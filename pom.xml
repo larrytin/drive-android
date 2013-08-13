@@ -9,7 +9,7 @@
   </parent>
   <artifactId>drive-android</artifactId>
   <packaging>apk</packaging>
-  <url>https://github.com/goodow/drive/</url>
+  <url>https://github.com/goodow/drive-android/</url>
   <inceptionYear>2013</inceptionYear>
 
   <dependencies>
