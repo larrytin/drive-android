@@ -1,0 +1,18 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">10dp</dimen>
+    <dimen name="activity_vertical_margin">10dp</dimen>
+    <dimen name="progressTextSize">11sp</dimen>
+    <dimen name="progressBar_height">5dp</dimen>
+    <dimen name="listGroupHeigh">21dp</dimen>
+    <dimen name="listItemHeigh">42dp</dimen>
+    <dimen name="listGroupTextSize">12sp</dimen>
+    <dimen name="listItemTextSize">15sp</dimen>
+    <dimen name="listItemPadding">1dp</dimen>
+    <dimen name="listGroupHeigh_large">58dp</dimen>
+    <dimen name="listItemHeigh_large">88dp</dimen>
+    <dimen name="listGroupTextSize_large">20sp</dimen>
+    <dimen name="listItemTextSize_large">30sp</dimen>
+    <dimen name="listItemPadding_large">3dp</dimen>
+
+</resources>

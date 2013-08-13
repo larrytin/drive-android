@@ -1,0 +1,98 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:orientation="vertical" >
+
+        <!-- 登录 label -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="登录"
+            android:textSize="27sp" />
+
+        <!-- 用户名 label -->
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="用户名"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <!-- 用户名输入框 -->
+
+        <EditText
+            android:id="@+id/username_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edittext_bg"
+            android:hint="请输入您在教师管理平台上注册的用户名"
+            android:inputType="textPersonName"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:text="admin" >
+
+            <requestFocus />
+        </EditText>
+
+        <!-- 密码 label -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="密码"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <!-- 密码 输入框 -->
+
+        <EditText
+            android:id="@+id/password_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/edittext_bg"
+            android:inputType="textPassword"
+            android:maxLength="10"
+            android:singleLine="true"
+            android:text="admin" />
+
+        <!-- 登录按钮 -->
+
+        <Button
+            android:id="@+id/login_Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/selector_button_bg"
+            android:text="登录"
+            android:textColor="@drawable/selector_button_text_color_normal" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+</LinearLayout>

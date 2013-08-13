@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/audio_file_name_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="音频名称"
+            android:textColor="@android:color/black"
+            android:textSize="30sp" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/play_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="播放"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/pause_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="暂停"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/reset_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="重播"
+                android:textSize="24sp" />
+
+            <Button
+                android:id="@+id/stop_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="停止"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/progress_rate_SeekBar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:max="100"
+            android:progress="0"
+            android:secondaryProgress="0"
+            android:visibility="visible" >
+        </SeekBar>
+
+        <TextView
+            android:id="@+id/current_progress_TextView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="当前进度: 0%"
+            android:textColor="@android:color/black"
+            android:textSize="24sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/curtime_and_total_time_TextView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="当前播放时间：0秒  \n歌曲总时间: 0秒"
+            android:textColor="@android:color/black"
+            android:textSize="24sp" >
+        </TextView>
+    </LinearLayout>
+
+</LinearLayout>
