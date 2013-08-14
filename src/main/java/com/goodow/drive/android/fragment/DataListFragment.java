@@ -148,6 +148,15 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    MainActivity activity = (MainActivity) getActivity();
+
+    activity.setLocalFragment(this);
+    activity.setLastiRemoteDataFragment(this);
+  }
+
+  @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
     Log.i(TAG, "onActivityCreated()");
@@ -155,9 +164,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     MainActivity activity = (MainActivity) getActivity();
 
     activity.setActionBarTitle("我的收藏夹");
-    activity.setLocalFragment(this);
-    activity.setLastiRemoteDataFragment(this);
-
     TextView textView = (TextView) activity.findViewById(R.id.openfailure_text);
     ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
     activity.setOpenStateView(textView, imageView);

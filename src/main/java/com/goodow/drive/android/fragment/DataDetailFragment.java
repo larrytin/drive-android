@@ -1,5 +1,6 @@
 package com.goodow.drive.android.fragment;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import android.app.Fragment;
@@ -21,6 +22,7 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DownloadStatusEnum;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.OfflineFileObserver;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
@@ -66,27 +68,15 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
   public void onResume() {
     super.onResume();
 
-    fileName = (TextView) getActivity().findViewById(R.id.fileName);
-    progressBar = (ProgressBar) getActivity().findViewById(R.id.thumbnailProgressBar);
-    imageView = (ImageView) getActivity().findViewById(R.id.thumbnail);
+    MainActivity activity = (MainActivity) getActivity();
+    if (null != activity) {
+      activity.setLocalFragmentForDetail(this);
 
-    downloadSwitch = (Switch) getActivity().findViewById(R.id.downloadButton);
-    downloadSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-      @Override
-      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked) {
-          file.set("status", DownloadStatusEnum.WAITING.getStatus());
-          String attachmentId = file.get("id");
-          OfflineFileObserver.OFFLINEFILEOBSERVER.addFile(attachmentId, true);
-        } else {
-          OfflineFileObserver.OFFLINEFILEOBSERVER.removeFile(file);
-        }
-        
-        Intent intent = new Intent();
-        intent.setAction("CHANGE_OFFLINE_STATE");
-        getActivity().getBaseContext().sendBroadcast(intent);
-      }
-    });
+      fileName = (TextView) activity.findViewById(R.id.fileName);
+      progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
+      imageView = (ImageView) activity.findViewById(R.id.thumbnail);
+      downloadSwitch = (Switch) activity.findViewById(R.id.downloadButton);
+    }
   }
 
   public void initView() {
@@ -98,19 +88,41 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       String thumbnail = file.get("thumbnail");
       if (null != thumbnail) {
         InitImageBitmapTask ibt = new InitImageBitmapTask();
-        
+
         ibt.execute(thumbnail);
       }
 
+      String blobKey = file.get("blobKey");
       boolean isOffline = false;
       CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
       for (int i = 0; i < list.length(); i++) {
         CollaborativeMap map = list.get(i);
-        if (file.get("blobKey").equals(map.get("blobKey"))) {
-          isOffline = true;
+
+        if (blobKey.equals(map.get("blobKey"))) {
+          File localFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+          if (localFile.exists()) {
+            isOffline = true;
+          }
         }
       }
       downloadSwitch.setChecked(isOffline);
+
+      downloadSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+          if (isChecked) {
+            file.set("status", DownloadStatusEnum.WAITING.getStatus());
+            String attachmentId = file.get("id");
+            OfflineFileObserver.OFFLINEFILEOBSERVER.addFile(attachmentId, true);
+          } else {
+            OfflineFileObserver.OFFLINEFILEOBSERVER.removeFile(file);
+          }
+
+          Intent intent = new Intent();
+          intent.setAction("CHANGE_OFFLINE_STATE");
+          getActivity().getBaseContext().sendBroadcast(intent);
+        }
+      });
 
       // Comparator<Object> comparator = new Comparator<Object>() {
       // @Override

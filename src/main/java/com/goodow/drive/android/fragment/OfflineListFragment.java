@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
 
 public class OfflineListFragment extends ListFragment implements ILocalFragment {
+  private final String TAG = getClass().getSimpleName();
+
   private OfflineAdapter adapter;
 
   private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -33,7 +36,7 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    
+
     CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
     adapter = new OfflineAdapter((MainActivity) this.getActivity(), list, new OnItemClickListener() {
       @Override
@@ -55,26 +58,16 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
   public void onResume() {
     super.onResume();
 
-    MainActivity activity = (MainActivity) getActivity();
-    if (null != activity) {
-      activity.setActionBarTitle("离线文件");
-    }
-    RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.mainConnect);
-    relativeLayout.setVisibility(View.GONE);
-  }
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_folderlist, container, false);
-  }
-
-  @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
+    Log.i(TAG, "onResume()");
 
     MainActivity activity = (MainActivity) getActivity();
     if (null != activity) {
+      Log.i(TAG, "onResume()-activty is not null");
+
       activity.setLocalFragment(this);
+      activity.setLastiRemoteDataFragment(this);
+
+      activity.setActionBarTitle("离线文件");
 
       IntentFilter intentFilter1 = new IntentFilter();
       intentFilter1.addAction("NEW_RES_DOWNLOADING");
@@ -84,9 +77,14 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
       activity.registerReceiver(broadcastReceiver, intentFilter1);
       activity.registerReceiver(broadcastReceiver, intentFilter2);
 
-      activity.setLocalFragment(this);
-      activity.setLastiRemoteDataFragment(this);
+      RelativeLayout relativeLayout = (RelativeLayout) activity.findViewById(R.id.mainConnect);
+      relativeLayout.setVisibility(View.GONE);
     }
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.fragment_folderlist, container, false);
   }
 
   @Override
