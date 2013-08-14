@@ -7,6 +7,7 @@
     <artifactId>realtime-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
+  <groupId>com.goodow.drive</groupId>
   <artifactId>drive-android</artifactId>
   <packaging>apk</packaging>
   <url>https://github.com/goodow/drive-android/</url>
