@@ -235,7 +235,7 @@ public class MainActivity extends RoboActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    this.getWindow().setFlags(0x80000000, 0x80000000);
+    // this.getWindow().setFlags(0x80000000, 0x80000000);
 
     actionBar = getActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
@@ -416,17 +416,19 @@ public class MainActivity extends RoboActivity {
     public void changeDoc(String docId) {
       iNotifyData = null;
 
-      JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue());
-      JsonArray jsonArray = map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue());
-      for (int i = jsonArray.length() - 1; i > 0; i--) {
-        jsonArray.remove(i);
+      if (null != root) {
+        JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue());
+        JsonArray jsonArray = map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue());
+        for (int i = jsonArray.length() - 1; i > 0; i--) {
+          jsonArray.remove(i);
+        }
+        jsonArray.set(0, "root");
+
+        map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(), jsonArray);
+        map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue(), docId);
+
+        root.set(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue(), map);
       }
-      jsonArray.set(0, "root");
-
-      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(), jsonArray);
-      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue(), docId);
-
-      root.set(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue(), map);
     }
 
     @Override
@@ -439,7 +441,9 @@ public class MainActivity extends RoboActivity {
         if (null != mapId) {
           jsonArray.set(jsonArray.length(), mapId);
         } else {
-          jsonArray.remove(jsonArray.length() - 1);
+          if (jsonArray.length() > 0) {
+            jsonArray.remove(jsonArray.length() - 1);
+          }
         }
 
         map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(), jsonArray);

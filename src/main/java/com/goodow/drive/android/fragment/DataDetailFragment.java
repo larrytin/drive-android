@@ -2,10 +2,8 @@ package com.goodow.drive.android.fragment;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Comparator;
-
-import android.R.integer;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -83,6 +81,10 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
         } else {
           OfflineFileObserver.OFFLINEFILEOBSERVER.removeFile(file);
         }
+        
+        Intent intent = new Intent();
+        intent.setAction("CHANGE_OFFLINE_STATE");
+        getActivity().getBaseContext().sendBroadcast(intent);
       }
     });
   }
@@ -93,8 +95,12 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
 
       progressBar.setVisibility(View.VISIBLE);
       imageView.setVisibility(View.GONE);
-      InitImageBitmapTask ibt = new InitImageBitmapTask();
-      ibt.execute((String) file.get("thumbnail"));
+      String thumbnail = file.get("thumbnail");
+      if (null != thumbnail) {
+        InitImageBitmapTask ibt = new InitImageBitmapTask();
+        
+        ibt.execute(thumbnail);
+      }
 
       boolean isOffline = false;
       CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();

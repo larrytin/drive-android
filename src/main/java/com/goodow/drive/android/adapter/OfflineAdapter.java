@@ -1,12 +1,6 @@
 package com.goodow.drive.android.adapter;
 
 import java.io.File;
-
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -15,12 +9,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.activity.MainActivity;
+import com.goodow.drive.android.adapter.CollaborativeAdapter.OnItemClickListener;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
-import com.goodow.drive.android.toolutils.OfflineFileObserver;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
@@ -30,46 +23,12 @@ import com.goodow.realtime.ValueChangedEvent;
 public class OfflineAdapter extends BaseAdapter {
   private CollaborativeList offlineList;
   private MainActivity activity;
+  private OnItemClickListener onItemClickListener;
 
-  private View row;
-  private ProgressBar progressBar;
-  private TextView textView;
-
-  @SuppressLint("HandlerLeak")
-  private Handler handler = new Handler() {
-    @Override
-    public void handleMessage(Message msg) {
-      switch (msg.what) {
-      case 1:
-        int progress = msg.getData().getInt("progress");
-
-        if (null != textView) {
-          ((TextView) row.findViewById(R.id.downloadText)).setText(progress + " %");
-        }
-
-        if (null != progressBar) {
-          ((ProgressBar) activity.findViewById(10)).setProgress(progress);
-          progressBar.setProgress(progress);
-        }
-
-        break;
-      case -1:
-        if (null != textView) {
-          textView.setText("100 %");
-        }
-
-        if (null != progressBar) {
-          progressBar.setProgress(100);
-        }
-
-        break;
-      }
-    }
-  };
-
-  public OfflineAdapter(MainActivity activity, CollaborativeList offlineList) {
+  public OfflineAdapter(MainActivity activity, CollaborativeList offlineList, OnItemClickListener onItemClickListener) {
     this.offlineList = offlineList;
     this.activity = activity;
+    this.onItemClickListener = onItemClickListener;
   }
 
   @Override
@@ -98,7 +57,7 @@ public class OfflineAdapter extends BaseAdapter {
     imageView.setImageResource(ToolsFunctionForThisProgect.getFileIconByFileFullName("." + item.get("type")));
 
     final TextView offlinefilename = (TextView) row.findViewById(R.id.offlineFileName);
-    offlinefilename.setText((String) item.get("title"));
+    offlinefilename.setText((String) item.get("label"));
 
     final ProgressBar progressBar = (ProgressBar) row.findViewById(R.id.downloadBar);
     final TextView downloadText = (TextView) row.findViewById(R.id.downloadText);
@@ -133,23 +92,7 @@ public class OfflineAdapter extends BaseAdapter {
     delButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-
-        AlertDialog alertDialog = new AlertDialog.Builder(activity).setPositiveButton(R.string.dailogOK, new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            OfflineFileObserver.OFFLINEFILEOBSERVER.removeFile(item);
-
-            OfflineAdapter.this.notifyDataSetChanged();
-          }
-        }).setNegativeButton(R.string.dailogCancel, new DialogInterface.OnClickListener() {
-
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-
-          }
-        }).setMessage(R.string.del_DailogMessage).create();
-
-        alertDialog.show();
+        onItemClickListener.onItemClick(item);
       }
     });
 
@@ -159,6 +102,8 @@ public class OfflineAdapter extends BaseAdapter {
       downloadText.setText(0 + " %");
       downloadStatus.setText(GlobalConstant.DownloadStatusEnum.UNDOWNLOADING.getStatus());
     }
+
+    return row;
 
     /**
      * 动态显示下载进度第二套方案
@@ -183,7 +128,42 @@ public class OfflineAdapter extends BaseAdapter {
     // }
     // });
     // }
-
-    return row;
   }
+
+  // private View row;
+  // private ProgressBar progressBar;
+  // private TextView textView;
+  //
+  // @SuppressLint("HandlerLeak")
+  // private Handler handler = new Handler() {
+  // @Override
+  // public void handleMessage(Message msg) {
+  // switch (msg.what) {
+  // case 1:
+  // int progress = msg.getData().getInt("progress");
+  //
+  // if (null != textView) {
+  // ((TextView) row.findViewById(R.id.downloadText)).setText(progress + " %");
+  // }
+  //
+  // if (null != progressBar) {
+  // ((ProgressBar) activity.findViewById(10)).setProgress(progress);
+  // progressBar.setProgress(progress);
+  // }
+  //
+  // break;
+  // case -1:
+  // if (null != textView) {
+  // textView.setText("100 %");
+  // }
+  //
+  // if (null != progressBar) {
+  // progressBar.setProgress(100);
+  // }
+  //
+  // break;
+  // }
+  // }
+  // };
+
 }

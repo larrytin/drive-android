@@ -132,7 +132,7 @@ public enum OfflineFileObserver {
               }
 
               CollaborativeMap newFile = newModel.createMap(null);
-              newFile.set("title", execute.getFilename());
+              newFile.set("label", execute.getFilename());
 
               for (Tools.MIME_TYPE_Table mimeType : Tools.MIME_TYPE_Table.values()) {
                 if (execute.getContentType().equals(mimeType.getMimeType())) {
@@ -144,6 +144,15 @@ public enum OfflineFileObserver {
               newFile.set("progress", "0");
               newFile.set("status", GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
               newFile.set("blobKey", execute.getBlobKey());
+
+              String thumbnail = execute.getThumbnail();
+              if (!DriveModule.DRIVE_SERVER.endsWith(".goodow.com")) {
+                StringBuffer stringBuffer = new StringBuffer(DriveModule.DRIVE_SERVER);
+                stringBuffer.append(thumbnail.substring(thumbnail.indexOf("8880") + 4));
+                stringBuffer.append("=s218");
+                thumbnail = stringBuffer.toString();
+              }
+              newFile.set("thumbnail", thumbnail);
 
               newList.push(newFile);
 

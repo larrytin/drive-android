@@ -15,8 +15,10 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.adapter.OfflineAdapter;
+import com.goodow.drive.android.adapter.CollaborativeAdapter.OnItemClickListener;
 import com.goodow.drive.android.toolutils.OfflineFileObserver;
 import com.goodow.realtime.CollaborativeList;
+import com.goodow.realtime.CollaborativeMap;
 
 public class OfflineListFragment extends ListFragment implements ILocalFragment {
   private OfflineAdapter adapter;
@@ -24,9 +26,29 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
   private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
-
       adapter.notifyDataSetChanged();
     }
+  };
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    
+    CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
+    adapter = new OfflineAdapter((MainActivity) this.getActivity(), list, new OnItemClickListener() {
+      @Override
+      public void onItemClick(CollaborativeMap file) {
+        MainActivity activity = (MainActivity) OfflineListFragment.this.getActivity();
+
+        DataDetailFragment dataDetailFragment = activity.getDataDetailFragment();
+        dataDetailFragment.setFile(file);
+        dataDetailFragment.initView();
+
+        activity.setDataDetailLayoutState(View.VISIBLE);
+        activity.setLocalFragment(dataDetailFragment);
+      }
+    });
+    setListAdapter(adapter);
   };
 
   @Override
@@ -39,10 +61,6 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
     }
     RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.mainConnect);
     relativeLayout.setVisibility(View.GONE);
-
-    CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
-    adapter = new OfflineAdapter((MainActivity) this.getActivity(), list);
-    setListAdapter(adapter);
   }
 
   @Override
@@ -55,11 +73,20 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
     super.onActivityCreated(savedInstanceState);
 
     MainActivity activity = (MainActivity) getActivity();
-    activity.setLocalFragment(this);
+    if (null != activity) {
+      activity.setLocalFragment(this);
 
-    IntentFilter intentFilter = new IntentFilter();
-    intentFilter.addAction("NEW_RES_DOWNLOADING");
-    activity.registerReceiver(broadcastReceiver, intentFilter);
+      IntentFilter intentFilter1 = new IntentFilter();
+      intentFilter1.addAction("NEW_RES_DOWNLOADING");
+      IntentFilter intentFilter2 = new IntentFilter();
+      intentFilter2.addAction("CHANGE_OFFLINE_STATE");
+
+      activity.registerReceiver(broadcastReceiver, intentFilter1);
+      activity.registerReceiver(broadcastReceiver, intentFilter2);
+
+      activity.setLocalFragment(this);
+      activity.setLastiRemoteDataFragment(this);
+    }
   }
 
   @Override
@@ -72,18 +99,15 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
   @Override
   public void connectUi() {
     // TODO Auto-generated method stub
-
   }
 
   @Override
   public void loadDocument() {
     // TODO Auto-generated method stub
-
   }
 
   @Override
   public void backFragment() {
     // TODO Auto-generated method stub
-
   }
 }

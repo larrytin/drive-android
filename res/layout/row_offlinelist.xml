@@ -81,6 +81,6 @@
         android:layout_marginRight="15dp"
         android:background="@drawable/selector_delbutton_bg"
         android:contentDescription="@string/contentDescription"
-        android:src="@drawable/action_discussion_trash" />
+        android:src="@drawable/action_discussion_edit" />
 
 </RelativeLayout>
