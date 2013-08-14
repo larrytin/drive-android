@@ -3,6 +3,10 @@ package com.goodow.drive.android.activity;
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,26 +16,33 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.Interface.IRemoteControl;
@@ -79,6 +90,14 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
   private OfflineListFragment offlineListFragment = new OfflineListFragment();
   private DataDetailFragment dataDetailFragment = new DataDetailFragment();
   private LessonListFragment lessonListFragment = new LessonListFragment();
+
+  @SuppressLint("HandlerLeak")
+  private Handler handler = new Handler() {
+    @Override
+    public void handleMessage(Message msg) {
+      currentFragment.backFragment();
+    }
+  };
 
   public LocalResFragment getLocalResFragment() {
     return localResFragment;
@@ -129,20 +148,26 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
     leftMenu.layout(x, leftMenu.getTop(), leftMenu.getRight(), leftMenu.getBottom());
   }
 
-  public void setDataDetailLayoutState(int state) {
+  public void setDataDetailLayoutState(final int state) {
     if (dataDetailLayout.getVisibility() != state) {
-      Animation animation;
+      Interpolator accelerator = new AccelerateInterpolator();
+      Interpolator decelerator = new DecelerateInterpolator();
 
-      if (state == View.VISIBLE) {
+      ObjectAnimator visToInvis = ObjectAnimator.ofFloat(dataDetailLayout, "rotationY", 0f, 90f);
+      visToInvis.setDuration(500);
+      visToInvis.setInterpolator(accelerator);
 
-        animation = AnimationUtils.makeInAnimation(this, false);
-      } else {
-
-        animation = AnimationUtils.makeOutAnimation(this, true);
-      }
-
-      dataDetailLayout.startAnimation(animation);
-      dataDetailLayout.setVisibility(state);
+      final ObjectAnimator invisToVis = ObjectAnimator.ofFloat(dataDetailLayout, "rotationY", -90f, 0f);
+      invisToVis.setDuration(500);
+      invisToVis.setInterpolator(decelerator);
+      visToInvis.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator anim) {
+          invisToVis.start();
+          dataDetailLayout.setVisibility(state);
+        }
+      });
+      visToInvis.start();
     }
   }
 
@@ -242,10 +267,31 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
       }
     });
 
-    dataDetailLayout.setOnClickListener(new View.OnClickListener() {
+    // dataDetailLayout.setOnClickListener(new View.OnClickListener() {
+    // @Override
+    // public void onClick(View v) {
+    // // 拦截叠层之间的点击事件
+    // }
+    // });
+    final GestureDetector gt = new GestureDetector(this, new SimpleOnGestureListener() {
+      private final int FLING_MIN_DISTANCE = 10;// X或者y轴上移动的距离(像素)
+      private final int FLING_MIN_VELOCITY = 20;// x或者y轴上的移动速度(像素/秒)
+
       @Override
-      public void onClick(View v) {
-        // 拦截叠层之间的点击事件
+      public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (e2.getX() - e1.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
+          Message message = new Message();
+          handler.sendMessage(message);
+        }
+
+        return true;
+      }
+    });
+    dataDetailLayout.setLongClickable(true);
+    dataDetailLayout.setOnTouchListener(new OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        return gt.onTouchEvent(event);
       }
     });
   }
@@ -296,7 +342,7 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
       this.currentFragment = iRemoteDataFragment;
     }
   }
-  
+
   public void setLocalFragmentForDetail(ILocalFragment iRemoteDataFragment) {
     this.currentFragment = iRemoteDataFragment;
   }
