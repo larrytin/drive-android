@@ -62,6 +62,8 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
       if (null != currentmap) {
         // 删除监听
         currentmap.removeObjectChangedListener(valuesChangeEventHandler);
+      } else {
+        Toast.makeText(getActivity(), "远程操作失败,请尝试切换菜单。", Toast.LENGTH_SHORT).show();
       }
 
       path.changePath(null, DOCID);
@@ -120,15 +122,21 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
           for (int i = 0; i < currentPathList.length(); i++) {
             CollaborativeMap currentMap = model.getObject(currentPathList.get(i).asString());
 
-            String label = currentMap.get("label");
-            if (null != label) {
-              title.append(label + "/");
+            if (null != currentMap) {
+              String label = currentMap.get("label");
+              if (null != label) {
+                title.append(label + "/");
+              }
+            } else {
+              Toast.makeText(getActivity(), "远程操作失败,请尝试切换菜单。", Toast.LENGTH_SHORT).show();
             }
           }
 
           activity.setActionBarTitle(title.toString());
         }
       }
+    } else {
+      Toast.makeText(getActivity(), "远程操作失败,请尝试切换菜单。", Toast.LENGTH_SHORT).show();
     }
 
     openState();
@@ -141,7 +149,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     ((MainActivity) getActivity()).restActionBarTitle();
   }
 
-  @Override 
+  @Override
   public void onResume() {
     super.onResume();
     MainActivity activity = (MainActivity) getActivity();
@@ -201,7 +209,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
             if (null != map) {
               showData();
             } else {
-              backFragment();
+              Toast.makeText(getActivity(), "远程操作失败,请尝试切换菜单。", Toast.LENGTH_SHORT).show();
             }
           }
         }
