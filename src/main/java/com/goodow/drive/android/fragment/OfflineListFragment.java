@@ -48,7 +48,7 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
         dataDetailFragment.initView();
 
         activity.setDataDetailLayoutState(View.VISIBLE);
-        activity.setLocalFragment(dataDetailFragment);
+        activity.setLocalFragmentForDetail(dataDetailFragment);
       }
     });
     setListAdapter(adapter);
@@ -69,13 +69,10 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
 
       activity.setActionBarTitle("离线文件");
 
-      IntentFilter intentFilter1 = new IntentFilter();
-      intentFilter1.addAction("NEW_RES_DOWNLOADING");
-      IntentFilter intentFilter2 = new IntentFilter();
-      intentFilter2.addAction("CHANGE_OFFLINE_STATE");
+      IntentFilter intentFilter = new IntentFilter();
+      intentFilter.addAction("CHANGE_OFFLINE_STATE");
 
-      activity.registerReceiver(broadcastReceiver, intentFilter1);
-      activity.registerReceiver(broadcastReceiver, intentFilter2);
+      activity.registerReceiver(broadcastReceiver, intentFilter);
 
       RelativeLayout relativeLayout = (RelativeLayout) activity.findViewById(R.id.mainConnect);
       relativeLayout.setVisibility(View.GONE);

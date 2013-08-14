@@ -11,9 +11,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -75,7 +74,28 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       fileName = (TextView) activity.findViewById(R.id.fileName);
       progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
       imageView = (ImageView) activity.findViewById(R.id.thumbnail);
+      
       downloadSwitch = (Switch) activity.findViewById(R.id.downloadButton);
+      
+      downloadSwitch.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          Switch switchButton = (Switch)v;
+          boolean isChecked = switchButton.isChecked();
+          
+          if (isChecked) {
+            file.set("status", DownloadStatusEnum.WAITING.getStatus());
+            String attachmentId = file.get("id");
+            OfflineFileObserver.OFFLINEFILEOBSERVER.addFile(attachmentId, true);
+          } else {
+            OfflineFileObserver.OFFLINEFILEOBSERVER.removeFile(file);
+          }
+
+          Intent intent = new Intent();
+          intent.setAction("CHANGE_OFFLINE_STATE");
+          getActivity().getBaseContext().sendBroadcast(intent);
+        }
+      });
     }
   }
 
@@ -106,23 +126,6 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
         }
       }
       downloadSwitch.setChecked(isOffline);
-
-      downloadSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-          if (isChecked) {
-            file.set("status", DownloadStatusEnum.WAITING.getStatus());
-            String attachmentId = file.get("id");
-            OfflineFileObserver.OFFLINEFILEOBSERVER.addFile(attachmentId, true);
-          } else {
-            OfflineFileObserver.OFFLINEFILEOBSERVER.removeFile(file);
-          }
-
-          Intent intent = new Intent();
-          intent.setAction("CHANGE_OFFLINE_STATE");
-          getActivity().getBaseContext().sendBroadcast(intent);
-        }
-      });
 
       // Comparator<Object> comparator = new Comparator<Object>() {
       // @Override

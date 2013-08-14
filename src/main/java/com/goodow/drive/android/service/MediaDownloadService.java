@@ -35,11 +35,6 @@ public class MediaDownloadService extends Service {
   private CollaborativeMap downloadRes;
 
   private void startResDownloadTread(final CollaborativeMap res) {
-    // 广播通知离线文件夹界面刷新
-    Intent intent = new Intent();
-    intent.setAction("NEW_RES_DOWNLOADING");
-    getBaseContext().sendBroadcast(intent);
-
     // 这里会发生阻塞, 这里阻塞很危险, 会导致ANR, 所以还是不要使用 BlockingQueue
     downloadUrlQueue.add(res);
 
@@ -84,12 +79,6 @@ public class MediaDownloadService extends Service {
           File newFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey"));
           // 本地文件不存在则开启下载
           if (!newFile.exists()) {
-
-            // 广播通知离线文件夹界面刷新
-            Intent intent = new Intent();
-            intent.setAction("NEW_RES_DOWNLOADING");
-            getBaseContext().sendBroadcast(intent);
-
             downloadRes.set("status", "downloading");
 
             final String urlString = downloadRes.get("url");

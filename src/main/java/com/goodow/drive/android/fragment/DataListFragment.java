@@ -154,6 +154,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
     activity.setLocalFragment(this);
     activity.setLastiRemoteDataFragment(this);
+    
+    loadDocument();
   }
 
   @Override
@@ -167,8 +169,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     TextView textView = (TextView) activity.findViewById(R.id.openfailure_text);
     ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
     activity.setOpenStateView(textView, imageView);
-
-    loadDocument();
   }
 
   private void initEventHandler() {
@@ -290,7 +290,7 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
         dataDetailFragment.initView();
 
         activity.setDataDetailLayoutState(View.VISIBLE);
-        activity.setLocalFragment(dataDetailFragment);
+        activity.setLocalFragmentForDetail(dataDetailFragment);
       }
     });
     setListAdapter(adapter);

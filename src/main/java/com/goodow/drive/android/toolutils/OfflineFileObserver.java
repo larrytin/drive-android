@@ -6,6 +6,7 @@ import java.lang.Thread.State;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import android.content.Intent;
 import android.util.Log;
 
 import com.goodow.api.services.attachment.Attachment;
@@ -132,19 +133,21 @@ public enum OfflineFileObserver {
               }
 
               CollaborativeMap newFile = newModel.createMap(null);
+              
+              newFile.set("url", DriveModule.DRIVE_SERVER + "/serve?id=" + attachmentId);
+              newFile.set("progress", "0");
+              newFile.set("status", GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
+             
               newFile.set("label", execute.getFilename());
+              newFile.set("blobKey", execute.getBlobKey());
+              newFile.set("id", execute.getId());
 
               for (Tools.MIME_TYPE_Table mimeType : Tools.MIME_TYPE_Table.values()) {
                 if (execute.getContentType().equals(mimeType.getMimeType())) {
                   newFile.set("type", mimeType.getType());
                 }
               }
-
-              newFile.set("url", DriveModule.DRIVE_SERVER + "/serve?id=" + attachmentId);
-              newFile.set("progress", "0");
-              newFile.set("status", GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
-              newFile.set("blobKey", execute.getBlobKey());
-
+              
               String thumbnail = execute.getThumbnail();
               if (DriveModule.DRIVE_SERVER.endsWith("http://192.168.1.15:8880")) {
                 StringBuffer stringBuffer = new StringBuffer(DriveModule.DRIVE_SERVER);
@@ -263,6 +266,10 @@ public enum OfflineFileObserver {
               }
             }
           }
+          
+          Intent intent = new Intent();
+          intent.setAction("CHANGE_OFFLINE_STATE");
+          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
         }
       };
     } while (false);
@@ -284,6 +291,10 @@ public enum OfflineFileObserver {
               DownloadResServiceBinder.getDownloadResServiceBinder().removeResDownload(resource);
             }
           }
+          
+          Intent intent = new Intent();
+          intent.setAction("CHANGE_OFFLINE_STATE");
+          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
         }
       };
     } while (false);
