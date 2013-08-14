@@ -1,9 +1,6 @@
 package com.goodow.drive.android.fragment;
 
-import java.io.File;
 import android.app.ListFragment;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,13 +17,10 @@ import com.goodow.drive.android.Interface.INotifyData;
 import com.goodow.drive.android.Interface.IRemoteControl;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.activity.MainActivity;
-import com.goodow.drive.android.activity.play.AudioPlayActivity;
-import com.goodow.drive.android.activity.play.VideoPlayActivity;
 import com.goodow.drive.android.adapter.CollaborativeAdapter;
 import com.goodow.drive.android.adapter.CollaborativeAdapter.OnItemClickListener;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
-import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.realtime.BaseModelEvent;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
@@ -132,7 +126,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
             }
           }
 
-          ((MainActivity) getActivity()).setActionBarTitle(title.toString());
+          activity.setActionBarTitle(title.toString());
         }
       }
     }
@@ -147,14 +141,14 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     ((MainActivity) getActivity()).restActionBarTitle();
   }
 
-  @Override
+  @Override 
   public void onResume() {
     super.onResume();
     MainActivity activity = (MainActivity) getActivity();
 
     activity.setLocalFragment(this);
     activity.setLastiRemoteDataFragment(this);
-    
+
     loadDocument();
   }
 
@@ -205,49 +199,8 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
           if (null != currentPathList && 0 != currentPathList.length()) {
             CollaborativeMap map = model.getObject(currentPathList.get(currentPathList.length() - 1).asString());
             if (null != map) {
-              // 判断若为文件,则触发播放功能,并且pathList自动-1(即执行一遍backfragment()方法)
-              if (null == map.get(FOLDER_KEY)) {
-                File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + map.get("blobKey"));
-
-                if (file.exists()) {
-                  Intent intent = null;
-
-                  String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
-
-                  if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
-                    intent = new Intent(getActivity(), AudioPlayActivity.class);
-
-                    intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_NAME.name(), (String) map.get("label"));
-                    intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_PATH.name(), resPath + (String) map.get("blobKey"));
-                  } else if (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
-                    intent = new Intent(getActivity(), VideoPlayActivity.class);
-
-                    intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(), (String) map.get("label"));
-                    intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(), resPath + (String) map.get("blobKey"));
-                  } else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
-                    // TODO
-                  } else {
-                    intent = new Intent();
-
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setAction(Intent.ACTION_VIEW);
-                    String type = map.get("type");
-                    intent.setDataAndType(Uri.fromFile(file), type);
-                  }
-                  getActivity().startActivity(intent);
-                  // getActivity().startActivity(Intent.createChooser(intent,
-                  // "请选择打开程序…"));
-                } else {
-                  Toast.makeText(getActivity(), "请先下载该文件.", Toast.LENGTH_SHORT).show();
-                }
-
-                backFragment();
-              } else {
-                // 判断若为文件夹,则展现数据
-                showData();
-              }
+              showData();
             } else {
-
               backFragment();
             }
           }
@@ -308,7 +261,11 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
   public void onListItemClick(ListView l, View v, int position, long id) {
     CollaborativeMap clickItem = (CollaborativeMap) v.getTag();
 
-    path.changePath(clickItem.getId(), DOCID);
+    if (null == clickItem.get("blobKey")) {
+      path.changePath(clickItem.getId(), DOCID);
+    } else {
+      path.playFile(clickItem);
+    }
   }
 
   @Override
