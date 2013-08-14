@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.goodow.android.drive.R;
@@ -82,6 +83,13 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.fragment_folderlist, container, false);
+  }
+
+  @Override
+  public void onListItemClick(ListView l, View v, int position, long id) {
+    CollaborativeMap item = (CollaborativeMap) v.getTag();
+
+    ((MainActivity) getActivity()).getRemoteControlObserver().playFile(item);
   }
 
   @Override

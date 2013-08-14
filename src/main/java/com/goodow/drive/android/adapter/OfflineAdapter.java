@@ -14,6 +14,7 @@ import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.adapter.CollaborativeAdapter.OnItemClickListener;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
@@ -54,7 +55,13 @@ public class OfflineAdapter extends BaseAdapter {
     final CollaborativeMap item = (CollaborativeMap) getItem(position);
 
     ImageView imageView = (ImageView) row.findViewById(R.id.offlineFileIcon);
-    imageView.setImageResource(ToolsFunctionForThisProgect.getFileIconByFileFullName("." + item.get("type")));
+    String type = "";
+    for (Tools.MIME_TYPE_Table mimeType : Tools.MIME_TYPE_Table.values()) {
+      if (item.get("type").equals(mimeType.getMimeType())) {
+        type = mimeType.getType();
+      }
+    }
+    imageView.setImageResource(ToolsFunctionForThisProgect.getFileIconByFileFullName("." + type));
 
     final TextView offlinefilename = (TextView) row.findViewById(R.id.offlineFileName);
     offlinefilename.setText((String) item.get("label"));
@@ -103,6 +110,7 @@ public class OfflineAdapter extends BaseAdapter {
       downloadStatus.setText(GlobalConstant.DownloadStatusEnum.UNDOWNLOADING.getStatus());
     }
 
+    row.setTag(item);
     return row;
 
     /**
