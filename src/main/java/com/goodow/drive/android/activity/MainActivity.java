@@ -403,12 +403,13 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
       FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
       fragmentTransaction.replace(R.id.contentLayout, newFragment);
       fragmentTransaction.commitAllowingStateLoss();
+
+      currentFragment.loadDocument();
     } while (false);
 
   }
 
   public IRemoteControl getRemoteControlObserver() {
-
     return remoteControlObserver;
   }
 
@@ -421,8 +422,8 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
     case MotionEvent.ACTION_DOWN:
       setLeftMenuLayoutX(0);
       setLeftMenuLayoutX(-leftMenu.getWidth());
-      
-      if (event.getX() < 30) {
+
+      if (event.getX() < 40) {
         showLeftMenuLayout();
 
         startPoint = event.getX();
@@ -488,8 +489,7 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
 
   public void goObservation() {
     if (null != remoteControlObserver) {
-      String docId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-          + GlobalConstant.DocumentIdAndDataKey.REMOTECONTROLDOCID.getValue();
+      String docId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.REMOTECONTROLDOCID.getValue();
 
       remoteControlObserver.startObservation(docId);
     }
