@@ -259,41 +259,6 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
     fragmentTransaction.replace(R.id.leftMenuLayout, leftMenuFragment);
 
     fragmentTransaction.commitAllowingStateLoss();
-
-    middleLayout.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        hideLeftMenuLayout();
-      }
-    });
-
-    // dataDetailLayout.setOnClickListener(new View.OnClickListener() {
-    // @Override
-    // public void onClick(View v) {
-    // // 拦截叠层之间的点击事件
-    // }
-    // });
-    final GestureDetector gt = new GestureDetector(this, new SimpleOnGestureListener() {
-      private final int FLING_MIN_DISTANCE = 10;// X或者y轴上移动的距离(像素)
-      private final int FLING_MIN_VELOCITY = 20;// x或者y轴上的移动速度(像素/秒)
-
-      @Override
-      public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (e2.getX() - e1.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
-          Message message = new Message();
-          handler.sendMessage(message);
-        }
-
-        return true;
-      }
-    });
-    dataDetailLayout.setLongClickable(true);
-    dataDetailLayout.setOnTouchListener(new OnTouchListener() {
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        return gt.onTouchEvent(event);
-      }
-    });
   }
 
   @Override
@@ -315,6 +280,35 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
   protected void onResume() {
     Log.i(TAG, "onResume");
     super.onResume();
+
+    middleLayout.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        hideLeftMenuLayout();
+      }
+    });
+
+    final GestureDetector gt = new GestureDetector(this, new SimpleOnGestureListener() {
+      private final int FLING_MIN_DISTANCE = 10;// X或者y轴上移动的距离(像素)
+      private final int FLING_MIN_VELOCITY = 20;// x或者y轴上的移动速度(像素/秒)
+
+      @Override
+      public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (e2.getX() - e1.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
+          Message message = new Message();
+          handler.sendMessage(message);
+        }
+
+        return true;
+      }
+    });
+    dataDetailLayout.setLongClickable(true);
+    dataDetailLayout.setOnTouchListener(new OnTouchListener() {
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        return gt.onTouchEvent(event);
+      }
+    });
   }
 
   @Override
@@ -424,6 +418,8 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
   public boolean onTouchEvent(MotionEvent event) {
     switch (event.getAction()) {
     case MotionEvent.ACTION_DOWN:
+      setLeftMenuLayoutX(0);
+      setLeftMenuLayoutX(-leftMenu.getWidth());
       showLeftMenuLayout();
 
       startPoint = event.getX();
@@ -458,6 +454,7 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
             setLeftMenuLayoutX(add);
           } else {
             setLeftMenuLayoutX(0);
+            middleLayout.setVisibility(View.VISIBLE);
           }
         } else if (startPoint > event.getX()) {
           int reduce = leftMenu.getLeft() - (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);

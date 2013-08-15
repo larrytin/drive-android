@@ -51,7 +51,8 @@
             android:layout_gravity="center"
             android:alpha="0.6"
             android:background="@android:color/black"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:visibility="invisible" >
         </LinearLayout>
 
         <LinearLayout
@@ -59,7 +60,8 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:layout_gravity="left"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:visibility="invisible" >
         </LinearLayout>
     </FrameLayout>
 

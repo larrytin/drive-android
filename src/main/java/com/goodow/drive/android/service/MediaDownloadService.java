@@ -93,7 +93,6 @@ public class MediaDownloadService extends Service {
 
   public final class MyBinder extends Binder {
     public String getDownloadResBlobKey() {
-
       return MediaDownloadService.this.downloadRes.get("blobKey");
     }
 
@@ -103,17 +102,6 @@ public class MediaDownloadService extends Service {
 
     public void removeResDownload(final CollaborativeMap res) {
       MediaDownloadService.this.downloadUrlQueue.remove(res);
-
-      // Iterator<CollaborativeMap> iterator =
-      // downloadUrlQueue.iterator();
-      //
-      // while (iterator.hasNext()) {
-      // CollaborativeMap localRes = iterator.next();
-      // if (null != localRes.get("url") && null != res.get("url")
-      // && localRes.get("url").equals(res.get("url"))) {
-      // downloadUrlQueue.remove(localRes);
-      // }
-      // }
     }
 
   }
@@ -153,7 +141,7 @@ public class MediaDownloadService extends Service {
         }
       });
 
-      if (DriveModule.DRIVE_SERVER.endsWith(".goodow.com")) {
+      if (!DriveModule.DRIVE_SERVER.equals("http://192.168.1.15:8880")) {
         downloader.setDirectDownloadEnabled(false);// 设为多块下载
         downloader.setChunkSize(MediaHttpUploader.MINIMUM_CHUNK_SIZE);// 设置每一块的大小
       } else {
@@ -170,7 +158,6 @@ public class MediaDownloadService extends Service {
 
   @Override
   public IBinder onBind(Intent intent) {
-
     return myBinder;
   }
 

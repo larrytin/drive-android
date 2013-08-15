@@ -63,7 +63,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
         // 删除监听
         currentmap.removeObjectChangedListener(valuesChangeEventHandler);
       } else {
-        Toast.makeText(getActivity(), "远程操作失败,请尝试切换菜单。", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
       }
 
       path.changePath(null, DOCID);
@@ -116,7 +116,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
       MainActivity activity = (MainActivity) getActivity();
       if (null != activity) {
         if (currentPathList.length() <= 1) {
-          activity.setActionBarTitle("我的课程");
+          activity.setActionBarTitle(GlobalConstant.MenuTypeEnum.USER_LESSON_DATA.getMenuName());
         } else {
           StringBuffer title = new StringBuffer();
           for (int i = 0; i < currentPathList.length(); i++) {
@@ -128,7 +128,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
                 title.append(label + "/");
               }
             } else {
-              Toast.makeText(getActivity(), "远程操作失败,请尝试切换菜单。", Toast.LENGTH_SHORT).show();
+              Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
             }
           }
 
@@ -136,7 +136,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
         }
       }
     } else {
-      Toast.makeText(getActivity(), "远程操作失败,请尝试切换菜单。", Toast.LENGTH_SHORT).show();
+      Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
     }
 
     openState();
@@ -209,7 +209,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
             if (null != map) {
               showData();
             } else {
-              Toast.makeText(getActivity(), "远程操作失败,请尝试切换菜单。", Toast.LENGTH_SHORT).show();
+              Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
             }
           }
         }
