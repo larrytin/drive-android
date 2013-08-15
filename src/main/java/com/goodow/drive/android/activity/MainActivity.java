@@ -413,6 +413,7 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
   }
 
   private float startPoint = 0;
+  private boolean isShow = false;
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
@@ -420,25 +421,35 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
     case MotionEvent.ACTION_DOWN:
       setLeftMenuLayoutX(0);
       setLeftMenuLayoutX(-leftMenu.getWidth());
-      showLeftMenuLayout();
+      
+      if (event.getX() < 30) {
+        showLeftMenuLayout();
 
-      startPoint = event.getX();
+        startPoint = event.getX();
+        isShow = true;
+      }
 
       break;
     case MotionEvent.ACTION_UP:
-      if (Math.abs(leftMenu.getLeft()) > leftMenu.getWidth() / 3) {
-        hideLeftMenuLayout();
-      } else {
+      if ((Math.abs(leftMenu.getLeft()) <= leftMenu.getWidth() / 3) && leftMenu.getVisibility() == View.VISIBLE) {
         setLeftMenuLayoutX(0);
         middleLayout.setVisibility(View.VISIBLE);
+      } else {
+        hideLeftMenuLayout();
       }
 
       startPoint = 0;
+      isShow = false;
 
       break;
     case MotionEvent.ACTION_MOVE:
       do {
-        if (Math.abs(event.getX() - startPoint) < 4) {
+        if (!isShow) {
+
+          break;
+        }
+
+        if (Math.abs(event.getX() - startPoint) < 3) {
 
           break;
         }
