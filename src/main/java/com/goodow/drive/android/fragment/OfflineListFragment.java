@@ -34,6 +34,10 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
     }
   };
 
+  public OfflineListFragment() {
+    super();
+  }
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

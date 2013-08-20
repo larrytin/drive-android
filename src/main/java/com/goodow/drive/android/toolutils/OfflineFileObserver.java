@@ -144,13 +144,15 @@ public enum OfflineFileObserver {
               newFile.set("type", execute.getContentType());
 
               String thumbnail = execute.getThumbnail();
-              if (DriveModule.DRIVE_SERVER.endsWith("http://192.168.1.15:8880")) {
-                StringBuffer stringBuffer = new StringBuffer(DriveModule.DRIVE_SERVER);
-                stringBuffer.append(thumbnail.substring(thumbnail.indexOf("8880") + 4));
-                stringBuffer.append("=s218");
-                thumbnail = stringBuffer.toString();
+              if (null != thumbnail) {
+                if (DriveModule.DRIVE_SERVER.endsWith("http://192.168.1.15:8880")) {
+                  StringBuffer stringBuffer = new StringBuffer(DriveModule.DRIVE_SERVER);
+                  stringBuffer.append(thumbnail.substring(thumbnail.indexOf("8880") + 4));
+                  stringBuffer.append("=s218");
+                  thumbnail = stringBuffer.toString();
+                }
+                newFile.set("thumbnail", thumbnail);
               }
-              newFile.set("thumbnail", thumbnail);
 
               newList.push(newFile);
 

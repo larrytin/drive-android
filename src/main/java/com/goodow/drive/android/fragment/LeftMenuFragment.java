@@ -22,6 +22,10 @@ public class LeftMenuFragment extends ListFragment {
 
   private ArrayList<MenuTypeEnum> MENULIST = new ArrayList<MenuTypeEnum>();
 
+  public LeftMenuFragment() {
+    super();
+  }
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -52,20 +56,17 @@ public class LeftMenuFragment extends ListFragment {
 
       break;
     case USER_REMOTE_DATA:
-      String favoritesDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-          + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue();
+      String favoritesDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue();
       mainActivity.getRemoteControlObserver().changeDoc(favoritesDocId);
 
       break;
     case USER_LESSON_DATA:
-      String lessonDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-          + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
+      String lessonDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
       mainActivity.getRemoteControlObserver().changeDoc(lessonDocId);
 
       break;
     case USER_OFFLINE_DATA:
-      String offlineDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-          + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
+      String offlineDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
       mainActivity.getRemoteControlObserver().changeDoc(offlineDocId);
 
       break;

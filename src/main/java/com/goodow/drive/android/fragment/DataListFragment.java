@@ -55,6 +55,10 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   private EventHandler<ObjectChangedEvent> valuesChangeEventHandler;
   private INotifyData iNotifyData;
 
+  public DataListFragment() {
+    super();
+  }
+
   public void backFragment() {
     if (null != currentPathList && 1 < currentPathList.length()) {
       String mapId = currentPathList.get(currentPathList.length() - 1).asString();
@@ -136,7 +140,9 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
         }
       }
     } else {
-      Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
+      if (null != getActivity()) {
+        Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
+      }
     }
 
     openState();

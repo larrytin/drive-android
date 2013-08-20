@@ -45,6 +45,10 @@ public class OAuthFragment extends DialogFragment {
 
   private WebView webViewOauth;
 
+  public OAuthFragment() {
+    super();
+  }
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -61,11 +65,11 @@ public class OAuthFragment extends DialogFragment {
   }
 
   @SuppressLint("SetJavaScriptEnabled")
-@Override
+  @Override
   public void onViewCreated(View arg0, Bundle arg1) {
     super.onViewCreated(arg0, arg1);
     WebSettings webSettings = webViewOauth.getSettings();
-		webSettings.setJavaScriptEnabled(true);
+    webSettings.setJavaScriptEnabled(true);
 
     // load the url of the oAuth login page
     webViewOauth.loadUrl("http://retech.goodow.com/good.js/good/auth/ServiceLogin.html");

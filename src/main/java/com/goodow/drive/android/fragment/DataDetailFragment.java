@@ -46,6 +46,10 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
   public ImageView imageView;
   private Switch downloadSwitch;
 
+  public DataDetailFragment() {
+    super();
+  }
+
   public void backFragment() {
     MainActivity activity = (MainActivity) getActivity();
 

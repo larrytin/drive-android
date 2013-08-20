@@ -1,20 +1,20 @@
 package com.goodow.drive.android.toolutils;
 
 import java.io.File;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.goodow.drive.android.Interface.INotifyData;
 import com.goodow.drive.android.Interface.IRemoteControl;
-import com.goodow.drive.android.Interface.ISwitchFragment;
 import com.goodow.drive.android.activity.play.AudioPlayActivity;
+import com.goodow.drive.android.activity.play.FlashPlayerActivity;
 import com.goodow.drive.android.activity.play.VideoPlayActivity;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DocumentIdAndDataKey;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+import com.goodow.drive.android.module.DriveModule;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
 import com.goodow.realtime.Document;
@@ -25,7 +25,6 @@ import com.goodow.realtime.ModelInitializerHandler;
 import com.goodow.realtime.Realtime;
 import com.goodow.realtime.ValueChangedEvent;
 import com.goodow.realtime.ValuesAddedEvent;
-
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
@@ -34,13 +33,18 @@ import elemental.json.impl.JreJsonString;
 public class RemoteControlObserver implements IRemoteControl {
   private final String TAG = getClass().getSimpleName();
 
-  private ISwitchFragment iswitchfragment;
+  private Activity activity;
+  private SwitchFragment switchfragment;
   private Document doc;
   private Model model;
   private CollaborativeMap root;
   private CollaborativeList playFileList;
 
   private INotifyData iNotifyData;
+
+  public static abstract class SwitchFragment {
+    public abstract void switchFragment(DocumentIdAndDataKey doc);
+  }
 
   private EventHandler<ValuesAddedEvent> playFileHandler = new EventHandler<ValuesAddedEvent>() {
     @Override
@@ -55,29 +59,40 @@ public class RemoteControlObserver implements IRemoteControl {
         String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
 
         if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
-          intent = new Intent(MyApplication.getApplication(), AudioPlayActivity.class);
-          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          intent = new Intent(activity, AudioPlayActivity.class);
+
           intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_NAME.name(), (String) map.get("label"));
           intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_PATH.name(), resPath + (String) map.get("blobKey"));
         } else if (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
-          intent = new Intent(MyApplication.getApplication(), VideoPlayActivity.class);
-          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          intent = new Intent(activity, VideoPlayActivity.class);
+
           intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(), (String) map.get("label"));
-          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(), resPath + (String) map.get("blobKey"));
+          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(), resPath + (String) map.get("blobKey") + ".swf");
         } else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
-          // TODO
+          intent = new Intent(activity, FlashPlayerActivity.class);
+
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), (String) map.get("label"));
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name(), resPath + (String) map.get("blobKey"));
         } else {
           intent = new Intent();
-          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
           intent.setAction(Intent.ACTION_VIEW);
-          String type = map.get("type");
-          intent.setDataAndType(Uri.fromFile(file), type);
+          intent.setDataAndType(Uri.fromFile(file), (String) map.get("type"));
         }
-        MyApplication.getApplication().startActivity(intent);
-        // getActivity().startActivity(Intent.createChooser(intent,
-        // "请选择打开程序…"));
+
+        if (null != intent) {
+          activity.startActivity(intent);
+        }
       } else {
-        Toast.makeText(MyApplication.getApplication(), "请先下载该文件.", Toast.LENGTH_SHORT).show();
+        if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
+          Intent intent = new Intent(activity, FlashPlayerActivity.class);
+
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), (String) map.get("label"));
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id=" + map.get("id"));
+          activity.startActivity(intent);
+        } else {
+          Toast.makeText(activity, "请先下载该文件.", Toast.LENGTH_SHORT).show();
+        }
       }
     }
   };
@@ -99,8 +114,9 @@ public class RemoteControlObserver implements IRemoteControl {
     }
   };
 
-  public RemoteControlObserver(ISwitchFragment iswitchfragment) {
-    this.iswitchfragment = iswitchfragment;
+  public RemoteControlObserver(Activity activity, SwitchFragment switchfragment) {
+    this.activity = activity;
+    this.switchfragment = switchfragment;
   }
 
   @Override
@@ -169,7 +185,7 @@ public class RemoteControlObserver implements IRemoteControl {
 
       DocumentIdAndDataKey doc = DocumentIdAndDataKey.getEnumWithValue(lastDocId);
 
-      iswitchfragment.switchFragment(doc);
+      switchfragment.switchFragment(doc);
     }
   }
 
@@ -206,10 +222,9 @@ public class RemoteControlObserver implements IRemoteControl {
           DocumentIdAndDataKey doc = DocumentIdAndDataKey.getEnumWithValue(lastDocId);
 
           if (null != doc) {
-            iswitchfragment.switchFragment(doc);
+            switchfragment.switchFragment(doc);
           } else {
-            changeDoc("@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-                + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue());
+            changeDoc("@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue());
           }
         }
       }
@@ -252,6 +267,7 @@ public class RemoteControlObserver implements IRemoteControl {
       playFile.set("label", file.get("label"));
       playFile.set("blobKey", file.get("blobKey"));
       playFile.set("type", file.get("type"));
+      playFile.set("id", file.get("id"));
 
       if (50 < playFileList.length()) {
         playFileList.clear();

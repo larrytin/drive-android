@@ -22,13 +22,13 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
@@ -43,10 +43,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.Interface.IRemoteControl;
-import com.goodow.drive.android.Interface.ISwitchFragment;
 import com.goodow.drive.android.fragment.DataDetailFragment;
 import com.goodow.drive.android.fragment.DataListFragment;
 import com.goodow.drive.android.fragment.LeftMenuFragment;
@@ -58,12 +58,13 @@ import com.goodow.drive.android.global_data_cache.GlobalConstant.DocumentIdAndDa
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.LoginNetRequestTask;
 import com.goodow.drive.android.toolutils.RemoteControlObserver;
+import com.goodow.drive.android.toolutils.RemoteControlObserver.SwitchFragment;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
 
 @ContentView(R.layout.activity_main)
-public class MainActivity extends RoboActivity implements ISwitchFragment {
+public class MainActivity extends RoboActivity {
   private final String TAG = this.getClass().getSimpleName();
 
   private RemoteControlObserver remoteControlObserver;
@@ -272,7 +273,12 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
     Log.i(TAG, "onStart");
     super.onStart();
 
-    remoteControlObserver = new RemoteControlObserver(this);
+    remoteControlObserver = new RemoteControlObserver(this, new SwitchFragment() {
+      @Override
+      public void switchFragment(DocumentIdAndDataKey doc) {
+        MainActivity.this.switchFragment(doc);
+      }
+    });
     goObservation();
   }
 
@@ -366,7 +372,6 @@ public class MainActivity extends RoboActivity implements ISwitchFragment {
     openFailure_img = imageView;
   }
 
-  @Override
   public void switchFragment(DocumentIdAndDataKey doc) {
     Fragment newFragment = null;
 
