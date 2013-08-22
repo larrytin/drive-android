@@ -54,14 +54,14 @@ public final class GlobalConstant {
   private static String channel = "09";
 
   public static enum DocumentIdAndDataKey {
-    // 文件id
-    FAVORITESDOCID("favorites" + channel),
-    //
-    LESSONDOCID("lesson" + channel),
-    //
-    REMOTECONTROLDOCID("remotecontrol" + channel),
-    //
-    OFFLINEDOCID("offlinedoc" + channel),
+     // 文件id
+     FAVORITESDOCID("favorites" + channel),
+     //
+     LESSONDOCID("lesson" + channel),
+     //
+     REMOTECONTROLDOCID("remotecontrol" + channel),
+     //
+     OFFLINEDOCID("offlinedoc" + channel),
 
     // 属性key
     FOLDERSKEY("folders"),

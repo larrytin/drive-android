@@ -71,12 +71,12 @@
         <!-- 登录按钮 -->
 
         <Button
-            android:id="@+id/login_Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@drawable/selector_button_bg"
-            android:textColor="@drawable/selector_button_text_color_normal"
-            android:text="登录" />
+            android:onClick="login"
+            android:text="登录"
+            android:textColor="@drawable/selector_button_text_color_normal" />
     </LinearLayout>
 </LinearLayout>

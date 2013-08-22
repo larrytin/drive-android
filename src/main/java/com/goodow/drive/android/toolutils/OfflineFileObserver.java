@@ -200,16 +200,20 @@ public enum OfflineFileObserver {
           root = model.getRoot();
 
           list = root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
-          list.addValuesAddedListener(listAddEventHandler);
-          list.addValuesRemovedListener(listRemoveEventHandler);
+          if (null != list) {
+            list.addValuesAddedListener(listAddEventHandler);
+            list.addValuesRemovedListener(listRemoveEventHandler);
+          }
         } else {
           // 远程推送下载的离线文件夹
           model_unlogin = doc.getModel();
           root = model_unlogin.getRoot();
 
           list_unlogin = root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
-          list_unlogin.addValuesAddedListener(listAddEventHandler);
-          list_unlogin.addValuesRemovedListener(listRemoveEventHandler);
+          if (null != list_unlogin) {
+            list_unlogin.addValuesAddedListener(listAddEventHandler);
+            list_unlogin.addValuesRemovedListener(listRemoveEventHandler);
+          }
 
           addFile(attachmentId, false);
         }

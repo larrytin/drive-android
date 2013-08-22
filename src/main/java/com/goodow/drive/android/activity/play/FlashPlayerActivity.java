@@ -62,13 +62,13 @@ public class FlashPlayerActivity extends Activity {
       flashFileNameTextView.setText(flashfileName);
     }
     flashWebView = (WebView) findViewById(R.id.flash_webView);
-    setTitle("flash播放器");
+    setTitle("Flash播放器");
     setTitleColor(Color.RED);
     
     WebSettings webSettings = flashWebView.getSettings();
     webSettings.setPluginState(PluginState.ON);
     webSettings.setSupportZoom(true);
-    // WebView启用Javascript脚本执行
+    // WebView启用javascript脚本执行
     webSettings.setJavaScriptEnabled(true);
     webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 

@@ -2,7 +2,6 @@ package com.goodow.drive.android.toolutils;
 
 import java.io.File;
 import java.io.IOException;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.goodow.api.services.account.Account;
 import com.goodow.api.services.account.model.AccountInfo;
 import com.goodow.drive.android.activity.MainActivity;
@@ -22,7 +20,7 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
   private final String TAG = this.getClass().getSimpleName();
 
   private Activity activity;
-  private Account account = MyApplication.getAccount();
+  private Account account;
   private String userName;
   private Dialog dialog;
 
@@ -32,10 +30,11 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
    * @param activity
    * @param dialog
    */
-  public LoginNetRequestTask(Activity activity, Dialog dialog) {
+  public LoginNetRequestTask(Activity activity, Dialog dialog, Account account) {
     super();
     this.activity = activity;
     this.dialog = dialog;
+    this.account = account;
   }
 
   @Override

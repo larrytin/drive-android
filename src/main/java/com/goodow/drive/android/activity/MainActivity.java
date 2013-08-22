@@ -45,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.goodow.android.drive.R;
+import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.Interface.IRemoteControl;
 import com.goodow.drive.android.fragment.DataDetailFragment;
@@ -62,6 +63,15 @@ import com.goodow.drive.android.toolutils.RemoteControlObserver.SwitchFragment;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
+import com.goodow.realtime.android.CloudEndpointUtils;
+import com.goodow.realtime.android.RealtimeModule;
+import com.goodow.realtime.android.ServerAddress;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity {
@@ -537,7 +547,8 @@ public class MainActivity extends RoboActivity {
 
           // 一切OK
           String[] params = { username, password };
-          final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(MainActivity.this, dialog);
+          Account account = provideDevice("http://192.168.1.15:8080");
+          final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(MainActivity.this, dialog, account);
           SimpleProgressDialog.show(MainActivity.this, new OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -574,5 +585,18 @@ public class MainActivity extends RoboActivity {
   @Override
   protected void onSaveInstanceState(Bundle outState) {
     // super.onSaveInstanceState(outState);
+  }
+
+  @Provides
+  @Singleton
+  private Account provideDevice(@ServerAddress String serverAddress) {
+    Account.Builder endpointBuilder = new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+      @Override
+      public void initialize(HttpRequest httpRequest) {
+
+      }
+    });
+    endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
+    return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }
 }

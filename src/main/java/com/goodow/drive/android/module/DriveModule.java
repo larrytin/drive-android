@@ -34,11 +34,9 @@ public class DriveModule extends AbstractModule {
     if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
       storage = Environment.getExternalStorageDirectory();
       filePathString = "/retech";
-
     } else {
       storage = Environment.getDataDirectory();
       filePathString = "/data/com.goodow.drive.android/retech";
-
     }
 
     file = new File(storage, filePathString);
@@ -51,7 +49,6 @@ public class DriveModule extends AbstractModule {
     bind(MyApplication.class).asEagerSingleton();
 
     GlobalDataCacheForMemorySingleton.getInstance().setStoragePaht(file.getAbsolutePath());
-
   }
 
   @Provides
