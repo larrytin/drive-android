@@ -51,17 +51,20 @@ public final class GlobalConstant {
     }
   }
 
-  private static String channel = "09";
+  public static String SERVER = "http://realtime.goodow.com";
+  // public static String server = "http://192.168.1.15:8880";
+
+  private static String channel = "08";
 
   public static enum DocumentIdAndDataKey {
-     // 文件id
-     FAVORITESDOCID("favorites" + channel),
-     //
-     LESSONDOCID("lesson" + channel),
-     //
-     REMOTECONTROLDOCID("remotecontrol" + channel),
-     //
-     OFFLINEDOCID("offlinedoc" + channel),
+    // 文件id
+    FAVORITESDOCID("favorites" + channel),
+    //
+    LESSONDOCID("lesson" + channel),
+    //
+    REMOTECONTROLDOCID("remotecontrol" + channel),
+    //
+    OFFLINEDOCID("offlinedoc" + channel),
 
     // 属性key
     FOLDERSKEY("folders"),

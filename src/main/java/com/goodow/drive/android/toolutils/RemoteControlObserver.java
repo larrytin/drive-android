@@ -10,7 +10,6 @@ import com.goodow.drive.android.Interface.INotifyData;
 import com.goodow.drive.android.Interface.IRemoteControl;
 import com.goodow.drive.android.activity.play.AudioPlayActivity;
 import com.goodow.drive.android.activity.play.FlashPlayerActivity;
-import com.goodow.drive.android.activity.play.VideoPlayActivity;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DocumentIdAndDataKey;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
@@ -28,6 +27,7 @@ import com.goodow.realtime.ValuesAddedEvent;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
+import elemental.json.JsonString;
 import elemental.json.impl.JreJsonString;
 
 public class RemoteControlObserver implements IRemoteControl {
@@ -49,46 +49,57 @@ public class RemoteControlObserver implements IRemoteControl {
   private EventHandler<ValuesAddedEvent> playFileHandler = new EventHandler<ValuesAddedEvent>() {
     @Override
     public void handleEvent(ValuesAddedEvent event) {
-      CollaborativeMap map = (CollaborativeMap) event.getValues()[0];
+      JsonObject newJsonObject = (JsonObject) event.getValues()[0];
 
-      File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + map.get("blobKey"));
+      String label = ((JsonString) newJsonObject.get("label")).asString();
+      String blobKey = ((JsonString) newJsonObject.get("blobKey")).asString();
+      String type = ((JsonString) newJsonObject.get("type")).asString();
+      String id = ((JsonString) newJsonObject.get("id")).asString();
+
+      File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
 
       if (file.exists()) {
         Intent intent = null;
 
         String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
 
-        if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
+        if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(Tools.getTypeByMimeType(type))) {
           intent = new Intent(activity, AudioPlayActivity.class);
 
-          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_NAME.name(), (String) map.get("label"));
-          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_PATH.name(), resPath + (String) map.get("blobKey"));
-        } else if (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
-          intent = new Intent(activity, VideoPlayActivity.class);
-
-          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(), (String) map.get("label"));
-          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(), resPath + (String) map.get("blobKey") + ".swf");
-        } else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
+          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_NAME.name(), label);
+          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_PATH.name(), resPath + blobKey);
+        }
+        // else if
+        // (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(Tools.getTypeByMimeType((String)
+        // map.get("type")))) {
+        // intent = new Intent(activity, VideoPlayActivity.class);
+        //
+        // intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(),
+        // (String) map.get("label"));
+        // intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(),
+        // resPath + (String) map.get("blobKey") + ".swf");
+        // }
+        else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType(type))) {
           intent = new Intent(activity, FlashPlayerActivity.class);
 
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), (String) map.get("label"));
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name(), resPath + (String) map.get("blobKey"));
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name(), resPath + blobKey);
         } else {
           intent = new Intent();
 
           intent.setAction(Intent.ACTION_VIEW);
-          intent.setDataAndType(Uri.fromFile(file), (String) map.get("type"));
+          intent.setDataAndType(Uri.fromFile(file), type);
         }
 
         if (null != intent) {
           activity.startActivity(intent);
         }
       } else {
-        if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType((String) map.get("type")))) {
+        if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType(type))) {
           Intent intent = new Intent(activity, FlashPlayerActivity.class);
 
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), (String) map.get("label"));
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id=" + map.get("id"));
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id=" + id);
           activity.startActivity(intent);
         } else {
           Toast.makeText(activity, "请先下载该文件.", Toast.LENGTH_SHORT).show();
@@ -263,11 +274,12 @@ public class RemoteControlObserver implements IRemoteControl {
   @Override
   public void playFile(CollaborativeMap file) {
     if (null != file) {
-      CollaborativeMap playFile = model.createMap(null);
-      playFile.set("label", file.get("label"));
-      playFile.set("blobKey", file.get("blobKey"));
-      playFile.set("type", file.get("type"));
-      playFile.set("id", file.get("id"));
+      JsonObject playFile = Json.createObject();
+
+      playFile.put("label", (String) file.get("label"));
+      playFile.put("blobKey", (String) file.get("blobKey"));
+      playFile.put("type", (String) file.get("type"));
+      playFile.put("id", (String) file.get("id"));
 
       if (50 < playFileList.length()) {
         playFileList.clear();
