@@ -9,6 +9,7 @@
   </parent>
   <groupId>com.goodow.drive</groupId>
   <artifactId>drive-android</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>apk</packaging>
   <url>https://github.com/goodow/drive-android/</url>
   <inceptionYear>2013</inceptionYear>
@@ -21,17 +22,17 @@
     <dependency>
       <groupId>com.goodow.realtime</groupId>
       <artifactId>realtime-android</artifactId>
-      <version>${project.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
     <dependency>
       <groupId>com.goodow.apis</groupId>
       <artifactId>goodow-api-services-account</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.goodow.apis</groupId>
       <artifactId>goodow-api-services-attachment</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
   
