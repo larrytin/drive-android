@@ -69,14 +69,8 @@ public class LogInActivity extends RoboActivity {
       }
 
       String[] params = { username, password };
-<<<<<<< HEAD
-      Account account = provideDevice("http://192.168.1.15:8080");
-      final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(
-          LogInActivity.this, null, account);
-=======
       Account account = provideDevice(GlobalConstant.SERVER);
       final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(LogInActivity.this, null, account);
->>>>>>> branch 'master' of https://github.com/goodow/drive-android.git
       SimpleProgressDialog.show(LogInActivity.this, new OnCancelListener() {
         @Override
         public void onCancel(DialogInterface dialog) {
