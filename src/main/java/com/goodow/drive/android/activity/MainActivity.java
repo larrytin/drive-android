@@ -43,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.Interface.ILocalFragment;
@@ -154,7 +153,6 @@ public class MainActivity extends RoboActivity {
   }
 
   private void setLeftMenuLayoutX(int x) {
-    Log.i(TAG, "setLeftMenuLayoutX(): " + x);
     leftMenuFragment.setViewLayout(x);
     leftMenu.layout(x, leftMenu.getTop(), leftMenu.getRight(), leftMenu.getBottom());
   }
@@ -547,7 +545,7 @@ public class MainActivity extends RoboActivity {
 
           // 一切OK
           String[] params = { username, password };
-          Account account = provideDevice("http://192.168.1.15:8080");
+          Account account = provideDevice(GlobalConstant.SERVER);
           final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(MainActivity.this, dialog, account);
           SimpleProgressDialog.show(MainActivity.this, new OnCancelListener() {
             @Override

@@ -105,6 +105,10 @@ public class OfflineAdapter extends BaseAdapter {
 
     File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey"));
     if (!file.exists()) {
+      // RelativeLayout relativeLayout = (RelativeLayout)
+      // row.findViewById(R.id.progressMess);
+      // relativeLayout.setVisibility(View.GONE);
+      
       progressBar.setProgress(0);
       downloadText.setText(0 + " %");
       downloadStatus.setText(GlobalConstant.DownloadStatusEnum.UNDOWNLOADING.getStatus());

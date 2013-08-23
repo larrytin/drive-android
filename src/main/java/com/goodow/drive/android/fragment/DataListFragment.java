@@ -67,7 +67,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
         // 删除监听
         currentmap.removeObjectChangedListener(valuesChangeEventHandler);
       } else {
-        Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(getActivity(), R.string.remoteControlError,
+        // Toast.LENGTH_SHORT).show();
       }
 
       path.changePath(null, DOCID);
@@ -215,7 +216,9 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
             if (null != map) {
               showData();
             } else {
-              Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
+              if (null != getActivity()) {
+                Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
+              }
             }
           }
         }
@@ -338,6 +341,7 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
         list.pushAll((Object[]) values);
 
         root.set(GlobalConstant.DocumentIdAndDataKey.FOLDERSKEY.getValue(), list);
+        root.set(GlobalConstant.DocumentIdAndDataKey.FILESKEY.getValue(), model_.createList());
       }
     };
 

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
+import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.toolutils.LoginNetRequestTask;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.realtime.android.CloudEndpointUtils;
@@ -68,7 +69,7 @@ public class LogInActivity extends RoboActivity {
       }
 
       String[] params = { username, password };
-      Account account = provideDevice("http://192.168.1.15:8080");
+      Account account = provideDevice(GlobalConstant.SERVER);
       final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(LogInActivity.this, null, account);
       SimpleProgressDialog.show(LogInActivity.this, new OnCancelListener() {
         @Override

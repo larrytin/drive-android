@@ -21,9 +21,9 @@ import java.io.File;
 import android.os.Environment;
 
 public class DriveModule extends AbstractModule {
-  public static final String DRIVE_SERVER = "http://192.168.1.15:8880";
+  // public static final String DRIVE_SERVER = "http://192.168.1.15:8880";
 
-  // public static final String DRIVE_SERVER = "http://server.drive.goodow.com";
+  public static final String DRIVE_SERVER = "http://server.drive.goodow.com";
 
   @Override
   protected void configure() {
