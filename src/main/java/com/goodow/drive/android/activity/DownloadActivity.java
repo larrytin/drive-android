@@ -37,6 +37,7 @@ public class DownloadActivity extends Activity {
         public void initialize(HttpRequest request) {
           request.setParser(new JsonObjectParser(JSON_FACTORY));
         }
+        
       });
 
       Bitmap bitmap = null;
