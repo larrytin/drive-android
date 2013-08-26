@@ -4,14 +4,18 @@ import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
@@ -41,6 +45,7 @@ public class LogInActivity extends RoboActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
   }
 
   @Override
@@ -48,6 +53,22 @@ public class LogInActivity extends RoboActivity {
     super.onPause();
 
     SimpleProgressDialog.resetByThisContext(this);
+  }
+
+  @Override
+  public boolean onTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+      InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+      passwordEditText.getWindowToken();
+      inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
+
+      break;
+    default:
+      break;
+    }
+
+    return true;
   }
 
   public void login(View view) {
