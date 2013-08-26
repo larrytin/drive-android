@@ -106,19 +106,23 @@ public class LogInActivity extends RoboActivity {
     } while (false);
 
     // 用户输入的信息错误
-    Toast.makeText(LogInActivity.this, errorMessageString, Toast.LENGTH_SHORT).show();
+    Toast.makeText(LogInActivity.this, errorMessageString, Toast.LENGTH_SHORT)
+        .show();
   }
 
   @Provides
   @Singleton
   private Account provideDevice(@ServerAddress String serverAddress) {
-    Account.Builder endpointBuilder = new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-      @Override
-      public void initialize(HttpRequest httpRequest) {
+    Account.Builder endpointBuilder = new Account.Builder(
+        AndroidHttp.newCompatibleTransport(), new JacksonFactory(),
+        new HttpRequestInitializer() {
+          @Override
+          public void initialize(HttpRequest httpRequest) {
 
-      }
-    });
-    endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
+          }
+        });
+    endpointBuilder
+        .setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }
 }
