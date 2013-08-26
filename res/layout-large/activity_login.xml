@@ -1,20 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:orientation="horizontal" >
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:orientation="vertical" >
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_marginTop="100dp"
+        android:gravity="top"
         android:orientation="vertical" >
 
         <!-- 登录 label -->
@@ -23,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="登录"
-            android:textSize="27sp" />
+            android:textSize="25sp" />
 
         <!-- 用户名 label -->
 
@@ -86,13 +80,6 @@
             android:onClick="login"
             android:text="登录"
             android:textColor="@drawable/selector_button_text_color_normal" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:orientation="vertical" >
     </LinearLayout>
 
 </LinearLayout>

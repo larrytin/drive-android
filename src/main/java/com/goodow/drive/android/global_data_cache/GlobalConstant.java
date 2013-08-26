@@ -52,9 +52,9 @@ public final class GlobalConstant {
   }
 
   public static String SERVER = "http://realtime.goodow.com";
-  // public static String server = "http://192.168.1.15:8880";
+  // public static String SERVER = "http://192.168.1.15:8080";
 
-  private static String channel = "08";
+  private static String channel = "25";
 
   public static enum DocumentIdAndDataKey {
     // 文件id

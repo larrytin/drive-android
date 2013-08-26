@@ -1,12 +1,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:gravity="top"
         android:orientation="vertical" >
 
         <!-- 登录 label -->
@@ -39,8 +40,8 @@
             android:hint="请输入您在教师管理平台上注册的用户名"
             android:inputType="textPersonName"
             android:maxLength="10"
-            android:text="admin"
-            android:singleLine="true" >
+            android:singleLine="true"
+            android:text="admin" >
 
             <requestFocus />
         </EditText>
@@ -65,8 +66,8 @@
             android:background="@drawable/edittext_bg"
             android:inputType="textPassword"
             android:maxLength="10"
-            android:text="admin"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:text="admin" />
 
         <!-- 登录按钮 -->
 
@@ -79,4 +80,5 @@
             android:text="登录"
             android:textColor="@drawable/selector_button_text_color_normal" />
     </LinearLayout>
+
 </LinearLayout>

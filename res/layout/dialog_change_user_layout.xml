@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="38dp"
                 android:contentDescription="@string/contentDescription"
-                android:src="@drawable/tinyicon" />
+                android:src="@drawable/icon_launcher" />
 
             <TextView
                 android:layout_width="wrap_content"

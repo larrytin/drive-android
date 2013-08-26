@@ -101,7 +101,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       for (int i = 0; i < list.length(); i++) {
         CollaborativeMap map = list.get(i);
 
-        if (blobKey.equals(map.get("blobKey"))) {
+        if (null != blobKey && blobKey.equals(map.get("blobKey"))) {
           File localFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
           if (localFile.exists()) {
             isOffline = true;

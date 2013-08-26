@@ -133,7 +133,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
                 title.append(label + "/");
               }
             } else {
-              Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
+              // Toast.makeText(getActivity(), R.string.remoteControlError,
+              // Toast.LENGTH_SHORT).show();
             }
           }
 
@@ -142,7 +143,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
       }
     } else {
       if (null != getActivity()) {
-        Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(getActivity(), R.string.remoteControlError,
+        // Toast.LENGTH_SHORT).show();
       }
     }
 
@@ -217,7 +219,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
               showData();
             } else {
               if (null != getActivity()) {
-                Toast.makeText(getActivity(), R.string.remoteControlError, Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), R.string.remoteControlError,
+                // Toast.LENGTH_SHORT).show();
               }
             }
           }

@@ -102,7 +102,7 @@ public class RemoteControlObserver implements IRemoteControl {
           intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id=" + id);
           activity.startActivity(intent);
         } else {
-          Toast.makeText(activity, "请先下载该文件.", Toast.LENGTH_SHORT).show();
+          Toast.makeText(activity, "请先下载该文件。", Toast.LENGTH_SHORT).show();
         }
       }
     }

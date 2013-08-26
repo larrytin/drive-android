@@ -59,7 +59,13 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
       if (this.isCancelled()) {
         break;
       }
-      if (null == result || result.containsKey("error_message")) {
+      
+      if (null == result) {
+        errorMessage = "网络状况异常!";
+        break;
+      }
+      
+      if (result.containsKey("error_message")) {
         errorMessage = "用户名或者密码错误!";
         break;
       }
