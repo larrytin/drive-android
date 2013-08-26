@@ -309,8 +309,7 @@ public class MainActivity extends RoboActivity {
       @Override
       public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         if (e2.getX() - e1.getX() > FLING_MIN_DISTANCE && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
-          Message message = new Message();
-          handler.sendMessage(message);
+          handler.sendEmptyMessage(1);
         }
 
         return true;
