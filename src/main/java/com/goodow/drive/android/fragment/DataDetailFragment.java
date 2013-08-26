@@ -3,6 +3,8 @@ package com.goodow.drive.android.fragment;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,20 +27,8 @@ import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingle
 import com.goodow.drive.android.toolutils.OfflineFileObserver;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.JsonObjectParser;
-import com.google.api.client.json.jackson2.JacksonFactory;
 
 public class DataDetailFragment extends Fragment implements ILocalFragment {
-  private static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-  private static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
   private CollaborativeMap file;
   private TextView fileName;
@@ -176,20 +166,11 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
   private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {
-      HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
-        @Override
-        public void initialize(HttpRequest request) {
-          request.setParser(new JsonObjectParser(JSON_FACTORY));
-        }
-      });
-
       Bitmap bitmap = null;
-      HttpRequest request;
       try {
-        request = requestFactory.buildGetRequest(new GenericUrl(params[0]));
-        HttpResponse response = request.execute();
-        InputStream is_Bitmap = response.getContent();
-        bitmap = BitmapFactory.decodeStream(is_Bitmap);
+        URLConnection connection = (new URL(params[0]).openConnection());
+        InputStream bitmapStream = connection.getInputStream();
+        bitmap = BitmapFactory.decodeStream(bitmapStream);
       } catch (IOException e) {
         e.printStackTrace();
       }

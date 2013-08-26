@@ -10,6 +10,7 @@ import com.goodow.drive.android.Interface.INotifyData;
 import com.goodow.drive.android.Interface.IRemoteControl;
 import com.goodow.drive.android.activity.play.AudioPlayActivity;
 import com.goodow.drive.android.activity.play.FlashPlayerActivity;
+import com.goodow.drive.android.activity.play.PicturePlayAcivity;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DocumentIdAndDataKey;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
@@ -100,6 +101,13 @@ public class RemoteControlObserver implements IRemoteControl {
 
           intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
           intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id=" + id);
+          activity.startActivity(intent);
+        } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
+            || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
+
+          Intent intent = new Intent(activity, PicturePlayAcivity.class);
+
+          intent.putExtra(PicturePlayAcivity.PICTUREURL, DriveModule.DRIVE_SERVER + "/serve?id=" + id);
           activity.startActivity(intent);
         } else {
           Toast.makeText(activity, "请先下载该文件。", Toast.LENGTH_SHORT).show();

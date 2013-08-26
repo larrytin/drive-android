@@ -93,10 +93,10 @@
         </activity>
         <activity android:name="com.goodow.drive.android.activity.MainActivity" />
         <activity android:name="com.goodow.drive.android.activity.DownloadActivity" />
-        <activity android:name="com.goodow.drive.android.activity.DataListActivity" />
         <activity android:name="com.goodow.drive.android.activity.play.AudioPlayActivity" />
         <activity android:name="com.goodow.drive.android.activity.play.VideoPlayActivity" />
         <activity android:name="com.goodow.drive.android.activity.play.FlashPlayerActivity" />
+        <activity android:name="com.goodow.drive.android.activity.play.PicturePlayAcivity" />
     </application>
 
 </manifest>
