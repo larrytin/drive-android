@@ -10,13 +10,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ListView;
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.adapter.LeftMenuAdapter;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.MenuTypeEnum;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 
-public class LeftMenuFragment extends ListFragment {
+public class LeftMenuFragment extends ListFragment implements ILocalFragment {
   private LeftMenuAdapter adapter;
   private MainActivity mainActivity;
 
@@ -111,5 +112,26 @@ public class LeftMenuFragment extends ListFragment {
     if (null != adapter) {
       adapter.notifyDataSetChanged();
     }
+  }
+
+  @Override
+  public void backFragment() {
+    MainActivity activity = (MainActivity) getActivity();
+
+    activity.hideLeftMenuLayout();
+
+    activity.setLocalFragment(activity.getLastiRemoteDataFragment());
+  }
+
+  @Override
+  public void connectUi() {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void loadDocument() {
+    // TODO Auto-generated method stub
+
   }
 }

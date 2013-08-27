@@ -150,6 +150,8 @@ public class MainActivity extends RoboActivity {
     leftMenu.setVisibility(LinearLayout.VISIBLE);
 
     leftMenuFragment.showView();
+    
+    setLocalFragment(leftMenuFragment);
   }
 
   private void setLeftMenuLayoutX(int x) {

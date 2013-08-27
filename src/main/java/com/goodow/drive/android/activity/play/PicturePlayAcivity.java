@@ -15,10 +15,10 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import com.goodow.android.drive.R;
 
-
 @ContentView(R.layout.activity_picture_player)
 public class PicturePlayAcivity extends RoboActivity {
   public static String PICTUREURL = "pictureUrl";
+ 
   @InjectView(R.id.picture)
   private ImageView imageView;
 
@@ -29,14 +29,16 @@ public class PicturePlayAcivity extends RoboActivity {
     Intent intent = getIntent();
     String pictureUrl = intent.getStringExtra(PICTUREURL);
 
-    new InitImageBitmapTask().execute(pictureUrl);
+    if (null != pictureUrl) {
+      new InitImageBitmapTask().execute(pictureUrl);
+    }
   }
 
   private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
-
     @Override
     protected Bitmap doInBackground(String... params) {
       Bitmap bitmap = null;
+      
       try {
         URLConnection connection = (new URL(params[0]).openConnection());
         InputStream bitmapStream = connection.getInputStream();
@@ -44,6 +46,7 @@ public class PicturePlayAcivity extends RoboActivity {
       } catch (IOException e) {
         e.printStackTrace();
       }
+      
       return bitmap;
     }
 
