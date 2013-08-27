@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
@@ -30,17 +29,11 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-
 import android.os.Parcelable;
-
 import android.content.ComponentName;
-
-import android.content.Intent.ShortcutIconResource;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.BitmapFactory;
 
 @SuppressLint("SetJavaScriptEnabled")
 @ContentView(R.layout.activity_login)
@@ -71,7 +64,7 @@ public class LogInActivity extends RoboActivity {
         break;
       }
 
-      String[] params = {username, password};
+      String[] params = { username, password };
       Account account = provideDevice(GlobalConstant.SERVER);
       final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(LogInActivity.this, null, account);
       SimpleProgressDialog.show(LogInActivity.this, new OnCancelListener() {
@@ -101,34 +94,39 @@ public class LogInActivity extends RoboActivity {
       // 创建一个快捷图标.
       Intent intent = new Intent();
       intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+      
+      // 设置快捷方式名称
       intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
-      // cmp=com.goodow.android.drive/com.goodow.drive.android.activity.LogInActivity
+
+      // 设置快捷方式启动动作
       ComponentName comp = new ComponentName("com.goodow.android.drive", "com.goodow.drive.android.activity.LogInActivity");
       intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(Intent.ACTION_MAIN).setComponent(comp));
-      // 快捷方式的图标
+
+      // 设置快捷方式的图标
       Parcelable icon = Intent.ShortcutIconResource.fromContext(LogInActivity.this, R.drawable.icon_launcher);
       intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
-      // 发送一个无序广播
+
+      // 发送一个无序广播进行创建动作
       sendBroadcast(intent);
+
       Toast.makeText(this, "创建了快捷方式", Toast.LENGTH_LONG).show();
       Editor editor = sp.edit();
       editor.putBoolean("shortcut", true);
       editor.commit();
     }
-
   }
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     switch (event.getAction()) {
-      case MotionEvent.ACTION_DOWN:
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        passwordEditText.getWindowToken();
-        inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
+    case MotionEvent.ACTION_DOWN:
+      InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+      passwordEditText.getWindowToken();
+      inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
 
-        break;
-      default:
-        break;
+      break;
+    default:
+      break;
     }
 
     return true;
@@ -144,13 +142,12 @@ public class LogInActivity extends RoboActivity {
   @Provides
   @Singleton
   private Account provideDevice(@ServerAddress String serverAddress) {
-    Account.Builder endpointBuilder =
-        new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-          @Override
-          public void initialize(HttpRequest httpRequest) {
+    Account.Builder endpointBuilder = new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+      @Override
+      public void initialize(HttpRequest httpRequest) {
 
-          }
-        });
+      }
+    });
     endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }
