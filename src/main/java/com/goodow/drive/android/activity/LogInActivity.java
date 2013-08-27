@@ -31,6 +31,17 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
+import android.os.Parcelable;
+
+import android.content.ComponentName;
+
+import android.content.Intent.ShortcutIconResource;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.BitmapFactory;
+
 @SuppressLint("SetJavaScriptEnabled")
 @ContentView(R.layout.activity_login)
 public class LogInActivity extends RoboActivity {
@@ -41,35 +52,6 @@ public class LogInActivity extends RoboActivity {
 
   @InjectView(R.id.password_EditText)
   private EditText passwordEditText;
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-
-    SimpleProgressDialog.resetByThisContext(this);
-  }
-
-  @Override
-  public boolean onTouchEvent(MotionEvent event) {
-    switch (event.getAction()) {
-    case MotionEvent.ACTION_DOWN:
-      InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-      passwordEditText.getWindowToken();
-      inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
-
-      break;
-    default:
-      break;
-    }
-
-    return true;
-  }
 
   public void login(View view) {
     String errorMessageString = "登录成功!";
@@ -89,7 +71,7 @@ public class LogInActivity extends RoboActivity {
         break;
       }
 
-      String[] params = { username, password };
+      String[] params = {username, password};
       Account account = provideDevice(GlobalConstant.SERVER);
       final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(LogInActivity.this, null, account);
       SimpleProgressDialog.show(LogInActivity.this, new OnCancelListener() {
@@ -106,23 +88,70 @@ public class LogInActivity extends RoboActivity {
     } while (false);
 
     // 用户输入的信息错误
-    Toast.makeText(LogInActivity.this, errorMessageString, Toast.LENGTH_SHORT)
-        .show();
+    Toast.makeText(LogInActivity.this, errorMessageString, Toast.LENGTH_SHORT).show();
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    // 快捷键
+    SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+    boolean shortcut = sp.getBoolean("shortcut", false);
+    if (!shortcut) {
+      // 创建一个快捷图标.
+      Intent intent = new Intent();
+      intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+      intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+      // cmp=com.goodow.android.drive/com.goodow.drive.android.activity.LogInActivity
+      ComponentName comp = new ComponentName("com.goodow.android.drive", "com.goodow.drive.android.activity.LogInActivity");
+      intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, new Intent(Intent.ACTION_MAIN).setComponent(comp));
+      // 快捷方式的图标
+      Parcelable icon = Intent.ShortcutIconResource.fromContext(LogInActivity.this, R.drawable.icon_launcher);
+      intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
+      // 发送一个无序广播
+      sendBroadcast(intent);
+      Toast.makeText(this, "创建了快捷方式", Toast.LENGTH_LONG).show();
+      Editor editor = sp.edit();
+      editor.putBoolean("shortcut", true);
+      editor.commit();
+    }
+
+  }
+
+  @Override
+  public boolean onTouchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+      case MotionEvent.ACTION_DOWN:
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        passwordEditText.getWindowToken();
+        inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
+
+        break;
+      default:
+        break;
+    }
+
+    return true;
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+
+    SimpleProgressDialog.resetByThisContext(this);
   }
 
   @Provides
   @Singleton
   private Account provideDevice(@ServerAddress String serverAddress) {
-    Account.Builder endpointBuilder = new Account.Builder(
-        AndroidHttp.newCompatibleTransport(), new JacksonFactory(),
-        new HttpRequestInitializer() {
+    Account.Builder endpointBuilder =
+        new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
           @Override
           public void initialize(HttpRequest httpRequest) {
 
           }
         });
-    endpointBuilder
-        .setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
+    endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }
 }
