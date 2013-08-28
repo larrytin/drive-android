@@ -121,7 +121,6 @@ public class LogInActivity extends RoboActivity {
     switch (event.getAction()) {
     case MotionEvent.ACTION_DOWN:
       InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-      passwordEditText.getWindowToken();
       inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
 
       break;

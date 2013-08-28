@@ -41,8 +41,11 @@ public class PicturePlayAcivity extends RoboActivity {
       
       try {
         URLConnection connection = (new URL(params[0]).openConnection());
+        connection.setDoInput(true);
+        connection.connect();
         InputStream bitmapStream = connection.getInputStream();
         bitmap = BitmapFactory.decodeStream(bitmapStream);
+        bitmapStream.close();
       } catch (IOException e) {
         e.printStackTrace();
       }
