@@ -6,11 +6,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
 import android.content.DialogInterface;
-
-import android.util.DisplayMetrics;
-
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -180,7 +176,10 @@ public class PicturePlayAcivity extends RoboActivity {
       Bitmap bitmap = null;
 
       try {
-        URLConnection connection = (new URL(params[0]).openConnection());
+        int width = PicturePlayAcivity.this.getResources().getDisplayMetrics().widthPixels;
+        int height = PicturePlayAcivity.this.getResources().getDisplayMetrics().heightPixels;
+
+        URLConnection connection = (new URL(params[0] + "=s"+(width > height ? width : height)).openConnection());
         connection.setDoInput(true);
         connection.connect();
         InputStream bitmapStream = connection.getInputStream();
@@ -213,13 +212,14 @@ public class PicturePlayAcivity extends RoboActivity {
     String pictureUrl = intent.getStringExtra(PICTUREURL);
 
     if (null != pictureUrl) {
-      ImageDownloadTask imgtask = new ImageDownloadTask();
-      /** 这里是获取手机屏幕的分辨率用来处理 图片 溢出问题的。begin */
-      DisplayMetrics dm = new DisplayMetrics();
-      getWindowManager().getDefaultDisplay().getMetrics(dm);
-      imgtask.setDisplayWidth(dm.widthPixels);
-      imgtask.setDisplayHeight(dm.heightPixels);
-      imgtask.execute(pictureUrl, imageView);
+      new InitImageBitmapTask().execute(pictureUrl);
+      // ImageDownloadTask imgtask = new ImageDownloadTask();
+      // /** 这里是获取手机屏幕的分辨率用来处理 图片 溢出问题的。begin */
+      // DisplayMetrics dm = new DisplayMetrics();
+      // getWindowManager().getDefaultDisplay().getMetrics(dm);
+      // imgtask.setDisplayWidth(dm.widthPixels);
+      // imgtask.setDisplayHeight(dm.heightPixels);
+      // imgtask.execute(pictureUrl, imageView);
     }
   }
 

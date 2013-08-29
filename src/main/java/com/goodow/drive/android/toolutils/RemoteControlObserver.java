@@ -56,6 +56,7 @@ public class RemoteControlObserver implements IRemoteControl {
       String blobKey = ((JsonString) newJsonObject.get("blobKey")).asString();
       String type = ((JsonString) newJsonObject.get("type")).asString();
       String id = ((JsonString) newJsonObject.get("id")).asString();
+      String thumbnail = ((JsonString) newJsonObject.get("thumbnail")).asString();
 
       File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
 
@@ -107,7 +108,9 @@ public class RemoteControlObserver implements IRemoteControl {
 
           Intent intent = new Intent(activity, PicturePlayAcivity.class);
 
-          intent.putExtra(PicturePlayAcivity.PICTUREURL, DriveModule.DRIVE_SERVER + "/serve?id=" + id);
+          // intent.putExtra(PicturePlayAcivity.PICTUREURL,
+          // DriveModule.DRIVE_SERVER + "/serve?id=" + id);
+          intent.putExtra(PicturePlayAcivity.PICTUREURL, thumbnail);
           activity.startActivity(intent);
         } else {
           Toast.makeText(activity, "请先下载该文件。", Toast.LENGTH_SHORT).show();
@@ -288,6 +291,7 @@ public class RemoteControlObserver implements IRemoteControl {
       playFile.put("blobKey", (String) file.get("blobKey"));
       playFile.put("type", (String) file.get("type"));
       playFile.put("id", (String) file.get("id"));
+      playFile.put("thumbnail", (String) file.get("thumbnail"));
 
       if (50 < playFileList.length()) {
         playFileList.clear();
