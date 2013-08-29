@@ -10,12 +10,26 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" >
 
-        <ImageView
-            android:id="@+id/picture"
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/contentDescription"
-            android:scaleType="fitXY" />
+            android:layout_gravity="center" >
+
+            <ProgressBar
+                android:id="@+id/pictureProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+            <ImageView
+                android:id="@+id/picture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/contentDescription"
+                android:scaleType="fitXY"
+                android:visibility="gone" />
+        </FrameLayout>
     </HorizontalScrollView>
 
 </ScrollView>

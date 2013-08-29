@@ -51,8 +51,8 @@ public final class GlobalConstant {
     }
   }
 
-  public static String SERVER = "http://realtime.goodow.com";
-  // public static String SERVER = "http://192.168.1.15:8080";
+  // public static String SERVER = "http://realtime.goodow.com";
+  public static String SERVER = "http://192.168.1.15:8080";
 
   private static String channel = "21";
 

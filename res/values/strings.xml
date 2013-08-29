@@ -21,6 +21,6 @@
     <string name="remoteControlError">远程同步操作异常,请尝试切换菜单。</string>
 
     <!-- 内网 -->
-    <!-- <string name="com.goodow.realtime.serverAddress">http://192.168.1.15:8080</string> -->
+    <string name="com.goodow.realtime.serverAddress">http://192.168.1.15:8080</string>
 
 </resources>

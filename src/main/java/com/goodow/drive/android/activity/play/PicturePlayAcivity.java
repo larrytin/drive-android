@@ -15,7 +15,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 
@@ -179,7 +182,7 @@ public class PicturePlayAcivity extends RoboActivity {
         int width = PicturePlayAcivity.this.getResources().getDisplayMetrics().widthPixels;
         int height = PicturePlayAcivity.this.getResources().getDisplayMetrics().heightPixels;
 
-        URLConnection connection = (new URL(params[0] + "=s"+(width > height ? width : height)).openConnection());
+        URLConnection connection = (new URL(params[0] + "=s" + ((width > height ? width : height) * 8) / 10).openConnection());
         connection.setDoInput(true);
         connection.connect();
         InputStream bitmapStream = connection.getInputStream();
@@ -195,7 +198,10 @@ public class PicturePlayAcivity extends RoboActivity {
     @Override
     protected void onPostExecute(Bitmap result) {
       super.onPostExecute(result);
+      ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
+      progressBar.setVisibility(View.GONE);
       imageView.setImageBitmap(result);
+      imageView.setVisibility(View.VISIBLE);
     }
   }
 
