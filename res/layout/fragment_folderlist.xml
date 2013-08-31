@@ -10,6 +10,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical" >
 
+        <ProgressBar
+            android:id="@+id/page_indicator"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="2.0dip"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:max="5"
+            android:progress="1"
+            android:progressDrawable="@drawable/paging_progress" >
+        </ProgressBar>
+
         <TextView
             android:id="@+id/openfailure_text"
             android:layout_width="match_parent"

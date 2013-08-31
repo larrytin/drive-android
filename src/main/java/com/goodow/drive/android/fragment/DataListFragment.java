@@ -2,6 +2,8 @@ package com.goodow.drive.android.fragment;
 
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +29,7 @@ import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
 import com.goodow.realtime.Document;
 import com.goodow.realtime.DocumentLoadedHandler;
+import com.goodow.realtime.DocumentSaveStateChangedEvent;
 import com.goodow.realtime.EventHandler;
 import com.goodow.realtime.Model;
 import com.goodow.realtime.ModelInitializerHandler;
@@ -54,6 +58,40 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   private EventHandler<?> listEventHandler;
   private EventHandler<ObjectChangedEvent> valuesChangeEventHandler;
   private INotifyData iNotifyData;
+  private static final int ISCONNECT = 1;
+	private static final int CONNECTFINISH = 2;
+	private Handler handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+			case ISCONNECT:
+				add.run();
+				progressBar.setVisibility(View.VISIBLE);
+				break;
+			case CONNECTFINISH:
+				progressBar.setVisibility(View.GONE);
+				handler.removeCallbacks(add);
+				break;
+			}
+		};
+	};
+
+	int prolength = 0;
+	Runnable add = new Runnable() {
+		// 定义add
+		@Override
+		public void run() {
+			prolength = progressBar.getProgress() + 1;
+			progressBar.setProgress(prolength);
+			if (prolength < 6) {
+				handler.postDelayed(add, 50);
+			} else {
+				progressBar.setProgress(0);
+				handler.post(add);
+			}
+		}
+
+	};
+	private ProgressBar progressBar;
 
   public DataListFragment() {
     super();
@@ -179,6 +217,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     activity.setActionBarTitle("我的收藏夹");
     TextView textView = (TextView) activity.findViewById(R.id.openfailure_text);
     ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
+    progressBar = (ProgressBar) activity.findViewById(R.id.page_indicator);
+		progressBar.setMax(5);
     activity.setOpenStateView(textView, imageView);
   }
 
@@ -249,7 +289,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.i(TAG, "onCreate()");
-
     RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.mainConnect);
     relativeLayout.setVisibility(View.VISIBLE);
 
@@ -273,7 +312,7 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+    
     return inflater.inflate(R.layout.fragment_folderlist, container, false);
   }
 
@@ -298,7 +337,25 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
       @Override
       public void onLoaded(Document document) {
         Log.i(TAG, "onLoaded()");
-
+        document.addDocumentSaveStateListener(new EventHandler<DocumentSaveStateChangedEvent>() {
+					@Override
+					public void handleEvent(DocumentSaveStateChangedEvent event) {
+						boolean isSaving = event.isSaving();
+						boolean isPending = event.isPending();
+						if (isSaving == true) {
+							// 正在联网中
+							Message msg = Message.obtain();
+							msg.what = ISCONNECT;
+							handler.sendMessage(msg);
+						}
+						if (isSaving == false && isPending == false) {
+							// 联网完成
+							Message msg = Message.obtain();
+							msg.what = CONNECTFINISH;
+							handler.sendMessage(msg);
+						}
+					}
+				});
         doc = document;
         model = doc.getModel();
         root = model.getRoot();
