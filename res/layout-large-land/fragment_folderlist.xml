@@ -19,7 +19,8 @@
             android:focusableInTouchMode="false"
             android:max="5"
             android:progress="1"
-            android:progressDrawable="@drawable/paging_progress" >
+            android:progressDrawable="@drawable/paging_progress" 
+            android:visibility="gone">
         </ProgressBar>
 
         <TextView
