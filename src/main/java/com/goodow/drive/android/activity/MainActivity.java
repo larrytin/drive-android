@@ -15,6 +15,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
@@ -41,6 +43,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.goodow.android.drive.R;
@@ -186,6 +189,39 @@ public class MainActivity extends RoboActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
 
+    // MenuItem mi1 = menu.add(0, 0, 0, "Item1");// 第三个参数用来指定按钮的排列顺序
+    // mi1.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM |
+    // MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
+    // mi1.setActionView(R.layout.actionbar_view);
+    //
+    // LayoutInflater layoutInflater = LayoutInflater.from(this);
+    // View view = layoutInflater.inflate(R.layout.actionbar_view, null);
+    // RelativeLayout relativeLayout = (RelativeLayout)
+    // view.findViewById(R.id.actionBarLayout);
+    //
+    // relativeLayout.setLayoutParams(new
+    // RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+    // RelativeLayout.LayoutParams.WRAP_CONTENT));
+    // final TextView newTextView = new TextView(this);
+    // ColorStateList colorStateList =
+    // getResources().getColorStateList(R.color.white);
+    // newTextView.setText("M1-ActionView");
+    // newTextView.setTextColor(colorStateList);
+    // newTextView.setOnClickListener(new OnClickListener() {
+    // @Override
+    // public void onClick(View v) {
+    // newTextView.setBackground(getResources().getDrawable(R.color.blue));
+    // }
+    // });
+    //
+    // RelativeLayout.LayoutParams rLayoutParams = new
+    // RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+    // RelativeLayout.LayoutParams.WRAP_CONTENT);
+    // // rLayoutParams.addRule(RelativeLayout.RIGHT_OF, textView.getId());
+    // relativeLayout.addView(newTextView, rLayoutParams);
+    //
+    // mi1.setActionView(relativeLayout);
+    
     MenuItem back2Login = menu.add(0, 0, 0, R.string.actionBar_back);
     back2Login.setIcon(R.drawable.discussion_indicator_opened);
     back2Login.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);

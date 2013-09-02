@@ -42,13 +42,13 @@
                 android:text="暂停"
                 android:textSize="20sp" />
 
-            <Button
+            <!-- <Button
                 android:id="@+id/reset_Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="重播"
-                android:textSize="20sp" />
+                android:textSize="20sp" /> -->
 
             <Button
                 android:id="@+id/stop_Button"
@@ -70,7 +70,7 @@
             android:visibility="visible" >
         </SeekBar>
 
-        <TextView
+        <!-- <TextView
             android:id="@+id/current_progress_TextView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -78,13 +78,13 @@
             android:text="当前进度: 0%"
             android:textColor="@android:color/black"
             android:textSize="12sp" >
-        </TextView>
+        </TextView> -->
 
         <TextView
             android:id="@+id/curtime_and_total_time_TextView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="当前播放时间：0秒  \n歌曲总时间: 0秒"
+            android:text="时间：0秒  / 0秒"
             android:textColor="@android:color/black"
             android:textSize="12sp" >
         </TextView>
