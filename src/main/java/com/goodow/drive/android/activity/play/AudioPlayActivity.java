@@ -1,7 +1,6 @@
 package com.goodow.drive.android.activity.play;
 
 import java.io.IOException;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.media.MediaPlayer;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
@@ -29,6 +27,8 @@ public class AudioPlayActivity extends Activity {
     MP3_PATH
   };
 
+  private ButtonClickListener listener;
+  private Button stopButton;
   private MediaPlayer mediaPlayer = new MediaPlayer();
   private String audioFilePath;
 
@@ -58,15 +58,13 @@ public class AudioPlayActivity extends Activity {
     final TextView audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
     audioFileNameTextView.setText(mp3Name);
 
-    final ButtonClickListener listener = new ButtonClickListener();
+    listener = new ButtonClickListener();
     final Button playButton = (Button) this.findViewById(R.id.play_Button);
     pauseButton = (Button) this.findViewById(R.id.pause_Button);
     // final Button resetButton = (Button) this.findViewById(R.id.reset_Button);
-    final Button stopButton = (Button) this.findViewById(R.id.stop_Button);
+    stopButton = (Button) this.findViewById(R.id.stop_Button);
     playButton.setOnClickListener(listener);
-    pauseButton.setOnClickListener(listener);
     // resetButton.setOnClickListener(listener);
-    stopButton.setOnClickListener(listener);
 
     progressSeekBar = (SeekBar) findViewById(R.id.progress_rate_SeekBar);
     // curProgressText = (TextView)
@@ -103,6 +101,11 @@ public class AudioPlayActivity extends Activity {
       }
     });
 
+    try {
+      play();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -135,7 +138,9 @@ public class AudioPlayActivity extends Activity {
         switch (v.getId()) {// 通过传过来的Buttonid可以判断Button的类型
         case R.id.play_Button:// 播放
           pauseButton.setText("暂停");
-          play();
+          mediaPlayer.start();
+          pauseButton.setOnClickListener(listener);
+          stopButton.setOnClickListener(listener);
           break;
 
         case R.id.pause_Button:
@@ -157,10 +162,16 @@ public class AudioPlayActivity extends Activity {
         // break;
 
         case R.id.stop_Button:
-          if (mediaPlayer.isPlaying()) {
-            mediaPlayer.seekTo(0);
-            mediaPlayer.pause();// 如果它正在播放的话，就让他停止
+          if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
           }
+
+          mediaPlayer.seekTo(0);
+          mediaPlayer.pause();
+
+          button.setText("暂停");
+          pauseButton.setOnClickListener(null);
+          stopButton.setOnClickListener(null);
           break;
         }
       } catch (Exception e) {// 抛出异常
@@ -174,7 +185,6 @@ public class AudioPlayActivity extends Activity {
     mediaPlayer.reset();
     mediaPlayer.setDataSource(audioFilePath);
     mediaPlayer.prepare();
-    mediaPlayer.start();// 播放
 
     startSeekBarUpdate();
   }
