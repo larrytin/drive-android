@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.lang.Thread.State;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-
 import android.content.Intent;
 import android.util.Log;
 
@@ -28,7 +27,6 @@ import com.goodow.realtime.ValuesRemovedEvent;
 import elemental.json.JsonObject;
 
 public enum OfflineFileObserver {
-
   OFFLINEFILEOBSERVER;
 
   private String TAG = this.getClass().getSimpleName();
@@ -121,8 +119,13 @@ public enum OfflineFileObserver {
 
             out: do {
               if (null == execute || execute.getId() == null) {
-
                 break out;
+              }
+
+              CollaborativeMap newFile = newModel.createMap(null);
+
+              if (null == newFile) {
+                break;
               }
 
               for (int i = 0; i < newList.length(); i++) {
@@ -131,8 +134,6 @@ public enum OfflineFileObserver {
                   newList.remove(i);
                 }
               }
-
-              CollaborativeMap newFile = newModel.createMap(null);
 
               newFile.set("url", DriveModule.DRIVE_SERVER + "/serve?id=" + attachmentId);
               newFile.set("progress", "0");
@@ -156,7 +157,7 @@ public enum OfflineFileObserver {
 
               newList.push(newFile);
 
-              Log.i(TAG, "Add a new download rescourse :" + newFile.toString());
+              Log.i(TAG, "new download rescource:" + newList.toString());
             } while (false);
           } catch (IOException e) {
             e.printStackTrace();

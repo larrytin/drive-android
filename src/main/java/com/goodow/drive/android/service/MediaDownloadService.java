@@ -3,6 +3,7 @@ package com.goodow.drive.android.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.Thread.State;
+import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import android.app.Service;
@@ -37,9 +38,20 @@ public class MediaDownloadService extends Service {
   private CollaborativeMap downloadRes;
 
   private void startResDownloadTread(final CollaborativeMap res) {
-    // 这里会发生阻塞, 这里阻塞很危险, 会导致ANR, 所以还是不要使用 BlockingQueue
-    downloadUrlQueue.add(res);
-
+    //遍历队列,若有相同的URL则不添加
+    Iterator<CollaborativeMap>iterator = downloadUrlQueue.iterator();
+    add: do{
+      while (iterator.hasNext()) {
+        CollaborativeMap item = iterator.next();
+        if(item.get("url").equals(res.get("url"))){
+          
+          break add;
+        }
+      }
+      
+      downloadUrlQueue.add(res);
+    }while(false);
+    
     State state = resDownloadThread.getState();
     switch (state) {
     // 线程被阻塞，在等待一个锁。
