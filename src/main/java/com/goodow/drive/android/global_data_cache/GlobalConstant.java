@@ -1,6 +1,69 @@
 package com.goodow.drive.android.global_data_cache;
 
 public final class GlobalConstant {
+  public static enum DocumentIdAndDataKey {
+    // 文件id
+    FAVORITESDOCID("favorites" + channel),
+    //
+    LESSONDOCID("lesson" + channel),
+    //
+    REMOTECONTROLDOCID("remotecontrol" + channel),
+    //
+    OFFLINEDOCID("offlinedoc" + channel),
+
+    // 属性key
+    FOLDERSKEY("folders"),
+    //
+    FILESKEY("files"),
+    //
+    OFFLINEKEY("offline"),
+    //
+    CURRENTPATHKEY("currentpath"),
+    //
+    CURRENTDOCIDKEY("currentdocid"),
+    //
+    PATHKEY("path"),
+    //
+    PLAYFILE("playfile");
+
+    public static DocumentIdAndDataKey getEnumWithValue(String value) {
+      if (null != value) {
+        for (DocumentIdAndDataKey item : DocumentIdAndDataKey.values()) {
+          if (item.getValue().equals(value)) {
+
+            return item;
+          }
+        }
+      }
+
+      return null;
+    }
+
+    private final String value;
+
+    private DocumentIdAndDataKey(String value) {
+      this.value = value;
+    }
+
+    public String getValue() {
+      return value;
+    }
+  }
+
+  public static enum DownloadStatusEnum {
+    WAITING("等待下载"), DOWNLOADING("正在下载"), COMPLETE("下载完成"), UNDOWNLOADING("未下载");
+
+    private final String status;
+
+    private DownloadStatusEnum(String status) {
+      this.status = status;
+    }
+
+    public String getStatus() {
+      return status;
+    }
+  }
+
   public static enum MenuTypeEnum {
     //
     USER_NAME("用户帐户名称"),
@@ -37,73 +100,14 @@ public final class GlobalConstant {
     }
   }
 
-  public static enum DownloadStatusEnum {
-    WAITING("等待下载"), DOWNLOADING("正在下载"), COMPLETE("下载完成"), UNDOWNLOADING("未下载");
-
-    private final String status;
-
-    private DownloadStatusEnum(String status) {
-      this.status = status;
-    }
-
-    public String getStatus() {
-      return status;
-    }
-  }
-
-  public static String SERVER = "http://realtime.goodow.com";
+  // 外网
+  // public static String SERVER = "http://realtime.goodow.com";
+  // 北京内网
   // public static String SERVER = "http://192.168.1.15:8080";
+  // 无锡内网
+  public static String SERVER = "drive.retechcorp.com:8080";
 
   private static String channel = "21";
-
-  public static enum DocumentIdAndDataKey {
-    // 文件id
-    FAVORITESDOCID("favorites" + channel),
-    //
-    LESSONDOCID("lesson" + channel),
-    //
-    REMOTECONTROLDOCID("remotecontrol" + channel),
-    //
-    OFFLINEDOCID("offlinedoc" + channel),
-
-    // 属性key
-    FOLDERSKEY("folders"),
-    //
-    FILESKEY("files"),
-    //
-    OFFLINEKEY("offline"),
-    //
-    CURRENTPATHKEY("currentpath"),
-    //
-    CURRENTDOCIDKEY("currentdocid"),
-    //
-    PATHKEY("path"),
-    //
-    PLAYFILE("playfile");
-
-    private final String value;
-
-    private DocumentIdAndDataKey(String value) {
-      this.value = value;
-    }
-
-    public String getValue() {
-      return value;
-    }
-
-    public static DocumentIdAndDataKey getEnumWithValue(String value) {
-      if (null != value) {
-        for (DocumentIdAndDataKey item : DocumentIdAndDataKey.values()) {
-          if (item.getValue().equals(value)) {
-
-            return item;
-          }
-        }
-      }
-
-      return null;
-    }
-  }
 
   private GlobalConstant() {
 
