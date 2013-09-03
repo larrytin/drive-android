@@ -1,24 +1,9 @@
 package com.goodow.drive.android.fragment;
 
-import android.app.ListFragment;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.Interface.INotifyData;
 import com.goodow.drive.android.Interface.IRemoteControl;
-import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.adapter.CollaborativeAdapter;
 import com.goodow.drive.android.adapter.CollaborativeAdapter.OnItemClickListener;
@@ -29,12 +14,24 @@ import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
 import com.goodow.realtime.Document;
 import com.goodow.realtime.DocumentLoadedHandler;
-import com.goodow.realtime.DocumentSaveStateChangedEvent;
 import com.goodow.realtime.EventHandler;
 import com.goodow.realtime.Model;
 import com.goodow.realtime.ModelInitializerHandler;
 import com.goodow.realtime.ObjectChangedEvent;
 import com.goodow.realtime.Realtime;
+
+import android.app.ListFragment;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 
@@ -58,45 +55,12 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
   private EventHandler<?> listEventHandler;
   private EventHandler<ObjectChangedEvent> valuesChangeEventHandler;
   private INotifyData iNotifyData;
-	private static final int ISCONNECT = 1;
-	private static final int CONNECTFINISH = 2;
-	private Handler handler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case ISCONNECT:
-				add.run();
-				progressBar.setVisibility(View.VISIBLE);
-				break;
-			case CONNECTFINISH:
-				progressBar.setVisibility(View.GONE);
-				handler.removeCallbacks(add);
-				break;
-			}
-		};
-	};
-
-	int prolength = 0;
-	Runnable add = new Runnable() {
-		// 定义add
-		@Override
-		public void run() {
-			prolength = progressBar.getProgress() + 1;
-			progressBar.setProgress(prolength);
-			if (prolength < 6) {
-				handler.postDelayed(add, 50);
-			} else {
-				progressBar.setProgress(0);
-				handler.post(add);
-			}
-		}
-
-	};
-	private ProgressBar progressBar;
 
   public LessonListFragment() {
     super();
   }
 
+  @Override
   public void backFragment() {
     if (null != currentPathList && 1 < currentPathList.length()) {
       String mapId = currentPathList.get(currentPathList.length() - 1).asString();
@@ -117,6 +81,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     }
   }
 
+  @Override
   public void connectUi() {
     Log.i(TAG, "connectUi()");
 
@@ -136,6 +101,145 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
       showData();
     }
+  }
+
+  @Override
+  public void loadDocument() {
+    DOCID =
+        "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+            + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
+    Log.i(TAG, "loadDocument() DOCID: " + DOCID);
+
+    // 文件Document
+    DocumentLoadedHandler onLoaded = new DocumentLoadedHandler() {
+      @Override
+      public void onLoaded(Document document) {
+        Log.i(TAG, "onLoaded()");
+
+        doc = document;
+        model = doc.getModel();
+        root = model.getRoot();
+
+        connectUi();
+      }
+    };
+
+    ModelInitializerHandler initializer = new ModelInitializerHandler() {
+      @Override
+      public void onInitializer(Model model_) {
+        model = model_;
+        root = model.getRoot();
+
+        String[] mapKey = {"label", FILE_KEY, FOLDER_KEY};
+        CollaborativeMap[] values = new CollaborativeMap[3];
+
+        for (int k = 0; k < values.length; k++) {
+          CollaborativeMap map = model.createMap(null);
+          for (int i = 0; i < mapKey.length; i++) {
+            if ("label".equals(mapKey[i])) {
+
+              map.set(mapKey[i], "Lesson " + k);
+            } else {
+              CollaborativeList subList = model.createList();
+
+              if (FOLDER_KEY.equals(mapKey[i])) {
+                CollaborativeMap subMap = model.createMap(null);
+                subMap.set("label", "SubFolder");
+                subMap.set(FILE_KEY, model.createList());
+                subMap.set(FOLDER_KEY, model.createList());
+                subList.push(subMap);
+              }
+
+              map.set(mapKey[i], subList);
+            }
+          }
+
+          values[k] = map;
+        }
+
+        CollaborativeList list = model_.createList();
+        list.pushAll((Object[]) values);
+
+        root.set(GlobalConstant.DocumentIdAndDataKey.FOLDERSKEY.getValue(), list);
+        root.set(GlobalConstant.DocumentIdAndDataKey.FILESKEY.getValue(), model_.createList());
+      }
+    };
+
+    Realtime.load(DOCID, onLoaded, initializer, null);
+  }
+
+  @Override
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    Log.i(TAG, "onActivityCreated()");
+
+    MainActivity activity = (MainActivity) getActivity();
+
+    activity.setActionBarTitle("我的课程");
+    TextView textView = (TextView) activity.findViewById(R.id.openfailure_text);
+    ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
+    activity.setOpenStateView(textView, imageView);
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    Log.i(TAG, "onCreate()");
+
+    RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.mainConnect);
+    relativeLayout.setVisibility(View.VISIBLE);
+
+    adapter = new CollaborativeAdapter(this.getActivity(), null, null, new OnItemClickListener() {
+      @Override
+      public void onItemClick(CollaborativeMap file) {
+        MainActivity activity = (MainActivity) LessonListFragment.this.getActivity();
+
+        DataDetailFragment dataDetailFragment = activity.getDataDetailFragment();
+        dataDetailFragment.setFile(file);
+        dataDetailFragment.initView();
+
+        activity.setDataDetailLayoutState(View.VISIBLE);
+        activity.setLocalFragmentForDetail(dataDetailFragment);
+      }
+    });
+    setListAdapter(adapter);
+
+    initEventHandler();
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+    return inflater.inflate(R.layout.fragment_folderlist, container, false);
+  }
+
+  @Override
+  public void onListItemClick(ListView l, View v, int position, long id) {
+    CollaborativeMap clickItem = (CollaborativeMap) v.getTag();
+
+    if (null == clickItem.get("blobKey")) {
+      path.changePath(clickItem.getId(), DOCID);
+    } else {
+      path.playFile(clickItem);
+    }
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+
+    ((MainActivity) getActivity()).restActionBarTitle();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    MainActivity activity = (MainActivity) getActivity();
+
+    activity.setLocalFragment(this);
+    activity.setLastiRemoteDataFragment(this);
+
+    loadDocument();
   }
 
   public void showData() {
@@ -187,39 +291,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     }
 
     openState();
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-
-    ((MainActivity) getActivity()).restActionBarTitle();
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    MainActivity activity = (MainActivity) getActivity();
-
-    activity.setLocalFragment(this);
-    activity.setLastiRemoteDataFragment(this);
-
-    loadDocument();
-  }
-
-  @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-    Log.i(TAG, "onActivityCreated()");
-
-    MainActivity activity = (MainActivity) getActivity();
-
-    activity.setActionBarTitle("我的课程");
-    TextView textView = (TextView) activity.findViewById(R.id.openfailure_text);
-    ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
-    progressBar = (ProgressBar) activity.findViewById(R.id.page_indicator);
-		progressBar.setMax(5);
-    activity.setOpenStateView(textView, imageView);
   }
 
   private void initEventHandler() {
@@ -283,129 +354,5 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
         }
       }
     }
-  }
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    Log.i(TAG, "onCreate()");
-
-    RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.mainConnect);
-    relativeLayout.setVisibility(View.VISIBLE);
-
-    adapter = new CollaborativeAdapter(this.getActivity(), null, null, new OnItemClickListener() {
-      @Override
-      public void onItemClick(CollaborativeMap file) {
-        MainActivity activity = (MainActivity) LessonListFragment.this.getActivity();
-
-        DataDetailFragment dataDetailFragment = activity.getDataDetailFragment();
-        dataDetailFragment.setFile(file);
-        dataDetailFragment.initView();
-
-        activity.setDataDetailLayoutState(View.VISIBLE);
-        activity.setLocalFragmentForDetail(dataDetailFragment);
-      }
-    });
-    setListAdapter(adapter);
-
-    initEventHandler();
-  }
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-    return inflater.inflate(R.layout.fragment_folderlist, container, false);
-  }
-
-  @Override
-  public void onListItemClick(ListView l, View v, int position, long id) {
-    CollaborativeMap clickItem = (CollaborativeMap) v.getTag();
-
-    if (null == clickItem.get("blobKey")) {
-      path.changePath(clickItem.getId(), DOCID);
-    } else {
-      path.playFile(clickItem);
-    }
-  }
-
-  @Override
-  public void loadDocument() {
-    DOCID = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
-    Log.i(TAG, "loadDocument() DOCID: " + DOCID);
-
-    // 文件Document
-    DocumentLoadedHandler onLoaded = new DocumentLoadedHandler() {
-      @Override
-      public void onLoaded(Document document) {
-        Log.i(TAG, "onLoaded()");
-        document.addDocumentSaveStateListener(new EventHandler<DocumentSaveStateChangedEvent>() {
-					@Override
-					public void handleEvent(DocumentSaveStateChangedEvent event) {
-						boolean isSaving = event.isSaving();
-						boolean isPending = event.isPending();
-						if (isSaving == true) {
-							// 正在联网中
-							Message msg = Message.obtain();
-							msg.what = ISCONNECT;
-							handler.sendMessage(msg);
-						}
-						if (isSaving == false && isPending == false) {
-							// 联网完成
-							Message msg = Message.obtain();
-							msg.what = CONNECTFINISH;
-							handler.sendMessage(msg);
-						}
-					}
-				});
-        doc = document;
-        model = doc.getModel();
-        root = model.getRoot();
-
-        connectUi();
-      }
-    };
-
-    ModelInitializerHandler initializer = new ModelInitializerHandler() {
-      @Override
-      public void onInitializer(Model model_) {
-        model = model_;
-        root = model.getRoot();
-
-        String[] mapKey = { "label", FILE_KEY, FOLDER_KEY };
-        CollaborativeMap[] values = new CollaborativeMap[3];
-
-        for (int k = 0; k < values.length; k++) {
-          CollaborativeMap map = model.createMap(null);
-          for (int i = 0; i < mapKey.length; i++) {
-            if ("label".equals(mapKey[i])) {
-
-              map.set(mapKey[i], "Lesson " + k);
-            } else {
-              CollaborativeList subList = model.createList();
-
-              if (FOLDER_KEY.equals(mapKey[i])) {
-                CollaborativeMap subMap = model.createMap(null);
-                subMap.set("label", "SubFolder");
-                subMap.set(FILE_KEY, model.createList());
-                subMap.set(FOLDER_KEY, model.createList());
-                subList.push(subMap);
-              }
-
-              map.set(mapKey[i], subList);
-            }
-          }
-
-          values[k] = map;
-        }
-
-        CollaborativeList list = model_.createList();
-        list.pushAll((Object[]) values);
-
-        root.set(GlobalConstant.DocumentIdAndDataKey.FOLDERSKEY.getValue(), list);
-        root.set(GlobalConstant.DocumentIdAndDataKey.FILESKEY.getValue(), model_.createList());
-      }
-    };
-
-    Realtime.load(DOCID, onLoaded, initializer, null);
   }
 }
