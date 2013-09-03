@@ -101,11 +101,11 @@ public final class GlobalConstant {
   }
 
   // 外网
-  // public static String SERVER = "http://realtime.goodow.com";
+  // public static String REALTIME_SERVER = "http://realtime.goodow.com";
   // 北京内网
-  // public static String SERVER = "http://192.168.1.15:8080";
+  // public static String REALTIME_SERVER = "http://192.168.1.15:8080";
   // 无锡内网
-  public static String SERVER = "drive.retechcorp.com:8080";
+  public static String REALTIME_SERVER = "http://drive.retechcorp.com:8080";
 
   private static String channel = "21";
 

@@ -65,7 +65,7 @@ public class LogInActivity extends RoboActivity {
       }
 
       String[] params = { username, password };
-      Account account = provideDevice(GlobalConstant.SERVER);
+      Account account = provideDevice(GlobalConstant.REALTIME_SERVER);
       final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(LogInActivity.this, null, account);
       SimpleProgressDialog.show(LogInActivity.this, new OnCancelListener() {
         @Override
