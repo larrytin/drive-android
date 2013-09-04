@@ -105,8 +105,7 @@ public class RemoteControlObserver implements IRemoteControl {
           Intent intent = new Intent(activity, FlashPlayerActivity.class);
 
           intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id="
-              + id);
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id=" + id);
           activity.startActivity(intent);
         } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
             || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
@@ -172,7 +171,28 @@ public class RemoteControlObserver implements IRemoteControl {
       JsonArray jsonArray = map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue());
 
       if (null != mapId) {
-        jsonArray.set(jsonArray.length(), mapId);
+        // 判断传入的mapId是否在path里出现过,如果有则说明是通过点击ActionBar来跳转的,需要清空前面所有的路径
+        boolean flag = true;
+        for (int i = jsonArray.length() - 1; i >= 0; i--) {
+          String item = jsonArray.get(i).asString();
+          if (item.equals(mapId)) {
+            flag = false;
+          }
+        }
+
+        if (flag) {
+          jsonArray.set(jsonArray.length(), mapId);// 正常点击文件夹
+        } else {
+          // 通过ActionBar来跳转文件夹
+          for (int i = jsonArray.length() - 1; i > 0; i--) {
+            String item = jsonArray.get(i).asString();
+            if (item.equals(mapId)) {
+              break;
+            } else {
+              jsonArray.remove(i);
+            }
+          }
+        }
       } else {
         if (jsonArray.length() > 0) {
           jsonArray.remove(jsonArray.length() - 1);
@@ -285,8 +305,7 @@ public class RemoteControlObserver implements IRemoteControl {
           if (null != doc) {
             switchfragment.switchFragment(doc);
           } else {
-            changeDoc("@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-                + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue());
+            changeDoc("@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue());
           }
         }
       }

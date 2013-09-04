@@ -1,5 +1,51 @@
 package com.goodow.drive.android.activity;
 
+import roboguice.activity.RoboActivity;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.res.ColorStateList;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.Window;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.Interface.ILocalFragment;
@@ -19,61 +65,18 @@ import com.goodow.drive.android.toolutils.RemoteControlObserver.SwitchFragment;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
+import com.goodow.realtime.CollaborativeMap;
+import com.goodow.realtime.Model;
 import com.goodow.realtime.android.CloudEndpointUtils;
 import com.goodow.realtime.android.RealtimeModule;
 import com.goodow.realtime.android.ServerAddress;
-
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
-import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.view.Window;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.Animation.AnimationListener;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
+import elemental.json.JsonArray;
 
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity {
@@ -81,6 +84,7 @@ public class MainActivity extends RoboActivity {
 
   private RemoteControlObserver remoteControlObserver;
   private ActionBar actionBar;
+  private String title;
 
   @InjectView(R.id.leftMenuLayout)
   private LinearLayout leftMenu;
@@ -136,9 +140,7 @@ public class MainActivity extends RoboActivity {
 
   public void goObservation() {
     if (null != remoteControlObserver) {
-      String docId =
-          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-              + GlobalConstant.DocumentIdAndDataKey.REMOTECONTROLDOCID.getValue();
+      String docId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.REMOTECONTROLDOCID.getValue();
 
       remoteControlObserver.startObservation(docId, pbIndeterminate);
     }
@@ -181,39 +183,6 @@ public class MainActivity extends RoboActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
 
-    // MenuItem mi1 = menu.add(0, 0, 0, "Item1");// 第三个参数用来指定按钮的排列顺序
-    // mi1.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM |
-    // MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
-    // mi1.setActionView(R.layout.actionbar_view);
-    //
-    // LayoutInflater layoutInflater = LayoutInflater.from(this);
-    // View view = layoutInflater.inflate(R.layout.actionbar_view, null);
-    // RelativeLayout relativeLayout = (RelativeLayout)
-    // view.findViewById(R.id.actionBarLayout);
-    //
-    // relativeLayout.setLayoutParams(new
-    // RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-    // RelativeLayout.LayoutParams.WRAP_CONTENT));
-    // final TextView newTextView = new TextView(this);
-    // ColorStateList colorStateList =
-    // getResources().getColorStateList(R.color.white);
-    // newTextView.setText("M1-ActionView");
-    // newTextView.setTextColor(colorStateList);
-    // newTextView.setOnClickListener(new OnClickListener() {
-    // @Override
-    // public void onClick(View v) {
-    // newTextView.setBackground(getResources().getDrawable(R.color.blue));
-    // }
-    // });
-    //
-    // RelativeLayout.LayoutParams rLayoutParams = new
-    // RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-    // RelativeLayout.LayoutParams.WRAP_CONTENT);
-    // // rLayoutParams.addRule(RelativeLayout.RIGHT_OF, textView.getId());
-    // relativeLayout.addView(newTextView, rLayoutParams);
-    //
-    // mi1.setActionView(relativeLayout);
-
     MenuItem back2Login = menu.add(0, 0, 0, R.string.actionBar_back);
     back2Login.setIcon(R.drawable.discussion_indicator_opened);
     back2Login.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
@@ -224,17 +193,17 @@ public class MainActivity extends RoboActivity {
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     switch (keyCode) {
-      case KeyEvent.KEYCODE_BACK:
-        if (null != currentFragment) {
-          currentFragment.backFragment();
-
-          return true;
-        }
-      case KeyEvent.KEYCODE_HOME:
+    case KeyEvent.KEYCODE_BACK:
+      if (null != currentFragment) {
+        currentFragment.backFragment();
 
         return true;
-      default:
-        break;
+      }
+    case KeyEvent.KEYCODE_HOME:
+
+      return true;
+    default:
+      break;
     }
 
     return super.onKeyDown(keyCode, event);
@@ -278,69 +247,69 @@ public class MainActivity extends RoboActivity {
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     switch (event.getAction()) {
-      case MotionEvent.ACTION_DOWN:
+    case MotionEvent.ACTION_DOWN:
+      setLeftMenuLayoutX(0);
+      setLeftMenuLayoutX(-leftMenu.getWidth());
+
+      if (event.getX() < 40) {
+        showLeftMenuLayout();
+
+        startPoint = event.getX();
+        isShow = true;
+      }
+
+      break;
+    case MotionEvent.ACTION_UP:
+      if ((Math.abs(leftMenu.getLeft()) <= leftMenu.getWidth() / 3) && leftMenu.getVisibility() == View.VISIBLE) {
         setLeftMenuLayoutX(0);
-        setLeftMenuLayoutX(-leftMenu.getWidth());
+        middleLayout.setVisibility(View.VISIBLE);
+      } else {
+        hideLeftMenuLayout();
+      }
 
-        if (event.getX() < 40) {
-          showLeftMenuLayout();
+      startPoint = 0;
+      isShow = false;
 
-          startPoint = event.getX();
-          isShow = true;
+      break;
+    case MotionEvent.ACTION_MOVE:
+      do {
+        if (!isShow) {
+
+          break;
         }
 
-        break;
-      case MotionEvent.ACTION_UP:
-        if ((Math.abs(leftMenu.getLeft()) <= leftMenu.getWidth() / 3) && leftMenu.getVisibility() == View.VISIBLE) {
-          setLeftMenuLayoutX(0);
-          middleLayout.setVisibility(View.VISIBLE);
-        } else {
-          hideLeftMenuLayout();
+        if (Math.abs(event.getX() - startPoint) < 3) {
+
+          break;
         }
 
-        startPoint = 0;
-        isShow = false;
+        if (leftMenu.getLeft() >= 0) {
 
-        break;
-      case MotionEvent.ACTION_MOVE:
-        do {
-          if (!isShow) {
+          break;
+        }
 
-            break;
+        if (startPoint < event.getX()) {
+          int add = leftMenu.getLeft() + (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
+          if (add < 0) {
+            setLeftMenuLayoutX(add);
+          } else {
+            setLeftMenuLayoutX(0);
+            middleLayout.setVisibility(View.VISIBLE);
           }
-
-          if (Math.abs(event.getX() - startPoint) < 3) {
-
-            break;
+        } else if (startPoint > event.getX()) {
+          int reduce = leftMenu.getLeft() - (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
+          if (Math.abs(reduce) < leftMenu.getWidth()) {
+            setLeftMenuLayoutX(reduce);
           }
+        }
 
-          if (leftMenu.getLeft() >= 0) {
+        startPoint = event.getX();
+      } while (false);
 
-            break;
-          }
+      break;
+    default:
 
-          if (startPoint < event.getX()) {
-            int add = leftMenu.getLeft() + (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
-            if (add < 0) {
-              setLeftMenuLayoutX(add);
-            } else {
-              setLeftMenuLayoutX(0);
-              middleLayout.setVisibility(View.VISIBLE);
-            }
-          } else if (startPoint > event.getX()) {
-            int reduce = leftMenu.getLeft() - (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
-            if (Math.abs(reduce) < leftMenu.getWidth()) {
-              setLeftMenuLayoutX(reduce);
-            }
-          }
-
-          startPoint = event.getX();
-        } while (false);
-
-        break;
-      default:
-
-        break;
+      break;
     }
 
     return true;
@@ -444,7 +413,7 @@ public class MainActivity extends RoboActivity {
           }
 
           // 一切OK
-          String[] params = {username, password};
+          String[] params = { username, password };
           Account account = provideDevice(GlobalConstant.REALTIME_SERVER);
           final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(MainActivity.this, dialog, account);
           SimpleProgressDialog.show(MainActivity.this, new OnCancelListener() {
@@ -484,22 +453,22 @@ public class MainActivity extends RoboActivity {
       }
 
       switch (doc) {
-        case LESSONDOCID:
-          newFragment = lessonListFragment;
+      case LESSONDOCID:
+        newFragment = lessonListFragment;
 
-          break;
-        case FAVORITESDOCID:
-          newFragment = dataListFragment;
+        break;
+      case FAVORITESDOCID:
+        newFragment = dataListFragment;
 
-          break;
-        case OFFLINEDOCID:
-          newFragment = offlineListFragment;
+        break;
+      case OFFLINEDOCID:
+        newFragment = offlineListFragment;
 
-          break;
-        default:
-          newFragment = dataListFragment;
+        break;
+      default:
+        newFragment = dataListFragment;
 
-          break;
+        break;
       }
 
       if (null == newFragment) {
@@ -520,9 +489,14 @@ public class MainActivity extends RoboActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    actionBar = getActionBar();
+
+    if (null != title) {
+      actionBar.setTitle(title);
+    }
+
     // this.getWindow().setFlags(0x80000000, 0x80000000);
 
-    actionBar = getActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
 
     fragmentManager = getFragmentManager();
@@ -541,8 +515,11 @@ public class MainActivity extends RoboActivity {
 
   @Override
   protected void onPause() {
-    Log.i(TAG, "onPause");
     super.onPause();
+
+    if (null != getActionBar().getTitle()) {
+      title = (String) getActionBar().getTitle();
+    }
   }
 
   @Override
@@ -587,7 +564,7 @@ public class MainActivity extends RoboActivity {
 
   @Override
   protected void onSaveInstanceState(Bundle outState) {
-    // super.onSaveInstanceState(outState);
+
   }
 
   @Override
@@ -615,13 +592,12 @@ public class MainActivity extends RoboActivity {
   @Provides
   @Singleton
   private Account provideDevice(@ServerAddress String serverAddress) {
-    Account.Builder endpointBuilder =
-        new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-          @Override
-          public void initialize(HttpRequest httpRequest) {
+    Account.Builder endpointBuilder = new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+      @Override
+      public void initialize(HttpRequest httpRequest) {
 
-          }
-        });
+      }
+    });
     endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }
@@ -639,5 +615,46 @@ public class MainActivity extends RoboActivity {
     leftMenuFragment.showView();
 
     setLocalFragment(leftMenuFragment);
+  }
+
+  public void setActionBarContent(JsonArray currentPathList, Model model, final String docId) {
+    ActionBar actionBar = getActionBar();
+
+    actionBar.setDisplayShowCustomEnabled(true);
+    actionBar.setDisplayShowTitleEnabled(false);
+
+    LayoutInflater layoutInflater = LayoutInflater.from(this);
+
+    View view = layoutInflater.inflate(R.layout.actionbar_view, null);
+
+    LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.actionbar_view);
+
+    for (int i = 0; i < currentPathList.length(); i++) {
+      final CollaborativeMap currentMap = model.getObject(currentPathList.get(i).asString());
+
+      if (null != currentMap) {
+        final TextView newTextView = new TextView(this);
+
+        newTextView.setId(i);
+
+        newTextView.setText((String) currentMap.get("label") + "/");
+
+        ColorStateList colorStateList = getResources().getColorStateList(R.color.white);
+        newTextView.setTextColor(colorStateList);
+
+        newTextView.setBackgroundResource(R.drawable.selector_actionbar_text_color);
+
+        newTextView.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            remoteControlObserver.changePath(currentMap.getId(), docId);
+          }
+        });
+
+        linearLayout.addView(newTextView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+      }
+    }
+
+    actionBar.setCustomView(view);
   }
 }

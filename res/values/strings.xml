@@ -24,7 +24,7 @@
     <!-- <string name="com.goodow.realtime.serverAddress">http://192.168.1.15:8080</string> -->
    
     <!-- 无锡内网 -->
-    <string name="com.goodow.realtime.serverAddress">http://drive.retechcorp.com:8080</string>
+    <!-- <string name="com.goodow.realtime.serverAddress">http://drive.retechcorp.com:8080</string> -->
     
    <!--不配置,是外部网络-->
 

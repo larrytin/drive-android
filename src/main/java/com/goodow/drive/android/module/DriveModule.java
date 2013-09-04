@@ -24,10 +24,11 @@ public class DriveModule extends AbstractModule {
   // 北京内网
   // public static final String DRIVE_SERVER = "http://192.168.1.15:8880";
   // 无锡内网
-     public static final String DRIVE_SERVER = "http://drive.retechcorp.com:8880";
+  // public static final String DRIVE_SERVER =
+  // "http://drive.retechcorp.com:8880";
 
   // google play
-  // public static final String DRIVE_SERVER = "http://server.drive.goodow.com";
+  public static final String DRIVE_SERVER = "http://server.drive.goodow.com";
 
   @Override
   protected void configure() {
@@ -58,13 +59,12 @@ public class DriveModule extends AbstractModule {
   @Provides
   @Singleton
   Attachment provideAttachment() {
-    Attachment.Builder endpointBuilder =
-        new Attachment.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-          @Override
-          public void initialize(HttpRequest httpRequest) {
+    Attachment.Builder endpointBuilder = new Attachment.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+      @Override
+      public void initialize(HttpRequest httpRequest) {
 
-          }
-        });
+      }
+    });
     endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(DRIVE_SERVER));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }
@@ -72,13 +72,12 @@ public class DriveModule extends AbstractModule {
   @Provides
   @Singleton
   Account provideDevice(@ServerAddress String serverAddress) {
-    Account.Builder endpointBuilder =
-        new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-          @Override
-          public void initialize(HttpRequest httpRequest) {
+    Account.Builder endpointBuilder = new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+      @Override
+      public void initialize(HttpRequest httpRequest) {
 
-          }
-        });
+      }
+    });
     endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }

@@ -186,4 +186,5 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       imageView.setImageBitmap(result);
     }
   }
+
 }
