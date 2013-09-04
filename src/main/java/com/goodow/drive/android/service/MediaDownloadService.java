@@ -158,7 +158,7 @@ public class MediaDownloadService extends Service {
         }
       });
 
-      if (!DriveModule.DRIVE_SERVER.equals("http://192.168.1.15:8880")) {
+      if (DriveModule.DRIVE_SERVER.equals("http://server.drive.goodow.com")) {
         downloader.setDirectDownloadEnabled(false);// 设为多块下载
         downloader.setChunkSize(MediaHttpUploader.MINIMUM_CHUNK_SIZE);// 设置每一块的大小
       } else {

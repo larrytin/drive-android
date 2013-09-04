@@ -105,9 +105,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
   @Override
   public void loadDocument() {
-    DOCID =
-        "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-            + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
+    DOCID = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
     Log.i(TAG, "loadDocument() DOCID: " + DOCID);
 
     // 文件Document
@@ -130,7 +128,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
         model = model_;
         root = model.getRoot();
 
-        String[] mapKey = {"label", FILE_KEY, FOLDER_KEY};
+        String[] mapKey = { "label", FILE_KEY, FOLDER_KEY };
         CollaborativeMap[] values = new CollaborativeMap[3];
 
         for (int k = 0; k < values.length; k++) {
@@ -175,7 +173,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
     MainActivity activity = (MainActivity) getActivity();
 
-    activity.setActionBarTitle("我的课程");
+    activity.setActionBarTitle("我的课程/");
     TextView textView = (TextView) activity.findViewById(R.id.openfailure_text);
     ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
     activity.setOpenStateView(textView, imageView);
@@ -262,26 +260,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
       // 设置action bar的显示
       MainActivity activity = (MainActivity) getActivity();
       if (null != activity) {
-        if (currentPathList.length() <= 1) {
-          activity.setActionBarTitle(GlobalConstant.MenuTypeEnum.USER_LESSON_DATA.getMenuName());
-        } else {
-          StringBuffer title = new StringBuffer();
-          for (int i = 0; i < currentPathList.length(); i++) {
-            CollaborativeMap currentMap = model.getObject(currentPathList.get(i).asString());
-
-            if (null != currentMap) {
-              String label = currentMap.get("label");
-              if (null != label) {
-                title.append(label + "/");
-              }
-            } else {
-              // Toast.makeText(getActivity(), R.string.remoteControlError,
-              // Toast.LENGTH_SHORT).show();
-            }
-          }
-
-          activity.setActionBarTitle(title.toString());
-        }
+        activity.setActionBarContent(currentPathList, model, DOCID);
       }
     } else {
       if (null != getActivity()) {
