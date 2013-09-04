@@ -23,6 +23,8 @@
         android:gravity="center_vertical"
         android:ellipsize="marquee" 
         android:focusable="true" 
+        android:paddingLeft="5dip"
+        android:paddingRight="15dip"
         android:textSize="@dimen/listItemTextSize" />
 
     <ImageButton
