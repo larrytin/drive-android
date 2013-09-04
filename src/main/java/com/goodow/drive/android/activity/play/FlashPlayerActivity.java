@@ -3,7 +3,6 @@ package com.goodow.drive.android.activity.play;
 import java.util.List;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -13,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Menu;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
@@ -37,7 +37,8 @@ public class FlashPlayerActivity extends Activity {
   private String filePath;
   private WebView flashWebView;
   private Handler mHandler = new Handler();
-  private ProgressDialog mProgressDialog;
+
+  // private ProgressDialog mProgressDialog;
 
   @SuppressLint("JavascriptInterface")
   @Override
@@ -91,21 +92,20 @@ public class FlashPlayerActivity extends Activity {
         System.out.println("newProgress:" + String.valueOf(newProgress));
         if (newProgress == 100) {
           new Handler().postDelayed(new Runnable() {
-
             @Override
             public void run() {
-              mProgressDialog.dismiss();
+              FlashPlayerActivity.this.findViewById(R.id.pb_indeterminate).setVisibility(View.GONE);
             }
           }, 500);
         }
       }
     });
+
     if (checkinstallornotadobeflashapk()) {
       flashWebView.loadUrl(filePath);
     } else {
       installadobeapk();
     }
-
   }
 
   @Override
