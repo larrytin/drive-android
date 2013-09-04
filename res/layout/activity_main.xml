@@ -6,6 +6,7 @@
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
+
         <ProgressBar
             android:id="@+id/pb_indeterminate"
             style="@style/ProgressBarIndeterminate"
@@ -18,7 +19,8 @@
         <RelativeLayout
             android:id="@+id/mainConnect"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent"
+            android:visibility="gone" >
 
             <ProgressBar
                 android:id="@+id/mainProgressBar"

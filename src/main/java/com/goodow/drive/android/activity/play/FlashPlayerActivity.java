@@ -64,7 +64,7 @@ public class FlashPlayerActivity extends Activity {
     flashWebView = (WebView) findViewById(R.id.flash_webView);
     setTitle("Flash播放器");
     setTitleColor(Color.RED);
-    
+
     WebSettings webSettings = flashWebView.getSettings();
     webSettings.setPluginState(PluginState.ON);
     webSettings.setSupportZoom(true);
@@ -82,7 +82,8 @@ public class FlashPlayerActivity extends Activity {
       e.printStackTrace();
     }
 
-    mProgressDialog = ProgressDialog.show(this, "请稍等...", "加载flash中...", true);
+    // mProgressDialog = ProgressDialog.show(this, "请稍等...", "加载flash中...",
+    // true);
     flashWebView.setWebChromeClient(new WebChromeClient() {
       @Override
       public void onProgressChanged(WebView view, int newProgress) {

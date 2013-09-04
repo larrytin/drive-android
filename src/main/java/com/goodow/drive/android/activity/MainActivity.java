@@ -92,6 +92,8 @@ public class MainActivity extends RoboActivity {
   private LinearLayout middleLayout;
   @InjectView(R.id.dataDetailLayout)
   private LinearLayout dataDetailLayout;
+  @InjectView(R.id.contentLayout)
+  private LinearLayout contentLayout; 
 
   private TextView openFailure_text;
   private ImageView openFailure_img;
@@ -244,8 +246,7 @@ public class MainActivity extends RoboActivity {
     return true;
   }
 
-  @Override
-  public boolean onTouchEvent(MotionEvent event) {
+  private boolean touchEvent(MotionEvent event) {
     switch (event.getAction()) {
     case MotionEvent.ACTION_DOWN:
       setLeftMenuLayoutX(0);
@@ -313,6 +314,11 @@ public class MainActivity extends RoboActivity {
     }
 
     return true;
+  }
+
+  @Override
+  public boolean onTouchEvent(MotionEvent event) {
+    return touchEvent(event);
   }
 
   public void openState(int visibility) {
@@ -533,6 +539,14 @@ public class MainActivity extends RoboActivity {
     Log.i(TAG, "onResume");
     super.onResume();
 
+    contentLayout.setOnTouchListener(new OnTouchListener() {
+      
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        return touchEvent(event);
+      }
+    });
+    
     middleLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
