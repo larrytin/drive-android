@@ -45,7 +45,7 @@ public class LogInActivity extends RoboActivity {
 
   @InjectView(R.id.password_EditText)
   private EditText passwordEditText;
-
+//
   public void login(View view) {
     String errorMessageString = "登录成功!";
     String username = "";
