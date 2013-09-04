@@ -21,6 +21,8 @@
         android:layout_height="@dimen/listItemHeigh"
         android:layout_toRightOf="@id/leftImage"
         android:gravity="center_vertical"
+        android:ellipsize="marquee" 
+        android:focusable="true" 
         android:textSize="@dimen/listItemTextSize" />
 
     <ImageButton
