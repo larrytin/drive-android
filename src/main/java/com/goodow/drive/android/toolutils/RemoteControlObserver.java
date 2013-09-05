@@ -90,6 +90,13 @@ public class RemoteControlObserver implements IRemoteControl {
 
           intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
           intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name(), resPath + blobKey);
+        } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
+            || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
+
+          intent = new Intent(activity, PicturePlayAcivity.class);
+
+          intent.putExtra(PicturePlayAcivity.PICTUREPATH, file.getPath());
+          activity.startActivity(intent);
         } else {
           intent = new Intent();
 

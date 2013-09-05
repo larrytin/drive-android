@@ -1,20 +1,27 @@
 package com.goodow.drive.android.activity.play;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import android.content.DialogInterface;
+
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -173,6 +180,68 @@ public class PicturePlayAcivity extends RoboActivity {
     }
   }
 
+  public static String PICTUREURL = "pictureUrl";
+  public static String PICTUREPATH = "picturePaht";
+
+  @InjectView(R.id.picture)
+  private ImageView imageView;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+
+    Intent intent = getIntent();
+    String picture = intent.getStringExtra(PICTUREURL);
+
+    if (null != picture) {
+      new InitImageBitmapTask().execute(picture);
+      // ImageDownloadTask imgtask = new ImageDownloadTask();
+      // /** 这里是获取手机屏幕的分辨率用来处理 图片 溢出问题的。begin */
+      // DisplayMetrics dm = new DisplayMetrics();
+      // getWindowManager().getDefaultDisplay().getMetrics(dm);
+      // imgtask.setDisplayWidth(dm.widthPixels);
+      // imgtask.setDisplayHeight(dm.heightPixels);
+      // imgtask.execute(pictureUrl, imageView);
+    } else {
+      picture = intent.getStringExtra(PICTUREPATH);
+
+      Bitmap bitmap = BitmapFactory.decodeFile(picture);
+      int bitmapWidth = bitmap.getWidth();
+      int bitmapHeight = bitmap.getHeight();
+
+      DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+      int screenWidth = displayMetrics.widthPixels;
+      int screenHeight = displayMetrics.heightPixels;
+
+      float newWidth = 1;
+      if (bitmapWidth > screenWidth) {
+        newWidth = ((float) screenWidth) / bitmapWidth;
+      }
+
+      float newHeight = 1;
+      if (bitmapHeight > screenHeight) {
+        newHeight = ((float) screenHeight) / bitmapHeight;
+      }
+
+      Matrix matrix = new Matrix();
+      matrix.setScale(newWidth, newHeight);
+
+      Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, matrix, true);
+
+      imageView.setImageBitmap(newBitmap);
+      
+      ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
+      progressBar.setVisibility(View.GONE);
+      imageView.setVisibility(View.VISIBLE);
+    }
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    SimpleProgressDialog.resetByThisContext(this);
+  }
+
   private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {
@@ -198,40 +267,11 @@ public class PicturePlayAcivity extends RoboActivity {
     @Override
     protected void onPostExecute(Bitmap result) {
       super.onPostExecute(result);
+      imageView.setImageBitmap(result);
+      
       ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
       progressBar.setVisibility(View.GONE);
-      imageView.setImageBitmap(result);
       imageView.setVisibility(View.VISIBLE);
     }
-  }
-
-  public static String PICTUREURL = "pictureUrl";
-
-  @InjectView(R.id.picture)
-  private ImageView imageView;
-
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
-    Intent intent = getIntent();
-    String pictureUrl = intent.getStringExtra(PICTUREURL);
-
-    if (null != pictureUrl) {
-      new InitImageBitmapTask().execute(pictureUrl);
-      // ImageDownloadTask imgtask = new ImageDownloadTask();
-      // /** 这里是获取手机屏幕的分辨率用来处理 图片 溢出问题的。begin */
-      // DisplayMetrics dm = new DisplayMetrics();
-      // getWindowManager().getDefaultDisplay().getMetrics(dm);
-      // imgtask.setDisplayWidth(dm.widthPixels);
-      // imgtask.setDisplayHeight(dm.heightPixels);
-      // imgtask.execute(pictureUrl, imageView);
-    }
-  }
-
-  @Override
-  protected void onPause() {
-    super.onPause();
-    SimpleProgressDialog.resetByThisContext(this);
   }
 }
