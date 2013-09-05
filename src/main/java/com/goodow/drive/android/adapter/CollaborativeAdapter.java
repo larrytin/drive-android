@@ -141,6 +141,7 @@ public class CollaborativeAdapter extends BaseAdapter {
     }
 
     TextView listItem = (TextView) row.findViewById(R.id.listItem);
+    listItem.setSelected(true);// 跑马灯效果
     listItem.setText(textViewContent);
 
     return row;

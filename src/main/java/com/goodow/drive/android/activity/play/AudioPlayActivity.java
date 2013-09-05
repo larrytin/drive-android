@@ -133,7 +133,6 @@ public class AudioPlayActivity extends Activity {
   private final class ButtonClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
-      Button button = (Button) v;// 得到button
       try {
         switch (v.getId()) {// 通过传过来的Buttonid可以判断Button的类型
         case R.id.play_Button:// 播放
@@ -146,10 +145,10 @@ public class AudioPlayActivity extends Activity {
         case R.id.pause_Button:
           if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            button.setText("继续");// 让这个按钮上的文字显示为继续
+            pauseButton.setText("继续");// 让这个按钮上的文字显示为继续
           } else {
             mediaPlayer.start();// 继续播放
-            button.setText("暂停");
+            pauseButton.setText("暂停");
           }
           break;
 
@@ -169,7 +168,7 @@ public class AudioPlayActivity extends Activity {
           mediaPlayer.seekTo(0);
           mediaPlayer.pause();
 
-          button.setText("暂停");
+          pauseButton.setText("暂停");
           pauseButton.setOnClickListener(null);
           stopButton.setOnClickListener(null);
           break;

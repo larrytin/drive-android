@@ -6,12 +6,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.view.Menu;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -64,7 +62,6 @@ public class FlashPlayerActivity extends Activity {
     }
     flashWebView = (WebView) findViewById(R.id.flash_webView);
     setTitle("Flash播放器");
-    setTitleColor(Color.RED);
 
     WebSettings webSettings = flashWebView.getSettings();
     webSettings.setPluginState(PluginState.ON);
@@ -109,10 +106,15 @@ public class FlashPlayerActivity extends Activity {
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    // getMenuInflater().inflate(R.menu.activity_main, menu);
-    return true;
+  public void onPause() {
+    super.onPause();
+    flashWebView.onPause();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    flashWebView.onResume();
   }
 
   // 退出时关闭flash播放
@@ -120,17 +122,8 @@ public class FlashPlayerActivity extends Activity {
   protected void onDestroy() {
     super.onDestroy();
     flashWebView.destroy();
-    this.finish();
+    // this.finish();
     System.gc();
-  }
-
-  // 按下Back按键时关闭flash播放
-  @Override
-  public void onBackPressed() {
-    flashWebView.destroy();
-    this.finish();
-    System.gc();
-    super.onBackPressed();
   }
 
   // 后台运行

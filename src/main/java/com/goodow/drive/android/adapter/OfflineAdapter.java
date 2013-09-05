@@ -64,6 +64,7 @@ public class OfflineAdapter extends BaseAdapter {
     imageView.setImageResource(ToolsFunctionForThisProgect.getFileIconByFileFullName("." + type));
 
     final TextView offlinefilename = (TextView) row.findViewById(R.id.offlineFileName);
+    offlinefilename.setSelected(true);// 跑马灯效果
     offlinefilename.setText((String) item.get("label"));
 
     final ProgressBar progressBar = (ProgressBar) row.findViewById(R.id.downloadBar);
@@ -108,7 +109,7 @@ public class OfflineAdapter extends BaseAdapter {
       // RelativeLayout relativeLayout = (RelativeLayout)
       // row.findViewById(R.id.progressMess);
       // relativeLayout.setVisibility(View.GONE);
-      
+
       progressBar.setProgress(0);
       downloadText.setText(0 + " %");
       downloadStatus.setText(GlobalConstant.DownloadStatusEnum.UNDOWNLOADING.getStatus());

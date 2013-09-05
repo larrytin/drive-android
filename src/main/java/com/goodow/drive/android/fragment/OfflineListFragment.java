@@ -1,5 +1,6 @@
 package com.goodow.drive.android.fragment;
 
+import android.app.ActionBar;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -42,6 +43,11 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    ActionBar actionBar = getActivity().getActionBar();
+    actionBar.setTitle("离线文件");
+    actionBar.setDisplayShowTitleEnabled(true);
+    actionBar.setDisplayShowCustomEnabled(false);
+    
     CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
     adapter = new OfflineAdapter((MainActivity) this.getActivity(), list, new OnItemClickListener() {
       @Override

@@ -1,36 +1,29 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <ProgressBar
+        android:id="@+id/pb_indeterminate"
+        style="@style/ProgressBarIndeterminate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_gravity="top"
+        android:layout_marginBottom="-7.0dip"
+        android:layout_marginTop="-6.0dip" />
 
-        <ProgressBar
-            android:id="@+id/pb_indeterminate"
-            style="@style/ProgressBarIndeterminate"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginBottom="-7.0dip"
-            android:layout_marginTop="-6.0dip" />
+    <TextView
+        android:id="@+id/flash_file_name_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:textColor="@android:color/black"
+        android:textSize="30sp" />
 
-        <TextView
-            android:id="@+id/flash_file_name_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:textColor="@android:color/black"
-            android:textSize="30sp" />
+    <WebView
+        android:id="@+id/flash_webView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <WebView
-            android:id="@+id/flash_webView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp" />
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

@@ -22,7 +22,8 @@ import android.os.Environment;
 
 public class DriveModule extends AbstractModule {
   // 北京内网
-  // public static final String DRIVE_SERVER = "http://192.168.1.15:8880";
+  // public static final String DRIVE_SERVER = "http://192.168.11.39:8880";
+
   // 无锡内网
   // public static final String DRIVE_SERVER =
   // "http://drive.retechcorp.com:8880";
