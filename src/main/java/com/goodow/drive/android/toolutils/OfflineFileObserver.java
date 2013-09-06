@@ -29,23 +29,6 @@ import elemental.json.JsonObject;
 public enum OfflineFileObserver {
   OFFLINEFILEOBSERVER;
 
-  private String TAG = this.getClass().getSimpleName();
-
-  private BlockingQueue<JsonObject> unLoginDownloadQueue = new LinkedBlockingDeque<JsonObject>();
-
-  private Document doc;
-  private Model model;
-  private CollaborativeMap root;
-  private CollaborativeList list;
-
-  private Model model_unlogin;
-  private CollaborativeList list_unlogin;
-
-  private EventHandler<ValuesAddedEvent> listAddEventHandler;
-  private EventHandler<ValuesRemovedEvent> listRemoveEventHandler;
-
-  private UnloginDownloadThread unloginDownloadThread = new UnloginDownloadThread();
-
   private class UnloginDownloadThread extends Thread {
     @Override
     public void run() {
@@ -64,6 +47,23 @@ public enum OfflineFileObserver {
       }
     }
   }
+
+  private String TAG = this.getClass().getSimpleName();
+
+  private BlockingQueue<JsonObject> unLoginDownloadQueue = new LinkedBlockingDeque<JsonObject>();
+  private Document doc;
+  private Model model;
+  private CollaborativeMap root;
+
+  private CollaborativeList list;
+  private Model model_unlogin;
+
+  private CollaborativeList list_unlogin;
+  private EventHandler<ValuesAddedEvent> listAddEventHandler;
+
+  private EventHandler<ValuesRemovedEvent> listRemoveEventHandler;
+
+  private UnloginDownloadThread unloginDownloadThread = new UnloginDownloadThread();
 
   public void addAttachment(JsonObject json) {
     unLoginDownloadQueue.add(json);
@@ -94,10 +94,6 @@ public enum OfflineFileObserver {
     }
   }
 
-  public CollaborativeList getList() {
-    return list;
-  }
-
   public void addFile(final String attachmentId, boolean isLogin) {
     final Model newModel;
     final CollaborativeList newList;
@@ -111,6 +107,7 @@ public enum OfflineFileObserver {
 
     if (null != attachmentId) {
       new Thread() {
+        @Override
         public void run() {
           try {
             Attachment attachment = MyApplication.getAttachment();
@@ -165,6 +162,71 @@ public enum OfflineFileObserver {
         };
       }.start();
     }
+  }
+
+  public CollaborativeList getList() {
+    return list;
+  }
+
+  public void initEventHandler() {
+    do {
+      if (listAddEventHandler != null) {
+
+        break;
+      }
+
+      listAddEventHandler = new EventHandler<ValuesAddedEvent>() {
+        @Override
+        public void handleEvent(ValuesAddedEvent event) {
+          Object[] adds = event.getValues();
+
+          if (null != adds) {
+            for (Object o : adds) {
+              CollaborativeMap resource = (CollaborativeMap) o;
+              File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + resource.get("blobKey"));
+
+              if (!file.exists()) {
+                // 本地文件不存在,添加下载任务
+                DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(resource);
+              } else {
+                // 本地文件已存在,直接显示下载成功
+                resource.set("progress", "100");
+                resource.set("status", GlobalConstant.DownloadStatusEnum.COMPLETE.getStatus());
+              }
+            }
+          }
+
+          Intent intent = new Intent();
+          intent.setAction("CHANGE_OFFLINE_STATE");
+          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
+        }
+      };
+    } while (false);
+
+    do {
+      if (listRemoveEventHandler != null) {
+
+        break;
+      }
+
+      listRemoveEventHandler = new EventHandler<ValuesRemovedEvent>() {
+        @Override
+        public void handleEvent(ValuesRemovedEvent event) {
+          Object[] adds = event.getValues();
+
+          if (null != adds) {
+            for (Object o : adds) {
+              CollaborativeMap resource = (CollaborativeMap) o;
+              DownloadResServiceBinder.getDownloadResServiceBinder().removeResDownload(resource);
+            }
+          }
+
+          Intent intent = new Intent();
+          intent.setAction("CHANGE_OFFLINE_STATE");
+          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
+        }
+      };
+    } while (false);
   }
 
   public void removeFile(CollaborativeMap removefile) {
@@ -239,66 +301,5 @@ public enum OfflineFileObserver {
     };
 
     Realtime.load(docId, onLoaded, initializer, null);
-  }
-
-  public void initEventHandler() {
-    do {
-      if (listAddEventHandler != null) {
-
-        break;
-      }
-
-      listAddEventHandler = new EventHandler<ValuesAddedEvent>() {
-        @Override
-        public void handleEvent(ValuesAddedEvent event) {
-          Object[] adds = event.getValues();
-
-          if (null != adds) {
-            for (Object o : adds) {
-              CollaborativeMap resource = (CollaborativeMap) o;
-              File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + resource.get("blobKey"));
-
-              if (!file.exists()) {
-                // 本地文件不存在,添加下载任务
-                DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(resource);
-              } else {
-                // 本地文件已存在,直接显示下载成功
-                resource.set("progress", "100");
-                resource.set("status", GlobalConstant.DownloadStatusEnum.COMPLETE.getStatus());
-              }
-            }
-          }
-
-          Intent intent = new Intent();
-          intent.setAction("CHANGE_OFFLINE_STATE");
-          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
-        }
-      };
-    } while (false);
-
-    do {
-      if (listRemoveEventHandler != null) {
-
-        break;
-      }
-
-      listRemoveEventHandler = new EventHandler<ValuesRemovedEvent>() {
-        @Override
-        public void handleEvent(ValuesRemovedEvent event) {
-          Object[] adds = event.getValues();
-
-          if (null != adds) {
-            for (Object o : adds) {
-              CollaborativeMap resource = (CollaborativeMap) o;
-              DownloadResServiceBinder.getDownloadResServiceBinder().removeResDownload(resource);
-            }
-          }
-
-          Intent intent = new Intent();
-          intent.setAction("CHANGE_OFFLINE_STATE");
-          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
-        }
-      };
-    } while (false);
   }
 }
