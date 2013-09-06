@@ -10,3 +10,8 @@ gen/
 
 # Created by OS.
 .DS_Store
+
+# ignore
+res/values/.gitignore
+src/main/java/com/goodow/drive/android/module/.gitignore
+src/main/java/com/goodow/drive/android/global_data_cache/.gitignore
