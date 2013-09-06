@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="contentDescription">description</string>
+    <string name="app_name">KeRuiXing platform</string>
+    <string name="action_settings">Settings</string>
+    <string name="openfailure">The folder is empty!</string>
+    <string name="backFolderErro">已是最顶层文件夹!</string>
+    <string name="actionBar_back">退出</string>
+    <string name="backButton">返回上一级</string>
+    <string name="delButton">删除</string>
+    <string name="back_DailogMessage">是否确定退出?</string>
+    <string name="del_DailogMessage">是否确定删除?</string>
+    <string name="dailogOK">确定</string>
+    <string name="dailogCancel">取消</string>
+    <string name="webConnect">网络连接中…</string>
+    <string name="favorites">我的收藏夹</string>
+    <string name="offlinedoc">离线文件</string>
+    <string name="lesson">我的课程</string>
+    <string name="canOffline">可离线查看</string>
+    <string name="remoteControlError">远程同步操作异常,请尝试切换菜单。</string>
+
+    <!-- 北京内网 -->
+    <string name="com.goodow.realtime.serverAddress">http://192.168.11.39:8080</string>
+   
+    <!-- 无锡内网 -->
+    <!-- <string name="com.goodow.realtime.serverAddress">http://drive.retechcorp.com:8080</string> -->
+    
+   <!--不配置,是外部网络-->
+
+</resources>
