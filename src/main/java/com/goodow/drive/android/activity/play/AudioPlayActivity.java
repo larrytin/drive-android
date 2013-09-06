@@ -136,8 +136,10 @@ public class AudioPlayActivity extends Activity {
       try {
         switch (v.getId()) {// 通过传过来的Buttonid可以判断Button的类型
         case R.id.play_Button:// 播放
-          pauseButton.setText("暂停");
+          mediaPlayer.seekTo(0);
           mediaPlayer.start();
+
+          pauseButton.setText("暂停");
           pauseButton.setOnClickListener(listener);
           stopButton.setOnClickListener(listener);
           break;
@@ -145,7 +147,7 @@ public class AudioPlayActivity extends Activity {
         case R.id.pause_Button:
           if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            pauseButton.setText("继续");// 让这个按钮上的文字显示为继续
+            pauseButton.setText("继续");
           } else {
             mediaPlayer.start();// 继续播放
             pauseButton.setText("暂停");

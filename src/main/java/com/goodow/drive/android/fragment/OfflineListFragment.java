@@ -13,12 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.ILocalFragment;
+import com.goodow.drive.android.Interface.IOnItemClickListener;
 import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.adapter.OfflineAdapter;
-import com.goodow.drive.android.adapter.CollaborativeAdapter.OnItemClickListener;
 import com.goodow.drive.android.toolutils.OfflineFileObserver;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
@@ -47,9 +46,9 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
     actionBar.setTitle("离线文件");
     actionBar.setDisplayShowTitleEnabled(true);
     actionBar.setDisplayShowCustomEnabled(false);
-    
+
     CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
-    adapter = new OfflineAdapter((MainActivity) this.getActivity(), list, new OnItemClickListener() {
+    adapter = new OfflineAdapter((MainActivity) this.getActivity(), list, new IOnItemClickListener() {
       @Override
       public void onItemClick(CollaborativeMap file) {
         MainActivity activity = (MainActivity) OfflineListFragment.this.getActivity();
@@ -61,6 +60,7 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
         activity.setDataDetailLayoutState(View.VISIBLE);
         activity.setLocalFragmentForDetail(dataDetailFragment);
       }
+
     });
     setListAdapter(adapter);
   };

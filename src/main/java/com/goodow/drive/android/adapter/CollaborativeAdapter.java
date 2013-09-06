@@ -2,30 +2,31 @@ package com.goodow.drive.android.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.IOnItemClickListener;
 import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
 
 public class CollaborativeAdapter extends BaseAdapter {
-  public static abstract interface OnItemClickListener {
-    public abstract void onItemClick(CollaborativeMap file);
-  }
-
   private CollaborativeList folderList;
   private CollaborativeList fileList;
   private LayoutInflater layoutInflater;
-  private OnItemClickListener onItemClickListener;
+  private IOnItemClickListener onItemClickListener;
 
-  public CollaborativeAdapter(Context context, CollaborativeList folderList, CollaborativeList fileList, OnItemClickListener onItemClickListener) {
+  public CollaborativeAdapter(Context context, CollaborativeList folderList, CollaborativeList fileList, IOnItemClickListener onItemClickListener) {
     this.folderList = folderList;
     this.fileList = fileList;
     this.layoutInflater = LayoutInflater.from(context);

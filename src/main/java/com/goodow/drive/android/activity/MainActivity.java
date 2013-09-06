@@ -93,7 +93,7 @@ public class MainActivity extends RoboActivity {
   @InjectView(R.id.dataDetailLayout)
   private LinearLayout dataDetailLayout;
   @InjectView(R.id.contentLayout)
-  private LinearLayout contentLayout; 
+  private LinearLayout contentLayout;
 
   private TextView openFailure_text;
   private ImageView openFailure_img;
@@ -246,7 +246,7 @@ public class MainActivity extends RoboActivity {
     return true;
   }
 
-  private boolean touchEvent(MotionEvent event) {
+  public boolean touchEvent(MotionEvent event, boolean returnValue) {
     switch (event.getAction()) {
     case MotionEvent.ACTION_DOWN:
       setLeftMenuLayoutX(0);
@@ -313,12 +313,12 @@ public class MainActivity extends RoboActivity {
       break;
     }
 
-    return true;
+    return returnValue;
   }
 
   @Override
   public boolean onTouchEvent(MotionEvent event) {
-    return touchEvent(event);
+    return touchEvent(event, true);
   }
 
   public void openState(int visibility) {
@@ -539,14 +539,7 @@ public class MainActivity extends RoboActivity {
     Log.i(TAG, "onResume");
     super.onResume();
 
-    contentLayout.setOnTouchListener(new OnTouchListener() {
-      
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        return touchEvent(event);
-      }
-    });
-    
+    // 点击隐藏左菜单栏
     middleLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -567,6 +560,7 @@ public class MainActivity extends RoboActivity {
         return true;
       }
     });
+
     dataDetailLayout.setLongClickable(true);
     dataDetailLayout.setOnTouchListener(new OnTouchListener() {
       @Override
