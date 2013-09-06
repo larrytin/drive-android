@@ -96,7 +96,6 @@ public class RemoteControlObserver implements IRemoteControl {
           intent = new Intent(activity, PicturePlayAcivity.class);
 
           intent.putExtra(PicturePlayAcivity.PICTUREPATH, file.getPath());
-          activity.startActivity(intent);
         } else {
           intent = new Intent();
 

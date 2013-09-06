@@ -101,9 +101,9 @@ public final class GlobalConstant {
   }
 
   // 外网
-  public static String REALTIME_SERVER = "http://realtime.goodow.com";
+  // public static String REALTIME_SERVER = "http://realtime.goodow.com";
   // 北京内网
-  // public static String REALTIME_SERVER = "http://192.168.11.39:8080";
+  public static String REALTIME_SERVER = "http://192.168.11.39:8080";
   // 无锡内网
   // public static String REALTIME_SERVER = "http://drive.retechcorp.com:8080";
 

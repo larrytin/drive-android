@@ -1,15 +1,11 @@
 package com.goodow.drive.android.activity.play;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -20,7 +16,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
@@ -206,33 +201,8 @@ public class PicturePlayAcivity extends RoboActivity {
       picture = intent.getStringExtra(PICTUREPATH);
 
       Bitmap bitmap = BitmapFactory.decodeFile(picture);
-      int bitmapWidth = bitmap.getWidth();
-      int bitmapHeight = bitmap.getHeight();
 
-      DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-      int screenWidth = displayMetrics.widthPixels;
-      int screenHeight = displayMetrics.heightPixels;
-
-      float newWidth = 1;
-      if (bitmapWidth > screenWidth) {
-        newWidth = ((float) screenWidth) / bitmapWidth;
-      }
-
-      float newHeight = 1;
-      if (bitmapHeight > screenHeight) {
-        newHeight = ((float) screenHeight) / bitmapHeight;
-      }
-
-      Matrix matrix = new Matrix();
-      matrix.setScale(newWidth, newHeight);
-
-      Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, matrix, true);
-
-      imageView.setImageBitmap(newBitmap);
-      
-      ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
-      progressBar.setVisibility(View.GONE);
-      imageView.setVisibility(View.VISIBLE);
+      setImage(bitmap);
     }
   }
 
@@ -240,6 +210,36 @@ public class PicturePlayAcivity extends RoboActivity {
   protected void onPause() {
     super.onPause();
     SimpleProgressDialog.resetByThisContext(this);
+  }
+
+  private void setImage(Bitmap bitmap) {
+    int bitmapWidth = bitmap.getWidth();
+    int bitmapHeight = bitmap.getHeight();
+
+    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+    int screenWidth = displayMetrics.widthPixels;
+    // int screenHeight = displayMetrics.heightPixels;
+
+    float scale = 1;
+    if (bitmapWidth > screenWidth) {
+      scale = ((float) screenWidth) / bitmapWidth;
+    }
+
+    // float newHeight = 1;
+    // if (bitmapHeight > screenHeight) {
+    // newHeight = ((float) screenHeight) / bitmapHeight;
+    // }
+
+    Matrix matrix = new Matrix();
+    matrix.setScale(scale, scale);
+
+    Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, matrix, true);
+
+    imageView.setImageBitmap(newBitmap);
+
+    ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
+    progressBar.setVisibility(View.GONE);
+    imageView.setVisibility(View.VISIBLE);
   }
 
   private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
@@ -267,11 +267,8 @@ public class PicturePlayAcivity extends RoboActivity {
     @Override
     protected void onPostExecute(Bitmap result) {
       super.onPostExecute(result);
-      imageView.setImageBitmap(result);
-      
-      ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
-      progressBar.setVisibility(View.GONE);
-      imageView.setVisibility(View.VISIBLE);
+
+      setImage(result);
     }
   }
 }
