@@ -48,9 +48,13 @@ public class FlashPlayerActivity extends Activity {
     if (getIntent().hasExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name())) {
       filePath = "file:///android_asset/flash_loading.html";
       localFlashFilePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name());
+
+      flashWebView = (WebView) findViewById(R.id.flash_webView_offline);
     } else {
       // url
       filePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name());
+
+      flashWebView = (WebView) findViewById(R.id.flash_webView_online);
     }
 
     // 获取从外部传进来的 flash资源完整路径
@@ -60,7 +64,8 @@ public class FlashPlayerActivity extends Activity {
     if (!TextUtils.isEmpty(flashfileName)) {
       flashFileNameTextView.setText(flashfileName);
     }
-    flashWebView = (WebView) findViewById(R.id.flash_webView);
+    
+    flashWebView.setVisibility(View.VISIBLE);
     setTitle("Flash播放器");
 
     WebSettings webSettings = flashWebView.getSettings();

@@ -51,14 +51,7 @@
       services and handle them to the custom IntentService.
 
       The com.google.android.c2dm.permission.SEND permission is necessary
-      so only GCM services can send data messages for the app.
-
-
-
-
-
-
-
+      so only GCM services can send data messages for the app.
         -->
         <receiver
             android:name="com.goodow.realtime.android.gcm.GCMRedirectedBroadcastReceiver"
@@ -85,8 +78,7 @@
       handle received messages.
 
       By default, it must be named .GCMIntentService, unless the
-      application uses a custom BroadcastReceiver that redefines its name.
-        -->
+      application uses a custom BroadcastReceiver that redefines its name.        -->
         <service android:name="com.goodow.realtime.android.gcm.GCMIntentService" />
         <service android:name="com.goodow.drive.android.service.MediaDownloadService" />
 
@@ -102,10 +94,10 @@
         </activity>
         <activity android:name="com.goodow.drive.android.activity.MainActivity" />
         <activity android:name="com.goodow.drive.android.activity.DownloadActivity" />
-        <activity android:name="com.goodow.drive.android.activity.play.AudioPlayActivity" />
-        <activity android:name="com.goodow.drive.android.activity.play.VideoPlayActivity" />
-        <activity android:name="com.goodow.drive.android.activity.play.FlashPlayerActivity" />
-        <activity android:name="com.goodow.drive.android.activity.play.PicturePlayAcivity" />
+        <activity android:launchMode="singleInstance" android:name="com.goodow.drive.android.activity.play.AudioPlayActivity" />
+        <activity android:launchMode="singleInstance" android:name="com.goodow.drive.android.activity.play.VideoPlayActivity" />
+        <activity android:launchMode="singleInstance" android:name="com.goodow.drive.android.activity.play.FlashPlayerActivity" />
+        <activity android:launchMode="singleInstance" android:name="com.goodow.drive.android.activity.play.PicturePlayAcivity" />
     </application>
 
 </manifest>

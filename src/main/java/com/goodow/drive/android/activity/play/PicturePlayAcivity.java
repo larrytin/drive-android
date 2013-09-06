@@ -212,31 +212,34 @@ public class PicturePlayAcivity extends RoboActivity {
     SimpleProgressDialog.resetByThisContext(this);
   }
 
+  /**
+   * @param bitmap: 本地或者服务器上的图片资源,若为null,则加载load_picture_error图片. 
+   * 1.用Matrix进行处理.
+   * 2.根据宽度的比例来进行缩放处理.
+   */
   private void setImage(Bitmap bitmap) {
+    if (null == bitmap) {
+      bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.load_picture_error);
+    }
+    
     int bitmapWidth = bitmap.getWidth();
-    int bitmapHeight = bitmap.getHeight();
+    int bitmapHeight = bitmap.getHeight();;
 
     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
     int screenWidth = displayMetrics.widthPixels;
-    // int screenHeight = displayMetrics.heightPixels;
 
     float scale = 1;
+    // 若图片宽度大于屏幕宽度,则按照比例缩放,否则就按原大小处理
     if (bitmapWidth > screenWidth) {
       scale = ((float) screenWidth) / bitmapWidth;
     }
 
-    // float newHeight = 1;
-    // if (bitmapHeight > screenHeight) {
-    // newHeight = ((float) screenHeight) / bitmapHeight;
-    // }
-
     Matrix matrix = new Matrix();
     matrix.setScale(scale, scale);
 
-    Bitmap newBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, matrix, true);
+    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, matrix, true);
 
-    imageView.setImageBitmap(newBitmap);
-
+    imageView.setImageBitmap(bitmap);
     ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
     progressBar.setVisibility(View.GONE);
     imageView.setVisibility(View.VISIBLE);
