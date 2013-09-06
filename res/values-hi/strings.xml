@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="contentDescription">description</string>
+    <string name="app_name">KeRuiXing platform</string>
+    <string name="action_settings">Settings</string>
+    <string name="openfailure">The folder is empty!</string>
+    <string name="backFolderErro">%2$s में से पृष्ठ %1$s</string>
+    <string name="ds_dialog_exit_button_text">बाहर निकलें</string>
+    <string name="backButton">Back at the next higher level</string>
+    <string name="remove_button_confirm">निकालें</string>
+    <string name="back_dailogMessage">Whether determine the Quitter?</string>
+    <string name="del_dailogMessage"> निकालें</string>
+    <string name="trix_sheets_tab_menu_ok">ठीक</string>
+    <string name="unsaved_dialog_cancel">रद्द करें</string>
+    <string name="welcome_offer_fail_connect">Network connection...</string>
+    <string name="create_new_favorites">मेरे साथ साझा</string>
+    <string name="prefs_offline_category">ऑफ़लाइन फ़ाइलें</string>
+    <string name="lesson_class">मेरे स्वामित्व का</string>
+    <string name="pin_checkbox_label">ऑफ़लाइन उपलब्ध है</string>
+    <string name="remoteControlError">सर्वर के साथ समन्‍वयन करते समय नेटवर्क त्रुटि.</string>
+
+    <!-- 北京内网 -->
+    <string name="com.goodow.realtime.serverAddress">http://192.168.11.39:8080</string>
+   
+    <!-- 无锡内网 -->
+    <!-- <string name="com.goodow.realtime.serverAddress">http://drive.retechcorp.com:8080</string> -->
+    
+   <!--不配置,是外部网络-->
+
+</resources>
