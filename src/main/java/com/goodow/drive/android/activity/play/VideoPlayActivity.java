@@ -35,29 +35,29 @@ public class VideoPlayActivity extends Activity {
 
       try {
         switch (v.getId()) {
-          case R.id.play_ImageButton:
-            play();
-            break;
+        case R.id.play_ImageButton:
+          play();
+          break;
 
-          case R.id.pause_ImageButton:
-            if (mediaPlayer.isPlaying()) {
-              mediaPlayer.pause();
-            } else {
-              mediaPlayer.start();
-            }
-            break;
-          case R.id.reset_ImageButton:
-            if (mediaPlayer.isPlaying()) {
-              mediaPlayer.seekTo(0);
-            } else {
-              play();
-            }
-            break;
-          case R.id.stop_ImageButton:
-            if (mediaPlayer.isPlaying()) {
-              mediaPlayer.stop();
-            }
-            break;
+        case R.id.pause_ImageButton:
+          if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+          } else {
+            mediaPlayer.start();
+          }
+          break;
+        case R.id.reset_ImageButton:
+          if (mediaPlayer.isPlaying()) {
+            mediaPlayer.seekTo(0);
+          } else {
+            play();
+          }
+          break;
+        case R.id.stop_ImageButton:
+          if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+          }
+          break;
         }
       } catch (Exception e) {
         Log.e(TAG, e.toString());
@@ -91,6 +91,7 @@ public class VideoPlayActivity extends Activity {
       }
     }
   }
+
   private final String TAG = this.getClass().getSimpleName();
   private MediaPlayer mediaPlayer = new MediaPlayer();
   private String audioFilePath;

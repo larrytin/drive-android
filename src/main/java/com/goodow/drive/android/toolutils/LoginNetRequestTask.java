@@ -19,10 +19,10 @@ import com.goodow.realtime.Realtime;
 public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> {
   private final String TAG = this.getClass().getSimpleName();
 
-  private Activity activity;
-  private Account account;
+  private final Activity activity;
+  private final Account account;
   private String userName;
-  private Dialog dialog;
+  private final Dialog dialog;
 
   /**
    * If the dialog is null, that is the class of activity is LoginActivity.
@@ -59,12 +59,12 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
       if (this.isCancelled()) {
         break;
       }
-      
+
       if (null == result) {
         errorMessage = "网络状况异常!";
         break;
       }
-      
+
       if (result.containsKey("error_message")) {
         errorMessage = "用户名或者密码错误!";
         break;
@@ -90,7 +90,9 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
       Realtime.authorize(userId, token);
       Log.i(TAG, "userId: " + userId + "\n token: " + token);
 
-      String docId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
+      String docId =
+          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+              + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
 
       OfflineFileObserver.OFFLINEFILEOBSERVER.startObservation(docId, null);
 

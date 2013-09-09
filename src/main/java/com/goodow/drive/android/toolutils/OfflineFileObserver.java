@@ -48,9 +48,9 @@ public enum OfflineFileObserver {
     }
   }
 
-  private String TAG = this.getClass().getSimpleName();
+  private final String TAG = this.getClass().getSimpleName();
 
-  private BlockingQueue<JsonObject> unLoginDownloadQueue = new LinkedBlockingDeque<JsonObject>();
+  private final BlockingQueue<JsonObject> unLoginDownloadQueue = new LinkedBlockingDeque<JsonObject>();
   private Document doc;
   private Model model;
   private CollaborativeMap root;

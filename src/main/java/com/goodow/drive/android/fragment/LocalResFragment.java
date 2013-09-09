@@ -25,7 +25,7 @@ import com.goodow.drive.android.toolutils.Tools;
 public class LocalResFragment extends ListFragment implements ILocalFragment {
   private LocalResAdapter localResAdapter;
 
-  private ArrayList<File> folderList = new ArrayList<File>();
+  private final ArrayList<File> folderList = new ArrayList<File>();
   // 保存当前级文件的父文件路径
   private String parentDirectory = null;
 
@@ -34,57 +34,6 @@ public class LocalResFragment extends ListFragment implements ILocalFragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_folderlist, container, false);
-  }
-
-  @Override
-  public void onActivityCreated(Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-
-    ((MainActivity) getActivity()).setLocalFragment(this);
-  }
-
-  @Override
-  public void onListItemClick(ListView l, View v, int position, long id) {
-    File file = new File((String) v.getTag());
-
-    if (file.isDirectory()) {
-      parentDirectory = file.getParentFile().getAbsolutePath();
-      initDataSource(file);
-    } else {
-      if (file.exists()) {
-        String fileName = file.getName();
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("label", fileName);
-        map.put("type", fileName.substring(fileName.lastIndexOf(".") + 1));
-        map.put("blobKey", fileName);
-
-        Intent intent = null;
-
-        String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
-
-        if (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(map.get("type"))) {
-          intent = new Intent(getActivity(), VideoPlayActivity.class);
-
-          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(), (String) map.get("label"));
-          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(), resPath + (String) map.get("blobKey"));
-        } else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(map.get("type"))) {
-          // TODO
-        } else {
-          intent = new Intent();
-
-          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          intent.setAction(Intent.ACTION_VIEW);
-          String type = Tools.getMIMETypeByType((String) map.get("type"));
-          intent.setDataAndType(Uri.fromFile(file), type);
-        }
-
-        getActivity().startActivity(intent);
-      }
-    }
-  }
-
   public void backFragment() {
     if (null != parentDirectory) {
       initDataSource(new File(parentDirectory));
@@ -103,17 +52,9 @@ public class LocalResFragment extends ListFragment implements ILocalFragment {
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
+  public void connectUi() {
+    // TODO Auto-generated method stub
 
-    if (null == localResAdapter) {
-
-      localResAdapter = new LocalResAdapter(folderList, this);
-    }
-
-    setListAdapter(localResAdapter);
-
-    initDataSource(new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath()));
   }
 
   public void delFile(File file) {
@@ -158,14 +99,74 @@ public class LocalResFragment extends ListFragment implements ILocalFragment {
   }
 
   @Override
-  public void connectUi() {
+  public void loadDocument() {
     // TODO Auto-generated method stub
 
   }
 
   @Override
-  public void loadDocument() {
-    // TODO Auto-generated method stub
+  public void onActivityCreated(Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
 
+    ((MainActivity) getActivity()).setLocalFragment(this);
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.fragment_folderlist, container, false);
+  }
+
+  @Override
+  public void onListItemClick(ListView l, View v, int position, long id) {
+    File file = new File((String) v.getTag());
+
+    if (file.isDirectory()) {
+      parentDirectory = file.getParentFile().getAbsolutePath();
+      initDataSource(file);
+    } else {
+      if (file.exists()) {
+        String fileName = file.getName();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("label", fileName);
+        map.put("type", fileName.substring(fileName.lastIndexOf(".") + 1));
+        map.put("blobKey", fileName);
+
+        Intent intent = null;
+
+        String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
+
+        if (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(map.get("type"))) {
+          intent = new Intent(getActivity(), VideoPlayActivity.class);
+
+          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(), map.get("label"));
+          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(), resPath + map.get("blobKey"));
+        } else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(map.get("type"))) {
+          // TODO
+        } else {
+          intent = new Intent();
+
+          intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+          intent.setAction(Intent.ACTION_VIEW);
+          String type = Tools.getMIMETypeByType(map.get("type"));
+          intent.setDataAndType(Uri.fromFile(file), type);
+        }
+
+        getActivity().startActivity(intent);
+      }
+    }
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+
+    if (null == localResAdapter) {
+
+      localResAdapter = new LocalResAdapter(folderList, this);
+    }
+
+    setListAdapter(localResAdapter);
+
+    initDataSource(new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath()));
   }
 }

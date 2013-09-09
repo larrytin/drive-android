@@ -30,16 +30,42 @@ import com.goodow.realtime.CollaborativeMap;
 
 public class DataDetailFragment extends Fragment implements ILocalFragment {
 
+  private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
+    @Override
+    protected Bitmap doInBackground(String... params) {
+      Bitmap bitmap = null;
+      try {
+        URLConnection connection = (new URL(params[0]).openConnection());
+        InputStream bitmapStream = connection.getInputStream();
+        bitmap = BitmapFactory.decodeStream(bitmapStream);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      return bitmap;
+    }
+
+    @Override
+    protected void onPostExecute(Bitmap result) {
+      super.onPostExecute(result);
+      progressBar.setVisibility(View.GONE);
+      imageView.setVisibility(View.VISIBLE);
+      imageView.setImageBitmap(result);
+    }
+  }
+
   private CollaborativeMap file;
   private TextView fileName;
   private ProgressBar progressBar;
   public ImageView imageView;
+
   private Switch downloadSwitch;
 
   public DataDetailFragment() {
     super();
   }
 
+  @Override
   public void backFragment() {
     MainActivity activity = (MainActivity) getActivity();
 
@@ -48,28 +74,10 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
     activity.setLocalFragment(activity.getLastiRemoteDataFragment());
   }
 
-  public void setFile(CollaborativeMap file) {
-    this.file = file;
-  }
-
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_datadetail, container, false);
-  }
+  public void connectUi() {
+    // TODO Auto-generated method stub
 
-  @Override
-  public void onResume() {
-    super.onResume();
-
-    MainActivity activity = (MainActivity) getActivity();
-    if (null != activity) {
-      activity.setLocalFragmentForDetail(this);
-
-      fileName = (TextView) activity.findViewById(R.id.fileName);
-      progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
-      imageView = (ImageView) activity.findViewById(R.id.thumbnail);
-      downloadSwitch = (Switch) activity.findViewById(R.id.downloadButton);
-    }
   }
 
   public void initView() {
@@ -152,39 +160,33 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
   }
 
   @Override
-  public void connectUi() {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
   public void loadDocument() {
     // TODO Auto-generated method stub
 
   }
 
-  private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
-    @Override
-    protected Bitmap doInBackground(String... params) {
-      Bitmap bitmap = null;
-      try {
-        URLConnection connection = (new URL(params[0]).openConnection());
-        InputStream bitmapStream = connection.getInputStream();
-        bitmap = BitmapFactory.decodeStream(bitmapStream);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.fragment_datadetail, container, false);
+  }
 
-      return bitmap;
-    }
+  @Override
+  public void onResume() {
+    super.onResume();
 
-    @Override
-    protected void onPostExecute(Bitmap result) {
-      super.onPostExecute(result);
-      progressBar.setVisibility(View.GONE);
-      imageView.setVisibility(View.VISIBLE);
-      imageView.setImageBitmap(result);
+    MainActivity activity = (MainActivity) getActivity();
+    if (null != activity) {
+      activity.setLocalFragmentForDetail(this);
+
+      fileName = (TextView) activity.findViewById(R.id.fileName);
+      progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
+      imageView = (ImageView) activity.findViewById(R.id.thumbnail);
+      downloadSwitch = (Switch) activity.findViewById(R.id.downloadButton);
     }
+  }
+
+  public void setFile(CollaborativeMap file) {
+    this.file = file;
   }
 
 }

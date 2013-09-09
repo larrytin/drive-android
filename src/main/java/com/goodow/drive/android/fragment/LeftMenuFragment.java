@@ -21,10 +21,44 @@ public class LeftMenuFragment extends ListFragment implements ILocalFragment {
   private LeftMenuAdapter adapter;
   private MainActivity mainActivity;
 
-  private ArrayList<MenuTypeEnum> MENULIST = new ArrayList<MenuTypeEnum>();
+  private final ArrayList<MenuTypeEnum> MENULIST = new ArrayList<MenuTypeEnum>();
 
   public LeftMenuFragment() {
     super();
+  }
+
+  @Override
+  public void backFragment() {
+    MainActivity activity = (MainActivity) getActivity();
+
+    activity.hideLeftMenuLayout();
+
+    activity.setLocalFragment(activity.getLastiRemoteDataFragment());
+  }
+
+  @Override
+  public void connectUi() {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void hiddenView() {
+    View view = getView();
+    Animation out = AnimationUtils.makeOutAnimation(getActivity(), false);
+    view.startAnimation(out);
+    view.setVisibility(View.INVISIBLE);
+  }
+
+  @Override
+  public void loadDocument() {
+    // TODO Auto-generated method stub
+
+  }
+
+  public void notifyData() {
+    if (null != adapter) {
+      adapter.notifyDataSetChanged();
+    }
   }
 
   @Override
@@ -57,17 +91,23 @@ public class LeftMenuFragment extends ListFragment implements ILocalFragment {
 
       break;
     case USER_REMOTE_DATA:
-      String favoritesDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue();
+      String favoritesDocId =
+          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+              + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue();
       mainActivity.getRemoteControlObserver().changeDoc(favoritesDocId);
 
       break;
     case USER_LESSON_DATA:
-      String lessonDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
+      String lessonDocId =
+          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+              + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
       mainActivity.getRemoteControlObserver().changeDoc(lessonDocId);
 
       break;
     case USER_OFFLINE_DATA:
-      String offlineDocId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
+      String offlineDocId =
+          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+              + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
       mainActivity.getRemoteControlObserver().changeDoc(offlineDocId);
 
       break;
@@ -89,13 +129,6 @@ public class LeftMenuFragment extends ListFragment implements ILocalFragment {
     mainActivity.setDataDetailLayoutState(View.INVISIBLE);
   }
 
-  public void hiddenView() {
-    View view = getView();
-    Animation out = AnimationUtils.makeOutAnimation(getActivity(), false);
-    view.startAnimation(out);
-    view.setVisibility(View.INVISIBLE);
-  }
-
   public void setViewLayout(int x) {
     View view = getView();
     view.layout(x, view.getTop(), view.getRight(), view.getBottom());
@@ -106,32 +139,5 @@ public class LeftMenuFragment extends ListFragment implements ILocalFragment {
     Animation in = AnimationUtils.makeInAnimation(getActivity(), true);
     view.startAnimation(in);
     view.setVisibility(View.VISIBLE);
-  }
-
-  public void notifyData() {
-    if (null != adapter) {
-      adapter.notifyDataSetChanged();
-    }
-  }
-
-  @Override
-  public void backFragment() {
-    MainActivity activity = (MainActivity) getActivity();
-
-    activity.hideLeftMenuLayout();
-
-    activity.setLocalFragment(activity.getLastiRemoteDataFragment());
-  }
-
-  @Override
-  public void connectUi() {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void loadDocument() {
-    // TODO Auto-generated method stub
-
   }
 }

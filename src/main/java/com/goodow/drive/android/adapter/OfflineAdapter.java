@@ -22,9 +22,9 @@ import com.goodow.realtime.EventHandler;
 import com.goodow.realtime.ValueChangedEvent;
 
 public class OfflineAdapter extends BaseAdapter {
-  private CollaborativeList offlineList;
-  private MainActivity activity;
-  private IOnItemClickListener onItemClickListener;
+  private final CollaborativeList offlineList;
+  private final MainActivity activity;
+  private final IOnItemClickListener onItemClickListener;
 
   public OfflineAdapter(MainActivity activity, CollaborativeList offlineList, IOnItemClickListener onItemClickListener) {
     this.offlineList = offlineList;

@@ -45,7 +45,8 @@ public class LogInActivity extends RoboActivity {
 
   @InjectView(R.id.password_EditText)
   private EditText passwordEditText;
-//
+
+  //
   public void login(View view) {
     String errorMessageString = "登录成功!";
     String username = "";
@@ -94,7 +95,7 @@ public class LogInActivity extends RoboActivity {
       // 创建一个快捷图标.
       Intent intent = new Intent();
       intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-      
+
       // 设置快捷方式名称
       intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
 
@@ -141,12 +142,13 @@ public class LogInActivity extends RoboActivity {
   @Provides
   @Singleton
   private Account provideDevice(@ServerAddress String serverAddress) {
-    Account.Builder endpointBuilder = new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-      @Override
-      public void initialize(HttpRequest httpRequest) {
+    Account.Builder endpointBuilder =
+        new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+          @Override
+          public void initialize(HttpRequest httpRequest) {
 
-      }
-    });
+          }
+        });
     endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }

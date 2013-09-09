@@ -42,8 +42,8 @@ public class RemoteControlObserver implements IRemoteControl {
   }
 
   private final String TAG = getClass().getSimpleName();
-  private Activity activity;
-  private SwitchFragment switchfragment;
+  private final Activity activity;
+  private final SwitchFragment switchfragment;
   private Document doc;
   private Model model;
   private CollaborativeMap root;
@@ -52,7 +52,7 @@ public class RemoteControlObserver implements IRemoteControl {
 
   private INotifyData iNotifyData;
 
-  private EventHandler<ValuesAddedEvent> playFileHandler = new EventHandler<ValuesAddedEvent>() {
+  private final EventHandler<ValuesAddedEvent> playFileHandler = new EventHandler<ValuesAddedEvent>() {
     @Override
     public void handleEvent(ValuesAddedEvent event) {
       JsonObject newJsonObject = (JsonObject) event.getValues()[0];
@@ -111,7 +111,8 @@ public class RemoteControlObserver implements IRemoteControl {
           Intent intent = new Intent(activity, FlashPlayerActivity.class);
 
           intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id=" + id);
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id="
+              + id);
           activity.startActivity(intent);
         } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
             || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
@@ -128,7 +129,7 @@ public class RemoteControlObserver implements IRemoteControl {
     }
   };
 
-  private EventHandler<ValueChangedEvent> handler = new EventHandler<ValueChangedEvent>() {
+  private final EventHandler<ValueChangedEvent> handler = new EventHandler<ValueChangedEvent>() {
     @Override
     public void handleEvent(ValueChangedEvent event) {
       String property = event.getProperty();
@@ -311,7 +312,8 @@ public class RemoteControlObserver implements IRemoteControl {
           if (null != doc) {
             switchfragment.switchFragment(doc);
           } else {
-            changeDoc("@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue());
+            changeDoc("@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+                + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue());
           }
         }
       }

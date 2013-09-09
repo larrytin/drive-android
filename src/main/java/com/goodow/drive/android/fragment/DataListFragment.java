@@ -104,7 +104,9 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
   @Override
   public void loadDocument() {
-    DOCID = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue();
+    DOCID =
+        "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+            + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue();
     Log.i(TAG, "loadDocument() DOCID: " + DOCID);
 
     // 文件Document
