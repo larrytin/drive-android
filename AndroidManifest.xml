@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.goodow.android.drive"
-    android:versionCode="17"
-    android:versionName="0.0.17-SNAPSHOT" >
+    android:versionCode="18"
+    android:versionName="0.0.18-SNAPSHOT" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -94,7 +94,7 @@
         </activity>
         <activity android:name="com.goodow.drive.android.activity.MainActivity" />
         <activity android:name="com.goodow.drive.android.activity.DownloadActivity" />
-        <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.AudioPlayActivity" />
+        <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.AudioPlayActivity" android:configChanges="orientation|keyboardHidden|screenSize"/>
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.VideoPlayActivity" />
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.FlashPlayerActivity" />
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.PicturePlayAcivity" />
