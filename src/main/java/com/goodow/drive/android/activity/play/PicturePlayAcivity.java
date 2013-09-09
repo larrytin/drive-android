@@ -1,14 +1,15 @@
 package com.goodow.drive.android.activity.play;
 
+import com.goodow.android.drive.R;
+import com.goodow.drive.android.toolutils.SimpleProgressDialog;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import roboguice.activity.RoboActivity;
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,9 +21,9 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-
-import com.goodow.android.drive.R;
-import com.goodow.drive.android.toolutils.SimpleProgressDialog;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
 @ContentView(R.layout.activity_picture_player)
 public class PicturePlayAcivity extends RoboActivity {
@@ -61,18 +62,22 @@ public class PicturePlayAcivity extends RoboActivity {
       return bmp;
     }
 
+    // 得到显示的高度
     public int getDisplayHeight() {
       return _displayheight;
     }
 
+    // 得到显示的像素
     public int getDisplayPixels() {
       return _displaypixels;
     }
 
+    // 得到显示的宽度
     public int getDisplayWidth() {
       return _displaywidth;
     }
 
+    // 设置显示的高度
     public void setDisplayHeight(int height) {
       _displayheight = height;
     }
@@ -252,8 +257,7 @@ public class PicturePlayAcivity extends RoboActivity {
     }
 
     int bitmapWidth = bitmap.getWidth();
-    int bitmapHeight = bitmap.getHeight();
-    ;
+    int bitmapHeight = bitmap.getHeight();;
 
     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
     int screenWidth = displayMetrics.widthPixels;
