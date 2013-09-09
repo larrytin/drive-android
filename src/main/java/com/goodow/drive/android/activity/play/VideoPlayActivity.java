@@ -1,5 +1,7 @@
 package com.goodow.drive.android.activity.play;
 
+import com.goodow.android.drive.R;
+
 import java.io.File;
 
 import android.app.Activity;
@@ -15,8 +17,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.goodow.android.drive.R;
-
 public class VideoPlayActivity extends Activity {
   public static enum IntentExtraTagEnum {
     // mp4 资源名称
@@ -28,6 +28,7 @@ public class VideoPlayActivity extends Activity {
   private final class ButtonClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
+      // 判断SD卡是否存在
       if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
         Toast.makeText(VideoPlayActivity.this, "SDCard不存在", Toast.LENGTH_SHORT).show();
         return;
@@ -35,29 +36,29 @@ public class VideoPlayActivity extends Activity {
 
       try {
         switch (v.getId()) {
-        case R.id.play_ImageButton:
-          play();
-          break;
-
-        case R.id.pause_ImageButton:
-          if (mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-          } else {
-            mediaPlayer.start();
-          }
-          break;
-        case R.id.reset_ImageButton:
-          if (mediaPlayer.isPlaying()) {
-            mediaPlayer.seekTo(0);
-          } else {
+          case R.id.play_ImageButton:
             play();
-          }
-          break;
-        case R.id.stop_ImageButton:
-          if (mediaPlayer.isPlaying()) {
-            mediaPlayer.stop();
-          }
-          break;
+            break;
+
+          case R.id.pause_ImageButton:
+            if (mediaPlayer.isPlaying()) {
+              mediaPlayer.pause();
+            } else {
+              mediaPlayer.start();
+            }
+            break;
+          case R.id.reset_ImageButton:
+            if (mediaPlayer.isPlaying()) {
+              mediaPlayer.seekTo(0);
+            } else {
+              play();
+            }
+            break;
+          case R.id.stop_ImageButton:
+            if (mediaPlayer.isPlaying()) {
+              mediaPlayer.stop();
+            }
+            break;
         }
       } catch (Exception e) {
         Log.e(TAG, e.toString());
