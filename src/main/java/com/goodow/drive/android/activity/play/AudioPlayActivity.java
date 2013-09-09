@@ -83,7 +83,7 @@ public class AudioPlayActivity extends Activity {
 
   private String audioFilePath;
 
-  // 进度 拖动条
+  // 进度拖条
   private SeekBar progressSeekBar = null;
 
   // 当前进度
@@ -114,9 +114,11 @@ public class AudioPlayActivity extends Activity {
       int position = mediaPlayer.getCurrentPosition();
       int mMax = mediaPlayer.getDuration();
       int sMax = progressSeekBar.getMax();
-      if (mMax != 0) {
+      if (mMax != 0 && 100 != sMax) {
         progressSeekBar.setProgress(position * sMax / mMax);
         curtimeAndTotalTime.setText("时间：" + position / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
+      } else if (100 == sMax) {
+        curtimeAndTotalTime.setText("时间：" + mMax / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
       }
 
       // 每秒钟更新一次
@@ -218,9 +220,6 @@ public class AudioPlayActivity extends Activity {
     mediaPlayer.setDataSource(audioFilePath);
     mediaPlayer.prepare();
 
-    startSeekBarUpdate();
-  }
-  private void startSeekBarUpdate() {
     handler.post(start);
   }
 }

@@ -136,6 +136,10 @@ public class CollaborativeAdapter extends BaseAdapter {
         });
       }
 
+      if ("application/x-print".equals(item.get("type"))) {
+        button.setVisibility(View.GONE);
+      }
+
       textViewContent = (String) item.get("label");
     }
 

@@ -96,13 +96,17 @@ public class OfflineAdapter extends BaseAdapter {
       }
     });
 
-    ImageButton delButton = (ImageButton) row.findViewById(R.id.delButton);
-    delButton.setOnClickListener(new OnClickListener() {
+    ImageButton button = (ImageButton) row.findViewById(R.id.delButton);
+    button.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         onItemClickListener.onItemClick(item);
       }
     });
+
+    if ("application/x-print".equals(item.get("type"))) {
+      button.setVisibility(View.GONE);
+    }
 
     File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey"));
     if (!file.exists()) {
