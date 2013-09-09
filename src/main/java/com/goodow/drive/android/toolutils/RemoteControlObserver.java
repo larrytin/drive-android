@@ -1,5 +1,15 @@
 package com.goodow.drive.android.toolutils;
 
+import java.io.File;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import com.goodow.drive.android.Interface.INotifyData;
 import com.goodow.drive.android.Interface.IRemoteControl;
 import com.goodow.drive.android.activity.play.AudioPlayActivity;
@@ -21,15 +31,6 @@ import com.goodow.realtime.Realtime;
 import com.goodow.realtime.ValueChangedEvent;
 import com.goodow.realtime.ValuesAddedEvent;
 
-import java.io.File;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
@@ -62,18 +63,24 @@ public class RemoteControlObserver implements IRemoteControl {
       String type = ((JsonString) newJsonObject.get("type")).asString();
       String id = ((JsonString) newJsonObject.get("id")).asString();
 
-      File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+      File file = new File(
+          GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath()
+              + "/" + blobKey);
 
       if (file.exists()) {
         Intent intent = null;
 
-        String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
+        String resPath = GlobalDataCacheForMemorySingleton.getInstance
+            .getOfflineResDirPath() + "/";
 
-        if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(Tools.getTypeByMimeType(type))) {
+        if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(
+            Tools.getTypeByMimeType(type))) {
           intent = new Intent(activity, AudioPlayActivity.class);
 
-          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_NAME.name(), label);
-          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_PATH.name(), resPath + blobKey);
+          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_NAME.name(),
+              label);
+          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_PATH.name(),
+              resPath + blobKey);
         }
         // else if
         // (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(Tools.getTypeByMimeType((String)
@@ -85,13 +92,19 @@ public class RemoteControlObserver implements IRemoteControl {
         // intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(),
         // resPath + (String) map.get("blobKey") + ".swf");
         // }
-        else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType(type))) {
+        else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(
+            Tools.getTypeByMimeType(type))) {
           intent = new Intent(activity, FlashPlayerActivity.class);
 
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name(), resPath + blobKey);
-        } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
-            || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
+          intent.putExtra(
+              FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
+          intent.putExtra(
+              FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE
+                  .name(), resPath + blobKey);
+        } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(
+            Tools.getTypeByMimeType(type))
+            || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(
+                Tools.getTypeByMimeType(type))) {
 
           intent = new Intent(activity, PicturePlayAcivity.class);
 
@@ -107,19 +120,25 @@ public class RemoteControlObserver implements IRemoteControl {
           activity.startActivity(intent);
         }
       } else {
-        if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType(type))) {
+        if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(
+            Tools.getTypeByMimeType(type))) {
           Intent intent = new Intent(activity, FlashPlayerActivity.class);
 
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id="
-              + id);
+          intent.putExtra(
+              FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
+          intent.putExtra(
+              FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL
+                  .name(), DriveModule.DRIVE_SERVER + "/serve?id=" + id);
           activity.startActivity(intent);
-        } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
-            || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
+        } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(
+            Tools.getTypeByMimeType(type))
+            || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(
+                Tools.getTypeByMimeType(type))) {
 
           Intent intent = new Intent(activity, PicturePlayAcivity.class);
 
-          String thumbnail = ((JsonString) newJsonObject.get("thumbnail")).asString();
+          String thumbnail = ((JsonString) newJsonObject.get("thumbnail"))
+              .asString();
           intent.putExtra(PicturePlayAcivity.PICTUREURL, thumbnail);
           activity.startActivity(intent);
         } else {
@@ -133,7 +152,8 @@ public class RemoteControlObserver implements IRemoteControl {
     @Override
     public void handleEvent(ValueChangedEvent event) {
       String property = event.getProperty();
-      if (GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue().equals(property)) {
+      if (GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue().equals(
+          property)) {
         JsonObject newJson = (JsonObject) event.getNewValue();
         Log.i(TAG, "new path: " + newJson.toString());
 
@@ -156,15 +176,19 @@ public class RemoteControlObserver implements IRemoteControl {
     iNotifyData = null;
 
     if (null != root) {
-      JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue());
-      JsonArray jsonArray = map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue());
+      JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY
+          .getValue());
+      JsonArray jsonArray = map
+          .get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue());
       for (int i = jsonArray.length() - 1; i > 0; i--) {
         jsonArray.remove(i);
       }
       jsonArray.set(0, "root");
 
-      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(), jsonArray);
-      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue(), docId);
+      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(),
+          jsonArray);
+      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue(),
+          docId);
 
       root.set(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue(), map);
     }
@@ -173,9 +197,11 @@ public class RemoteControlObserver implements IRemoteControl {
   @Override
   public void changePath(String mapId, String docId) {
     if (null != root) {
-      JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue());
+      JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY
+          .getValue());
 
-      JsonArray jsonArray = map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue());
+      JsonArray jsonArray = map
+          .get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue());
 
       if (null != mapId) {
         // 判断传入的mapId是否在path里出现过,如果有则说明是通过点击ActionBar来跳转的,需要清空前面所有的路径
@@ -206,8 +232,10 @@ public class RemoteControlObserver implements IRemoteControl {
         }
       }
 
-      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(), jsonArray);
-      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue(), docId);
+      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(),
+          jsonArray);
+      map.put(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue(),
+          docId);
       root.set(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue(), map);
     }
   }
@@ -215,9 +243,11 @@ public class RemoteControlObserver implements IRemoteControl {
   @Override
   public JsonArray getCurrentPath() {
     if (null != root) {
-      JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue());
+      JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY
+          .getValue());
 
-      return map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue());
+      return map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY
+          .getValue());
     }
 
     return null;
@@ -270,49 +300,67 @@ public class RemoteControlObserver implements IRemoteControl {
     DocumentLoadedHandler onLoaded = new DocumentLoadedHandler() {
       @Override
       public void onLoaded(Document document) {
-        document.addDocumentSaveStateListener(new EventHandler<DocumentSaveStateChangedEvent>() {
-          @Override
-          public void handleEvent(DocumentSaveStateChangedEvent event) {
-            boolean isSaving = event.isSaving();
-            boolean isPending = event.isPending();
-            if (isSaving == true) {
-              // 正在联网中,显示progressbar
-              progressbar.setVisibility(View.VISIBLE);
-            }
-            if (isSaving == false && isPending == false) {
-              // 联网完成,隐藏progressbar
-              progressbar.setVisibility(View.GONE);
-            }
-          }
-        });
+        progressbar.setVisibility(View.GONE);
+        document
+            .addDocumentSaveStateListener(new EventHandler<DocumentSaveStateChangedEvent>() {
+              @Override
+              public void handleEvent(DocumentSaveStateChangedEvent event) {
+                // boolean isSaving = event.isSaving();
+                // boolean isPending = event.isPending();
+                // if (isSaving == true) {
+                // // 正在联网中,显示progressbar
+                // progressbar.setVisibility(View.VISIBLE);
+                // }
+                // if (isSaving == false && isPending == false) {
+                // // 联网完成,隐藏progressbar
+                // progressbar.setVisibility(View.GONE);
+                // }
+                if (event.isSaving || event.isPending) {
+                  // 正在联网中,显示progressbar
+                  progressbar.setVisibility(View.VISIBLE);
+                } else {
+                  // 联网完成,隐藏progressbar
+                  progressbar.setVisibility(View.GONE);
+                }
+              }
+            });
         doc = document;
         model = doc.getModel();
         root = model.getRoot();
 
-        playFileList = root.get(GlobalConstant.DocumentIdAndDataKey.PLAYFILE.getValue());
+        playFileList = root.get(GlobalConstant.DocumentIdAndDataKey.PLAYFILE
+            .getValue());
         if (null == playFileList) {
           playFileList = model.createList();
-          root.set(GlobalConstant.DocumentIdAndDataKey.PLAYFILE.getValue(), playFileList);
+          root.set(GlobalConstant.DocumentIdAndDataKey.PLAYFILE.getValue(),
+              playFileList);
         }
         playFileList.addValuesAddedListener(playFileHandler);
 
-        JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue());
-        Log.i(TAG, GlobalDataCacheForMemorySingleton.getInstance.getUserName() + "-root: " + root.toString());
+        JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY
+            .getValue());
+        Log.i(TAG, GlobalDataCacheForMemorySingleton.getInstance.getUserName()
+            + "-root: " + root.toString());
 
         root.addValueChangedListener(handler);
 
-        JreJsonString jreJsonString = (JreJsonString) (map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue()));
+        JreJsonString jreJsonString = (JreJsonString) (map
+            .get(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue()));
         if (null != jreJsonString) {
           String lastDocId = jreJsonString.asString();
 
-          lastDocId = lastDocId.substring(lastDocId.lastIndexOf("/") + 1, lastDocId.length());
+          lastDocId = lastDocId.substring(lastDocId.lastIndexOf("/") + 1,
+              lastDocId.length());
 
-          DocumentIdAndDataKey doc = DocumentIdAndDataKey.getEnumWithValue(lastDocId);
+          DocumentIdAndDataKey doc = DocumentIdAndDataKey
+              .getEnumWithValue(lastDocId);
 
           if (null != doc) {
             switchfragment.switchFragment(doc);
           } else {
-            changeDoc("@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+            changeDoc("@tmp/"
+                + GlobalDataCacheForMemorySingleton.getInstance().getUserId()
+                + "/"
                 + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue());
           }
         }
@@ -329,25 +377,32 @@ public class RemoteControlObserver implements IRemoteControl {
         JsonArray jsonArray = Json.createArray();
         jsonArray.set(0, "root");
 
-        jsonObject.put(GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(), jsonArray);
-        jsonObject.put(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue(), "");
+        jsonObject.put(
+            GlobalConstant.DocumentIdAndDataKey.CURRENTPATHKEY.getValue(),
+            jsonArray);
+        jsonObject.put(
+            GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue(), "");
 
-        root.set(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue(), jsonObject);
+        root.set(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue(),
+            jsonObject);
       }
     };
-
+    progressbar.setVisibility(View.VISIBLE);
     Realtime.load(docId, onLoaded, initializer, null);
   }
 
   private void updateUi(JsonObject map) {
-    JreJsonString jreJsonString = (JreJsonString) (map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue()));
+    JreJsonString jreJsonString = (JreJsonString) (map
+        .get(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue()));
 
     if (null != jreJsonString) {
       String lastDocId = jreJsonString.asString();
 
-      lastDocId = lastDocId.substring(lastDocId.lastIndexOf("/") + 1, lastDocId.length());
+      lastDocId = lastDocId.substring(lastDocId.lastIndexOf("/") + 1,
+          lastDocId.length());
 
-      DocumentIdAndDataKey doc = DocumentIdAndDataKey.getEnumWithValue(lastDocId);
+      DocumentIdAndDataKey doc = DocumentIdAndDataKey
+          .getEnumWithValue(lastDocId);
 
       switchfragment.switchFragment(doc);
     }
