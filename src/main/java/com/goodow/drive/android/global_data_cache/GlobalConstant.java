@@ -88,7 +88,8 @@ public final class GlobalConstant {
   }
 
   public static enum SupportResTypeEnum {
-    DOC("doc"), PDF("pdf"), MP3("mp3"), MP4("mp4"), FLASH("swf"), TEXT("txt"), PNG("png"), JPEG("jpg"), EXCEL("xls");
+    DOC("doc"), PDF("pdf"), MP3("mp3"), MP4("mp4"), FLASH("swf"), TEXT("txt"), PNG(
+        "png"), JPEG("jpg"), EXCEL("xls");
     private final String typeName;
 
     private SupportResTypeEnum(String typeName) {
@@ -103,11 +104,15 @@ public final class GlobalConstant {
   // 外网
   // public static String REALTIME_SERVER = "http://realtime.goodow.com";
   // 北京内网
-  public static String REALTIME_SERVER = "http://192.168.11.39:8080";
+  // public static String REALTIME_SERVER = "http://192.168.11.39:8080";
   // 无锡内网
-  // public static String REALTIME_SERVER = "http://drive.retechcorp.com:8080";
+  public static String REALTIME_SERVER = "http://drive.retechcorp.com:8080";
 
-  private static String channel = "21";
+  // 北京
+  // private static String channel = "21";
+
+  // 无锡
+  private static String channel = "07";
 
   private GlobalConstant() {
 
