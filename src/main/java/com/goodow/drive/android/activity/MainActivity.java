@@ -46,6 +46,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.Interface.ILocalFragment;
@@ -76,6 +77,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+
 import elemental.json.JsonArray;
 
 @ContentView(R.layout.activity_main)
@@ -103,17 +105,17 @@ public class MainActivity extends RoboActivity {
   private ILocalFragment currentFragment;
   private ILocalFragment lastFragment;
 
-  private LeftMenuFragment leftMenuFragment = new LeftMenuFragment();
-  private DataListFragment dataListFragment = new DataListFragment();
-  private LocalResFragment localResFragment = new LocalResFragment();
-  private OfflineListFragment offlineListFragment = new OfflineListFragment();
-  private DataDetailFragment dataDetailFragment = new DataDetailFragment();
-  private LessonListFragment lessonListFragment = new LessonListFragment();
+  private final LeftMenuFragment leftMenuFragment = new LeftMenuFragment();
+  private final DataListFragment dataListFragment = new DataListFragment();
+  private final LocalResFragment localResFragment = new LocalResFragment();
+  private final OfflineListFragment offlineListFragment = new OfflineListFragment();
+  private final DataDetailFragment dataDetailFragment = new DataDetailFragment();
+  private final LessonListFragment lessonListFragment = new LessonListFragment();
   @InjectView(R.id.pb_indeterminate)
   private ProgressBar pbIndeterminate;
 
   @SuppressLint("HandlerLeak")
-  private Handler handler = new Handler() {
+  private final Handler handler = new Handler() {
     @Override
     public void handleMessage(Message msg) {
       currentFragment.backFragment();
@@ -142,7 +144,9 @@ public class MainActivity extends RoboActivity {
 
   public void goObservation() {
     if (null != remoteControlObserver) {
-      String docId = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.REMOTECONTROLDOCID.getValue();
+      String docId =
+          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+              + GlobalConstant.DocumentIdAndDataKey.REMOTECONTROLDOCID.getValue();
 
       remoteControlObserver.startObservation(docId, pbIndeterminate);
     }
@@ -185,7 +189,7 @@ public class MainActivity extends RoboActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
 
-    MenuItem back2Login = menu.add(0, 0, 0, R.string.actionBar_back);
+    MenuItem back2Login = menu.add(0, 0, 0, R.string.ds_dialog_exit_button_text);
     back2Login.setIcon(R.drawable.discussion_indicator_opened);
     back2Login.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
@@ -225,7 +229,7 @@ public class MainActivity extends RoboActivity {
         middleLayout.setVisibility(LinearLayout.VISIBLE);
       }
     } else if (item.getItemId() == 0) {
-      new AlertDialog.Builder(this).setPositiveButton(R.string.dailogOK, new DialogInterface.OnClickListener() {
+      new AlertDialog.Builder(this).setPositiveButton(R.string.trix_sheets_tab_menu_ok, new DialogInterface.OnClickListener() {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -234,91 +238,21 @@ public class MainActivity extends RoboActivity {
 
           ToolsFunctionForThisProgect.quitApp(MainActivity.this);
         }
-      }).setNegativeButton(R.string.dailogCancel, new DialogInterface.OnClickListener() {
+      }).setNegativeButton(R.string.unsaved_dialog_cancel, new DialogInterface.OnClickListener() {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
 
         }
-      }).setMessage(R.string.back_DailogMessage).create().show();
+      }).setMessage(R.string.back_dailogMessage).create().show();
     }
 
     return true;
   }
 
-  public boolean touchEvent(MotionEvent event, boolean returnValue) {
-    switch (event.getAction()) {
-    case MotionEvent.ACTION_DOWN:
-      setLeftMenuLayoutX(0);
-      setLeftMenuLayoutX(-leftMenu.getWidth());
-
-      if (event.getX() < 40) {
-        showLeftMenuLayout();
-
-        startPoint = event.getX();
-        isShow = true;
-      }
-
-      break;
-    case MotionEvent.ACTION_UP:
-      if ((Math.abs(leftMenu.getLeft()) <= leftMenu.getWidth() / 3) && leftMenu.getVisibility() == View.VISIBLE) {
-        setLeftMenuLayoutX(0);
-        middleLayout.setVisibility(View.VISIBLE);
-      } else {
-        hideLeftMenuLayout();
-      }
-
-      startPoint = 0;
-      isShow = false;
-
-      break;
-    case MotionEvent.ACTION_MOVE:
-      do {
-        if (!isShow) {
-
-          break;
-        }
-
-        if (Math.abs(event.getX() - startPoint) < 3) {
-
-          break;
-        }
-
-        if (leftMenu.getLeft() >= 0) {
-
-          break;
-        }
-
-        if (startPoint < event.getX()) {
-          int add = leftMenu.getLeft() + (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
-          if (add < 0) {
-            setLeftMenuLayoutX(add);
-          } else {
-            setLeftMenuLayoutX(0);
-            middleLayout.setVisibility(View.VISIBLE);
-          }
-        } else if (startPoint > event.getX()) {
-          int reduce = leftMenu.getLeft() - (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
-          if (Math.abs(reduce) < leftMenu.getWidth()) {
-            setLeftMenuLayoutX(reduce);
-          }
-        }
-
-        startPoint = event.getX();
-      } while (false);
-
-      break;
-    default:
-
-      break;
-    }
-
-    return returnValue;
-  }
-
   @Override
   public boolean onTouchEvent(MotionEvent event) {
-    return touchEvent(event, true);
+    return touchEvent(event);
   }
 
   public void openState(int visibility) {
@@ -335,6 +269,48 @@ public class MainActivity extends RoboActivity {
 
   public void restActionBarTitle() {
     actionBar.setTitle(R.string.app_name);
+  }
+
+  public void setActionBarContent(JsonArray currentPathList, Model model, final String docId) {
+    ActionBar actionBar = getActionBar();
+
+    actionBar.setDisplayShowCustomEnabled(true);
+    actionBar.setDisplayShowTitleEnabled(false);
+
+    LayoutInflater layoutInflater = LayoutInflater.from(this);
+
+    View view = layoutInflater.inflate(R.layout.actionbar_view, null);
+
+    LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.actionbar_view);
+
+    for (int i = 0; i < currentPathList.length(); i++) {
+      final CollaborativeMap currentMap = model.getObject(currentPathList.get(i).asString());
+
+      if (null != currentMap) {
+        final TextView newTextView = new TextView(this);
+
+        newTextView.setId(i);
+
+        newTextView.setText((String) currentMap.get("label") + "/");
+
+        ColorStateList colorStateList = getResources().getColorStateList(R.color.white);
+        newTextView.setTextColor(colorStateList);
+
+        newTextView.setBackgroundResource(R.drawable.selector_actionbar_text_color);
+
+        newTextView.setOnClickListener(new OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            remoteControlObserver.changePath(currentMap.getId(), docId);
+          }
+        });
+
+        linearLayout.addView(newTextView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT));
+      }
+    }
+
+    actionBar.setCustomView(view);
   }
 
   public void setActionBarTitle(String title) {
@@ -539,7 +515,14 @@ public class MainActivity extends RoboActivity {
     Log.i(TAG, "onResume");
     super.onResume();
 
-    // 点击隐藏左菜单栏
+    contentLayout.setOnTouchListener(new OnTouchListener() {
+
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        return touchEvent(event);
+      }
+    });
+
     middleLayout.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -560,7 +543,6 @@ public class MainActivity extends RoboActivity {
         return true;
       }
     });
-
     dataDetailLayout.setLongClickable(true);
     dataDetailLayout.setOnTouchListener(new OnTouchListener() {
       @Override
@@ -600,12 +582,13 @@ public class MainActivity extends RoboActivity {
   @Provides
   @Singleton
   private Account provideDevice(@ServerAddress String serverAddress) {
-    Account.Builder endpointBuilder = new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-      @Override
-      public void initialize(HttpRequest httpRequest) {
+    Account.Builder endpointBuilder =
+        new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+          @Override
+          public void initialize(HttpRequest httpRequest) {
 
-      }
-    });
+          }
+        });
     endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }
@@ -625,44 +608,73 @@ public class MainActivity extends RoboActivity {
     setLocalFragment(leftMenuFragment);
   }
 
-  public void setActionBarContent(JsonArray currentPathList, Model model, final String docId) {
-    ActionBar actionBar = getActionBar();
+  private boolean touchEvent(MotionEvent event) {
+    switch (event.getAction()) {
+    case MotionEvent.ACTION_DOWN:
+      setLeftMenuLayoutX(0);
+      setLeftMenuLayoutX(-leftMenu.getWidth());
 
-    actionBar.setDisplayShowCustomEnabled(true);
-    actionBar.setDisplayShowTitleEnabled(false);
+      if (event.getX() < 40) {
+        showLeftMenuLayout();
 
-    LayoutInflater layoutInflater = LayoutInflater.from(this);
-
-    View view = layoutInflater.inflate(R.layout.actionbar_view, null);
-
-    LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.actionbar_view);
-
-    for (int i = 0; i < currentPathList.length(); i++) {
-      final CollaborativeMap currentMap = model.getObject(currentPathList.get(i).asString());
-
-      if (null != currentMap) {
-        final TextView newTextView = new TextView(this);
-
-        newTextView.setId(i);
-
-        newTextView.setText((String) currentMap.get("label") + "/");
-
-        ColorStateList colorStateList = getResources().getColorStateList(R.color.white);
-        newTextView.setTextColor(colorStateList);
-
-        newTextView.setBackgroundResource(R.drawable.selector_actionbar_text_color);
-
-        newTextView.setOnClickListener(new OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            remoteControlObserver.changePath(currentMap.getId(), docId);
-          }
-        });
-
-        linearLayout.addView(newTextView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        startPoint = event.getX();
+        isShow = true;
       }
+
+      break;
+    case MotionEvent.ACTION_UP:
+      if ((Math.abs(leftMenu.getLeft()) <= leftMenu.getWidth() / 3) && leftMenu.getVisibility() == View.VISIBLE) {
+        setLeftMenuLayoutX(0);
+        middleLayout.setVisibility(View.VISIBLE);
+      } else {
+        hideLeftMenuLayout();
+      }
+
+      startPoint = 0;
+      isShow = false;
+
+      break;
+    case MotionEvent.ACTION_MOVE:
+      do {
+        if (!isShow) {
+
+          break;
+        }
+
+        if (Math.abs(event.getX() - startPoint) < 3) {
+
+          break;
+        }
+
+        if (leftMenu.getLeft() >= 0) {
+
+          break;
+        }
+
+        if (startPoint < event.getX()) {
+          int add = leftMenu.getLeft() + (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
+          if (add < 0) {
+            setLeftMenuLayoutX(add);
+          } else {
+            setLeftMenuLayoutX(0);
+            middleLayout.setVisibility(View.VISIBLE);
+          }
+        } else if (startPoint > event.getX()) {
+          int reduce = leftMenu.getLeft() - (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
+          if (Math.abs(reduce) < leftMenu.getWidth()) {
+            setLeftMenuLayoutX(reduce);
+          }
+        }
+
+        startPoint = event.getX();
+      } while (false);
+
+      break;
+    default:
+
+      break;
     }
 
-    actionBar.setCustomView(view);
+    return true;
   }
 }

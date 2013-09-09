@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="32dip"
-        android:text="@string/canOffline"
+        android:text="@string/pin_checkbox_label"
         android:textSize="@dimen/listItemTextSize" />
 
 </LinearLayout>

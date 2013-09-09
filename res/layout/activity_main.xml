@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/mainProgressBar"
                 android:layout_centerInParent="true"
-                android:text="@string/webConnect" />
+                android:text="@string/welcome_offer_fail_connect" />
         </RelativeLayout>
 
         <LinearLayout

@@ -59,19 +59,20 @@ public class LocalResAdapter extends BaseAdapter {
     delButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        AlertDialog alertDialog = new AlertDialog.Builder(localResFragment.getActivity())
-            .setPositiveButton(R.string.dailogOK, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                if (null != item) {
-                  String localPath = item.getParentFile().getAbsolutePath();
+        AlertDialog alertDialog =
+            new AlertDialog.Builder(localResFragment.getActivity()).setPositiveButton(R.string.trix_sheets_tab_menu_ok,
+                new DialogInterface.OnClickListener() {
+                  @Override
+                  public void onClick(DialogInterface dialog, int which) {
+                    if (null != item) {
+                      String localPath = item.getParentFile().getAbsolutePath();
 
-                  localResFragment.delFile(item);
+                      localResFragment.delFile(item);
 
-                  localResFragment.initDataSource(new File(localPath));
-                }
-              }
-            }).setNegativeButton(R.string.dailogCancel, new DialogInterface.OnClickListener() {
+                      localResFragment.initDataSource(new File(localPath));
+                    }
+                  }
+                }).setNegativeButton(R.string.unsaved_dialog_cancel, new DialogInterface.OnClickListener() {
               @Override
               public void onClick(DialogInterface dialog, int which) {
 
