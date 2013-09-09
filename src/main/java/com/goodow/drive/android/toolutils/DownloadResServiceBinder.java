@@ -7,21 +7,21 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 public class DownloadResServiceBinder implements ServiceConnection {
-	private static MyBinder binder;
+  private static MyBinder binder;
 
-	@Override
-	public void onServiceConnected(ComponentName name, IBinder service) {
-		binder = (MyBinder) service;
+  public static MyBinder getDownloadResServiceBinder() {
+    return binder;
+  }
 
-	}
+  @Override
+  public void onServiceConnected(ComponentName name, IBinder service) {
+    binder = (MyBinder) service;
 
-	@Override
-	public void onServiceDisconnected(ComponentName name) {
-		binder = null;
-	}
+  }
 
-	public static MyBinder getDownloadResServiceBinder() {
-		return binder;
-	}
+  @Override
+  public void onServiceDisconnected(ComponentName name) {
+    binder = null;
+  }
 
 }

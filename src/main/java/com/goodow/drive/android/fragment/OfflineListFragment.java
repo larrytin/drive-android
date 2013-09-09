@@ -27,7 +27,7 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
 
   private OfflineAdapter adapter;
 
-  private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+  private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
       adapter.notifyDataSetChanged();
@@ -36,6 +36,21 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
 
   public OfflineListFragment() {
     super();
+  }
+
+  @Override
+  public void backFragment() {
+    // TODO Auto-generated method stub
+  };
+
+  @Override
+  public void connectUi() {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public void loadDocument() {
+    // TODO Auto-generated method stub
   }
 
   @Override
@@ -63,7 +78,26 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
 
     });
     setListAdapter(adapter);
-  };
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.fragment_folderlist, container, false);
+  }
+
+  @Override
+  public void onListItemClick(ListView l, View v, int position, long id) {
+    CollaborativeMap item = (CollaborativeMap) v.getTag();
+
+    ((MainActivity) getActivity()).getRemoteControlObserver().playFile(item);
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+
+    ((MainActivity) getActivity()).unregisterReceiver(broadcastReceiver);
+  }
 
   @Override
   public void onResume() {
@@ -88,39 +122,5 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
       RelativeLayout relativeLayout = (RelativeLayout) activity.findViewById(R.id.mainConnect);
       relativeLayout.setVisibility(View.GONE);
     }
-  }
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_folderlist, container, false);
-  }
-
-  @Override
-  public void onListItemClick(ListView l, View v, int position, long id) {
-    CollaborativeMap item = (CollaborativeMap) v.getTag();
-
-    ((MainActivity) getActivity()).getRemoteControlObserver().playFile(item);
-  }
-
-  @Override
-  public void onPause() {
-    super.onPause();
-
-    ((MainActivity) getActivity()).unregisterReceiver(broadcastReceiver);
-  }
-
-  @Override
-  public void connectUi() {
-    // TODO Auto-generated method stub
-  }
-
-  @Override
-  public void loadDocument() {
-    // TODO Auto-generated method stub
-  }
-
-  @Override
-  public void backFragment() {
-    // TODO Auto-generated method stub
   }
 }

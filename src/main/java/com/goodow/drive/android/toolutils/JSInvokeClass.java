@@ -1,14 +1,14 @@
 package com.goodow.drive.android.toolutils;
 
 public class JSInvokeClass {
-	private String flashFilePath;
+  private String flashFilePath;
 
-	public String getFlashFilePath() {
-		return flashFilePath;
-	}
+  public String getFlashFilePath() {
+    return flashFilePath;
+  }
 
-	public void setFlashFilePath(String flashFilePath) {
-		this.flashFilePath = flashFilePath;
-	}
+  public void setFlashFilePath(String flashFilePath) {
+    this.flashFilePath = flashFilePath;
+  }
 
 }

@@ -18,8 +18,8 @@ import com.goodow.drive.android.fragment.LocalResFragment;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
 
 public class LocalResAdapter extends BaseAdapter {
-  private ArrayList<File> dataSource;
-  private LocalResFragment localResFragment;
+  private final ArrayList<File> dataSource;
+  private final LocalResFragment localResFragment;
 
   public LocalResAdapter(ArrayList<File> dataSource, LocalResFragment localResFragment) {
     super();

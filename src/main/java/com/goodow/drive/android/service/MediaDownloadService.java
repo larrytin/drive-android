@@ -29,29 +29,124 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
 public class MediaDownloadService extends Service {
-  private final IBinder myBinder = new MyBinder();
+  public final class MyBinder extends Binder {
+    public void addResDownload(final CollaborativeMap res) {
+      startResDownloadTread(res);
+    }
 
-  private BlockingQueue<CollaborativeMap> downloadUrlQueue = new LinkedBlockingDeque<CollaborativeMap>();
+    public void clearResDownload() {
+      MediaDownloadService.this.downloadUrlQueue.clear();
+    }
+
+    public String getDownloadResBlobKey() {
+      return MediaDownloadService.this.downloadRes.get("blobKey");
+    }
+
+    public void removeResDownload(final CollaborativeMap res) {
+      MediaDownloadService.this.downloadUrlQueue.remove(res);
+    }
+  }
+
+  /**
+   * InnerClass: Media下载监听
+   */
+  private class CustomProgressListener implements MediaHttpDownloaderProgressListener {
+    @Override
+    public void progressChanged(final MediaHttpDownloader downloader) {
+      switch (downloader.getDownloadState()) {
+      case MEDIA_IN_PROGRESS:
+        downloadRes.set("progress", Integer.toString((int) (downloader.getProgress() * 100)));
+
+        break;
+      case MEDIA_COMPLETE:
+        downloadRes.set("progress", "100");
+        downloadRes.set("status", DownloadStatusEnum.COMPLETE.getStatus());
+
+        break;
+      default:
+
+        break;
+      }
+    }
+  }
+  private class ResDownloadThread extends Thread {
+    @Override
+    public void run() {
+      try {
+        while (true) {
+          downloadRes = MediaDownloadService.this.downloadUrlQueue.take();
+
+          File newFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey"));
+          // 本地文件不存在则开启下载
+          if (!newFile.exists()) {
+            downloadRes.set("status", GlobalConstant.DownloadStatusEnum.DOWNLOADING.getStatus());
+
+            final String urlString = downloadRes.get("url");
+            doDownLoad(urlString);
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+  private final IBinder myBinder = new MyBinder();
+  private final BlockingQueue<CollaborativeMap> downloadUrlQueue = new LinkedBlockingDeque<CollaborativeMap>();
   private ResDownloadThread resDownloadThread = new ResDownloadThread();
-  private HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-  private JsonFactory JSON_FACTORY = new JacksonFactory();
+
+  private final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+
+  private final JsonFactory JSON_FACTORY = new JacksonFactory();
+
   private CollaborativeMap downloadRes;
 
+  @Override
+  public IBinder onBind(Intent intent) {
+    return myBinder;
+  }
+
+  private void doDownLoad(String... params) {
+    try {
+      File newFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey"));
+      FileOutputStream outputStream = new FileOutputStream(newFile);
+
+      MediaHttpDownloader downloader = new MediaHttpDownloader(HTTP_TRANSPORT, new HttpRequestInitializer() {
+        @Override
+        public void initialize(HttpRequest request) {
+          request.setParser(new JsonObjectParser(JSON_FACTORY));
+        }
+      });
+
+      if (DriveModule.DRIVE_SERVER.equals("http://server.drive.goodow.com")) {
+        downloader.setDirectDownloadEnabled(false);// 设为多块下载
+        downloader.setChunkSize(MediaHttpUploader.MINIMUM_CHUNK_SIZE);// 设置每一块的大小
+      } else {
+        downloader.setDirectDownloadEnabled(true); // 设为单块下载
+      }
+
+      downloader.setProgressListener(new CustomProgressListener());// 设置监听器
+
+      downloader.download(new GenericUrl(params[0]), outputStream);// 启动下载
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   private void startResDownloadTread(final CollaborativeMap res) {
-    //遍历队列,若有相同的URL则不添加
-    Iterator<CollaborativeMap>iterator = downloadUrlQueue.iterator();
-    add: do{
+    // 遍历队列,若有相同的URL则不添加
+    Iterator<CollaborativeMap> iterator = downloadUrlQueue.iterator();
+    add: do {
       while (iterator.hasNext()) {
         CollaborativeMap item = iterator.next();
-        if(item.get("url").equals(res.get("url"))){
-          
+        if (item.get("url").equals(res.get("url"))) {
+
           break add;
         }
       }
-      
+
       downloadUrlQueue.add(res);
-    }while(false);
-    
+    } while (false);
+
     State state = resDownloadThread.getState();
     switch (state) {
     // 线程被阻塞，在等待一个锁。
@@ -82,100 +177,6 @@ public class MediaDownloadService extends Service {
 
       break;
     }
-  }
-
-  private class ResDownloadThread extends Thread {
-    public void run() {
-      try {
-        while (true) {
-          downloadRes = MediaDownloadService.this.downloadUrlQueue.take();
-
-          File newFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey"));
-          // 本地文件不存在则开启下载
-          if (!newFile.exists()) {
-            downloadRes.set("status", GlobalConstant.DownloadStatusEnum.DOWNLOADING.getStatus());
-
-            final String urlString = downloadRes.get("url");
-            doDownLoad(urlString);
-          }
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  public final class MyBinder extends Binder {
-    public String getDownloadResBlobKey() {
-      return MediaDownloadService.this.downloadRes.get("blobKey");
-    }
-
-    public void addResDownload(final CollaborativeMap res) {
-      startResDownloadTread(res);
-    }
-
-    public void removeResDownload(final CollaborativeMap res) {
-      MediaDownloadService.this.downloadUrlQueue.remove(res);
-    }
-
-    public void clearResDownload() {
-      MediaDownloadService.this.downloadUrlQueue.clear();
-    }
-  }
-
-  /**
-   * InnerClass: Media下载监听
-   */
-  private class CustomProgressListener implements MediaHttpDownloaderProgressListener {
-    @Override
-    public void progressChanged(final MediaHttpDownloader downloader) {
-      switch (downloader.getDownloadState()) {
-      case MEDIA_IN_PROGRESS:
-        downloadRes.set("progress", Integer.toString((int) (downloader.getProgress() * 100)));
-
-        break;
-      case MEDIA_COMPLETE:
-        downloadRes.set("progress", "100");
-        downloadRes.set("status", DownloadStatusEnum.COMPLETE.getStatus());
-
-        break;
-      default:
-
-        break;
-      }
-    }
-  }
-
-  private void doDownLoad(String... params) {
-    try {
-      File newFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey"));
-      FileOutputStream outputStream = new FileOutputStream(newFile);
-
-      MediaHttpDownloader downloader = new MediaHttpDownloader(HTTP_TRANSPORT, new HttpRequestInitializer() {
-        @Override
-        public void initialize(HttpRequest request) {
-          request.setParser(new JsonObjectParser(JSON_FACTORY));
-        }
-      });
-
-      if (DriveModule.DRIVE_SERVER.equals("http://server.drive.goodow.com")) {
-        downloader.setDirectDownloadEnabled(false);// 设为多块下载
-        downloader.setChunkSize(MediaHttpUploader.MINIMUM_CHUNK_SIZE);// 设置每一块的大小
-      } else {
-        downloader.setDirectDownloadEnabled(true); // 设为单块下载
-      }
-
-      downloader.setProgressListener(new CustomProgressListener());// 设置监听器
-
-      downloader.download(new GenericUrl(params[0]), outputStream);// 启动下载
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Override
-  public IBinder onBind(Intent intent) {
-    return myBinder;
   }
 
 }

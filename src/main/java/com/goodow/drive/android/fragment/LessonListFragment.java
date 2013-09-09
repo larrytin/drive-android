@@ -105,7 +105,9 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
   @Override
   public void loadDocument() {
-    DOCID = "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/" + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
+    DOCID =
+        "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+            + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
     Log.i(TAG, "loadDocument() DOCID: " + DOCID);
 
     // 文件Document

@@ -15,16 +15,16 @@ public class MyApplication {
   private static Attachment attachment;
   private static Account account;
 
+  public static Account getAccount() {
+    return account;
+  }
+
   public static Application getApplication() {
     return application;
   }
 
   public static Attachment getAttachment() {
     return attachment;
-  }
-
-  public static Account getAccount() {
-    return account;
   }
 
   @Inject

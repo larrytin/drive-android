@@ -60,12 +60,13 @@ public class DriveModule extends AbstractModule {
   @Provides
   @Singleton
   Attachment provideAttachment() {
-    Attachment.Builder endpointBuilder = new Attachment.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-      @Override
-      public void initialize(HttpRequest httpRequest) {
+    Attachment.Builder endpointBuilder =
+        new Attachment.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+          @Override
+          public void initialize(HttpRequest httpRequest) {
 
-      }
-    });
+          }
+        });
     endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(DRIVE_SERVER));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }
@@ -73,12 +74,13 @@ public class DriveModule extends AbstractModule {
   @Provides
   @Singleton
   Account provideDevice(@ServerAddress String serverAddress) {
-    Account.Builder endpointBuilder = new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
-      @Override
-      public void initialize(HttpRequest httpRequest) {
+    Account.Builder endpointBuilder =
+        new Account.Builder(AndroidHttp.newCompatibleTransport(), new JacksonFactory(), new HttpRequestInitializer() {
+          @Override
+          public void initialize(HttpRequest httpRequest) {
 
-      }
-    });
+          }
+        });
     endpointBuilder.setRootUrl(RealtimeModule.getEndpointRootUrl(serverAddress));
     return CloudEndpointUtils.updateBuilder(endpointBuilder).build();
   }

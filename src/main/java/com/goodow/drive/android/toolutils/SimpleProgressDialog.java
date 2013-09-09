@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 
 /**
- * 对 ProgressDialog 的简单封装 特点 : 1.调用者必须保证 show() 和 dismiss()的成对调用; 2.包含引用计数器机制, 不会创建多个ProgressDialog实例, 当最后一个引用计数器为0时,才会销毁ProgressDialog对象
- * 3.在Activity中的 onDestroy()中调用此reset()方法
+ * 对 ProgressDialog 的简单封装 特点 : 1.调用者必须保证 show() 和 dismiss()的成对调用; 2.包含引用计数器机制,
+ * 不会创建多个ProgressDialog实例, 当最后一个引用计数器为0时,才会销毁ProgressDialog对象 3.在Activity中的 onDestroy()中调用此reset()方法
  * 
  * @author zhihua.tang
  */
@@ -48,7 +48,8 @@ public final class SimpleProgressDialog {
   }
 
   /**
-   * 重置ProgressDialog(在Activity中, 必须在 onDestroy()中调用此方法, 否则可能触发 IllegalArgumentException: View not attached to window manager
+   * 重置ProgressDialog(在Activity中, 必须在 onDestroy()中调用此方法, 否则可能触发 IllegalArgumentException: View not
+   * attached to window manager
    */
   public static synchronized void resetByThisContext(Context context) {
     if (context == lastContext) {

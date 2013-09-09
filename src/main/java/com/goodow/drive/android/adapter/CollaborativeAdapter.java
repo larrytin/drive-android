@@ -19,10 +19,11 @@ import com.goodow.realtime.CollaborativeMap;
 public class CollaborativeAdapter extends BaseAdapter {
   private CollaborativeList folderList;
   private CollaborativeList fileList;
-  private LayoutInflater layoutInflater;
-  private IOnItemClickListener onItemClickListener;
+  private final LayoutInflater layoutInflater;
+  private final IOnItemClickListener onItemClickListener;
 
-  public CollaborativeAdapter(Context context, CollaborativeList folderList, CollaborativeList fileList, IOnItemClickListener onItemClickListener) {
+  public CollaborativeAdapter(Context context, CollaborativeList folderList, CollaborativeList fileList,
+      IOnItemClickListener onItemClickListener) {
     this.folderList = folderList;
     this.fileList = fileList;
     this.layoutInflater = LayoutInflater.from(context);
@@ -124,7 +125,8 @@ public class CollaborativeAdapter extends BaseAdapter {
         img_left.setImageResource(R.drawable.ic_type_folder);
         button.setVisibility(View.INVISIBLE);
       } else {
-        img_left.setImageResource(ToolsFunctionForThisProgect.getFileIconByFileFullName("." + Tools.getTypeByMimeType((String) item.get("type"))));
+        img_left.setImageResource(ToolsFunctionForThisProgect.getFileIconByFileFullName("."
+            + Tools.getTypeByMimeType((String) item.get("type"))));
 
         button.setOnClickListener(new OnClickListener() {
           @Override

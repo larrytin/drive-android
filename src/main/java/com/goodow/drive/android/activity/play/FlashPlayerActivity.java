@@ -22,6 +22,19 @@ import com.goodow.drive.android.toolutils.JSInvokeClass;
 @SuppressLint("SetJavaScriptEnabled")
 public class FlashPlayerActivity extends Activity {
 
+  public class AndroidBridge {
+    public void goMarket() {
+      mHandler.post(new Runnable() {
+        @Override
+        public void run() {
+          Intent installIntent = new Intent("android.intent.action.VIEW");
+          installIntent.setData(Uri.parse("market://details?id=com.adobe.flashplayer"));
+          startActivity(installIntent);
+        }
+      });
+    }
+  };
+
   public static enum IntentExtraTagEnum {
     // flash 资源名称
     FLASH_NAME,
@@ -29,14 +42,26 @@ public class FlashPlayerActivity extends Activity {
     FLASH_PATH_OF_LOCAL_FILE,
     // flash 资源的网络url
     FLASH_PATH_OF_SERVER_URL
-  };
-
+  }
   private String localFlashFilePath;
   private String filePath;
   private WebView flashWebView;
-  private Handler mHandler = new Handler();
 
   // private ProgressDialog mProgressDialog;
+
+  private final Handler mHandler = new Handler();
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    flashWebView.onPause();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    flashWebView.onResume();
+  }
 
   @SuppressLint("JavascriptInterface")
   @Override
@@ -64,7 +89,7 @@ public class FlashPlayerActivity extends Activity {
     if (!TextUtils.isEmpty(flashfileName)) {
       flashFileNameTextView.setText(flashfileName);
     }
-    
+
     flashWebView.setVisibility(View.VISIBLE);
     setTitle("Flash播放器");
 
@@ -110,18 +135,6 @@ public class FlashPlayerActivity extends Activity {
     }
   }
 
-  @Override
-  public void onPause() {
-    super.onPause();
-    flashWebView.onPause();
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    flashWebView.onResume();
-  }
-
   // 退出时关闭flash播放
   @Override
   protected void onDestroy() {
@@ -157,17 +170,5 @@ public class FlashPlayerActivity extends Activity {
   private void installadobeapk() {
     flashWebView.loadUrl("file:///android_asset/go_market.html");
     flashWebView.addJavascriptInterface(new AndroidBridge(), "android");
-  }
-
-  public class AndroidBridge {
-    public void goMarket() {
-      mHandler.post(new Runnable() {
-        public void run() {
-          Intent installIntent = new Intent("android.intent.action.VIEW");
-          installIntent.setData(Uri.parse("market://details?id=com.adobe.flashplayer"));
-          startActivity(installIntent);
-        }
-      });
-    }
   }
 }

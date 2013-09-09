@@ -14,8 +14,7 @@ public final class ToolsFunctionForThisProgect {
   /**
    * 根据文件后缀名获取对应icon
    * 
-   * @param fileFullName
-   *          文件名
+   * @param fileFullName 文件名
    * @return
    */
   public static int getFileIconByFileFullName(final String fileFullName) {

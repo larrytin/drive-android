@@ -31,9 +31,9 @@ public class PicturePlayAcivity extends RoboActivity {
     private ImageView imageView = null;
     private int _displaywidth = 480;
     private int _displayheight = 800;
-    private int _displaypixels = _displaywidth * _displayheight;
+    private final int _displaypixels = _displaywidth * _displayheight;
 
-    private DialogInterface.OnCancelListener progressDialogOnCancelListener = new DialogInterface.OnCancelListener() {
+    private final DialogInterface.OnCancelListener progressDialogOnCancelListener = new DialogInterface.OnCancelListener() {
 
       @Override
       public void onCancel(DialogInterface dialog) {
@@ -108,7 +108,7 @@ public class PicturePlayAcivity extends RoboActivity {
       SimpleProgressDialog.dismiss(PicturePlayAcivity.this);
       if (imageView != null && result != null) {
         imageView.setImageBitmap(result);
-        if (null != result && result.isRecycled() == false) {
+        if (result.isRecycled() == false) {
           System.gc();
         }
       }
@@ -175,7 +175,38 @@ public class PicturePlayAcivity extends RoboActivity {
     }
   }
 
+  private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
+    @Override
+    protected Bitmap doInBackground(String... params) {
+      Bitmap bitmap = null;
+
+      try {
+        int width = PicturePlayAcivity.this.getResources().getDisplayMetrics().widthPixels;
+        int height = PicturePlayAcivity.this.getResources().getDisplayMetrics().heightPixels;
+
+        URLConnection connection = (new URL(params[0] + "=s" + ((width > height ? width : height) * 8) / 10).openConnection());
+        connection.setDoInput(true);
+        connection.connect();
+        InputStream bitmapStream = connection.getInputStream();
+        bitmap = BitmapFactory.decodeStream(bitmapStream);
+        bitmapStream.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      return bitmap;
+    }
+
+    @Override
+    protected void onPostExecute(Bitmap result) {
+      super.onPostExecute(result);
+
+      setImage(result);
+    }
+  }
+
   public static String PICTUREURL = "pictureUrl";
+
   public static String PICTUREPATH = "picturePaht";
 
   @InjectView(R.id.picture)
@@ -213,17 +244,16 @@ public class PicturePlayAcivity extends RoboActivity {
   }
 
   /**
-   * @param bitmap: 本地或者服务器上的图片资源,若为null,则加载load_picture_error图片. 
-   * 1.用Matrix进行处理.
-   * 2.根据宽度的比例来进行缩放处理.
+   * @param bitmap: 本地或者服务器上的图片资源,若为null,则加载load_picture_error图片. 1.用Matrix进行处理. 2.根据宽度的比例来进行缩放处理.
    */
   private void setImage(Bitmap bitmap) {
     if (null == bitmap) {
       bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.load_picture_error);
     }
-    
+
     int bitmapWidth = bitmap.getWidth();
-    int bitmapHeight = bitmap.getHeight();;
+    int bitmapHeight = bitmap.getHeight();
+    ;
 
     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
     int screenWidth = displayMetrics.widthPixels;
@@ -243,35 +273,5 @@ public class PicturePlayAcivity extends RoboActivity {
     ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
     progressBar.setVisibility(View.GONE);
     imageView.setVisibility(View.VISIBLE);
-  }
-
-  private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
-    @Override
-    protected Bitmap doInBackground(String... params) {
-      Bitmap bitmap = null;
-
-      try {
-        int width = PicturePlayAcivity.this.getResources().getDisplayMetrics().widthPixels;
-        int height = PicturePlayAcivity.this.getResources().getDisplayMetrics().heightPixels;
-
-        URLConnection connection = (new URL(params[0] + "=s" + ((width > height ? width : height) * 8) / 10).openConnection());
-        connection.setDoInput(true);
-        connection.connect();
-        InputStream bitmapStream = connection.getInputStream();
-        bitmap = BitmapFactory.decodeStream(bitmapStream);
-        bitmapStream.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
-      return bitmap;
-    }
-
-    @Override
-    protected void onPostExecute(Bitmap result) {
-      super.onPostExecute(result);
-
-      setImage(result);
-    }
   }
 }
