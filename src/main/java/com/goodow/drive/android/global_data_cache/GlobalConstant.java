@@ -24,7 +24,7 @@ public final class GlobalConstant {
     //
     PATHKEY("path"),
     //
-    PLAYFILE("playfile");
+    PLAYFILE("playfile"); 
 
     public static DocumentIdAndDataKey getEnumWithValue(String value) {
       if (null != value) {

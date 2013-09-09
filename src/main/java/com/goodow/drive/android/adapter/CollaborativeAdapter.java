@@ -10,22 +10,19 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.IOnItemClickListener;
 import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
 
 public class CollaborativeAdapter extends BaseAdapter {
-  public static abstract interface OnItemClickListener {
-    public abstract void onItemClick(CollaborativeMap file);
-  }
-
   private CollaborativeList folderList;
   private CollaborativeList fileList;
   private LayoutInflater layoutInflater;
-  private OnItemClickListener onItemClickListener;
+  private IOnItemClickListener onItemClickListener;
 
-  public CollaborativeAdapter(Context context, CollaborativeList folderList, CollaborativeList fileList, OnItemClickListener onItemClickListener) {
+  public CollaborativeAdapter(Context context, CollaborativeList folderList, CollaborativeList fileList, IOnItemClickListener onItemClickListener) {
     this.folderList = folderList;
     this.fileList = fileList;
     this.layoutInflater = LayoutInflater.from(context);

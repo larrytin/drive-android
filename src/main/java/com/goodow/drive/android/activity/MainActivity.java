@@ -46,6 +46,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.Interface.ILocalFragment;
@@ -76,6 +77,7 @@ import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+
 import elemental.json.JsonArray;
 
 @ContentView(R.layout.activity_main)
@@ -103,17 +105,17 @@ public class MainActivity extends RoboActivity {
   private ILocalFragment currentFragment;
   private ILocalFragment lastFragment;
 
-  private LeftMenuFragment leftMenuFragment = new LeftMenuFragment();
-  private DataListFragment dataListFragment = new DataListFragment();
-  private LocalResFragment localResFragment = new LocalResFragment();
-  private OfflineListFragment offlineListFragment = new OfflineListFragment();
-  private DataDetailFragment dataDetailFragment = new DataDetailFragment();
-  private LessonListFragment lessonListFragment = new LessonListFragment();
+  private final LeftMenuFragment leftMenuFragment = new LeftMenuFragment();
+  private final DataListFragment dataListFragment = new DataListFragment();
+  private final LocalResFragment localResFragment = new LocalResFragment();
+  private final OfflineListFragment offlineListFragment = new OfflineListFragment();
+  private final DataDetailFragment dataDetailFragment = new DataDetailFragment();
+  private final LessonListFragment lessonListFragment = new LessonListFragment();
   @InjectView(R.id.pb_indeterminate)
   private ProgressBar pbIndeterminate;
 
   @SuppressLint("HandlerLeak")
-  private Handler handler = new Handler() {
+  private final Handler handler = new Handler() {
     @Override
     public void handleMessage(Message msg) {
       currentFragment.backFragment();

@@ -10,8 +10,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.IOnItemClickListener;
 import com.goodow.drive.android.activity.MainActivity;
-import com.goodow.drive.android.adapter.CollaborativeAdapter.OnItemClickListener;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.Tools;
@@ -24,9 +24,9 @@ import com.goodow.realtime.ValueChangedEvent;
 public class OfflineAdapter extends BaseAdapter {
   private CollaborativeList offlineList;
   private MainActivity activity;
-  private OnItemClickListener onItemClickListener;
+  private IOnItemClickListener onItemClickListener;
 
-  public OfflineAdapter(MainActivity activity, CollaborativeList offlineList, OnItemClickListener onItemClickListener) {
+  public OfflineAdapter(MainActivity activity, CollaborativeList offlineList, IOnItemClickListener onItemClickListener) {
     this.offlineList = offlineList;
     this.activity = activity;
     this.onItemClickListener = onItemClickListener;

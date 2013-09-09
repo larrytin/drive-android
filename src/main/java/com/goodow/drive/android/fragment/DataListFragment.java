@@ -1,25 +1,5 @@
 package com.goodow.drive.android.fragment;
 
-import com.goodow.android.drive.R;
-import com.goodow.drive.android.Interface.ILocalFragment;
-import com.goodow.drive.android.Interface.INotifyData;
-import com.goodow.drive.android.Interface.IRemoteControl;
-import com.goodow.drive.android.activity.MainActivity;
-import com.goodow.drive.android.adapter.CollaborativeAdapter;
-import com.goodow.drive.android.adapter.CollaborativeAdapter.OnItemClickListener;
-import com.goodow.drive.android.global_data_cache.GlobalConstant;
-import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
-import com.goodow.realtime.BaseModelEvent;
-import com.goodow.realtime.CollaborativeList;
-import com.goodow.realtime.CollaborativeMap;
-import com.goodow.realtime.Document;
-import com.goodow.realtime.DocumentLoadedHandler;
-import com.goodow.realtime.EventHandler;
-import com.goodow.realtime.Model;
-import com.goodow.realtime.ModelInitializerHandler;
-import com.goodow.realtime.ObjectChangedEvent;
-import com.goodow.realtime.Realtime;
-
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +12,25 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.ILocalFragment;
+import com.goodow.drive.android.Interface.INotifyData;
+import com.goodow.drive.android.Interface.IOnItemClickListener;
+import com.goodow.drive.android.Interface.IRemoteControl;
+import com.goodow.drive.android.activity.MainActivity;
+import com.goodow.drive.android.adapter.CollaborativeAdapter;
+import com.goodow.drive.android.global_data_cache.GlobalConstant;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+import com.goodow.realtime.BaseModelEvent;
+import com.goodow.realtime.CollaborativeList;
+import com.goodow.realtime.CollaborativeMap;
+import com.goodow.realtime.Document;
+import com.goodow.realtime.DocumentLoadedHandler;
+import com.goodow.realtime.EventHandler;
+import com.goodow.realtime.Model;
+import com.goodow.realtime.ModelInitializerHandler;
+import com.goodow.realtime.ObjectChangedEvent;
+import com.goodow.realtime.Realtime;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 
@@ -186,7 +185,7 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     // getActivity().findViewById(R.id.mainConnect);
     // relativeLayout.setVisibility(View.VISIBLE);
 
-    adapter = new CollaborativeAdapter(this.getActivity(), null, null, new OnItemClickListener() {
+    adapter = new CollaborativeAdapter(this.getActivity(), null, null, new IOnItemClickListener() {
       @Override
       public void onItemClick(CollaborativeMap file) {
         MainActivity activity = (MainActivity) DataListFragment.this.getActivity();
@@ -198,6 +197,7 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
         activity.setDataDetailLayoutState(View.VISIBLE);
         activity.setLocalFragmentForDetail(dataDetailFragment);
       }
+
     });
     setListAdapter(adapter);
 
