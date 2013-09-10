@@ -33,6 +33,8 @@ public class AudioPlayActivity extends Activity {
       try {
         switch (v.getId()) {// 通过传过来的Buttonid可以判断Button的类型
         case R.id.play_Button:// 播放
+          isVisible = true;
+
           mediaPlayer.seekTo(0);
           mediaPlayer.start();
 
@@ -40,6 +42,7 @@ public class AudioPlayActivity extends Activity {
           pauseButton.setEnabled(true);
           stopButton.setEnabled(true);
 
+          handler.post(start);
           break;
         case R.id.pause_Button:// 暂停&继续
           if (mediaPlayer.isPlaying()) {
@@ -116,7 +119,7 @@ public class AudioPlayActivity extends Activity {
       int mMax = mediaPlayer.getDuration();
       int sMax = progressSeekBar.getMax();
       int progress = progressSeekBar.getProgress();
-      if (mMax != 0 && 100 != progress) {
+      if (100 != progress) {
         progressSeekBar.setProgress(position * sMax / mMax);
         curtimeAndTotalTime.setText("时间：" + position / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
       } else if (100 == progress) {
@@ -159,8 +162,7 @@ public class AudioPlayActivity extends Activity {
     progressSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        /* 如果拖动进度发生改变，则显示当前进度值 */
-        // curProgressText.setText("当前进度: " + progress + "%");
+        isVisible = true;
       }
 
       @Override
@@ -190,6 +192,9 @@ public class AudioPlayActivity extends Activity {
         mediaPlayer.seekTo(0);
 
         pauseButton.setText("暂停");
+        progressSeekBar.setProgress(0);
+        curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration() / 1000 + " 秒");
+
         pauseButton.setEnabled(false);
         stopButton.setEnabled(false);
       }
