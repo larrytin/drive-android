@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.Interface.INotifyData;
@@ -21,6 +22,7 @@ import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.adapter.CollaborativeAdapter;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.realtime.BaseModelEvent;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
@@ -31,6 +33,7 @@ import com.goodow.realtime.Model;
 import com.goodow.realtime.ModelInitializerHandler;
 import com.goodow.realtime.ObjectChangedEvent;
 import com.goodow.realtime.Realtime;
+
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 
@@ -216,10 +219,11 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   public void onListItemClick(ListView l, View v, int position, long id) {
     CollaborativeMap clickItem = (CollaborativeMap) v.getTag();
 
-    if (null == clickItem.get("blobKey")) {
-      path.changePath(clickItem.getId(), DOCID);
-    } else {
+    String type = clickItem.get("type");
+    if (null != type && !type.equals(Tools.MIME_TYPE_Table.RES_PRINT.getMimeType())) {
       path.playFile(clickItem);
+    } else {
+      path.changePath(clickItem.getId(), DOCID);
     }
   }
 

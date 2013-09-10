@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.Interface.INotifyData;
@@ -21,6 +22,7 @@ import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.adapter.CollaborativeAdapter;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.realtime.BaseModelEvent;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
@@ -213,17 +215,19 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     return inflater.inflate(R.layout.fragment_folderlist, container, false);
   }
 
+
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
     CollaborativeMap clickItem = (CollaborativeMap) v.getTag();
 
-    if (null == clickItem.get("blobKey")) {
-      path.changePath(clickItem.getId(), DOCID);
-    } else {
-      path.playFile(clickItem);
+    if (!clickItem.get("type").equals(Tools.MIME_TYPE_Table.RES_PRINT.getMimeType())) {
+      if (null == clickItem.get("blobKey")) {
+        path.changePath(clickItem.getId(), DOCID);
+      } else {
+        path.playFile(clickItem);
+      }
     }
   }
-
   @Override
   public void onPause() {
     super.onPause();
@@ -280,7 +284,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
         @Override
         public void handleEvent(BaseModelEvent event) {
           adapter.notifyDataSetChanged();
-
           openState();
         }
       };
