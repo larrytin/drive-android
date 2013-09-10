@@ -35,8 +35,8 @@ public class AudioPlayActivity extends Activity {
           mediaPlayer.start();
 
           pauseButton.setText("暂停");
-          pauseButton.setOnClickListener(listener);
-          stopButton.setOnClickListener(listener);
+          pauseButton.setEnabled(true);
+          stopButton.setEnabled(true);
           break;
 
         case R.id.pause_Button:
@@ -66,8 +66,8 @@ public class AudioPlayActivity extends Activity {
           mediaPlayer.pause();
 
           pauseButton.setText("暂停");
-          pauseButton.setOnClickListener(null);
-          stopButton.setOnClickListener(null);
+          pauseButton.setEnabled(false);
+          stopButton.setEnabled(false);
           break;
         }
       } catch (Exception e) {// 抛出异常
@@ -114,10 +114,11 @@ public class AudioPlayActivity extends Activity {
       int position = mediaPlayer.getCurrentPosition();
       int mMax = mediaPlayer.getDuration();
       int sMax = progressSeekBar.getMax();
-      if (mMax != 0 && 100 != sMax) {
+      int progress = progressSeekBar.getProgress();
+      if (mMax != 0 && 100 != progress) {
         progressSeekBar.setProgress(position * sMax / mMax);
         curtimeAndTotalTime.setText("时间：" + position / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
-      } else if (100 == sMax) {
+      } else if (100 == progress) {
         curtimeAndTotalTime.setText("时间：" + mMax / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
       }
 
@@ -146,6 +147,8 @@ public class AudioPlayActivity extends Activity {
     // final Button resetButton = (Button) this.findViewById(R.id.reset_Button);
     stopButton = (Button) this.findViewById(R.id.stop_Button);
     playButton.setOnClickListener(listener);
+    pauseButton.setOnClickListener(listener);
+    stopButton.setOnClickListener(listener);
     // resetButton.setOnClickListener(listener);
 
     progressSeekBar = (SeekBar) findViewById(R.id.progress_rate_SeekBar);
@@ -185,6 +188,8 @@ public class AudioPlayActivity extends Activity {
       }
     });
 
+    pauseButton.setEnabled(false);
+    stopButton.setEnabled(false);
     try {
       play();
     } catch (IOException e) {
