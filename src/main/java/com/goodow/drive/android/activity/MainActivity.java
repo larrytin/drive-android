@@ -420,6 +420,7 @@ public class MainActivity extends RoboActivity {
 
       @Override
       public void onClick(View v) {
+        // 点击取消按钮对话框消失
         dialog.dismiss();
       }
     });
