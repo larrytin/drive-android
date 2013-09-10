@@ -91,8 +91,7 @@ public final class GlobalConstant {
    * @author Administrator 对应支持的文件格式;PRINT("print")是手偶格式
    */
   public static enum SupportResTypeEnum {
-    DOC("doc"), PDF("pdf"), MP3("mp3"), MP4("mp4"), FLASH("swf"), TEXT("txt"), PNG(
-        "png"), JPEG("jpg"), EXCEL("xls"), PRINT("print");
+    DOC("doc"), PDF("pdf"), MP3("mp3"), MP4("mp4"), FLASH("swf"), TEXT("txt"), PNG("png"), JPEG("jpg"), EXCEL("xls"), PRINT("print");
     private final String typeName;
 
     private SupportResTypeEnum(String typeName) {
@@ -105,16 +104,17 @@ public final class GlobalConstant {
   }
 
   // 外网
-  public static String REALTIME_SERVER = "http://realtime.goodow.com";
+  // public static String REALTIME_SERVER = "http://realtime.goodow.com";
   // 北京内网
   // public static String REALTIME_SERVER = "http://192.168.11.39:8080";
   // 无锡内网
-  // public static String REALTIME_SERVER = "http://drive.retechcorp.com:8080";
+  public static String REALTIME_SERVER = "http://drive.retechcorp.com:8080";
+
   // 北京+外网
-  private static String docId = "21";
+  // private static String docId = "21";
 
   // 无锡
-  // private static String docId = "07";
+  private static String docId = "07";
 
   private GlobalConstant() {
 

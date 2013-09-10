@@ -1,8 +1,12 @@
 package com.goodow.drive.android.activity.play;
 
+import com.goodow.android.drive.R;
+
 import java.io.IOException;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -13,8 +17,6 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-
-import com.goodow.android.drive.R;
 
 @SuppressLint("SdCardPath")
 public class AudioPlayActivity extends Activity {
@@ -37,18 +39,18 @@ public class AudioPlayActivity extends Activity {
           pauseButton.setText("暂停");
           pauseButton.setEnabled(true);
           stopButton.setEnabled(true);
-          break;
 
-        case R.id.pause_Button:
+          break;
+        case R.id.pause_Button:// 暂停&继续
           if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
             pauseButton.setText("继续");
           } else {
-            mediaPlayer.start();// 继续播放
+            mediaPlayer.start();
             pauseButton.setText("暂停");
           }
-          break;
 
+          break;
         // case R.id.reset_Button:
         // if (mediaPlayer.isPlaying()) {
         // mediaPlayer.seekTo(0);// 让它从0开始播放
@@ -56,18 +58,17 @@ public class AudioPlayActivity extends Activity {
         // play();// 如果它没有播放，就让它开始播放
         // }
         // break;
-
-        case R.id.stop_Button:
-          if (!mediaPlayer.isPlaying()) {
-            mediaPlayer.start();
-          }
-
+        case R.id.stop_Button:// 停止
           mediaPlayer.seekTo(0);
           mediaPlayer.pause();
 
           pauseButton.setText("暂停");
+          progressSeekBar.setProgress(0);
+          curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration() / 1000 + " 秒");
+
           pauseButton.setEnabled(false);
           stopButton.setEnabled(false);
+
           break;
         }
       } catch (Exception e) {// 抛出异常
@@ -171,20 +172,26 @@ public class AudioPlayActivity extends Activity {
 
       @Override
       public void onStopTrackingTouch(SeekBar seekBar) {
-        int dest = seekBar.getProgress();
         int mMax = mediaPlayer.getDuration();
+        int dest = seekBar.getProgress();
         int sMax = progressSeekBar.getMax();
         mediaPlayer.seekTo(mMax * dest / sMax);
-        if (!mediaPlayer.isPlaying()) {
-          mediaPlayer.start();
-        }
+        mediaPlayer.start();
+
+        pauseButton.setText("暂停");
+        pauseButton.setEnabled(true);
+        stopButton.setEnabled(true);
       }
     });
 
     mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
       @Override
       public void onCompletion(MediaPlayer arg0) {
-        progressSeekBar.setProgress(100);
+        mediaPlayer.seekTo(0);
+
+        pauseButton.setText("暂停");
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
       }
     });
 
@@ -220,8 +227,10 @@ public class AudioPlayActivity extends Activity {
   }
 
   private void play() throws IOException {
+    progressSeekBar.setProgress(0);
+
     mediaPlayer.setVolume(100, 100);
-    mediaPlayer.reset();
+    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     mediaPlayer.setDataSource(audioFilePath);
     mediaPlayer.prepare();
 
