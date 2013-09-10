@@ -215,19 +215,18 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     return inflater.inflate(R.layout.fragment_folderlist, container, false);
   }
 
-
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
     CollaborativeMap clickItem = (CollaborativeMap) v.getTag();
 
-    if (!clickItem.get("type").equals(Tools.MIME_TYPE_Table.RES_PRINT.getMimeType())) {
-      if (null == clickItem.get("blobKey")) {
-        path.changePath(clickItem.getId(), DOCID);
-      } else {
-        path.playFile(clickItem);
-      }
+    String type = clickItem.get("type");
+    if (null != type && !type.equals(Tools.MIME_TYPE_Table.RES_PRINT.getMimeType())) {
+      path.playFile(clickItem);
+    } else {
+      path.changePath(clickItem.getId(), DOCID);
     }
   }
+
   @Override
   public void onPause() {
     super.onPause();
