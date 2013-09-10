@@ -223,7 +223,10 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     if (null != type && !type.equals(Tools.MIME_TYPE_Table.RES_PRINT.getMimeType())) {
       path.playFile(clickItem);
     } else {
-      path.changePath(clickItem.getId(), DOCID);
+      String blobKey = clickItem.get("blobKey");
+      if (blobKey == null) {
+        path.changePath(clickItem.getId(), DOCID);
+      }
     }
   }
 
