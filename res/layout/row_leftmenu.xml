@@ -10,8 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:contentDescription="icon"
-        android:src="@drawable/folder" />
+        android:contentDescription="icon" />
 
     <TextView
         android:id="@+id/listItem_leftMenu"
