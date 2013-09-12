@@ -46,13 +46,13 @@ public final class ToolsFunctionForThisProgect {
         } else if (suffixOfFile.equals(GlobalConstant.SupportResTypeEnum.TEXT.getTypeName())) {
           resId = R.drawable.ic_type_doc;
         } else if (suffixOfFile.equals(GlobalConstant.SupportResTypeEnum.PNG.getTypeName())) {
-          resId = R.drawable.ic_type_drawing;
+          resId = R.drawable.ic_type_image;
         } else if (suffixOfFile.equals(GlobalConstant.SupportResTypeEnum.JPEG.getTypeName())) {
           resId = R.drawable.ic_type_image;
         } else if (suffixOfFile.equals(GlobalConstant.SupportResTypeEnum.EXCEL.getTypeName())) {
           resId = R.drawable.ic_type_excel;
         } else if (suffixOfFile.equals(GlobalConstant.SupportResTypeEnum.PRINT.getTypeName())) {
-          resId = R.drawable.ic_type_folder;
+          resId = R.drawable.ic_type_drawing;
         }
       }
 

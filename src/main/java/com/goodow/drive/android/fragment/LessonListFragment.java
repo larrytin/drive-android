@@ -177,7 +177,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
     MainActivity activity = (MainActivity) getActivity();
 
-    activity.setActionBarTitle("我的课程/");
+    activity.setActionBarTitle("我的课程");
     TextView textView = (TextView) activity.findViewById(R.id.openfailure_text);
     ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
     activity.setOpenStateView(textView, imageView);
