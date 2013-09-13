@@ -19,13 +19,14 @@
     <string name="lesson_class">我的课程</string>
     <string name="pin_checkbox_label">操作：</string>
     <string name="remoteControlError">远程同步操作异常,请尝试切换菜单。</string>
-
+    <string name="downloaded">已下载</string>
     <!-- 北京内网 -->
     <!-- <string name="com.goodow.realtime.serverAddress">http://192.168.11.39:8080</string> -->
-   
+
+
     <!-- 无锡内网 -->
     <string name="com.goodow.realtime.serverAddress">http://drive.retechcorp.com:8080</string>
-    
-   <!--不配置,是外部网络-->
+
+    <!-- 不配置,是外部网络 -->
 
 </resources>
