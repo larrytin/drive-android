@@ -42,7 +42,7 @@
         android:singleLine="true"
         android:text="@string/downloaded"
         android:textColor="@color/blue"
-        android:textSize="@dimen/progressTextSize"
+        android:textSize="@dimen/progressTextSize_large"
         android:visibility="gone" />
 
 </RelativeLayout>
