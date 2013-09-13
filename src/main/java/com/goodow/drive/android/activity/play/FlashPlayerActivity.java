@@ -1,6 +1,11 @@
 package com.goodow.drive.android.activity.play;
 
+import com.goodow.android.drive.R;
+import com.goodow.drive.android.toolutils.JSInvokeClass;
 import java.util.List;
+
+import android.util.DisplayMetrics;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -16,8 +21,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.widget.TextView;
-import com.goodow.android.drive.R;
-import com.goodow.drive.android.toolutils.JSInvokeClass;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class FlashPlayerActivity extends Activity {
@@ -43,6 +46,7 @@ public class FlashPlayerActivity extends Activity {
     // flash 资源的网络url
     FLASH_PATH_OF_SERVER_URL
   }
+
   private String localFlashFilePath;
   private String filePath;
   private WebView flashWebView;
@@ -60,7 +64,9 @@ public class FlashPlayerActivity extends Activity {
   @Override
   public void onResume() {
     super.onResume();
-    flashWebView.onResume();
+    if (null != flashWebView) {
+      flashWebView.onResume();
+    }
   }
 
   @SuppressLint("JavascriptInterface")
@@ -100,8 +106,12 @@ public class FlashPlayerActivity extends Activity {
     webSettings.setJavaScriptEnabled(true);
     webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 
-    JSInvokeClass jsInvokeClass = new JSInvokeClass();
-    jsInvokeClass.setFlashFilePath(localFlashFilePath);
+    DisplayMetrics dMetrics = new DisplayMetrics();
+    getWindowManager().getDefaultDisplay().getMetrics(dMetrics);
+    int width = dMetrics.widthPixels;
+    int height = dMetrics.heightPixels;
+    JSInvokeClass jsInvokeClass = new JSInvokeClass(width, height, localFlashFilePath);
+
     flashWebView.addJavascriptInterface(jsInvokeClass, "CallJava");
 
     try {

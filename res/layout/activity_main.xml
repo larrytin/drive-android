@@ -20,7 +20,7 @@
             android:id="@+id/mainConnect"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:visibility="gone" >
+            android:visibility="visible" >
 
             <ProgressBar
                 android:id="@+id/mainProgressBar"

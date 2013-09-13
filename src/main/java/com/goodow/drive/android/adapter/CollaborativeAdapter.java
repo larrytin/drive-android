@@ -11,10 +11,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.IOnItemClickListener;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.drive.android.toolutils.ToolsFunctionForThisProgect;
 import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
+
+import java.io.File;
 
 public class CollaborativeAdapter extends BaseAdapter {
   private CollaborativeList folderList;
@@ -117,6 +120,12 @@ public class CollaborativeAdapter extends BaseAdapter {
       row = layoutInflater.inflate(R.layout.row_folderlist, parent, false);
 
       row.setTag(item);
+
+      String blobKey = (String) item.get("blobKey");
+      File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+      if (file.exists()) {
+        row.findViewById(R.id.downloaded).setVisibility(View.VISIBLE);
+      }
 
       ImageView img_left = (ImageView) row.findViewById(R.id.leftImage);
       ImageButton button = (ImageButton) row.findViewById(R.id.delButton);

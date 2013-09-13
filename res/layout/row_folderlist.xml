@@ -20,9 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/listItemHeigh"
         android:layout_toRightOf="@id/leftImage"
+        android:ellipsize="marquee"
+        android:focusable="true"
         android:gravity="center_vertical"
-        android:ellipsize="marquee" 
-        android:focusable="true" 
         android:paddingLeft="5dip"
         android:paddingRight="15dip"
         android:textSize="@dimen/listItemTextSize" />
@@ -36,5 +36,16 @@
         android:background="@drawable/selector_delbutton_bg"
         android:contentDescription="@string/contentDescription"
         android:src="@drawable/action_discussion_edit" />
+
+    <TextView
+        android:id="@+id/downloaded"
+        android:layout_width="@dimen/listItemHeigh"
+        android:layout_height="@dimen/listItemHeigh"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@id/delButton"
+        android:gravity="center_vertical"
+        android:text="@string/downloaded"
+        android:textSize="@dimen/progressTextSize"
+        android:visibility="gone" />
 
 </RelativeLayout>

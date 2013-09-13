@@ -186,9 +186,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.i(TAG, "onCreate()");
-    // RelativeLayout relativeLayout = (RelativeLayout)
-    // getActivity().findViewById(R.id.mainConnect);
-    // relativeLayout.setVisibility(View.VISIBLE);
+    RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.mainConnect);
+    relativeLayout.setVisibility(View.VISIBLE);
 
     adapter = new CollaborativeAdapter(this.getActivity(), null, null, new IOnItemClickListener() {
       @Override
