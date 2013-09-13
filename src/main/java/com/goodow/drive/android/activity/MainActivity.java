@@ -228,13 +228,14 @@ public class MainActivity extends RoboActivity {
         middleLayout.setVisibility(LinearLayout.VISIBLE);
       }
     } else if (item.getItemId() == 0) {
-      // 退出程序
+      // 退出程序 取消
       new AlertDialog.Builder(this).setPositiveButton(R.string.unsaved_dialog_cancel, new DialogInterface.OnClickListener() {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
 
         }
+        // 确定
       }).setNegativeButton(R.string.trix_sheets_tab_menu_ok, new DialogInterface.OnClickListener() {
 
         @Override
