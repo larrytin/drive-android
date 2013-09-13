@@ -6,7 +6,6 @@ import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DownloadStatusEnum;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.OfflineFileObserver;
-import com.goodow.realtime.CollaborativeList;
 import com.goodow.realtime.CollaborativeMap;
 
 import java.io.File;
@@ -96,16 +95,22 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
 
       String blobKey = file.get("blobKey");
       boolean isOffline = false;
-      CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
-      for (int i = 0; i < list.length(); i++) {
-        CollaborativeMap map = list.get(i);
-
-        if (null != blobKey && blobKey.equals(map.get("blobKey"))) {
-          File localFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
-          if (localFile.exists()) {
-            isOffline = true;
-          }
-        }
+      // CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
+      // for (int i = 0; i < list.length(); i++) {
+      // CollaborativeMap map = list.get(i);
+      //
+      // if (null != blobKey && blobKey.equals(map.get("blobKey"))) {
+      // File localFile = new
+      // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+      // if (localFile.exists()) {
+      // isOffline = true;
+      // }
+      // }
+      // }
+      //本地文件
+      File files = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+      if (files.exists()) {
+        isOffline = true;
       }
       downloadSwitch.setOnCheckedChangeListener(null);
       downloadSwitch.setChecked(isOffline);
