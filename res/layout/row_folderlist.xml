@@ -39,12 +39,14 @@
 
     <TextView
         android:id="@+id/downloaded"
-        android:layout_width="@dimen/listItemHeigh"
+        android:textColor="@color/blue"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/listItemHeigh"
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@id/delButton"
         android:gravity="center_vertical"
         android:text="@string/downloaded"
+        android:singleLine="true"
         android:textSize="@dimen/progressTextSize"
         android:visibility="gone" />
 
