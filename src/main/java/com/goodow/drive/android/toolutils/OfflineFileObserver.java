@@ -245,6 +245,10 @@ public enum OfflineFileObserver {
       File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
       if (file.exists()) {
         file.delete();
+
+        Intent intent = new Intent();
+        intent.setAction("DELETE_DATA");
+        MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
       }
     }
   }

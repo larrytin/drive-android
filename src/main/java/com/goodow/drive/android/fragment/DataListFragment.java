@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Interface.ILocalFragment;
 import com.goodow.drive.android.Interface.INotifyData;
@@ -33,7 +32,10 @@ import com.goodow.realtime.Model;
 import com.goodow.realtime.ModelInitializerHandler;
 import com.goodow.realtime.ObjectChangedEvent;
 import com.goodow.realtime.Realtime;
-
+import android.content.IntentFilter;
+import android.content.Context;
+import android.content.Intent;
+import android.content.BroadcastReceiver;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 
@@ -43,6 +45,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   private IRemoteControl path;
   private JsonArray currentPathList;
   private CollaborativeMap currentFolder;
+
+  private BroadcastReceiver broadcastReceiver;
 
   private CollaborativeAdapter adapter;
 
@@ -186,14 +190,14 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.i(TAG, "onCreate()");
+    final MainActivity activity = (MainActivity) DataListFragment.this.getActivity();
+
     RelativeLayout relativeLayout = (RelativeLayout) getActivity().findViewById(R.id.mainConnect);
     relativeLayout.setVisibility(View.VISIBLE);
 
     adapter = new CollaborativeAdapter(this.getActivity(), null, null, new IOnItemClickListener() {
       @Override
       public void onItemClick(CollaborativeMap file) {
-        MainActivity activity = (MainActivity) DataListFragment.this.getActivity();
-
         DataDetailFragment dataDetailFragment = activity.getDataDetailFragment();
         dataDetailFragment.setFile(file);
         dataDetailFragment.initView();
@@ -204,6 +208,17 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
     });
     setListAdapter(adapter);
+
+    // 监听当有文件被删除时,刷新适配器
+    broadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        adapter.notifyDataSetInvalidated();
+      }
+    };
+    IntentFilter intentFilter = new IntentFilter();
+    intentFilter.addAction("DELETE_DATA");
+    activity.registerReceiver(broadcastReceiver, intentFilter);
 
     initEventHandler();
   }
@@ -233,7 +248,12 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   public void onPause() {
     super.onPause();
 
-    ((MainActivity) getActivity()).restActionBarTitle();
+    MainActivity activity = (MainActivity) getActivity();
+    activity.restActionBarTitle();
+
+    if (null != broadcastReceiver) {
+      activity.unregisterReceiver(broadcastReceiver);
+    }
   }
 
   @Override
