@@ -36,12 +36,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textSize="10sp"
             android:background="@drawable/edittext_bg"
             android:hint="请输入您在教师管理平台上注册的用户名"
             android:inputType="textPersonName"
             android:maxLength="10"
             android:singleLine="true"
-            android:text="admin" >
+            >
 
             <requestFocus />
         </EditText>
@@ -63,11 +64,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:textSize="10sp"
             android:background="@drawable/edittext_bg"
+            android:hint="请输入您在教师管理平台上注册的密码"
             android:inputType="textPassword"
             android:maxLength="10"
             android:singleLine="true"
-            android:text="admin" />
+            />
 
         <!-- 登录按钮 -->
 
