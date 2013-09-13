@@ -6,31 +6,21 @@ import java.lang.Thread.State;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-
 import android.content.IntentFilter;
-
-import android.widget.Toast;
-
 import android.util.Log;
-
 import android.content.Context;
-
 import android.content.BroadcastReceiver;
-
 import android.net.NetworkInfo;
-
 import android.net.ConnectivityManager;
-
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DownloadStatusEnum;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.module.DriveModule;
+import com.goodow.drive.android.toolutils.MyApplication;
 import com.goodow.realtime.CollaborativeMap;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.media.MediaHttpDownloader;
@@ -77,6 +67,10 @@ public class MediaDownloadService extends Service {
       case MEDIA_COMPLETE:
         downloadRes.set("progress", "100");
         downloadRes.set("status", DownloadStatusEnum.COMPLETE.getStatus());
+
+        Intent intent = new Intent();
+        intent.setAction("DATA_CONTROL");
+        MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
 
         break;
       default:
