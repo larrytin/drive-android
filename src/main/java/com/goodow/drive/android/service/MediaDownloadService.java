@@ -6,6 +6,22 @@ import java.lang.Thread.State;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+
+import android.content.IntentFilter;
+
+import android.widget.Toast;
+
+import android.util.Log;
+
+import android.content.Context;
+
+import android.content.BroadcastReceiver;
+
+import android.net.NetworkInfo;
+
+import android.net.ConnectivityManager;
+
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -69,6 +85,7 @@ public class MediaDownloadService extends Service {
       }
     }
   }
+
   private class ResDownloadThread extends Thread {
     @Override
     public void run() {
@@ -90,6 +107,7 @@ public class MediaDownloadService extends Service {
       }
     }
   }
+
   private final IBinder myBinder = new MyBinder();
   private final BlockingQueue<CollaborativeMap> downloadUrlQueue = new LinkedBlockingDeque<CollaborativeMap>();
   private ResDownloadThread resDownloadThread = new ResDownloadThread();
@@ -100,9 +118,57 @@ public class MediaDownloadService extends Service {
 
   private CollaborativeMap downloadRes;
 
+  private ConnectivityManager connectivityManager;
+
+  private NetworkInfo info;
+
+  // 用来接收网络状态改变的广播
+  private final BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
+    // 标记
+    private boolean receiver = false;
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+      String action = intent.getAction();
+      if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+        // Log.d("mark", "网络状态已经改变");
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        info = connectivityManager.getActiveNetworkInfo();
+        if (info != null && info.isAvailable()) {
+          if (receiver) {
+            // String name = info.getTypeName();
+            // Log.d("mark", "当前网络名称：" + name);
+            receiver = false;
+            getDownloadThreadState();
+          }
+        } else {
+          // Log.d("mark", "没有可用网络");
+          receiver = true;
+        }
+      }
+    }
+  };
+
   @Override
   public IBinder onBind(Intent intent) {
     return myBinder;
+  }
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    // 注册广播
+    IntentFilter mFilter = new IntentFilter();
+    mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+    registerReceiver(mConnectivityReceiver, mFilter);
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    // 注销广播
+    unregisterReceiver(mConnectivityReceiver);
   }
 
   private void doDownLoad(String... params) {
@@ -132,21 +198,11 @@ public class MediaDownloadService extends Service {
     }
   }
 
-  private void startResDownloadTread(final CollaborativeMap res) {
-    // 遍历队列,若有相同的URL则不添加
-    Iterator<CollaborativeMap> iterator = downloadUrlQueue.iterator();
-    add: do {
-      while (iterator.hasNext()) {
-        CollaborativeMap item = iterator.next();
-        if (item.get("url").equals(res.get("url"))) {
-
-          break add;
-        }
-      }
-
-      downloadUrlQueue.add(res);
-    } while (false);
-
+  /**
+   * 获取当前线程的状态,并处理下载任务
+   */
+  private void getDownloadThreadState() {
+    Log.i("mark", "进入下载");
     State state = resDownloadThread.getState();
     switch (state) {
     // 线程被阻塞，在等待一个锁。
@@ -177,6 +233,24 @@ public class MediaDownloadService extends Service {
 
       break;
     }
+  }
+
+  private void startResDownloadTread(final CollaborativeMap res) {
+    // 遍历队列,若有相同的URL则不添加
+    Iterator<CollaborativeMap> iterator = downloadUrlQueue.iterator();
+    add: do {
+      while (iterator.hasNext()) {
+        CollaborativeMap item = iterator.next();
+        if (item.get("url").equals(res.get("url"))) {
+
+          break add;
+        }
+      }
+
+      downloadUrlQueue.add(res);
+    } while (false);
+
+    getDownloadThreadState();
   }
 
 }
