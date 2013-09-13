@@ -17,7 +17,7 @@
     <string name="create_new_favorites">我的收藏夹</string>
     <string name="prefs_offline_category">离线文件</string>
     <string name="lesson_class">我的课程</string>
-    <string name="pin_checkbox_label">可离线查看</string>
+    <string name="pin_checkbox_label">操作：</string>
     <string name="remoteControlError">远程同步操作异常,请尝试切换菜单。</string>
 
     <!-- 北京内网 -->

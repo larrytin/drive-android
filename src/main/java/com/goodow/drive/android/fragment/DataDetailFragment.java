@@ -1,10 +1,20 @@
 package com.goodow.drive.android.fragment;
 
+import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.ILocalFragment;
+import com.goodow.drive.android.activity.MainActivity;
+import com.goodow.drive.android.global_data_cache.GlobalConstant.DownloadStatusEnum;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+import com.goodow.drive.android.toolutils.OfflineFileObserver;
+import com.goodow.realtime.CollaborativeList;
+import com.goodow.realtime.CollaborativeMap;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,14 +29,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import com.goodow.android.drive.R;
-import com.goodow.drive.android.Interface.ILocalFragment;
-import com.goodow.drive.android.activity.MainActivity;
-import com.goodow.drive.android.global_data_cache.GlobalConstant.DownloadStatusEnum;
-import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
-import com.goodow.drive.android.toolutils.OfflineFileObserver;
-import com.goodow.realtime.CollaborativeList;
-import com.goodow.realtime.CollaborativeMap;
 
 public class DataDetailFragment extends Fragment implements ILocalFragment {
 
@@ -84,8 +86,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
     if (null != file) {
       fileName.setText((String) file.get("label"));
 
-      progressBar.setVisibility(View.VISIBLE);
-      imageView.setVisibility(View.GONE);
+      imageView.setVisibility(View.VISIBLE);
       String thumbnail = file.get("thumbnail");
       if (null != thumbnail) {
         InitImageBitmapTask ibt = new InitImageBitmapTask();
@@ -179,7 +180,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       activity.setLocalFragmentForDetail(this);
 
       fileName = (TextView) activity.findViewById(R.id.fileName);
-      progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
+      // progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
       imageView = (ImageView) activity.findViewById(R.id.thumbnail);
       downloadSwitch = (Switch) activity.findViewById(R.id.downloadButton);
     }

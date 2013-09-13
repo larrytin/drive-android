@@ -19,16 +19,17 @@
         android:layout_marginBottom="30dp"
         android:orientation="vertical" >
 
-        <ProgressBar
+        <!-- <ProgressBar
             android:id="@+id/thumbnailProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
-
+      -->
         <ImageView
             android:id="@+id/thumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:src="@drawable/load"
             android:contentDescription="@string/contentDescription" />
     </RelativeLayout>
 
@@ -39,6 +40,8 @@
         android:layout_gravity="center"
         android:layout_marginBottom="32dip"
         android:text="@string/pin_checkbox_label"
+        android:textOn="删除"
+        android:textOff="下载"
         android:textSize="@dimen/listItemTextSize" />
 
 </LinearLayout>
