@@ -49,7 +49,14 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
   private JsonArray currentPathList;
   private CollaborativeMap currentFolder;
 
-  private BroadcastReceiver broadcastReceiver;
+  private final IntentFilter intentFilter = new IntentFilter("DATA_CONTROL");
+  // 监听当有文件被删除时,刷新适配器
+  private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      adapter.notifyDataSetInvalidated();
+    }
+  };
 
   private CollaborativeAdapter adapter;
 
@@ -212,17 +219,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     });
     setListAdapter(adapter);
 
-    // 监听当有文件被删除时,刷新适配器
-    broadcastReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        adapter.notifyDataSetInvalidated();
-      }
-    };
-    IntentFilter intentFilter = new IntentFilter();
-    intentFilter.addAction("DELETE_DATA");
-    activity.registerReceiver(broadcastReceiver, intentFilter);
-
     initEventHandler();
   }
 
@@ -266,6 +262,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
     activity.setLocalFragment(this);
     activity.setLastiRemoteDataFragment(this);
+    activity.registerReceiver(broadcastReceiver, intentFilter);
 
     loadDocument();
   }

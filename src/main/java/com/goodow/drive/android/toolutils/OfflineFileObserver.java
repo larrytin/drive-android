@@ -247,7 +247,7 @@ public enum OfflineFileObserver {
         file.delete();
 
         Intent intent = new Intent();
-        intent.setAction("DELETE_DATA");
+        intent.setAction("DATA_CONTROL");
         MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
       }
     }
