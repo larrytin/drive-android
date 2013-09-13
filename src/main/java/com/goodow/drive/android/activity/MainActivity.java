@@ -245,7 +245,7 @@ public class MainActivity extends RoboActivity {
 
           ToolsFunctionForThisProgect.quitApp(MainActivity.this);
         }
-      }).setMessage(R.string.back_dailogMessage).create().show();
+      }).setTitle("温馨提示").setMessage(R.string.back_dailogMessage).create().show();
     }
 
     return true;
