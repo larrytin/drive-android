@@ -116,7 +116,7 @@ public class OfflineAdapter extends BaseAdapter {
 
       progressBar.setProgress(0);
       downloadText.setText(0 + " %");
-      downloadStatus.setText(GlobalConstant.DownloadStatusEnum.UNDOWNLOADING.getStatus());
+      downloadStatus.setText(GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
     }
 
     row.setTag(item);

@@ -266,18 +266,19 @@ public enum OfflineFileObserver {
           if (null != list) {
             list.addValuesAddedListener(listAddEventHandler);
             list.addValuesRemovedListener(listRemoveEventHandler);
-          }
-          for (int i = 0; i < list.length(); i++) {
-            CollaborativeMap item = list.get(i);
 
-            File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey"));
-            if (!file.exists()) {
-              // 加入到下载队列
-              DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(item);
-            } else {
-              // 文件存在，但是未下载完成
-              if (!item.get("status").equals(GlobalConstant.DownloadStatusEnum.COMPLETE.getStatus())) {
+            for (int i = 0; i < list.length(); i++) {
+              CollaborativeMap item = list.get(i);
+
+              File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey"));
+              if (!file.exists()) {
+                // 加入到下载队列
                 DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(item);
+              } else {
+                // 文件存在，但是未下载完成
+                if (!item.get("status").equals(GlobalConstant.DownloadStatusEnum.COMPLETE.getStatus())) {
+                  DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(item);
+                }
               }
             }
           }
