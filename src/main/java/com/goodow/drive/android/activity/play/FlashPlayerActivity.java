@@ -58,7 +58,9 @@ public class FlashPlayerActivity extends Activity {
   @Override
   public void onPause() {
     super.onPause();
-    flashWebView.onPause();
+    if (null != flashWebView) {
+      flashWebView.onPause();
+    }
   }
 
   @Override

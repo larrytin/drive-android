@@ -1,11 +1,16 @@
  
 function setLocalFlashFilePath(){
 	var file_path = window.CallJava.getFlashFilePath();
-	var width = window.CallJava.getWidth();
-	var height = window.CallJava.getHeght();
-	var obj = document.getElementById("mov");
+	//var width = window.CallJava.getWidth();
+	//var height = window.CallJava.getHeght();
 	
-	alert(width+":"+height);
+	//var width = document.body.clientWidth;
+	//var height = document.body.clientHeight;
+	
+	var width = "100%";
+	var height = "100%";
+	
+	var obj = document.getElementById("mov");
 	
 	obj.innerHTML += "<embed src=\""+ file_path +"\" quality=\"high\" bgcolor=\"#ffffff\" width=\""+width+"\" height=\""+height+"\" swLiveConnect=true name=\"mov\" align=\"middle\" allowScriptAccess=\"sameDomain\" type=\"application/x-shockwave-flash\" pluginspage=\"http://www.macromedia.com/go/getflashplayer\" />";
 }
