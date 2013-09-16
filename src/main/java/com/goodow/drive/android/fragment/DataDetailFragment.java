@@ -91,6 +91,8 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
         InitImageBitmapTask ibt = new InitImageBitmapTask();
 
         ibt.execute(thumbnail);
+      } else {
+        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.load));
       }
 
       String blobKey = file.get("blobKey");
