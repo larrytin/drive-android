@@ -16,7 +16,7 @@
     <string name="welcome_offer_fail_connect">Network connection...</string>
     <string name="create_new_favorites">My Favorites</string>
     <string name="prefs_offline_category">Offline files</string>
-    <string name="lesson_class">My class</string>
+    <string name="lesson_class">I of course</string>
     <string name="pin_checkbox_label">Available offline</string>
     <string name="remoteControlError">Remote synchronization operation is unusual, please try to switch the menu</string>
     <string name="downloaded">Have downloaded</string>
