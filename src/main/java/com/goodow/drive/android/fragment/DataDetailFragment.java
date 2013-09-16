@@ -107,7 +107,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       // }
       // }
       // }
-      //本地文件
+      // 本地文件
       File files = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
       if (files.exists()) {
         isOffline = true;
@@ -185,7 +185,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       activity.setLocalFragmentForDetail(this);
 
       fileName = (TextView) activity.findViewById(R.id.fileName);
-      // progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
+      progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
       imageView = (ImageView) activity.findViewById(R.id.thumbnail);
       downloadSwitch = (Switch) activity.findViewById(R.id.downloadButton);
     }
