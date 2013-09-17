@@ -79,15 +79,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
   @Override
   public void backFragment() {
     if (null != currentPathList && 1 < currentPathList.length()) {
-      String mapId = currentPathList.get(currentPathList.length() - 1).asString();
-      CollaborativeMap currentmap = model.getObject(mapId);
-      if (null != currentmap) {
-        // 删除监听
-        currentmap.removeObjectChangedListener(valuesChangeEventHandler);
-      } else {
-        // Toast.makeText(getActivity(), R.string.remoteControlError,
-        // Toast.LENGTH_SHORT).show();
-      }
+      remoteHandle();
 
       path.changePath(null, DOCID);
     } else {
@@ -238,6 +230,8 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     } else {
       String blobKey = clickItem.get("blobKey");
       if (blobKey == null) {
+        remoteHandle();
+
         path.changePath(clickItem.getId(), DOCID);
       }
     }
@@ -253,6 +247,8 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     if (null != broadcastReceiver) {
       activity.unregisterReceiver(broadcastReceiver);
     }
+
+    remoteHandle();
   }
 
   @Override
@@ -288,11 +284,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
       MainActivity activity = (MainActivity) getActivity();
       if (null != activity) {
         activity.setActionBarContent(currentPathList, model, DOCID);
-      }
-    } else {
-      if (null != getActivity()) {
-        // Toast.makeText(getActivity(), R.string.remoteControlError,
-        // Toast.LENGTH_SHORT).show();
       }
     }
 
@@ -358,6 +349,18 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
           activity.openState(LinearLayout.INVISIBLE);
         }
       }
+    }
+  }
+
+  private void remoteHandle() {
+    String mapId = currentPathList.get(currentPathList.length() - 1).asString();
+    CollaborativeMap currentmap = model.getObject(mapId);
+    if (null != currentmap) {
+      // 删除监听
+      currentmap.removeObjectChangedListener(valuesChangeEventHandler);
+    } else {
+      // Toast.makeText(getActivity(), R.string.remoteControlError,
+      // Toast.LENGTH_SHORT).show();
     }
   }
 }
