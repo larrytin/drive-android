@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="contentDescription">description</string>
-    <string name="app_name">KeRuiXing platform</string>
-    <string name="action_settings">Settings</string>
-    <string name="openfailure">The folder is empty!</string>
-    <string name="backFolderErro">Is the top folder!</string>
+    <!-- 与云端硬盘对应相同的 -->
     <string name="ds_dialog_exit_button_text">Exit</string>
-    <string name="backButton">Back at the next higher level</string>
     <string name="remove_button_confirm">Remove</string>
-    <string name="back_dailogMessage">Are you sure you want to exit?</string>
-    <string name="del_DailogMessage">Sure to delete?</string>
+    <string name="ds_menu_settings">Settings</string>
     <string name="trix_sheets_tab_menu_ok">OK</string>
     <string name="unsaved_dialog_cancel">Cancel</string>
-    <string name="welcome_offer_fail_connect">Network connection...</string>
-    <string name="create_new_favorites">My Favorites</string>
     <string name="prefs_offline_category">Offline files</string>
+    
+    <!-- 自己命名 -->
+    <string name="contentDescription">description</string>
+    <string name="app_name">KeRuiXing platform</string>    
+    <string name="openfailure">The folder is empty!</string>
+    <string name="backFolderErro">Is the top folder!</string>
+    <string name="backButton">Back at the next higher level</string>
+    <string name="back_dailogMessage">Are you sure you want to exit?</string>
+    <string name="del_DailogMessage">Sure to delete?</string> 
+    <string name="welcome_offer_fail_connect">Network connection...</string>
+    <string name="create_new_favorites">My Favorites</string>    
     <string name="lesson_class">I of course</string>
+    <string name="login">Login</string>
     <string name="pin_checkbox_label">operation</string>
     <string name="remoteControlError">Remote synchronization operation is unusual, please try to switch the menu</string>
     <string name="downloaded">Have downloaded</string>
+    
     <!-- 北京内网 -->
     <!-- <string name="com.goodow.realtime.serverAddress">http://192.168.11.39:8080</string> -->
-
 
     <!-- 无锡内网 -->
     <string name="com.goodow.realtime.serverAddress">http://drive.retechcorp.com:8080</string>
