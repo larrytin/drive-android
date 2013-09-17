@@ -30,7 +30,7 @@
         <EditText
             android:id="@+id/username_EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/listGroupHeigh_large"
             android:layout_marginTop="10dp"
             android:background="@drawable/selector_edittext_bg"
             android:hint="请输入您的用户名"
@@ -57,7 +57,7 @@
         <EditText
             android:id="@+id/password_EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/listGroupHeigh_large"
             android:layout_marginTop="10dp"
             android:background="@drawable/selector_edittext_bg"
             android:inputType="textPassword"
@@ -70,8 +70,8 @@
 
         <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
+            android:layout_height="@dimen/listGroupHeigh_large"
+            android:layout_marginTop="45dp"
             android:background="@drawable/selector_button_bg"
             android:onClick="login"
             android:text="登录"
