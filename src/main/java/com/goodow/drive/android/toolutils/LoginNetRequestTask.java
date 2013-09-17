@@ -46,7 +46,7 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
       userName = params[0];
 
       // accountInfo = account.login(params[0], params[1]).execute();
-      fireNetwork(0, params);
+      accountInfo = fireNetwork(0, params);
 
     } catch (IOException e) {
       exceptionThrown = e;
