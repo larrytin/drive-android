@@ -60,7 +60,7 @@
                 android:inputType="textPersonName"
                 android:maxLength="12"
                 android:singleLine="true"
-                android:text="admin" />
+                />
         </LinearLayout>
 
         <!-- 密码 -->
@@ -87,7 +87,7 @@
                 android:inputType="textPassword"
                 android:maxLength="12"
                 android:singleLine="true"
-                android:text="admin" />
+                />
         </LinearLayout>
 
         <!-- 登录/取消 按钮 -->
