@@ -1,5 +1,6 @@
 package com.goodow.drive.android.toolutils;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import android.app.Activity;
@@ -44,7 +45,8 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
     try {
       userName = params[0];
 
-      accountInfo = account.login(params[0], params[1]).execute();
+      // accountInfo = account.login(params[0], params[1]).execute();
+      fireNetwork(0, params);
 
     } catch (IOException e) {
       exceptionThrown = e;
@@ -116,5 +118,19 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
     if (!TextUtils.isEmpty(errorMessage)) {
       Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show();
     }
+  }
+
+  private AccountInfo fireNetwork(int retry, String... params) throws IOException {
+    AccountInfo accountInfo = null;
+    try {
+      accountInfo = account.login(params[0], params[1]).execute();
+    } catch (EOFException e) {
+      if (retry < 2) {
+        Log.i(TAG, "重试登陆" + retry);
+        return fireNetwork(retry++, params);
+      }
+      throw e;
+    }
+    return accountInfo;
   }
 }
