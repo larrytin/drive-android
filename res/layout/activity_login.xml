@@ -13,12 +13,6 @@
 
         <!-- 登录 label -->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="登录"
-            android:textSize="17sp" />
-
         <!-- 用户名 label -->
 
         <TextView
@@ -35,11 +29,11 @@
         <EditText
             android:id="@+id/username_EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/listItemHeigh"
             android:layout_marginTop="10dp"
-            android:textSize="10sp"
-            android:background="@drawable/edittext_bg"
-            android:hint="请输入您在教师管理平台上注册的用户名"
+            android:textSize="15sp"
+            android:background="@drawable/selector_edittext_bg"
+            android:hint="请输入您的用户名"
             android:inputType="textPersonName"
             android:maxLength="10"
             android:singleLine="true"
@@ -63,11 +57,11 @@
         <EditText
             android:id="@+id/password_EditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/listItemHeigh"
             android:layout_marginTop="10dp"
-            android:textSize="10sp"
-            android:background="@drawable/edittext_bg"
-            android:hint="请输入您在教师管理平台上注册的密码"
+            android:textSize="15sp"
+            android:background="@drawable/selector_edittext_bg"
+            android:hint="请输入您的密码"
             android:inputType="textPassword"
             android:maxLength="10"
             android:singleLine="true"
@@ -77,11 +71,11 @@
 
         <Button
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_height="@dimen/listItemHeigh"
+            android:layout_marginTop="35dp"
             android:background="@drawable/selector_button_bg"
             android:onClick="login"
-            android:text="登录"
+            android:text="@string/login"
             android:textColor="@drawable/selector_button_text_color_normal" />
     </LinearLayout>
 

@@ -198,17 +198,17 @@ public class MainActivity extends RoboActivity {
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     switch (keyCode) {
-    case KeyEvent.KEYCODE_BACK:
-      if (null != currentFragment) {
-        currentFragment.backFragment();
+      case KeyEvent.KEYCODE_BACK:
+        if (null != currentFragment) {
+          currentFragment.backFragment();
+
+          return true;
+        }
+      case KeyEvent.KEYCODE_HOME:
 
         return true;
-      }
-    case KeyEvent.KEYCODE_HOME:
-
-      return true;
-    default:
-      break;
+      default:
+        break;
     }
 
     return super.onKeyDown(keyCode, event);
@@ -396,7 +396,7 @@ public class MainActivity extends RoboActivity {
           }
 
           // 一切OK
-          String[] params = { username, password };
+          String[] params = {username, password};
           Account account = provideDevice(GlobalConstant.REALTIME_SERVER);
           final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(MainActivity.this, dialog, account);
           SimpleProgressDialog.show(MainActivity.this, new OnCancelListener() {
@@ -437,22 +437,22 @@ public class MainActivity extends RoboActivity {
       }
 
       switch (doc) {
-      case LESSONDOCID:
-        newFragment = lessonListFragment;
+        case LESSONDOCID:
+          newFragment = lessonListFragment;
 
-        break;
-      case FAVORITESDOCID:
-        newFragment = dataListFragment;
+          break;
+        case FAVORITESDOCID:
+          newFragment = dataListFragment;
 
-        break;
-      case OFFLINEDOCID:
-        newFragment = offlineListFragment;
+          break;
+        case OFFLINEDOCID:
+          newFragment = offlineListFragment;
 
-        break;
-      default:
-        newFragment = dataListFragment;
+          break;
+        default:
+          newFragment = dataListFragment;
 
-        break;
+          break;
       }
 
       if (null == newFragment) {
@@ -614,69 +614,69 @@ public class MainActivity extends RoboActivity {
 
   private boolean touchEvent(MotionEvent event) {
     switch (event.getAction()) {
-    case MotionEvent.ACTION_DOWN:
-      setLeftMenuLayoutX(0);
-      setLeftMenuLayoutX(-leftMenu.getWidth());
-
-      if (event.getX() < 40) {
-        showLeftMenuLayout();
-
-        startPoint = event.getX();
-        isShow = true;
-      }
-
-      break;
-    case MotionEvent.ACTION_UP:
-      if ((Math.abs(leftMenu.getLeft()) <= leftMenu.getWidth() / 3) && leftMenu.getVisibility() == View.VISIBLE) {
+      case MotionEvent.ACTION_DOWN:
         setLeftMenuLayoutX(0);
-        middleLayout.setVisibility(View.VISIBLE);
-      } else {
-        hideLeftMenuLayout();
-      }
+        setLeftMenuLayoutX(-leftMenu.getWidth());
 
-      startPoint = 0;
-      isShow = false;
+        if (event.getX() < 40) {
+          showLeftMenuLayout();
 
-      break;
-    case MotionEvent.ACTION_MOVE:
-      do {
-        if (!isShow) {
-
-          break;
+          startPoint = event.getX();
+          isShow = true;
         }
 
-        if (Math.abs(event.getX() - startPoint) < 3) {
-
-          break;
+        break;
+      case MotionEvent.ACTION_UP:
+        if ((Math.abs(leftMenu.getLeft()) <= leftMenu.getWidth() / 3) && leftMenu.getVisibility() == View.VISIBLE) {
+          setLeftMenuLayoutX(0);
+          middleLayout.setVisibility(View.VISIBLE);
+        } else {
+          hideLeftMenuLayout();
         }
 
-        if (leftMenu.getLeft() >= 0) {
+        startPoint = 0;
+        isShow = false;
 
-          break;
-        }
+        break;
+      case MotionEvent.ACTION_MOVE:
+        do {
+          if (!isShow) {
 
-        if (startPoint < event.getX()) {
-          int add = leftMenu.getLeft() + (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
-          if (add < 0) {
-            setLeftMenuLayoutX(add);
-          } else {
-            setLeftMenuLayoutX(0);
-            middleLayout.setVisibility(View.VISIBLE);
+            break;
           }
-        } else if (startPoint > event.getX()) {
-          int reduce = leftMenu.getLeft() - (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
-          if (Math.abs(reduce) < leftMenu.getWidth()) {
-            setLeftMenuLayoutX(reduce);
+
+          if (Math.abs(event.getX() - startPoint) < 3) {
+
+            break;
           }
-        }
 
-        startPoint = event.getX();
-      } while (false);
+          if (leftMenu.getLeft() >= 0) {
 
-      break;
-    default:
+            break;
+          }
 
-      break;
+          if (startPoint < event.getX()) {
+            int add = leftMenu.getLeft() + (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
+            if (add < 0) {
+              setLeftMenuLayoutX(add);
+            } else {
+              setLeftMenuLayoutX(0);
+              middleLayout.setVisibility(View.VISIBLE);
+            }
+          } else if (startPoint > event.getX()) {
+            int reduce = leftMenu.getLeft() - (int) Tools.getRawSize(TypedValue.COMPLEX_UNIT_DIP, 6);
+            if (Math.abs(reduce) < leftMenu.getWidth()) {
+              setLeftMenuLayoutX(reduce);
+            }
+          }
+
+          startPoint = event.getX();
+        } while (false);
+
+        break;
+      default:
+
+        break;
     }
 
     return true;

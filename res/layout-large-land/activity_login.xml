@@ -14,12 +14,6 @@
 
         <!-- 登录 label -->
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="登录"
-            android:textSize="22sp" />
-
         <!-- 用户名 label -->
 
         <TextView
@@ -38,8 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/edittext_bg"
-            android:hint="请输入您在教师管理平台上注册的用户名"
+            android:background="@drawable/selector_edittext_bg"
+            android:hint="请输入您的用户名"
             android:inputType="textPersonName"
             android:maxLength="10"
             android:singleLine="true"
@@ -65,9 +59,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/edittext_bg"
+            android:background="@drawable/selector_edittext_bg"
             android:inputType="textPassword"
             android:maxLength="10"
+            android:hint="请输入您的密码"
             android:singleLine="true"
             />
 
@@ -76,7 +71,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="35dp"
             android:background="@drawable/selector_button_bg"
             android:onClick="login"
             android:text="登录"
