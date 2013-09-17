@@ -67,7 +67,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.goodow.drive.android.service.DownloadBroadcastReceiver"
+            android:name="com.goodow.drive.android.receiver.DownloadBroadcastReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.goodow.realtime.android.action.DOWNLOAD" />

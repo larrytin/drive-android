@@ -1,8 +1,12 @@
 package com.goodow.drive.android.toolutils;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+
+import android.content.SharedPreferences.Editor;
+
+import android.content.SharedPreferences;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -20,9 +24,14 @@ import com.goodow.realtime.Realtime;
 public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> {
   private final String TAG = this.getClass().getSimpleName();
 
+  public final static String LOGINPREFERENCESNAME = "LoginPreferencesName";
+  public final static String USERNAME = "UserName";
+  public final static String PASSWORD = "PassWord";
+
   private final Activity activity;
   private final Account account;
   private String userName;
+  private String password;
   private final Dialog dialog;
   Exception exceptionThrown = null;
 
@@ -44,9 +53,9 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
     AccountInfo accountInfo = null;
     try {
       userName = params[0];
+      password = params[1];
 
-      // accountInfo = account.login(params[0], params[1]).execute();
-      accountInfo = fireNetwork(0, params);
+      accountInfo = account.login(userName, password).execute();
 
     } catch (IOException e) {
       exceptionThrown = e;
@@ -102,15 +111,23 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
         Intent intent = new Intent(activity, MainActivity.class);
         activity.startActivity(intent);
         activity.finish();
-
       } else {
-        dialog.dismiss();
+        if (dialog.isShowing()) {
+          dialog.dismiss();
+        }
+
         MainActivity mainActivity = (MainActivity) activity;
         mainActivity.goObservation();
         mainActivity.notifyFragment();
-
       }
 
+      // 保存帐号密码,用于崩溃时自动登录
+      SharedPreferences sharedPreferences = activity.getSharedPreferences(LOGINPREFERENCESNAME, Activity.MODE_PRIVATE);
+      Editor editor = sharedPreferences.edit();
+      editor.putString(USERNAME, userName);
+      editor.putString(PASSWORD, password);
+
+      editor.apply();
     } while (false);
 
     SimpleProgressDialog.dismiss(activity);
@@ -118,19 +135,5 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
     if (!TextUtils.isEmpty(errorMessage)) {
       Toast.makeText(activity, errorMessage, Toast.LENGTH_SHORT).show();
     }
-  }
-
-  private AccountInfo fireNetwork(int retry, String... params) throws IOException {
-    AccountInfo accountInfo = null;
-    try {
-      accountInfo = account.login(params[0], params[1]).execute();
-    } catch (EOFException e) {
-      if (retry < 2) {
-        Log.i(TAG, "重试登陆" + retry);
-        return fireNetwork(retry++, params);
-      }
-      throw e;
-    }
-    return accountInfo;
   }
 }
