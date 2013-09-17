@@ -51,14 +51,10 @@ public enum OfflineFileObserver {
   private final String TAG = this.getClass().getSimpleName();
 
   private final BlockingQueue<JsonObject> unLoginDownloadQueue = new LinkedBlockingDeque<JsonObject>();
-  private Document doc;
   private Model model;
   private CollaborativeMap root;
 
   private CollaborativeList list;
-  private Model model_unlogin;
-
-  private CollaborativeList list_unlogin;
   private EventHandler<ValuesAddedEvent> listAddEventHandler;
 
   private EventHandler<ValuesRemovedEvent> listRemoveEventHandler;
@@ -94,15 +90,16 @@ public enum OfflineFileObserver {
     }
   }
 
-  public void addFile(final String attachmentId, boolean isLogin) {
+  // 为保证并发事件的安全性,需传入Model、CollaborativeList
+  public void addFile(final String attachmentId, boolean isLogin, Model offLineModel, CollaborativeList offLineList) {
     final Model newModel;
     final CollaborativeList newList;
     if (isLogin) {
       newModel = model;
       newList = list;
     } else {
-      newModel = model_unlogin;
-      newList = list_unlogin;
+      newModel = offLineModel;
+      newList = offLineList;
     }
 
     if (null != attachmentId) {
@@ -171,7 +168,6 @@ public enum OfflineFileObserver {
   public void initEventHandler() {
     do {
       if (listAddEventHandler != null) {
-
         break;
       }
 
@@ -259,11 +255,9 @@ public enum OfflineFileObserver {
     DocumentLoadedHandler onLoaded = new DocumentLoadedHandler() {
       @Override
       public void onLoaded(Document document) {
-        doc = document;
-
         if (null == attachmentId) {
           // 当前用户的离线文件夹
-          model = doc.getModel();
+          model = document.getModel();
           root = model.getRoot();
 
           list = root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
@@ -288,16 +282,17 @@ public enum OfflineFileObserver {
           }
         } else {
           // 远程推送下载的离线文件夹
-          model_unlogin = doc.getModel();
-          root = model_unlogin.getRoot();
+          // Model等数据不缓存至单例的成员变量中是为其并发的安全性考虑
+          Model model_unlogin = document.getModel();
+          CollaborativeMap root = model_unlogin.getRoot();
 
-          list_unlogin = root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
+          CollaborativeList list_unlogin = root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
           if (null != list_unlogin) {
             list_unlogin.addValuesAddedListener(listAddEventHandler);
             list_unlogin.addValuesRemovedListener(listRemoveEventHandler);
           }
 
-          addFile(attachmentId, false);
+          addFile(attachmentId, false, model_unlogin, list_unlogin);
         }
       }
     };
@@ -311,8 +306,8 @@ public enum OfflineFileObserver {
 
           root.set(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue(), model.createList());
         } else {
-          model_unlogin = model_;
-          root = model_unlogin.getRoot();
+          Model model_unlogin = model_;
+          CollaborativeMap root = model_unlogin.getRoot();
 
           root.set(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue(), model_unlogin.createList());
         }
