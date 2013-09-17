@@ -352,15 +352,14 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     }
   }
 
+  // 删除监听
   private void remoteHandle() {
-    String mapId = currentPathList.get(currentPathList.length() - 1).asString();
-    CollaborativeMap currentmap = model.getObject(mapId);
-    if (null != currentmap) {
-      // 删除监听
-      currentmap.removeObjectChangedListener(valuesChangeEventHandler);
-    } else {
-      // Toast.makeText(getActivity(), R.string.remoteControlError,
-      // Toast.LENGTH_SHORT).show();
+    if (null != currentPathList) {
+      String mapId = currentPathList.get(currentPathList.length() - 1).asString();
+      CollaborativeMap currentmap = model.getObject(mapId);
+      if (null != currentmap) {
+        currentmap.removeObjectChangedListener(valuesChangeEventHandler);
+      }
     }
   }
 }
