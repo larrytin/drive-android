@@ -78,7 +78,7 @@ public class OfflineAdapter extends BaseAdapter {
     final TextView downloadStatus = (TextView) row.findViewById(R.id.downloadStatus);
     downloadStatus.setText((String) item.get("status"));
 
-    item.addValueChangedListener(new EventHandler<ValueChangedEvent>() {
+    final EventHandler<ValueChangedEvent> downloadHandler = new EventHandler<ValueChangedEvent>() {
       @Override
       public void handleEvent(ValueChangedEvent event) {
         String newValue = event.getProperty();
@@ -94,7 +94,8 @@ public class OfflineAdapter extends BaseAdapter {
           downloadStatus.setText(newStatus);
         }
       }
-    });
+    };
+    item.addValueChangedListener(downloadHandler);
 
     ImageButton button = (ImageButton) row.findViewById(R.id.delButton);
     button.setOnClickListener(new OnClickListener() {
