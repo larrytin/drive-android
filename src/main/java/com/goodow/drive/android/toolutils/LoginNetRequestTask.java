@@ -23,6 +23,7 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
   private final Account account;
   private String userName;
   private final Dialog dialog;
+  Exception exceptionThrown = null;
 
   /**
    * If the dialog is null, that is the class of activity is LoginActivity.
@@ -46,6 +47,7 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
       accountInfo = account.login(params[0], params[1]).execute();
 
     } catch (IOException e) {
+      exceptionThrown = e;
       e.printStackTrace();
     }
     return accountInfo;
@@ -59,13 +61,11 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
       if (this.isCancelled()) {
         break;
       }
-
-      if (null == result) {
+      if (exceptionThrown != null) {
         errorMessage = "网络状况异常!";
-        break;
       }
 
-      if (result.containsKey("error_message")) {
+      if (null == result || result.containsKey("error_message")) {
         errorMessage = "用户名或者密码错误!";
         break;
       }
