@@ -30,8 +30,8 @@
 
     <ImageButton
         android:id="@+id/delButton"
-        android:layout_width="@dimen/listItemHeigh"
-        android:layout_height="@dimen/listItemHeigh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"
         android:background="@drawable/selector_delbutton_bg"

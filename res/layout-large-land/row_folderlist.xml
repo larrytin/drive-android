@@ -26,8 +26,8 @@
 
     <ImageButton
         android:id="@+id/delButton"
-        android:layout_width="@dimen/listItemHeigh_large"
-        android:layout_height="@dimen/listItemHeigh_large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="40dp"
         android:background="@drawable/selector_delbutton_bg"
