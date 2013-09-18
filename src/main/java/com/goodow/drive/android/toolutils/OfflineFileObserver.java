@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.lang.Thread.State;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+
+import android.os.AsyncTask;
+
+import android.os.AsyncTask;
+
 import android.content.Intent;
 import android.util.Log;
 
@@ -103,61 +108,125 @@ public enum OfflineFileObserver {
     }
 
     if (null != attachmentId) {
-      new Thread() {
+      new AsyncTask<Void, Void, com.goodow.api.services.attachment.model.Attachment>() {
+
         @Override
-        public void run() {
+        protected com.goodow.api.services.attachment.model.Attachment doInBackground(Void... params) {
+          com.goodow.api.services.attachment.model.Attachment execute = null;
           try {
             Attachment attachment = MyApplication.getAttachment();
             Get get = attachment.get(attachmentId);
-            com.goodow.api.services.attachment.model.Attachment execute = get.execute();
-
-            out: do {
-              if (null == execute || execute.getId() == null) {
-                break out;
-              }
-
-              CollaborativeMap newFile = newModel.createMap(null);
-
-              if (null == newFile) {
-                break;
-              }
-
-              for (int i = 0; i < newList.length(); i++) {
-                CollaborativeMap map = newList.get(i);
-                if (execute.getBlobKey().equals(map.get("blobKey"))) {
-                  newList.remove(i);
-                }
-              }
-
-              newFile.set("url", DriveModule.DRIVE_SERVER + "/serve?id=" + attachmentId);
-              newFile.set("progress", "0");
-              newFile.set("status", GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
-
-              newFile.set("label", execute.getFilename());
-              newFile.set("blobKey", execute.getBlobKey());
-              newFile.set("id", execute.getId());
-              newFile.set("type", execute.getContentType());
-
-              String thumbnail = execute.getThumbnail();
-              if (null != thumbnail) {
-                if (DriveModule.DRIVE_SERVER.endsWith("http://192.168.1.15:8880")) {
-                  StringBuffer stringBuffer = new StringBuffer(DriveModule.DRIVE_SERVER);
-                  stringBuffer.append(thumbnail.substring(thumbnail.indexOf("8880") + 4));
-                  stringBuffer.append("=s218");
-                  thumbnail = stringBuffer.toString();
-                }
-                newFile.set("thumbnail", thumbnail);
-              }
-
-              newList.push(newFile);
-
-              Log.i(TAG, "new download rescource:" + newList.toString());
-            } while (false);
+            execute = get.execute();
           } catch (IOException e) {
             e.printStackTrace();
           }
-        };
-      }.start();
+          return execute;
+        }
+
+        @Override
+        protected void onPostExecute(com.goodow.api.services.attachment.model.Attachment execute) {
+          // TODO Auto-generated method stub
+          super.onPostExecute(execute);
+          out: do {
+            if (null == execute || execute.getId() == null) {
+              break out;
+            }
+
+            CollaborativeMap newFile = newModel.createMap(null);
+
+            if (null == newFile) {
+              break;
+            }
+
+            for (int i = 0; i < newList.length(); i++) {
+              CollaborativeMap map = newList.get(i);
+              if (execute.getBlobKey().equals(map.get("blobKey"))) {
+                newList.remove(i);
+              }
+            }
+
+            newFile.set("url", DriveModule.DRIVE_SERVER + "/serve?id=" + attachmentId);
+            newFile.set("progress", "0");
+            newFile.set("status", GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
+
+            newFile.set("label", execute.getFilename());
+            newFile.set("blobKey", execute.getBlobKey());
+            newFile.set("id", execute.getId());
+            newFile.set("type", execute.getContentType());
+
+            String thumbnail = execute.getThumbnail();
+            if (null != thumbnail) {
+              if (DriveModule.DRIVE_SERVER.endsWith("http://192.168.1.15:8880")) {
+                StringBuffer stringBuffer = new StringBuffer(DriveModule.DRIVE_SERVER);
+                stringBuffer.append(thumbnail.substring(thumbnail.indexOf("8880") + 4));
+                stringBuffer.append("=s218");
+                thumbnail = stringBuffer.toString();
+              }
+              newFile.set("thumbnail", thumbnail);
+            }
+
+            newList.push(newFile);
+
+            Log.i(TAG, "new download rescource:" + newList.toString());
+          } while (false);
+        }
+
+      }.execute();
+      // new Thread() {
+      // @Override
+      // public void run() {
+      // try {
+      // Attachment attachment = MyApplication.getAttachment();
+      // Get get = attachment.get(attachmentId);
+      // com.goodow.api.services.attachment.model.Attachment execute = get.execute();
+      //
+      // out: do {
+      // if (null == execute || execute.getId() == null) {
+      // break out;
+      // }
+      //
+      // CollaborativeMap newFile = newModel.createMap(null);
+      //
+      // if (null == newFile) {
+      // break;
+      // }
+      //
+      // for (int i = 0; i < newList.length(); i++) {
+      // CollaborativeMap map = newList.get(i);
+      // if (execute.getBlobKey().equals(map.get("blobKey"))) {
+      // newList.remove(i);
+      // }
+      // }
+      //
+      // newFile.set("url", DriveModule.DRIVE_SERVER + "/serve?id=" + attachmentId);
+      // newFile.set("progress", "0");
+      // newFile.set("status", GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
+      //
+      // newFile.set("label", execute.getFilename());
+      // newFile.set("blobKey", execute.getBlobKey());
+      // newFile.set("id", execute.getId());
+      // newFile.set("type", execute.getContentType());
+      //
+      // String thumbnail = execute.getThumbnail();
+      // if (null != thumbnail) {
+      // if (DriveModule.DRIVE_SERVER.endsWith("http://192.168.1.15:8880")) {
+      // StringBuffer stringBuffer = new StringBuffer(DriveModule.DRIVE_SERVER);
+      // stringBuffer.append(thumbnail.substring(thumbnail.indexOf("8880") + 4));
+      // stringBuffer.append("=s218");
+      // thumbnail = stringBuffer.toString();
+      // }
+      // newFile.set("thumbnail", thumbnail);
+      // }
+      //
+      // newList.push(newFile);
+      //
+      // Log.i(TAG, "new download rescource:" + newList.toString());
+      // } while (false);
+      // } catch (IOException e) {
+      // e.printStackTrace();
+      // }
+      // };
+      // }.start();
     }
   }
 

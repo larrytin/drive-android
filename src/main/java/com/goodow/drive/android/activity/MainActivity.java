@@ -30,9 +30,13 @@ import com.goodow.realtime.android.ServerAddress;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -88,6 +92,10 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity {
   private final String TAG = this.getClass().getSimpleName();
+  static {
+    // To enable logging of HTTP requests and responses (including URL, headers, and content)
+    Logger.getLogger(HttpTransport.class.getName()).setLevel(Level.CONFIG);
+  }
 
   private RemoteControlObserver remoteControlObserver;
   private ActionBar actionBar;
