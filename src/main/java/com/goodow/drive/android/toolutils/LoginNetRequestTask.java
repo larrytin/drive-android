@@ -52,8 +52,8 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
   protected AccountInfo doInBackground(String... params) {
     AccountInfo accountInfo = null;
     try {
-      userName = params[0];
-      password = params[1];
+      userName = params[0].trim();
+      password = params[1].trim();
 
       accountInfo = account.login(userName, password).execute();
 
