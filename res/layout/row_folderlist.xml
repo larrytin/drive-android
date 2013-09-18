@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginRight="20dp"
+        android:layout_centerVertical="true"
         android:background="@drawable/selector_delbutton_bg"
         android:contentDescription="@string/contentDescription"
         android:src="@drawable/action_discussion_edit" />
