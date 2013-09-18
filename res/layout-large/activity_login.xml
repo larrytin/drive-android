@@ -1,9 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@drawable/login_bg"
     android:gravity="center_horizontal"
-    android:orientation="horizontal" 
-    android:background="@drawable/login_bg" >
+    android:orientation="horizontal" >
 
     <LinearLayout
         android:layout_width="350dp"
@@ -11,7 +11,6 @@
         android:layout_marginTop="100dp"
         android:gravity="top"
         android:orientation="vertical" >
-
 
         <!-- 用户名 label -->
 
@@ -35,8 +34,8 @@
             android:hint="请输入您的用户名"
             android:inputType="textPersonName"
             android:maxLength="10"
-            android:singleLine="true"
-            >
+            android:paddingLeft="5dp"
+            android:singleLine="true" >
 
             <requestFocus />
         </EditText>
@@ -59,11 +58,11 @@
             android:layout_height="@dimen/listGroupHeigh_large"
             android:layout_marginTop="10dp"
             android:background="@drawable/selector_edittext_bg"
+            android:hint="请输入您的密码"
             android:inputType="textPassword"
             android:maxLength="10"
-            android:hint="请输入您的密码"
-            android:singleLine="true"
-            />
+            android:paddingLeft="5dp"
+            android:singleLine="true" />
 
         <!-- 登录按钮 -->
 
