@@ -488,12 +488,12 @@ public class MainActivity extends RoboActivity {
 
     OverallUncaughtException.OVERALLUNCAUGHTEXCEPTION.setLoginAgain(new LoginAgain() {
       @Override
-      public void login() {
+      public void login(String errorinfo) {
         SharedPreferences sharedPreferences = getSharedPreferences(LoginNetRequestTask.LOGINPREFERENCESNAME, Activity.MODE_PRIVATE);
         String userName = sharedPreferences.getString(LoginNetRequestTask.USERNAME, "");
         String passWord = sharedPreferences.getString(LoginNetRequestTask.PASSWORD, "");
 
-        Log.e(TAG, "An UncaughtException has been caught!");
+        Log.e(TAG, errorinfo);
 
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

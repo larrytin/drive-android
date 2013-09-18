@@ -3,4 +3,5 @@
     <color name="progress_background">#ffdddddd</color>
     <color name="progress_indicator">#ff40b2e6</color>
     <color name="button_background">#358E00</color>
+    <color name="textgroup_background">#66CCFF</color>
 </resources>

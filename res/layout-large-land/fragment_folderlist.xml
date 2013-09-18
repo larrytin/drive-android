@@ -29,6 +29,10 @@
 
     <ListView
         android:id="@+id/android:list"
+        android:dividerHeight="1dp"
+        android:divider="@color/Black"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/style_list_background"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
