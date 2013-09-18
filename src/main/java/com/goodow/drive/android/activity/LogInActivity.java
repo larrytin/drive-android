@@ -1,20 +1,5 @@
 package com.goodow.drive.android.activity;
 
-import roboguice.activity.RoboActivity;
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.Toast;
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
@@ -23,17 +8,34 @@ import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.realtime.android.CloudEndpointUtils;
 import com.goodow.realtime.android.RealtimeModule;
 import com.goodow.realtime.android.ServerAddress;
+
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import android.os.Parcelable;
+
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Toast;
+import roboguice.activity.RoboActivity;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
 @SuppressLint("SetJavaScriptEnabled")
 @ContentView(R.layout.activity_login)
@@ -53,19 +55,19 @@ public class LogInActivity extends RoboActivity {
     String password = "";
 
     do {
-      username = usernameEditText.getText().toString();
+      username = usernameEditText.getText().toString().trim();
       if (TextUtils.isEmpty(username)) {
         errorMessageString = "用户名不能为空!";
         break;
       }
 
-      password = passwordEditText.getText().toString();
+      password = passwordEditText.getText().toString().trim();
       if (TextUtils.isEmpty(password)) {
         errorMessageString = "密码不能为空!";
         break;
       }
 
-      String[] params = { username, password };
+      String[] params = {username, password};
       Account account = provideDevice(GlobalConstant.REALTIME_SERVER);
       final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(LogInActivity.this, null, account);
       SimpleProgressDialog.show(LogInActivity.this, new OnCancelListener() {
@@ -120,13 +122,13 @@ public class LogInActivity extends RoboActivity {
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     switch (event.getAction()) {
-    case MotionEvent.ACTION_DOWN:
-      InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-      inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
+      case MotionEvent.ACTION_DOWN:
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
 
-      break;
-    default:
-      break;
+        break;
+      default:
+        break;
     }
 
     return true;
