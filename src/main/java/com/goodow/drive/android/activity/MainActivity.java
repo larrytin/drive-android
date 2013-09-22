@@ -110,6 +110,7 @@ public class MainActivity extends RoboActivity {
   @InjectView(R.id.contentLayout)
   private LinearLayout contentLayout;
 
+  private boolean isFirst = true;
   private TextView openFailure_text;
   private ImageView openFailure_img;
 
@@ -607,10 +608,14 @@ public class MainActivity extends RoboActivity {
     });
 
     // 默认打开菜单栏
-    setLeftMenuLayoutX(0);
-    showLeftMenuLayout();
+    if (isFirst) {
+      setLeftMenuLayoutX(0);
+      showLeftMenuLayout();
 
-    middleLayout.setVisibility(LinearLayout.VISIBLE);
+      middleLayout.setVisibility(LinearLayout.VISIBLE);
+
+      isFirst = false;
+    }
   }
 
   @Override
