@@ -1,5 +1,10 @@
 package com.goodow.drive.android.global_data_cache;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public final class GlobalConstant {
   public static enum DocumentIdAndDataKey {
     // 文件id
@@ -103,18 +108,46 @@ public final class GlobalConstant {
     }
   }
 
+  static {
+    Map<String, List<String>> map = new HashMap<String, List<String>>();
+    List<String> list_goodow = new ArrayList<String>();
+    list_goodow.add("http://realtime.goodow.com");
+    list_goodow.add("http://server.drive.goodow.com");
+    list_goodow.add("21");
+    List<String> list_wuxi = new ArrayList<String>();
+    list_wuxi.add("http://drive.retechcorp.com:8080");
+    list_wuxi.add("http://drive.retechcorp.com:8880");
+    list_wuxi.add("07");
+    List<String> list_beijing = new ArrayList<String>();
+    list_beijing.add("http://192.168.11.39:8080");
+    list_beijing.add("http://192.168.11.39:8880");
+    list_beijing.add("21");
+    map.put("goodow", list_goodow);
+    map.put("wuxi", list_wuxi);
+    map.put("beijing", list_wuxi);
+    // 配置时，修改此处。
+    // 无锡内网
+    mList = map.get("wuxi");
+    // 北京内网
+    // mList = map.get("beijing");
+    // 外网goodow
+    // mList = map.get("goodow");
+  }
+  public static List<String> mList;
+  public static String REALTIME_SERVER = mList.get(0);
   // 外网
   // public static String REALTIME_SERVER = "http://realtime.goodow.com";
   // 北京内网
   // public static String REALTIME_SERVER = "http://192.168.11.39:8080";
   // 无锡内网
-  public static String REALTIME_SERVER = "http://drive.retechcorp.com:8080";
+  // public static String REALTIME_SERVER = "http://drive.retechcorp.com:8080";
 
   // 北京+外网
   // private static String docId = "21";
 
   // 无锡
-  private static String docId = "07";
+  // private static String docId = "07";
+  private static String docId = mList.get(2);
 
   private GlobalConstant() {
 

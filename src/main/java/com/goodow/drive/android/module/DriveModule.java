@@ -2,6 +2,7 @@ package com.goodow.drive.android.module;
 
 import com.goodow.api.services.account.Account;
 import com.goodow.api.services.attachment.Attachment;
+import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.MyApplication;
 import com.goodow.realtime.android.CloudEndpointUtils;
@@ -21,11 +22,14 @@ import java.io.File;
 import android.os.Environment;
 
 public class DriveModule extends AbstractModule {
+
+  public static final String DRIVE_SERVER = GlobalConstant.mList.get(1);
+
   // 北京内网
   // public static final String DRIVE_SERVER = "http://192.168.11.39:8880";
 
   // 无锡内网
-  public static final String DRIVE_SERVER = "http://drive.retechcorp.com:8880";
+  // public static final String DRIVE_SERVER = "http://drive.retechcorp.com:8880";
 
   // google play
   // public static final String DRIVE_SERVER = "http://server.drive.goodow.com";
