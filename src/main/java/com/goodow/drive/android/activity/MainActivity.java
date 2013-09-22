@@ -92,10 +92,6 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_main)
 public class MainActivity extends RoboActivity {
   private final String TAG = this.getClass().getSimpleName();
-  static {
-    // To enable logging of HTTP requests and responses (including URL, headers, and content)
-    Logger.getLogger(HttpTransport.class.getName()).setLevel(Level.CONFIG);
-  }
 
   private RemoteControlObserver remoteControlObserver;
   private ActionBar actionBar;

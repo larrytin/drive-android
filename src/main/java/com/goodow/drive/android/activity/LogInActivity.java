@@ -12,9 +12,13 @@ import com.goodow.realtime.android.ServerAddress;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
@@ -40,6 +44,10 @@ import roboguice.inject.InjectView;
 @SuppressLint("SetJavaScriptEnabled")
 @ContentView(R.layout.activity_login)
 public class LogInActivity extends RoboActivity {
+  static {
+    // To enable logging of HTTP requests and responses (including URL, headers, and content)
+    Logger.getLogger(HttpTransport.class.getName()).setLevel(Level.CONFIG);
+  }
   private final String TAG = this.getClass().getSimpleName();
 
   @InjectView(R.id.username_EditText)
@@ -67,7 +75,7 @@ public class LogInActivity extends RoboActivity {
         break;
       }
 
-      String[] params = {username, password};
+      String[] params = { username, password };
       Account account = provideDevice(GlobalConstant.REALTIME_SERVER);
       final LoginNetRequestTask loginNetRequestTask = new LoginNetRequestTask(LogInActivity.this, null, account);
       SimpleProgressDialog.show(LogInActivity.this, new OnCancelListener() {
@@ -122,13 +130,13 @@ public class LogInActivity extends RoboActivity {
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     switch (event.getAction()) {
-      case MotionEvent.ACTION_DOWN:
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
+    case MotionEvent.ACTION_DOWN:
+      InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+      inputMethodManager.hideSoftInputFromWindow(usernameEditText.getWindowToken(), 0);
 
-        break;
-      default:
-        break;
+      break;
+    default:
+      break;
     }
 
     return true;
