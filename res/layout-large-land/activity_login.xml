@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="用户名"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <!-- 用户名输入框 -->
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="密码"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <!-- 密码 输入框 -->
@@ -76,7 +76,7 @@
             android:background="@drawable/selector_button_bg"
             android:onClick="login"
             android:text="登录"
-            android:textColor="@drawable/selector_button_text_color_normal" />
+            android:textColor="@color/Black" />
     </LinearLayout>
 
 </LinearLayout>

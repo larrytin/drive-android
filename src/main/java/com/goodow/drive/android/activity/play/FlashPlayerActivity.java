@@ -79,10 +79,21 @@ public class FlashPlayerActivity extends Activity {
 
     // 获取从外部传进来的 flash资源完整路径
     if (getIntent().hasExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name())) {
+      // url
+      // filePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name());
+
+      flashWebView = (WebView) findViewById(R.id.flash_webView_offline);
+
       filePath = "file:///android_asset/flash_loading.html";
       localFlashFilePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name());
 
-      flashWebView = (WebView) findViewById(R.id.flash_webView_offline);
+      DisplayMetrics dMetrics = new DisplayMetrics();
+      getWindowManager().getDefaultDisplay().getMetrics(dMetrics);
+      int width = dMetrics.widthPixels;
+      int height = dMetrics.heightPixels;
+      JSInvokeClass jsInvokeClass = new JSInvokeClass(width, height, localFlashFilePath);
+
+      flashWebView.addJavascriptInterface(jsInvokeClass, "CallJava");
     } else {
       // url
       filePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name());
@@ -107,14 +118,6 @@ public class FlashPlayerActivity extends Activity {
     // WebView启用javascript脚本执行
     webSettings.setJavaScriptEnabled(true);
     webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-
-    DisplayMetrics dMetrics = new DisplayMetrics();
-    getWindowManager().getDefaultDisplay().getMetrics(dMetrics);
-    int width = dMetrics.widthPixels;
-    int height = dMetrics.heightPixels;
-    JSInvokeClass jsInvokeClass = new JSInvokeClass(width, height, localFlashFilePath);
-
-    flashWebView.addJavascriptInterface(jsInvokeClass, "CallJava");
 
     try {
       Thread.sleep(500);// 主线程暂停下，否则容易白屏，原因未知

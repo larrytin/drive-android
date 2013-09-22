@@ -12,6 +12,7 @@
         android:paddingLeft="5dp"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:textColor="@color/blue"
-        android:textSize="@dimen/listGroupTextSize" />
+        android:textSize="@dimen/listGroupTextSize"
+        android:textStyle="bold" />
 
 </RelativeLayout>
