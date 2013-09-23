@@ -92,7 +92,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
 
         ibt.execute(thumbnail);
       } else {
-        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_type_file));
+        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_thumbnail));
       }
 
       String blobKey = file.get("blobKey");
