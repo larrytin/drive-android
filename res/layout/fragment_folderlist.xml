@@ -6,8 +6,10 @@
     android:paddingRight="@dimen/activity_horizontal_margin" >
 
     <LinearLayout
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:orientation="vertical" >
 
         <TextView
@@ -16,25 +18,28 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/openfailure"
+            android:textColor="@color/Gray"
             android:textSize="@dimen/listItemTextSize"
             android:visibility="invisible" />
 
-        <ImageView
+        <!--
+             <ImageView
             android:id="@+id/openfailure_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/contentDescription"
             android:src="@drawable/ic_open_failure"
             android:visibility="invisible" />
+        -->
     </LinearLayout>
 
     <ListView
         android:id="@+id/android:list"
-        android:dividerHeight="1dp"
-        android:divider="@color/Black"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:background="@drawable/style_list_background"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:divider="@color/Black"
+        android:dividerHeight="1dp" />
 
 </FrameLayout>

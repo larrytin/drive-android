@@ -8,7 +8,7 @@
     <dimen name="listGroupHeigh">21dp</dimen>
     <dimen name="listItemHeigh">45dp</dimen>
     <dimen name="listGroupTextSize">12sp</dimen>
-    <dimen name="listItemTextSize">15sp</dimen>
+    <dimen name="listItemTextSize">25sp</dimen>
     <dimen name="listItemPadding">1dp</dimen>
     <dimen name="listGroupHeigh_large">58dp</dimen>
     <dimen name="listItemHeigh_large">88dp</dimen>

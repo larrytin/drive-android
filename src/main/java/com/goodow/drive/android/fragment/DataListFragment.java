@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -181,8 +180,9 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
     activity.setActionBarTitle("我的收藏夹");
     TextView textView = (TextView) activity.findViewById(R.id.openfailure_text);
-    ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
-    activity.setOpenStateView(textView, imageView);
+    // ImageView imageView = (ImageView) activity.findViewById(R.id.openfailure_img);
+    // activity.setOpenStateView(textView, imageView);
+    activity.setOpenStateView(textView, null);
   }
 
   @Override

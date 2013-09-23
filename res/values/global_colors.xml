@@ -7,5 +7,6 @@
     <color name="White">#FFFFFF</color>
     <color name="Black">#000000</color>
     <color name="DodgerBlue">#1E90FF</color>
+    <color name="Gray">#999999</color>
 
 </resources>

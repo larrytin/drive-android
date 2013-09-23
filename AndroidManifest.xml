@@ -94,9 +94,9 @@
         </activity>
         <activity android:name="com.goodow.drive.android.activity.MainActivity" />
         <activity android:name="com.goodow.drive.android.activity.DownloadActivity" />
-        <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.AudioPlayActivity" android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.AudioPlayActivity" android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden|screenSize"/>
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.VideoPlayActivity" />
-        <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.FlashPlayerActivity" />
+        <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.FlashPlayerActivity" android:screenOrientation="landscape" />
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.PicturePlayAcivity" />
     </application>
 
