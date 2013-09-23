@@ -122,16 +122,23 @@ public final class GlobalConstant {
     list_beijing.add("http://192.168.11.39:8080");
     list_beijing.add("http://192.168.11.39:8880");
     list_beijing.add("21");
+    List<String> list_ceshi = new ArrayList<String>();
+    list_ceshi.add("http://61.177.139.216:8084");
+    list_ceshi.add("http://61.177.139.216:8880");
+    list_ceshi.add("25");
     map.put("goodow", list_goodow);
     map.put("wuxi", list_wuxi);
-    map.put("beijing", list_wuxi);
+    map.put("beijing", list_beijing);
+    map.put("ceshi", list_ceshi);
     // 配置时，修改此处。
     // 无锡内网
-    mList = map.get("wuxi");
+    // mList = map.get("wuxi");
     // 北京内网
     // mList = map.get("beijing");
     // 外网goodow
     // mList = map.get("goodow");
+    // 测试
+    mList = map.get("ceshi");
   }
   public static List<String> mList;
   public static String REALTIME_SERVER = mList.get(0);
