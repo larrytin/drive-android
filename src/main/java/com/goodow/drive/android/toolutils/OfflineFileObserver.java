@@ -5,14 +5,9 @@ import java.io.IOException;
 import java.lang.Thread.State;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-
 import android.os.AsyncTask;
-
-import android.os.AsyncTask;
-
 import android.content.Intent;
 import android.util.Log;
-
 import com.goodow.api.services.attachment.Attachment;
 import com.goodow.api.services.attachment.Attachment.Get;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
@@ -28,7 +23,6 @@ import com.goodow.realtime.ModelInitializerHandler;
 import com.goodow.realtime.Realtime;
 import com.goodow.realtime.ValuesAddedEvent;
 import com.goodow.realtime.ValuesRemovedEvent;
-
 import elemental.json.JsonObject;
 
 public enum OfflineFileObserver {

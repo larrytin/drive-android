@@ -599,7 +599,8 @@ public class MainActivity extends RoboActivity {
     dataDetailLayout.setOnTouchListener(new OnTouchListener() {
       @Override
       public boolean onTouch(View v, MotionEvent event) {
-        return gt.onTouchEvent(event);
+        gt.onTouchEvent(event);
+        return true;
       }
     });
 
