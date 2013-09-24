@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.api.services.account.Account;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.LoginNetRequestTask;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.realtime.android.CloudEndpointUtils;
@@ -98,6 +99,9 @@ public class LogInActivity extends RoboActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
+
     // 快捷键
     SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
     boolean shortcut = sp.getBoolean("shortcut", false);
@@ -140,6 +144,13 @@ public class LogInActivity extends RoboActivity {
     }
 
     return true;
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
   }
 
   @Override

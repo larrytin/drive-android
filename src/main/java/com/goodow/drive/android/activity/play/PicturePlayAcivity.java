@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity.play;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 
 import java.io.ByteArrayOutputStream;
@@ -221,6 +222,8 @@ public class PicturePlayAcivity extends RoboActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
+
     Intent intent = getIntent();
     String picture = intent.getStringExtra(PICTUREURL);
 
@@ -243,6 +246,13 @@ public class PicturePlayAcivity extends RoboActivity {
   }
 
   @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    // GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
+  }
+
+  @Override
   protected void onPause() {
     super.onPause();
     SimpleProgressDialog.resetByThisContext(this);
@@ -257,7 +267,8 @@ public class PicturePlayAcivity extends RoboActivity {
     }
 
     int bitmapWidth = bitmap.getWidth();
-    int bitmapHeight = bitmap.getHeight();;
+    int bitmapHeight = bitmap.getHeight();
+    ;
 
     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
     int screenWidth = displayMetrics.widthPixels;

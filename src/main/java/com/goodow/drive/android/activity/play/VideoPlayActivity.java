@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity.play;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 
 import java.io.File;
 
@@ -36,29 +37,29 @@ public class VideoPlayActivity extends Activity {
 
       try {
         switch (v.getId()) {
-          case R.id.play_ImageButton:
-            play();
-            break;
+        case R.id.play_ImageButton:
+          play();
+          break;
 
-          case R.id.pause_ImageButton:
-            if (mediaPlayer.isPlaying()) {
-              mediaPlayer.pause();
-            } else {
-              mediaPlayer.start();
-            }
-            break;
-          case R.id.reset_ImageButton:
-            if (mediaPlayer.isPlaying()) {
-              mediaPlayer.seekTo(0);
-            } else {
-              play();
-            }
-            break;
-          case R.id.stop_ImageButton:
-            if (mediaPlayer.isPlaying()) {
-              mediaPlayer.stop();
-            }
-            break;
+        case R.id.pause_ImageButton:
+          if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+          } else {
+            mediaPlayer.start();
+          }
+          break;
+        case R.id.reset_ImageButton:
+          if (mediaPlayer.isPlaying()) {
+            mediaPlayer.seekTo(0);
+          } else {
+            play();
+          }
+          break;
+        case R.id.stop_ImageButton:
+          if (mediaPlayer.isPlaying()) {
+            mediaPlayer.stop();
+          }
+          break;
         }
       } catch (Exception e) {
         Log.e(TAG, e.toString());
@@ -105,6 +106,9 @@ public class VideoPlayActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
+
     setContentView(R.layout.activity_video_player);
 
     // 获取从外部传进来的 mp4资源完整路径
@@ -130,6 +134,13 @@ public class VideoPlayActivity extends Activity {
     pauseButton.setOnClickListener(listener);
     resetButton.setOnClickListener(listener);
     stopButton.setOnClickListener(listener);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+
+    GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
   }
 
   // 播放

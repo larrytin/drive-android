@@ -1,9 +1,11 @@
 package com.goodow.drive.android.toolutils;
 
-import android.app.Activity;
-import android.text.TextUtils;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+
+import android.app.Activity;
+import android.text.TextUtils;
 
 /**
  * 这里只放置, 在当前项目中会被用到的方法
@@ -66,8 +68,7 @@ public final class ToolsFunctionForThisProgect {
   }
 
   public static synchronized void quitApp(final Activity activity) {
-    // GlobalDataCacheForMemorySingleton.getInstance.exit();
-    activity.finish();
+    GlobalDataCacheForMemorySingleton.getInstance.exit();
     // 杀死当前app进程
     int nPid = android.os.Process.myPid();
     android.os.Process.killProcess(nPid);

@@ -485,6 +485,8 @@ public class MainActivity extends RoboActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
+
     // 添加捕获全局异常的处理方案
     Thread.currentThread().setUncaughtExceptionHandler(OverallUncaughtException.OVERALLUNCAUGHTEXCEPTION);
 
@@ -501,6 +503,8 @@ public class MainActivity extends RoboActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(LoginNetRequestTask.USERNAME, userName);
         intent.putExtra(LoginNetRequestTask.PASSWORD, passWord);
+
+        GlobalDataCacheForMemorySingleton.getInstance.exit();
 
         MainActivity.this.startActivity(intent);
 
@@ -545,6 +549,8 @@ public class MainActivity extends RoboActivity {
   protected void onDestroy() {
     Log.i(TAG, "onDestroy");
     super.onDestroy();
+
+    GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
   }
 
   @Override

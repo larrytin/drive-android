@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity.play;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.JSInvokeClass;
 import java.util.List;
 
@@ -75,6 +76,9 @@ public class FlashPlayerActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
+
     setContentView(R.layout.activity_flash_player);
 
     // 获取从外部传进来的 flash资源完整路径
@@ -155,7 +159,9 @@ public class FlashPlayerActivity extends Activity {
   protected void onDestroy() {
     super.onDestroy();
     flashWebView.destroy();
-    // this.finish();
+
+    GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
+
     System.gc();
   }
 

@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity.play;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 
 import java.io.IOException;
 
@@ -134,6 +135,9 @@ public class AudioPlayActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
+
     setContentView(R.layout.activity_audio_player);
 
     // 获取从外部传进来的 mp3资源完整路径
@@ -212,8 +216,10 @@ public class AudioPlayActivity extends Activity {
   @Override
   protected void onDestroy() {
     mediaPlayer.release();
+
+    GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
+
     super.onDestroy();
-    Log.i(TAG, "onDestroy()");
   }
 
   @Override
