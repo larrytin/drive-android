@@ -26,8 +26,8 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 public class DataDetailFragment extends Fragment implements ILocalFragment {
 
@@ -60,7 +60,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
   private ProgressBar progressBar;
   public ImageView imageView;
 
-  private Switch downloadSwitch;
+  private ToggleButton downloadToggle;
 
   public DataDetailFragment() {
     super();
@@ -114,9 +114,9 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       if (files.exists()) {
         isOffline = true;
       }
-      downloadSwitch.setOnCheckedChangeListener(null);
-      downloadSwitch.setChecked(isOffline);
-      downloadSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      downloadToggle.setOnCheckedChangeListener(null);
+      downloadToggle.setChecked(isOffline);
+      downloadToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
           if (isChecked) {
@@ -189,7 +189,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       fileName = (TextView) activity.findViewById(R.id.fileName);
       progressBar = (ProgressBar) activity.findViewById(R.id.thumbnailProgressBar);
       imageView = (ImageView) activity.findViewById(R.id.thumbnail);
-      downloadSwitch = (Switch) activity.findViewById(R.id.downloadButton);
+      downloadToggle = (ToggleButton) activity.findViewById(R.id.downloadButton);
     }
   }
 

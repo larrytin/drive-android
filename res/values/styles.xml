@@ -17,7 +17,7 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
     
-    <style name="Switch">
+    <!-- <style name="Switch">
         <item name="android:track">@*android:drawable/switch_track_holo_dark</item>
         <item name="android:thumb">@*android:drawable/switch_inner_holo_dark</item>
         <item name="android:switchTextAppearance">@*android:style/TextAppearance.Holo.Widget.Switch</item>
@@ -27,10 +27,10 @@
         <item name="android:switchMinWidth">96dip</item>
         <item name="android:switchPadding">16dip</item>
     </style>
-  <style name="Drive_Switch" parent="Switch">
+    <style name="Drive_Switch" parent="Switch">
       <item name="android:track">@drawable/switch_track_holo_light</item>
        <item name="android:thumb">@drawable/switch_inner_holo_light</item>
-  </style>
+  </style>-->
 
     <color name="transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
