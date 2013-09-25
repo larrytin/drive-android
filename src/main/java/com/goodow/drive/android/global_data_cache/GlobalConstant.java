@@ -121,7 +121,7 @@ public final class GlobalConstant {
     List<String> list_beijing = new ArrayList<String>();
     list_beijing.add("http://192.168.11.39:8080");
     list_beijing.add("http://192.168.11.39:8880");
-    list_beijing.add("21");
+    list_beijing.add("25");
     List<String> list_ceshi = new ArrayList<String>();
     list_ceshi.add("http://61.177.139.216:8084");
     list_ceshi.add("http://61.177.139.216:8880");
