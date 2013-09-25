@@ -25,9 +25,9 @@
                 android:contentDescription="@string/contentDescription"
                 android:gravity="center_vertical" />
 
-            <TextView
+            <com.goodow.drive.android.toolutils.FocusedTextView
                 android:id="@+id/offlineFileName"
-                android:layout_width="wrap_content"
+                android:layout_width="120dip"
                 android:layout_height="fill_parent"
                 android:layout_marginLeft="6dp"
                 android:layout_toRightOf="@id/offlineFileIcon"
@@ -35,6 +35,9 @@
                 android:paddingRight="15dip"
                 android:ellipsize="marquee"
                 android:focusable="true"
+                android:singleLine="true"
+                android:textSize="@dimen/listGroupTextSize_large"
+                android:marqueeRepeatLimit="marquee_forever"
                 android:gravity="center_vertical" />
         </RelativeLayout>
 
