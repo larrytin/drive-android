@@ -51,8 +51,8 @@
         android:layout_gravity="center"
         android:layout_marginBottom="32dip"
         android:text="@string/pin_checkbox_label"
-        android:textOn="下载"
-        android:textOff="删除"
+        android:textOn="删除"
+        android:textOff="下载"
         android:textSize="@dimen/listItemTextSize" />
 
 </LinearLayout>

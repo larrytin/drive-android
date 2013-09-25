@@ -119,7 +119,7 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       downloadToggle.setOnCheckedChangeListener(new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-          if (!isChecked) {
+          if (isChecked) {
             file.set("status", DownloadStatusEnum.WAITING.getStatus());
             String attachmentId = file.get("id");
             OfflineFileObserver.OFFLINEFILEOBSERVER.addFile(attachmentId, true, null, null);
