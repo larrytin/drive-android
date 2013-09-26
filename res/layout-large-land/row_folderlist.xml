@@ -20,7 +20,7 @@
         android:layout_height="@dimen/listItemHeigh_large"
         android:layout_toRightOf="@id/leftImage"
         android:ellipsize="marquee"
-        android:focusable="true"
+        android:singleLine="true"
         android:gravity="center_vertical"
         android:textSize="@dimen/listItemTextSize_large" />
 
