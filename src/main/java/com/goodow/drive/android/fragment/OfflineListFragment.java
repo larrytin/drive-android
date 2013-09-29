@@ -63,6 +63,8 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
     actionBar.setDisplayShowCustomEnabled(false);
 
     CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
+    Log.i("offlineAdapter", "OfflineListFragment中list=" + (list == null) + "");
+    // 此处第一次进入时，list为空。
     adapter = new OfflineAdapter((MainActivity) this.getActivity(), list, new IOnItemClickListener() {
       @Override
       public void onItemClick(CollaborativeMap file) {
@@ -77,6 +79,7 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
       }
 
     });
+
     setListAdapter(adapter);
   }
 

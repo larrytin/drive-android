@@ -1,6 +1,9 @@
 package com.goodow.drive.android.adapter;
 
 import java.io.File;
+
+import android.util.Log;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -35,6 +38,8 @@ public class OfflineAdapter extends BaseAdapter {
   @Override
   public int getCount() {
     int count = (offlineList == null ? 0 : offlineList.length());
+    Log.i("offlineAdapter", count + "");
+    Log.i("offlineAdapter", offlineList == null ? "offlineList为空" : offlineList.toString());
     return count;
   }
 

@@ -225,6 +225,7 @@ public enum OfflineFileObserver {
   }
 
   public CollaborativeList getList() {
+    Log.i("offlineAdapter", "OfflineFileObserver中的getList方法list=" + (list == null) + "");
     return list;
   }
 
@@ -337,8 +338,8 @@ public enum OfflineFileObserver {
           // 当前用户的离线文件夹
           model = document.getModel();
           root = model.getRoot();
-
           list = root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
+          Log.i("offlineAdapter", "OfflineFileObserver中的startObservation方法list=" + (list == null) + "");
           if (null != list) {
             list.addValuesAddedListener(listAddEventHandler);
             list.addValuesRemovedListener(listRemoveEventHandler);
@@ -364,8 +365,11 @@ public enum OfflineFileObserver {
                   DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(item);
                 }
               }
+
             }
           }
+          // TODO:此时更新adapter
+
         } else {
           // 远程推送下载的离线文件夹
           // Model等数据不缓存至单例的成员变量中是为其并发的安全性考虑
