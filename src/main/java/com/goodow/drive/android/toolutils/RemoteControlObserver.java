@@ -62,13 +62,18 @@ public class RemoteControlObserver implements IRemoteControl {
       String blobKey = ((JsonString) newJsonObject.get("blobKey")).asString();
       String type = ((JsonString) newJsonObject.get("type")).asString();
       String id = ((JsonString) newJsonObject.get("id")).asString();
-
-      File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+      String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
+      String filePath = resPath + blobKey;
+      // 加入下载的内容，里面有flash类型,那么加上".swf"
+      if (type.equals("application/x-shockwave-flash")) {
+        filePath = filePath + ".swf";
+      }
+      File file = new File(filePath);
+      // File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() +
+      // "/" + blobKey);
 
       if (file.exists()) {
         Intent intent = null;
-
-        String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
 
         if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(Tools.getTypeByMimeType(type))) {
           intent = new Intent(activity, AudioPlayActivity.class);
@@ -90,7 +95,7 @@ public class RemoteControlObserver implements IRemoteControl {
           intent = new Intent(activity, FlashPlayerActivity.class);
 
           intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name(), resPath + blobKey);
+          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name(), resPath + blobKey + ".swf");
         } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
             || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
 

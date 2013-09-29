@@ -122,7 +122,13 @@ public class CollaborativeAdapter extends BaseAdapter {
       row.setTag(item);
 
       String blobKey = (String) item.get("blobKey");
-      File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+      String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey;
+      // 加入下载的内容，里面有flash类型,那么加上".swf"
+      if ("application/x-shockwave-flash".equals(item.get("type"))) {
+        filePath = filePath + ".swf";
+      }
+      File file = new File(filePath);
+
       if (file.exists()) {
         row.findViewById(R.id.downloaded).setVisibility(View.VISIBLE);
       }

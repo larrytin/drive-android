@@ -488,29 +488,30 @@ public class MainActivity extends RoboActivity {
     GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
 
     // 添加捕获全局异常的处理方案
-    Thread.currentThread().setUncaughtExceptionHandler(OverallUncaughtException.OVERALLUNCAUGHTEXCEPTION);
-
-    OverallUncaughtException.OVERALLUNCAUGHTEXCEPTION.setLoginAgain(new LoginAgain() {
-      @Override
-      public void login(String errorinfo) {
-        SharedPreferences sharedPreferences = getSharedPreferences(LoginNetRequestTask.LOGINPREFERENCESNAME, Activity.MODE_PRIVATE);
-        String userName = sharedPreferences.getString(LoginNetRequestTask.USERNAME, "");
-        String passWord = sharedPreferences.getString(LoginNetRequestTask.PASSWORD, "");
-
-        Log.e(TAG, errorinfo);
-
-        Intent intent = new Intent(MainActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(LoginNetRequestTask.USERNAME, userName);
-        intent.putExtra(LoginNetRequestTask.PASSWORD, passWord);
-
-        GlobalDataCacheForMemorySingleton.getInstance.exit();
-
-        MainActivity.this.startActivity(intent);
-
-        android.os.Process.killProcess(android.os.Process.myPid());
-      }
-    });
+    // Thread.currentThread().setUncaughtExceptionHandler(OverallUncaughtException.OVERALLUNCAUGHTEXCEPTION);
+    //
+    // OverallUncaughtException.OVERALLUNCAUGHTEXCEPTION.setLoginAgain(new LoginAgain() {
+    // @Override
+    // public void login(String errorinfo) {
+    // SharedPreferences sharedPreferences =
+    // getSharedPreferences(LoginNetRequestTask.LOGINPREFERENCESNAME, Activity.MODE_PRIVATE);
+    // String userName = sharedPreferences.getString(LoginNetRequestTask.USERNAME, "");
+    // String passWord = sharedPreferences.getString(LoginNetRequestTask.PASSWORD, "");
+    //
+    // Log.e(TAG, errorinfo);
+    //
+    // Intent intent = new Intent(MainActivity.this, MainActivity.class);
+    // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    // intent.putExtra(LoginNetRequestTask.USERNAME, userName);
+    // intent.putExtra(LoginNetRequestTask.PASSWORD, passWord);
+    //
+    // GlobalDataCacheForMemorySingleton.getInstance.exit();
+    //
+    // MainActivity.this.startActivity(intent);
+    //
+    // android.os.Process.killProcess(android.os.Process.myPid());
+    // }
+    // });
 
     actionBar = getActionBar();
 

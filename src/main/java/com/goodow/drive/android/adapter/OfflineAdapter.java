@@ -109,7 +109,13 @@ public class OfflineAdapter extends BaseAdapter {
       button.setVisibility(View.GONE);
     }
 
-    File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey"));
+    String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey");
+    // 加入下载的内容，里面有flash类型,那么加上".swf"
+    if (item.get("type").equals("application/x-shockwave-flash")) {
+      filePath = filePath + ".swf";
+    }
+    File file = new File(filePath);
+
     if (!file.exists()) {
       // RelativeLayout relativeLayout = (RelativeLayout)
       // row.findViewById(R.id.progressMess);
