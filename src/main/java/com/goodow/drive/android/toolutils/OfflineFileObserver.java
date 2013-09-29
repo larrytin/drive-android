@@ -242,7 +242,15 @@ public enum OfflineFileObserver {
           if (null != adds) {
             for (Object o : adds) {
               CollaborativeMap resource = (CollaborativeMap) o;
-              File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + resource.get("blobKey"));
+              String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + resource.get("blobKey");
+              // 加入下载的内容，里面有flash类型,那么加上".swf"
+              if (resource.get("type").equals("application/x-shockwave-flash")) {
+                filePath = filePath + ".swf";
+              }
+              File file = new File(filePath);
+              // File file = new
+              // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" +
+              // resource.get("blobKey"));
 
               if (!file.exists()) {
                 // 本地文件不存在,添加下载任务
@@ -299,9 +307,16 @@ public enum OfflineFileObserver {
           list.remove(i);
         }
       }
+      String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey;
+      // 加入下载的内容，里面有flash类型,那么加上".swf"
+      if (removefile.get("type").equals("application/x-shockwave-flash")) {
+        filePath = filePath + ".swf";
+      }
+      File file = new File(filePath);
 
       // 删除本地文件
-      File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+      // File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() +
+      // "/" + blobKey);
       if (file.exists()) {
         file.delete();
 
@@ -331,7 +346,15 @@ public enum OfflineFileObserver {
             for (int i = 0; i < list.length(); i++) {
               CollaborativeMap item = list.get(i);
 
-              File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey"));
+              String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey");
+              // 加入下载的内容，里面有flash类型,那么加上".swf"
+              if (item.get("type").equals("application/x-shockwave-flash")) {
+                filePath = filePath + ".swf";
+              }
+              File file = new File(filePath);
+              // File file = new
+              // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" +
+              // item.get("blobKey"));
               if (!file.exists()) {
                 // 加入到下载队列
                 DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(item);

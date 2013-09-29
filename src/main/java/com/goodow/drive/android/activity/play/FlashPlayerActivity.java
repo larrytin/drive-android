@@ -5,6 +5,10 @@ import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingle
 import com.goodow.drive.android.toolutils.JSInvokeClass;
 import java.util.List;
 
+import android.widget.ProgressBar;
+
+import android.util.Log;
+
 import android.util.DisplayMetrics;
 
 import android.annotation.SuppressLint;
@@ -80,31 +84,7 @@ public class FlashPlayerActivity extends Activity {
     GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
 
     setContentView(R.layout.activity_flash_player);
-
-    // 获取从外部传进来的 flash资源完整路径
-    if (getIntent().hasExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name())) {
-      // url
-      // filePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name());
-
-      flashWebView = (WebView) findViewById(R.id.flash_webView_offline);
-
-      filePath = "file:///android_asset/flash_loading.html";
-      localFlashFilePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name());
-
-      DisplayMetrics dMetrics = new DisplayMetrics();
-      getWindowManager().getDefaultDisplay().getMetrics(dMetrics);
-      int width = dMetrics.widthPixels;
-      int height = dMetrics.heightPixels;
-      JSInvokeClass jsInvokeClass = new JSInvokeClass(width, height, localFlashFilePath);
-
-      flashWebView.addJavascriptInterface(jsInvokeClass, "CallJava");
-    } else {
-      // url
-      filePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name());
-
-      flashWebView = (WebView) findViewById(R.id.flash_webView_online);
-    }
-
+    // TODO:此处移了过来
     // 获取从外部传进来的 flash资源完整路径
     String flashfileName = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_NAME.name());
 
@@ -113,45 +93,77 @@ public class FlashPlayerActivity extends Activity {
       flashFileNameTextView.setText(flashfileName);
     }
 
-    flashWebView.setVisibility(View.VISIBLE);
-    setTitle("Flash播放器");
-
-    WebSettings webSettings = flashWebView.getSettings();
-    webSettings.setPluginState(PluginState.ON);
-    webSettings.setSupportZoom(true);
-    // WebView启用javascript脚本执行
-    webSettings.setJavaScriptEnabled(true);
-    webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-
-    try {
-      Thread.sleep(500);// 主线程暂停下，否则容易白屏，原因未知
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-
-    // mProgressDialog = ProgressDialog.show(this, "请稍等...", "加载flash中...",
-    // true);
-    flashWebView.setWebChromeClient(new WebChromeClient() {
-      @Override
-      public void onProgressChanged(WebView view, int newProgress) {
-        super.onProgressChanged(view, newProgress);
-        System.out.println("newProgress:" + String.valueOf(newProgress));
-        if (newProgress == 100) {
-          new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-              FlashPlayerActivity.this.findViewById(R.id.pb_indeterminate).setVisibility(View.GONE);
-            }
-          }, 500);
-        }
-      }
-    });
-
-    if (checkinstallornotadobeflashapk()) {
-      flashWebView.loadUrl(filePath);
+    // 获取从外部传进来的 flash资源完整路径 flash 资源完整path(已经下载到了本地)
+    if (getIntent().hasExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name())) {
+      // url
+      // filePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name());
+      // 加载离线播放的webView
+      flashWebView = (WebView) findViewById(R.id.flash_webView_offline);
+      flashWebView.setVisibility(View.VISIBLE);
+      setTitle("Flash播放器");
+      // // asset目录下html
+      // filePath = "file:///android_asset/flash_loading.html";
+      // 得到本地的地址
+      localFlashFilePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name());
+      Log.i("FlashPlayerActivity", localFlashFilePath);
+      // DisplayMetrics dMetrics = new DisplayMetrics();
+      // getWindowManager().getDefaultDisplay().getMetrics(dMetrics);
+      // int width = dMetrics.widthPixels;
+      // int height = dMetrics.heightPixels;
+      // JSInvokeClass jsInvokeClass = new JSInvokeClass(width, height, localFlashFilePath);
+      // // 调用js
+      // flashWebView.addJavascriptInterface(jsInvokeClass, "CallJava");
+      WebSettings webSettings = flashWebView.getSettings();
+      // settings.setPluginsEnabled(true);
+      webSettings.setPluginState(PluginState.ON);
+      // 将其地址加入
+      flashWebView.loadUrl("file:/" + localFlashFilePath);
     } else {
-      installadobeapk();
+      // url 在线的视频
+      filePath = getIntent().getStringExtra(IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name());
+
+      flashWebView = (WebView) findViewById(R.id.flash_webView_online);
+      flashWebView.setVisibility(View.VISIBLE);
+      final ProgressBar progressBarIndeterminate = (ProgressBar) FlashPlayerActivity.this.findViewById(R.id.pb_indeterminate);
+      progressBarIndeterminate.setVisibility(View.VISIBLE);
+      setTitle("Flash播放器");
+      WebSettings webSettings = flashWebView.getSettings();
+      webSettings.setPluginState(PluginState.ON);
+      webSettings.setSupportZoom(true);
+      // WebView启用javascript脚本执行
+      webSettings.setJavaScriptEnabled(true);
+      webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+
+      try {
+        Thread.sleep(500);// 主线程暂停下，否则容易白屏，原因未知
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
+      // mProgressDialog = ProgressDialog.show(this, "请稍等...", "加载flash中...",
+      // true);
+      flashWebView.setWebChromeClient(new WebChromeClient() {
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+          super.onProgressChanged(view, newProgress);
+          System.out.println("newProgress:" + String.valueOf(newProgress));
+          if (newProgress == 100) {
+            new Handler().postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                progressBarIndeterminate.setVisibility(View.GONE);
+              }
+            }, 500);
+          }
+        }
+      });
+      if (checkinstallornotadobeflashapk()) {
+        flashWebView.loadUrl(filePath);
+      } else {
+        installadobeapk();
+      }
     }
+
   }
 
   // 退出时关闭flash播放

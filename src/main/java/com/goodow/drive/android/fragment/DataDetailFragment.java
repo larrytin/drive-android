@@ -110,7 +110,14 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       // }
       // }
       // 本地文件
-      File files = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey);
+      // File files = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath()
+      // + "/" + blobKey);
+      String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey;
+      // 加入下载的内容，里面有flash类型,那么加上".swf"
+      if (file.get("type").equals("application/x-shockwave-flash")) {
+        filePath = filePath + ".swf";
+      }
+      File files = new File(filePath);
       if (files.exists()) {
         isOffline = true;
       }

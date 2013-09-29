@@ -86,8 +86,15 @@ public class MediaDownloadService extends Service {
       try {
         while (true) {
           downloadRes = MediaDownloadService.this.downloadUrlQueue.take();
-
-          File newFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey"));
+          String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey");
+          // 加入下载的内容，里面有flash类型,那么加上".swf"
+          if (downloadRes.get("type").equals("application/x-shockwave-flash")) {
+            filePath = filePath + ".swf";
+          }
+          File newFile = new File(filePath);
+          // File newFile = new
+          // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" +
+          // downloadRes.get("blobKey"));
           // 本地文件不存在则开启下载
           if (!newFile.exists()) {
             downloadRes.set("status", GlobalConstant.DownloadStatusEnum.DOWNLOADING.getStatus());
@@ -167,7 +174,13 @@ public class MediaDownloadService extends Service {
 
   private void doDownLoad(String... params) {
     try {
-      File newFile = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey"));
+      String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey");
+      // 加入下载的内容，里面有flash类型,那么加上".swf"
+      if (downloadRes.get("type").equals("application/x-shockwave-flash")) {
+        filePath = filePath + ".swf";
+      }
+      File newFile = new File(filePath);
+
       FileOutputStream outputStream = new FileOutputStream(newFile);
 
       MediaHttpDownloader downloader = new MediaHttpDownloader(HTTP_TRANSPORT, new HttpRequestInitializer() {
