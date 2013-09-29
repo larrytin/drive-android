@@ -225,6 +225,7 @@ public enum OfflineFileObserver {
   }
 
   public CollaborativeList getList() {
+    Log.i("offlineAdapter", "OfflineFileObserver中的getList方法list=" + (list == null) + "");
     return list;
   }
 
