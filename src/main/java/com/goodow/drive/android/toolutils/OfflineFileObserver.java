@@ -1,13 +1,5 @@
 package com.goodow.drive.android.toolutils;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.Thread.State;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import android.os.AsyncTask;
-import android.content.Intent;
-import android.util.Log;
 import com.goodow.api.services.attachment.Attachment;
 import com.goodow.api.services.attachment.Attachment.Get;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
@@ -23,6 +15,16 @@ import com.goodow.realtime.ModelInitializerHandler;
 import com.goodow.realtime.Realtime;
 import com.goodow.realtime.ValuesAddedEvent;
 import com.goodow.realtime.ValuesRemovedEvent;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.Thread.State;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.util.Log;
 import elemental.json.JsonObject;
 
 public enum OfflineFileObserver {
@@ -37,7 +39,8 @@ public enum OfflineFileObserver {
 
           String attachmentId = json.getString("attachmentId");
           String userId = json.getString("userId");
-          String docId = "@tmp/" + userId + "/" + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
+          String docId =
+              "@tmp/" + userId + "/" + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
 
           startObservation(docId, attachmentId);
         }
@@ -49,7 +52,8 @@ public enum OfflineFileObserver {
 
   private final String TAG = this.getClass().getSimpleName();
 
-  private final BlockingQueue<JsonObject> unLoginDownloadQueue = new LinkedBlockingDeque<JsonObject>();
+  private final BlockingQueue<JsonObject> unLoginDownloadQueue =
+      new LinkedBlockingDeque<JsonObject>();
   private Model model;
   private CollaborativeMap root;
 
@@ -65,32 +69,33 @@ public enum OfflineFileObserver {
 
     State state = unloginDownloadThread.getState();
     switch (state) {
-    case BLOCKED:
+      case BLOCKED:
 
-      break;
-    case NEW:
-      unloginDownloadThread.start();
+        break;
+      case NEW:
+        unloginDownloadThread.start();
 
-      break;
-    case RUNNABLE:
+        break;
+      case RUNNABLE:
 
-      break;
-    case TERMINATED:
-      unloginDownloadThread = new UnloginDownloadThread();
-      unloginDownloadThread.start();
+        break;
+      case TERMINATED:
+        unloginDownloadThread = new UnloginDownloadThread();
+        unloginDownloadThread.start();
 
-      break;
-    case TIMED_WAITING:
+        break;
+      case TIMED_WAITING:
 
-      break;
-    default:
+        break;
+      default:
 
-      break;
+        break;
     }
   }
 
   // 为保证并发事件的安全性,需传入Model、CollaborativeList
-  public void addFile(final String attachmentId, boolean isLogin, Model offLineModel, CollaborativeList offLineList) {
+  public void addFile(final String attachmentId, boolean isLogin, Model offLineModel,
+      CollaborativeList offLineList) {
     final Model newModel;
     final CollaborativeList newList;
     if (isLogin) {
@@ -121,7 +126,7 @@ public enum OfflineFileObserver {
         protected void onPostExecute(com.goodow.api.services.attachment.model.Attachment execute) {
           // TODO Auto-generated method stub
           super.onPostExecute(execute);
-          out: do {
+          out : do {
             if (null == execute || execute.getId() == null) {
               break out;
             }
@@ -172,7 +177,8 @@ public enum OfflineFileObserver {
       // try {
       // Attachment attachment = MyApplication.getAttachment();
       // Get get = attachment.get(attachmentId);
-      // com.goodow.api.services.attachment.model.Attachment execute = get.execute();
+      // com.goodow.api.services.attachment.model.Attachment execute =
+      // get.execute();
       //
       // out: do {
       // if (null == execute || execute.getId() == null) {
@@ -192,9 +198,11 @@ public enum OfflineFileObserver {
       // }
       // }
       //
-      // newFile.set("url", DriveModule.DRIVE_SERVER + "/serve?id=" + attachmentId);
+      // newFile.set("url", DriveModule.DRIVE_SERVER + "/serve?id=" +
+      // attachmentId);
       // newFile.set("progress", "0");
-      // newFile.set("status", GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
+      // newFile.set("status",
+      // GlobalConstant.DownloadStatusEnum.WAITING.getStatus());
       //
       // newFile.set("label", execute.getFilename());
       // newFile.set("blobKey", execute.getBlobKey());
@@ -203,9 +211,12 @@ public enum OfflineFileObserver {
       //
       // String thumbnail = execute.getThumbnail();
       // if (null != thumbnail) {
-      // if (DriveModule.DRIVE_SERVER.endsWith("http://192.168.1.15:8880")) {
-      // StringBuffer stringBuffer = new StringBuffer(DriveModule.DRIVE_SERVER);
-      // stringBuffer.append(thumbnail.substring(thumbnail.indexOf("8880") + 4));
+      // if
+      // (DriveModule.DRIVE_SERVER.endsWith("http://192.168.1.15:8880")) {
+      // StringBuffer stringBuffer = new
+      // StringBuffer(DriveModule.DRIVE_SERVER);
+      // stringBuffer.append(thumbnail.substring(thumbnail.indexOf("8880")
+      // + 4));
       // stringBuffer.append("=s218");
       // thumbnail = stringBuffer.toString();
       // }
@@ -243,14 +254,17 @@ public enum OfflineFileObserver {
           if (null != adds) {
             for (Object o : adds) {
               CollaborativeMap resource = (CollaborativeMap) o;
-              String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + resource.get("blobKey");
+              String filePath =
+                  GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/"
+                      + resource.get("blobKey");
               // 加入下载的内容，里面有flash类型,那么加上".swf"
               if (resource.get("type").equals("application/x-shockwave-flash")) {
                 filePath = filePath + ".swf";
               }
               File file = new File(filePath);
               // File file = new
-              // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" +
+              // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath()
+              // + "/" +
               // resource.get("blobKey"));
 
               if (!file.exists()) {
@@ -308,7 +322,8 @@ public enum OfflineFileObserver {
           list.remove(i);
         }
       }
-      String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey;
+      String filePath =
+          GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey;
       // 加入下载的内容，里面有flash类型,那么加上".swf"
       if (removefile.get("type").equals("application/x-shockwave-flash")) {
         filePath = filePath + ".swf";
@@ -316,7 +331,9 @@ public enum OfflineFileObserver {
       File file = new File(filePath);
 
       // 删除本地文件
-      // File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() +
+      // File file = new
+      // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath()
+      // +
       // "/" + blobKey);
       if (file.exists()) {
         file.delete();
@@ -350,21 +367,25 @@ public enum OfflineFileObserver {
             for (int i = 0; i < list.length(); i++) {
               CollaborativeMap item = list.get(i);
 
-              String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + item.get("blobKey");
+              String filePath =
+                  GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/"
+                      + item.get("blobKey");
               // 加入下载的内容，里面有flash类型,那么加上".swf"
               if (item.get("type").equals("application/x-shockwave-flash")) {
                 filePath = filePath + ".swf";
               }
               File file = new File(filePath);
               // File file = new
-              // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" +
+              // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath()
+              // + "/" +
               // item.get("blobKey"));
               if (!file.exists()) {
                 // 加入到下载队列
                 DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(item);
               } else {
                 // 文件存在，但是未下载完成
-                if (!item.get("status").equals(GlobalConstant.DownloadStatusEnum.COMPLETE.getStatus())) {
+                if (!item.get("status").equals(
+                    GlobalConstant.DownloadStatusEnum.COMPLETE.getStatus())) {
                   DownloadResServiceBinder.getDownloadResServiceBinder().addResDownload(item);
                 }
               }
@@ -376,7 +397,8 @@ public enum OfflineFileObserver {
           Model model_unlogin = document.getModel();
           CollaborativeMap root = model_unlogin.getRoot();
 
-          CollaborativeList list_unlogin = root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
+          CollaborativeList list_unlogin =
+              root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
           if (null != list_unlogin) {
             list_unlogin.addValuesAddedListener(listAddEventHandler);
             list_unlogin.addValuesRemovedListener(listRemoveEventHandler);
@@ -399,7 +421,8 @@ public enum OfflineFileObserver {
           Model model_unlogin = model_;
           CollaborativeMap root = model_unlogin.getRoot();
 
-          root.set(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue(), model_unlogin.createList());
+          root.set(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue(), model_unlogin
+              .createList());
         }
       }
     };

@@ -1,5 +1,14 @@
 package com.goodow.drive.android.fragment;
 
+import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.ILocalFragment;
+import com.goodow.drive.android.Interface.IOnItemClickListener;
+import com.goodow.drive.android.activity.MainActivity;
+import com.goodow.drive.android.adapter.OfflineAdapter;
+import com.goodow.drive.android.toolutils.OfflineFileObserver;
+import com.goodow.realtime.CollaborativeList;
+import com.goodow.realtime.CollaborativeMap;
+
 import android.app.ActionBar;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
@@ -13,14 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import com.goodow.android.drive.R;
-import com.goodow.drive.android.Interface.ILocalFragment;
-import com.goodow.drive.android.Interface.IOnItemClickListener;
-import com.goodow.drive.android.activity.MainActivity;
-import com.goodow.drive.android.adapter.OfflineAdapter;
-import com.goodow.drive.android.toolutils.OfflineFileObserver;
-import com.goodow.realtime.CollaborativeList;
-import com.goodow.realtime.CollaborativeMap;
 
 public class OfflineListFragment extends ListFragment implements ILocalFragment {
   private final String TAG = getClass().getSimpleName();
@@ -37,13 +38,15 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
       if ("com.goodow.drive.android.offlineFileObserver".equals(intent.getAction())) {
         Log.i("offlineAdapter", "接收到了广播");
         list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
-        adapter = new OfflineAdapter((MainActivity) OfflineListFragment.this.getActivity(), list, new IOnItemClickListener() {
-          @Override
-          public void onItemClick(CollaborativeMap file) {
+        adapter =
+            new OfflineAdapter((MainActivity) OfflineListFragment.this.getActivity(), list,
+                new IOnItemClickListener() {
+                  @Override
+                  public void onItemClick(CollaborativeMap file) {
 
-          }
+                  }
 
-        });
+                });
         setListAdapter(adapter);
       }
     }
@@ -80,20 +83,21 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
     list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
     Log.i("offlineAdapter", "OfflineListFragment中list=" + (list == null) + "");
     // 此处第一次进入时，list为空。
-    adapter = new OfflineAdapter((MainActivity) this.getActivity(), list, new IOnItemClickListener() {
-      @Override
-      public void onItemClick(CollaborativeMap file) {
-        MainActivity activity = (MainActivity) OfflineListFragment.this.getActivity();
+    adapter =
+        new OfflineAdapter((MainActivity) this.getActivity(), list, new IOnItemClickListener() {
+          @Override
+          public void onItemClick(CollaborativeMap file) {
+            MainActivity activity = (MainActivity) OfflineListFragment.this.getActivity();
 
-        DataDetailFragment dataDetailFragment = activity.getDataDetailFragment();
-        dataDetailFragment.setFile(file);
-        dataDetailFragment.initView();
+            DataDetailFragment dataDetailFragment = activity.getDataDetailFragment();
+            dataDetailFragment.setFile(file);
+            dataDetailFragment.initView();
 
-        activity.setDataDetailLayoutState(View.VISIBLE);
-        activity.setLocalFragmentForDetail(dataDetailFragment);
-      }
+            activity.setDataDetailLayoutState(View.VISIBLE);
+            activity.setLocalFragmentForDetail(dataDetailFragment);
+          }
 
-    });
+        });
     setListAdapter(adapter);
   }
 
