@@ -170,17 +170,19 @@ public class FlashPlayerActivity extends Activity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    flashWebView.destroy();
-
+    if (flashWebView != null) {
+      flashWebView.destroy();
+    }
     GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
-
     System.gc();
   }
 
   // 后台运行
   @Override
   protected void onUserLeaveHint() {
-    flashWebView.destroy();
+    if (flashWebView != null) {
+      flashWebView.destroy();
+    }
     this.finish();
     System.gc();
     super.onUserLeaveHint();

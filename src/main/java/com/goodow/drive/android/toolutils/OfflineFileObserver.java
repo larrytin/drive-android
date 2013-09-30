@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.util.Log;
 import com.goodow.api.services.attachment.Attachment;
 import com.goodow.api.services.attachment.Attachment.Get;
+import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.module.DriveModule;
@@ -369,6 +370,9 @@ public enum OfflineFileObserver {
             }
           }
           // TODO:此时更新adapter
+          Intent intent = new Intent();
+          intent.setAction("com.goodow.drive.android.offlineFileObserver");
+          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
 
         } else {
           // 远程推送下载的离线文件夹
