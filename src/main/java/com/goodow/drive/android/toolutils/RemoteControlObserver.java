@@ -156,7 +156,7 @@ public class RemoteControlObserver implements IRemoteControl {
 
   @Override
   public void changeDoc(String docId) {
-    iNotifyData = null;
+    // iNotifyData = null;
 
     if (null != root) {
       JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue());
