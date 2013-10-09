@@ -27,10 +27,25 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
 
   private OfflineAdapter adapter;
 
+  protected CollaborativeList list;
+
   private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
       adapter.notifyDataSetChanged();
+      // 当得到数据后，刷新离线的listView
+      if ("com.goodow.drive.android.offlineFileObserver".equals(intent.getAction())) {
+        Log.i("offlineAdapter", "接收到了广播");
+        list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
+        adapter = new OfflineAdapter((MainActivity) OfflineListFragment.this.getActivity(), list, new IOnItemClickListener() {
+          @Override
+          public void onItemClick(CollaborativeMap file) {
+
+          }
+
+        });
+        setListAdapter(adapter);
+      }
     }
   };
 
@@ -62,7 +77,7 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
     actionBar.setDisplayShowTitleEnabled(true);
     actionBar.setDisplayShowCustomEnabled(false);
 
-    CollaborativeList list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
+    list = OfflineFileObserver.OFFLINEFILEOBSERVER.getList();
     adapter = new OfflineAdapter((MainActivity) this.getActivity(), list, new IOnItemClickListener() {
       @Override
       public void onItemClick(CollaborativeMap file) {
@@ -116,7 +131,7 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
 
       IntentFilter intentFilter = new IntentFilter();
       intentFilter.addAction("CHANGE_OFFLINE_STATE");
-
+      intentFilter.addAction("com.goodow.drive.android.offlineFileObserver");
       activity.registerReceiver(broadcastReceiver, intentFilter);
 
       RelativeLayout relativeLayout = (RelativeLayout) activity.findViewById(R.id.mainConnect);

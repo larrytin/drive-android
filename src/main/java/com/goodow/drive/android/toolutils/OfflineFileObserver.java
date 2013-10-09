@@ -324,6 +324,9 @@ public enum OfflineFileObserver {
           root = model.getRoot();
 
           list = root.get(GlobalConstant.DocumentIdAndDataKey.OFFLINEKEY.getValue());
+          Intent intent = new Intent();
+          intent.setAction("com.goodow.drive.android.offlineFileObserver");
+          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
           if (null != list) {
             list.addValuesAddedListener(listAddEventHandler);
             list.addValuesRemovedListener(listRemoveEventHandler);
