@@ -43,7 +43,14 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
                 new IOnItemClickListener() {
                   @Override
                   public void onItemClick(CollaborativeMap file) {
+                    MainActivity activity = (MainActivity) OfflineListFragment.this.getActivity();
 
+                    DataDetailFragment dataDetailFragment = activity.getDataDetailFragment();
+                    dataDetailFragment.setFile(file);
+                    dataDetailFragment.initView();
+
+                    activity.setDataDetailLayoutState(View.VISIBLE);
+                    activity.setLocalFragmentForDetail(dataDetailFragment);
                   }
 
                 });
