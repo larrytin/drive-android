@@ -1,15 +1,5 @@
 package com.goodow.drive.android.toolutils;
 
-import java.io.File;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-
 import com.goodow.drive.android.Interface.INotifyData;
 import com.goodow.drive.android.Interface.IRemoteControl;
 import com.goodow.drive.android.activity.play.AudioPlayActivity;
@@ -31,6 +21,15 @@ import com.goodow.realtime.Realtime;
 import com.goodow.realtime.ValueChangedEvent;
 import com.goodow.realtime.ValuesAddedEvent;
 
+import java.io.File;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
@@ -53,87 +52,114 @@ public class RemoteControlObserver implements IRemoteControl {
 
   private INotifyData iNotifyData;
 
-  private final EventHandler<ValuesAddedEvent> playFileHandler = new EventHandler<ValuesAddedEvent>() {
-    @Override
-    public void handleEvent(ValuesAddedEvent event) {
-      JsonObject newJsonObject = (JsonObject) event.getValues()[0];
+  private final EventHandler<ValuesAddedEvent> playFileHandler =
+      new EventHandler<ValuesAddedEvent>() {
+        @Override
+        public void handleEvent(ValuesAddedEvent event) {
+          JsonObject newJsonObject = (JsonObject) event.getValues()[0];
 
-      String label = ((JsonString) newJsonObject.get("label")).asString();
-      String blobKey = ((JsonString) newJsonObject.get("blobKey")).asString();
-      String type = ((JsonString) newJsonObject.get("type")).asString();
-      String id = ((JsonString) newJsonObject.get("id")).asString();
-      String resPath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
-      String filePath = resPath + blobKey;
-      // 加入下载的内容，里面有flash类型,那么加上".swf"
-      if (type.equals("application/x-shockwave-flash")) {
-        filePath = filePath + ".swf";
-      }
-      File file = new File(filePath);
-      // File file = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() +
-      // "/" + blobKey);
+          String label = ((JsonString) newJsonObject.get("label")).asString();
+          String blobKey = ((JsonString) newJsonObject.get("blobKey")).asString();
+          String type = ((JsonString) newJsonObject.get("type")).asString();
+          String id = ((JsonString) newJsonObject.get("id")).asString();
+          String resPath =
+              GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
+          String filePath = resPath + blobKey;
+          // 加入下载的内容，里面有flash类型,那么加上".swf"
+          if (type.equals("application/x-shockwave-flash")) {
+            filePath = filePath + ".swf";
+          }
+          File file = new File(filePath);
+          // File file = new
+          // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() +
+          // "/" + blobKey);
 
-      if (file.exists()) {
-        Intent intent = null;
+          if (file.exists()) {
+            Intent intent = null;
 
-        if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(Tools.getTypeByMimeType(type))) {
-          intent = new Intent(activity, AudioPlayActivity.class);
+            if (GlobalConstant.SupportResTypeEnum.MP3.getTypeName().equals(
+                Tools.getTypeByMimeType(type))) {
+              intent = new Intent(activity, AudioPlayActivity.class);
 
-          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_NAME.name(), label);
-          intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_PATH.name(), resPath + blobKey);
+              intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_NAME.name(), label);
+              intent.putExtra(AudioPlayActivity.IntentExtraTagEnum.MP3_PATH.name(), resPath
+                  + blobKey);
+            }
+            // else if
+            // (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(Tools.getTypeByMimeType((String)
+            // map.get("type")))) {
+            // intent = new Intent(activity, VideoPlayActivity.class);
+            //
+            // intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(),
+            // (String) map.get("label"));
+            // intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(),
+            // resPath + (String) map.get("blobKey") + ".swf");
+            // }
+            // else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(
+            // Tools.getTypeByMimeType(type))) {
+            // intent = new Intent(activity, FlashPlayerActivity.class);
+            //
+            // intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
+            // intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE
+            // .name(), resPath + blobKey + ".swf");
+            // }
+            else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(
+                Tools.getTypeByMimeType(type))
+                || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(
+                    Tools.getTypeByMimeType(type))) {
+
+              intent = new Intent(activity, PicturePlayAcivity.class);
+
+              intent.putExtra(PicturePlayAcivity.PICTUREPATH, file.getPath());
+            } else {
+              intent = new Intent();
+
+              intent.setAction(Intent.ACTION_VIEW);
+              intent.setDataAndType(Uri.fromFile(file), type);
+              // 指定应用打开软件
+              // PackageManager pm =
+              // MyApplication.getApplication().getBaseContext().getPackageManager();
+              // List<PackageInfo> infoList = pm.getInstalledPackages(PackageManager.GET_SERVICES);
+              //
+              // if (type.equals("application/x-shockwave-flash")) {
+              // for (PackageInfo info : infoList) {
+              // if ("com.issess.isFlashPlayer".equals(info.packageName)) {
+              // intent.setClassName("com.issess.isFlashPlayer",
+              // "com.issess.isFlashPlayer.player.IsFlashPlayer");
+              // }
+              // }
+              //
+              // }
+            }
+
+            if (null != intent) {
+              activity.startActivity(intent);
+            }
+          } else {
+            if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(
+                Tools.getTypeByMimeType(type))) {
+              Intent intent = new Intent(activity, FlashPlayerActivity.class);
+
+              intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
+              intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL
+                  .name(), DriveModule.DRIVE_SERVER + "/serve?id=" + id);
+              activity.startActivity(intent);
+            } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(
+                Tools.getTypeByMimeType(type))
+                || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(
+                    Tools.getTypeByMimeType(type))) {
+
+              Intent intent = new Intent(activity, PicturePlayAcivity.class);
+
+              String thumbnail = ((JsonString) newJsonObject.get("thumbnail")).asString();
+              intent.putExtra(PicturePlayAcivity.PICTUREURL, thumbnail);
+              activity.startActivity(intent);
+            } else {
+              Toast.makeText(activity, "请先下载该文件。", Toast.LENGTH_SHORT).show();
+            }
+          }
         }
-        // else if
-        // (GlobalConstant.SupportResTypeEnum.MP4.getTypeName().equals(Tools.getTypeByMimeType((String)
-        // map.get("type")))) {
-        // intent = new Intent(activity, VideoPlayActivity.class);
-        //
-        // intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(),
-        // (String) map.get("label"));
-        // intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(),
-        // resPath + (String) map.get("blobKey") + ".swf");
-        // }
-        else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType(type))) {
-          intent = new Intent(activity, FlashPlayerActivity.class);
-
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_LOCAL_FILE.name(), resPath + blobKey + ".swf");
-        } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
-            || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
-
-          intent = new Intent(activity, PicturePlayAcivity.class);
-
-          intent.putExtra(PicturePlayAcivity.PICTUREPATH, file.getPath());
-        } else {
-          intent = new Intent();
-
-          intent.setAction(Intent.ACTION_VIEW);
-          intent.setDataAndType(Uri.fromFile(file), type);
-        }
-
-        if (null != intent) {
-          activity.startActivity(intent);
-        }
-      } else {
-        if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(Tools.getTypeByMimeType(type))) {
-          Intent intent = new Intent(activity, FlashPlayerActivity.class);
-
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_NAME.name(), label);
-          intent.putExtra(FlashPlayerActivity.IntentExtraTagEnum.FLASH_PATH_OF_SERVER_URL.name(), DriveModule.DRIVE_SERVER + "/serve?id="
-              + id);
-          activity.startActivity(intent);
-        } else if (GlobalConstant.SupportResTypeEnum.JPEG.getTypeName().equals(Tools.getTypeByMimeType(type))
-            || GlobalConstant.SupportResTypeEnum.PNG.getTypeName().equals(Tools.getTypeByMimeType(type))) {
-
-          Intent intent = new Intent(activity, PicturePlayAcivity.class);
-
-          String thumbnail = ((JsonString) newJsonObject.get("thumbnail")).asString();
-          intent.putExtra(PicturePlayAcivity.PICTUREURL, thumbnail);
-          activity.startActivity(intent);
-        } else {
-          Toast.makeText(activity, "请先下载该文件。", Toast.LENGTH_SHORT).show();
-        }
-      }
-    }
-  };
+      };
 
   private final EventHandler<ValueChangedEvent> handler = new EventHandler<ValueChangedEvent>() {
     @Override
@@ -313,11 +339,14 @@ public class RemoteControlObserver implements IRemoteControl {
         playFileList.addValuesAddedListener(playFileHandler);
 
         JsonObject map = root.get(GlobalConstant.DocumentIdAndDataKey.PATHKEY.getValue());
-        Log.i(TAG, GlobalDataCacheForMemorySingleton.getInstance.getUserName() + "-root: " + root.toString());
+        Log.i(TAG, GlobalDataCacheForMemorySingleton.getInstance.getUserName() + "-root: "
+            + root.toString());
 
         root.addValueChangedListener(handler);
 
-        JreJsonString jreJsonString = (JreJsonString) (map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue()));
+        JreJsonString jreJsonString =
+            (JreJsonString) (map
+                .get(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue()));
         if (null != jreJsonString) {
           String lastDocId = jreJsonString.asString();
 
@@ -356,7 +385,8 @@ public class RemoteControlObserver implements IRemoteControl {
   }
 
   private void updateUi(JsonObject map) {
-    JreJsonString jreJsonString = (JreJsonString) (map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue()));
+    JreJsonString jreJsonString =
+        (JreJsonString) (map.get(GlobalConstant.DocumentIdAndDataKey.CURRENTDOCIDKEY.getValue()));
 
     if (null != jreJsonString) {
       String lastDocId = jreJsonString.asString();
