@@ -1,27 +1,13 @@
 package com.goodow.drive.android.service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.lang.Thread.State;
-import java.util.Iterator;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import android.content.IntentFilter;
-import android.util.Log;
-import android.content.Context;
-import android.content.BroadcastReceiver;
-import android.net.NetworkInfo;
-import android.net.ConnectivityManager;
-import android.app.Service;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DownloadStatusEnum;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.module.DriveModule;
+import com.goodow.drive.android.toolutils.FolderSize;
 import com.goodow.drive.android.toolutils.MyApplication;
 import com.goodow.realtime.CollaborativeMap;
+
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.media.MediaHttpDownloader;
 import com.google.api.client.googleapis.media.MediaHttpDownloaderProgressListener;
@@ -34,7 +20,29 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.lang.Thread.State;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Binder;
+import android.os.IBinder;
+
 public class MediaDownloadService extends Service {
+
   public final class MyBinder extends Binder {
     public void addResDownload(final CollaborativeMap res) {
       startResDownloadTread(res);
@@ -60,22 +68,22 @@ public class MediaDownloadService extends Service {
     @Override
     public void progressChanged(final MediaHttpDownloader downloader) {
       switch (downloader.getDownloadState()) {
-      case MEDIA_IN_PROGRESS:
-        downloadRes.set("progress", Integer.toString((int) (downloader.getProgress() * 100)));
+        case MEDIA_IN_PROGRESS:
+          downloadRes.set("progress", Integer.toString((int) (downloader.getProgress() * 100)));
 
-        break;
-      case MEDIA_COMPLETE:
-        downloadRes.set("progress", "100");
-        downloadRes.set("status", DownloadStatusEnum.COMPLETE.getStatus());
+          break;
+        case MEDIA_COMPLETE:
+          downloadRes.set("progress", "100");
+          downloadRes.set("status", DownloadStatusEnum.COMPLETE.getStatus());
 
-        Intent intent = new Intent();
-        intent.setAction("DATA_CONTROL");
-        MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
+          Intent intent = new Intent();
+          intent.setAction("DATA_CONTROL");
+          MyApplication.getApplication().getBaseContext().sendBroadcast(intent);
 
-        break;
-      default:
+          break;
+        default:
 
-        break;
+          break;
       }
     }
   }
@@ -86,7 +94,9 @@ public class MediaDownloadService extends Service {
       try {
         while (true) {
           downloadRes = MediaDownloadService.this.downloadUrlQueue.take();
-          String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey");
+          String filePath =
+              GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/"
+                  + downloadRes.get("blobKey");
           // 加入下载的内容，里面有flash类型,那么加上".swf"
           if (downloadRes.get("type").equals("application/x-shockwave-flash")) {
             filePath = filePath + ".swf";
@@ -95,11 +105,50 @@ public class MediaDownloadService extends Service {
           // File newFile = new
           // File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" +
           // downloadRes.get("blobKey"));
-          // 本地文件不存在则开启下载
-          if (!newFile.exists()) {
+          // 本地文件不存在则开启下载,或者存在，但是大小为0
+          if (!newFile.exists() || newFile.length() == 0) {
             downloadRes.set("status", GlobalConstant.DownloadStatusEnum.DOWNLOADING.getStatus());
 
             final String urlString = downloadRes.get("url");
+            long fileLength = 0;
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.connect();
+            if (conn.getResponseCode() == 200) {
+              fileLength = conn.getContentLength();// 根据响应获取文件大小
+            }
+            String fileName = null;
+            // 如果文件夹过大，删除最早的一个文件
+            while ((GlobalConstant.OfflineResourceSize + fileLength) > GlobalConstant.FolderSizeLimite) {
+              fileName =
+                  (String) FolderSize.getSortedHashtableByValue(GlobalConstant.fileInfo)[0]
+                      .getKey();
+              String filePath1 =
+                  GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/";
+              File file = new File(filePath1 + fileName);
+              if (file.exists() && file.isFile()) {
+                long tmpfilelength = file.length();
+                if (file.delete()) {
+                  GlobalConstant.OfflineResourceSize =
+                      GlobalConstant.OfflineResourceSize - tmpfilelength;
+                  // 移除集合中的数据
+                  GlobalConstant.fileInfo.remove(fileName);
+                  // TODO:可以删除list里卖弄的数据
+                } else {
+                  // 初始化
+                  GlobalConstant.getFoldInformation();
+                }
+              } else {
+                // 初始化
+                GlobalConstant.getFoldInformation();
+              }
+            }
+            // 更新文件夹的大小
+            GlobalConstant.OfflineResourceSize = GlobalConstant.OfflineResourceSize + fileLength;
+            // 集合中添加新的文件
+            GlobalConstant.fileInfo.put((String) (downloadRes.get("type").equals(
+                "application/x-shockwave-flash") ? downloadRes.get("blobKey") + ".swf"
+                : downloadRes.get("blobKey")), System.currentTimeMillis());
             doDownLoad(urlString);
           }
         }
@@ -110,7 +159,8 @@ public class MediaDownloadService extends Service {
   }
 
   private final IBinder myBinder = new MyBinder();
-  private final BlockingQueue<CollaborativeMap> downloadUrlQueue = new LinkedBlockingDeque<CollaborativeMap>();
+  private final BlockingQueue<CollaborativeMap> downloadUrlQueue =
+      new LinkedBlockingDeque<CollaborativeMap>();
   private ResDownloadThread resDownloadThread = new ResDownloadThread();
 
   private final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
@@ -122,6 +172,8 @@ public class MediaDownloadService extends Service {
   private ConnectivityManager connectivityManager;
 
   private NetworkInfo info;
+  private final Timer timer = new Timer();
+  private TimerTask task;
 
   // 用来接收网络状态改变的广播
   private final BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
@@ -163,6 +215,15 @@ public class MediaDownloadService extends Service {
     IntentFilter mFilter = new IntentFilter();
     mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     registerReceiver(mConnectivityReceiver, mFilter);
+    // 初始化计时器任务
+    task = new TimerTask() {
+
+      @Override
+      public void run() {
+        getDownloadThreadState();
+      }
+    };
+    timer.schedule(task, 10000, 10000);
   }
 
   @Override
@@ -170,25 +231,32 @@ public class MediaDownloadService extends Service {
     super.onDestroy();
     // 注销广播
     unregisterReceiver(mConnectivityReceiver);
+    if (timer != null) {
+      timer.cancel();
+    }
   }
 
   private void doDownLoad(String... params) {
     try {
-      String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + downloadRes.get("blobKey");
+      String filePath =
+          GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/"
+              + downloadRes.get("blobKey");
       // 加入下载的内容，里面有flash类型,那么加上".swf"
       if (downloadRes.get("type").equals("application/x-shockwave-flash")) {
         filePath = filePath + ".swf";
       }
+
       File newFile = new File(filePath);
 
       FileOutputStream outputStream = new FileOutputStream(newFile);
 
-      MediaHttpDownloader downloader = new MediaHttpDownloader(HTTP_TRANSPORT, new HttpRequestInitializer() {
-        @Override
-        public void initialize(HttpRequest request) {
-          request.setParser(new JsonObjectParser(JSON_FACTORY));
-        }
-      });
+      MediaHttpDownloader downloader =
+          new MediaHttpDownloader(HTTP_TRANSPORT, new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest request) {
+              request.setParser(new JsonObjectParser(JSON_FACTORY));
+            }
+          });
 
       if (DriveModule.DRIVE_SERVER.equals("http://server.drive.goodow.com")) {
         downloader.setDirectDownloadEnabled(false);// 设为多块下载
@@ -209,47 +277,45 @@ public class MediaDownloadService extends Service {
    * 获取当前线程的状态,并处理下载任务
    */
   private void getDownloadThreadState() {
-    Log.i("mark", "进入下载");
     State state = resDownloadThread.getState();
     switch (state) {
     // 线程被阻塞，在等待一个锁。
-    case BLOCKED:
+      case BLOCKED:
 
-      break;
-    // 线程已被创建，但从未启动
-    case NEW:
-      resDownloadThread.start();
+        break;
+      // 线程已被创建，但从未启动
+      case NEW:
+        resDownloadThread.start();
 
-      break;
-    // 线程可能已经运行
-    case RUNNABLE:
+        break;
+      // 线程可能已经运行
+      case RUNNABLE:
 
-      break;
-    // 线程已被终止
-    case TERMINATED:
-      // note : 如果下载线程被异常终止了, 就重新创建一个
-      resDownloadThread = new ResDownloadThread();
-      resDownloadThread.start();
+        break;
+      // 线程已被终止
+      case TERMINATED:
+        // note : 如果下载线程被异常终止了, 就重新创建一个
+        resDownloadThread = new ResDownloadThread();
+        resDownloadThread.start();
 
-      break;
-    // 线程正在等待一个指定的时间。
-    case TIMED_WAITING:
+        break;
+      // 线程正在等待一个指定的时间。
+      case TIMED_WAITING:
 
-      break;
-    default:
+        break;
+      default:
 
-      break;
+        break;
     }
   }
 
   private void startResDownloadTread(final CollaborativeMap res) {
     // 遍历队列,若有相同的URL则不添加
     Iterator<CollaborativeMap> iterator = downloadUrlQueue.iterator();
-    add: do {
+    add : do {
       while (iterator.hasNext()) {
         CollaborativeMap item = iterator.next();
         if (item.get("url").equals(res.get("url"))) {
-
           break add;
         }
       }

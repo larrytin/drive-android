@@ -1,5 +1,8 @@
 package com.goodow.drive.android.global_data_cache;
 
+import com.goodow.drive.android.toolutils.FolderSize;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,7 +99,8 @@ public final class GlobalConstant {
    * @author Administrator 对应支持的文件格式;PRINT("print")是手偶格式
    */
   public static enum SupportResTypeEnum {
-    DOC("doc"), PDF("pdf"), MP3("mp3"), MP4("mp4"), FLASH("swf"), TEXT("txt"), PNG("png"), JPEG("jpg"), EXCEL("xls"), PRINT("print");
+    DOC("doc"), PDF("pdf"), MP3("mp3"), MP4("mp4"), FLASH("swf"), TEXT("txt"), PNG("png"), JPEG(
+        "jpg"), EXCEL("xls"), PRINT("print");
     private final String typeName;
 
     private SupportResTypeEnum(String typeName) {
@@ -136,9 +140,9 @@ public final class GlobalConstant {
     // 北京内网
     // mList = map.get("beijing");
     // 外网goodow
-    // mList = map.get("goodow");
+    mList = map.get("goodow");
     // 测试
-    mList = map.get("ceshi");
+    // mList = map.get("ceshi");
   }
   public static List<String> mList;
   public static String REALTIME_SERVER = mList.get(0);
@@ -155,6 +159,24 @@ public final class GlobalConstant {
   // 无锡
   // private static String docId = "07";
   private static String docId = mList.get(2);
+  // 离线文件夹的大小
+  public static long OfflineResourceSize;
+  // 离线文件的文件名和时间
+  public static Map<String, Long> fileInfo = new HashMap<String, Long>();
+
+  // 设置文件夹的大小
+  public static long FolderSizeLimite = 300 * 1024 * 1024;
+
+  public static void getFoldInformation() {
+    // 获得下载目录下的文件大小，及文件名和文件的修改时间(等同于创建时间)
+    try {
+      GlobalConstant.OfflineResourceSize =
+          FolderSize.getFileSize(new File(GlobalDataCacheForMemorySingleton.getInstance()
+              .getOfflineResDirPath()), GlobalConstant.fileInfo);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   private GlobalConstant() {
 

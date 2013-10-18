@@ -1,26 +1,25 @@
 package com.goodow.drive.android.toolutils;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-
-import android.content.SharedPreferences.Editor;
-
-import android.content.SharedPreferences;
-
-import android.app.Activity;
-import android.app.Dialog;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 import com.goodow.api.services.account.Account;
 import com.goodow.api.services.account.model.AccountInfo;
 import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.realtime.Realtime;
+
+import java.io.EOFException;
+import java.io.File;
+import java.io.IOException;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
 
 public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> {
   private final String TAG = this.getClass().getSimpleName();
@@ -107,7 +106,8 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
       String docId =
           "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
               + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
-
+      // 遍历离线目录的大小
+      GlobalConstant.getFoldInformation();
       OfflineFileObserver.OFFLINEFILEOBSERVER.startObservation(docId, null);
 
       if (null == dialog) {
@@ -125,7 +125,8 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
       }
 
       // 保存帐号密码,用于崩溃时自动登录
-      SharedPreferences sharedPreferences = activity.getSharedPreferences(LOGINPREFERENCESNAME, Activity.MODE_PRIVATE);
+      SharedPreferences sharedPreferences =
+          activity.getSharedPreferences(LOGINPREFERENCESNAME, Activity.MODE_PRIVATE);
       Editor editor = sharedPreferences.edit();
       editor.putString(USERNAME, userName);
       editor.putString(PASSWORD, password);

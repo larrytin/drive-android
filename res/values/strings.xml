@@ -31,7 +31,7 @@
     <!-- 无锡内网 -->
 <!--     <string name="com.goodow.realtime.serverAddress">http://drive.retechcorp.com:8080</string> -->
     <!--测试账号 -->
-    <string name="com.goodow.realtime.serverAddress">http://61.177.139.216:8084</string>
+<!--     <string name="com.goodow.realtime.serverAddress">http://61.177.139.216:8084</string> -->
     
     
 
