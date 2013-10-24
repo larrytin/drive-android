@@ -198,6 +198,7 @@ public class MainActivity extends RoboActivity {
     MenuItem back2Login = menu.add(0, 0, 0, R.string.ds_dialog_exit_button_text);
     back2Login.setIcon(R.drawable.exit_program);
     back2Login.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
     return true;
   }
 

@@ -24,5 +24,8 @@
     <string name="pin_checkbox_label">操作：</string>
     <string name="remoteControlError">远程同步操作异常,请尝试切换菜单。</string>
     <string name="downloaded">已下载</string>
+    <string name="rename">输入新名称：</string>
+    <string name="add_folder">新增文件夹</string>
+    <string name="test">测试</string>
 
 </resources>

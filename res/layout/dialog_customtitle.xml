@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:orientation="horizontal"
+    android:padding="10dip"
+    >
+    <LinearLayout 
+        android:background="@drawable/status_selector"
+        android:id="@+id/last_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+       <ImageView 
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:src="@drawable/action_discussion_bar_previous"/>
+       <ImageView 
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:layout_marginLeft="-8dp"
+          android:src="@drawable/ic_type_folder_big"/>
+    </LinearLayout>
+    <TextView
+        android:layout_weight="1"
+        android:id="@+id/tv_test"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:text="@string/test"
+        android:textColor="@color/blue"
+        android:textSize="14sp" />
+    <ImageView
+        android:id="@+id/img_createfolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_new_folder" />
+    
+</LinearLayout>
+

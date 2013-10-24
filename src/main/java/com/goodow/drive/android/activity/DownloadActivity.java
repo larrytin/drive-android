@@ -31,17 +31,17 @@ public class DownloadActivity extends Activity {
   /**
    * InnerClass: 后台下载一张
    */
-  // test
   private class DownlaodTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {
-      HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
-        @Override
-        public void initialize(HttpRequest request) {
-          request.setParser(new JsonObjectParser(JSON_FACTORY));
-        }
+      HttpRequestFactory requestFactory =
+          HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest request) {
+              request.setParser(new JsonObjectParser(JSON_FACTORY));
+            }
 
-      });
+          });
 
       Bitmap bitmap = null;
       HttpRequest request;
@@ -88,12 +88,13 @@ public class DownloadActivity extends Activity {
     protected Long doInBackground(String... params) {
       long downloadCount = 0;
 
-      HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
-        @Override
-        public void initialize(HttpRequest request) {
-          request.setParser(new JsonObjectParser(JSON_FACTORY));
-        }
-      });
+      HttpRequestFactory requestFactory =
+          HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
+            @Override
+            public void initialize(HttpRequest request) {
+              request.setParser(new JsonObjectParser(JSON_FACTORY));
+            }
+          });
 
       Bitmap bitmap = null;
       HttpRequest request;
