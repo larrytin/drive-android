@@ -8,7 +8,7 @@
     <string name="trix_sheets_tab_menu_ok">OK</string>
     <string name="unsaved_dialog_cancel">Cancel</string>
     <string name="prefs_offline_category">Offline files</string>
-    
+    <string name="pick_entry_create_new_folder">create new folder</string>
     <!-- 自己命名 -->
     <string name="contentDescription">description</string>
     <string name="app_name">KeRuiXing platform</string>    

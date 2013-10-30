@@ -4,4 +4,10 @@
     <color name="progress_indicator">#ff40b2e6</color>
     <color name="button_background">#358E00</color>
     <color name="textgroup_background">#66CCFF</color>
+    <color name="list_entry_pressed">#ff83d1ee</color>
+    <color name="pick_entry_dialog_header_text">#ff33b5e5</color>
+    <color name="pick_entry_dialog_header_divider">#ff33b5e5</color>
+    <color name="list_entry_focused">#ffc1e9f7</color>
+    <color name="list_entry_disabled_focused">#ffe0e0e0</color>
+    <color name="list_entry_activated">#22000000</color>
 </resources>

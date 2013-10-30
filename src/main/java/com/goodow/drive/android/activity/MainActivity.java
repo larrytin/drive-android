@@ -195,7 +195,7 @@ public class MainActivity extends RoboActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
 
-    MenuItem back2Login = menu.add(0, 0, 0, R.string.ds_dialog_exit_button_text);
+    MenuItem back2Login = menu.add(0, 0, 1, R.string.ds_dialog_exit_button_text);
     back2Login.setIcon(R.drawable.exit_program);
     back2Login.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
@@ -223,41 +223,43 @@ public class MainActivity extends RoboActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    super.onOptionsItemSelected(item);
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        if (leftMenu.getVisibility() == LinearLayout.VISIBLE) {
+          hideLeftMenuLayout();
+        } else {
+          setLeftMenuLayoutX(0);
+          showLeftMenuLayout();
 
-    if (item.getItemId() == android.R.id.home) {
-      if (leftMenu.getVisibility() == LinearLayout.VISIBLE) {
-        hideLeftMenuLayout();
-      } else {
-        setLeftMenuLayoutX(0);
-        showLeftMenuLayout();
+          middleLayout.setVisibility(LinearLayout.VISIBLE);
+        }
+        return true;
+      case 0:
+        // 退出程序 取消
+        new AlertDialog.Builder(this).setPositiveButton(R.string.unsaved_dialog_cancel,
+            new DialogInterface.OnClickListener() {
 
-        middleLayout.setVisibility(LinearLayout.VISIBLE);
-      }
-    } else if (item.getItemId() == 0) {
-      // 退出程序 取消
-      new AlertDialog.Builder(this).setPositiveButton(R.string.unsaved_dialog_cancel,
-          new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+              }
+              // 确定
+            }).setNegativeButton(R.string.trix_sheets_tab_menu_ok,
+            new DialogInterface.OnClickListener() {
 
-            }
-            // 确定
-          }).setNegativeButton(R.string.trix_sheets_tab_menu_ok,
-          new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                GlobalDataCacheForMemorySingleton.getInstance.setUserId(null);
+                GlobalDataCacheForMemorySingleton.getInstance.setAccess_token(null);
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-              GlobalDataCacheForMemorySingleton.getInstance.setUserId(null);
-              GlobalDataCacheForMemorySingleton.getInstance.setAccess_token(null);
-
-              ToolsFunctionForThisProgect.quitApp(MainActivity.this);
-            }
-          }).setTitle("温馨提示").setMessage(R.string.back_dailogMessage).create().show();
+                ToolsFunctionForThisProgect.quitApp(MainActivity.this);
+              }
+            }).setTitle("温馨提示").setMessage(R.string.back_dailogMessage).create().show();
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
     }
 
-    return true;
   }
 
   @Override

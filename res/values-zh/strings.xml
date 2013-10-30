@@ -8,6 +8,7 @@
     <string name="trix_sheets_tab_menu_ok">确定</string>
     <string name="unsaved_dialog_cancel">取消</string>
     <string name="prefs_offline_category">离线文件</string>
+    <string name="pick_entry_create_new_folder">新建文件夹</string>
     
     <!-- 自己命名 -->
     <string name="contentDescription">description</string>

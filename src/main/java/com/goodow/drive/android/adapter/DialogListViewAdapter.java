@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -107,19 +106,17 @@ public class DialogListViewAdapter extends BaseAdapter {
     View row = convertView;
 
     if (0 == position && null != folderList && folderList.length() != 0) {
-      row = layoutInflater.inflate(R.layout.row_foldergroup, parent, false);
+      row = layoutInflater.inflate(R.layout.dialog_foldergroup, parent, false);
       textViewContent = "文件夹";
     } else if ((0 == position && (null == folderList || folderList.length() == 0))
         || (0 != position && null == item)) {
-      row = layoutInflater.inflate(R.layout.row_foldergroup, parent, false);
+      row = layoutInflater.inflate(R.layout.dialog_foldergroup, parent, false);
       textViewContent = "文件";
     } else {
-      row = layoutInflater.inflate(R.layout.row_folderlist, parent, false);
+      row = layoutInflater.inflate(R.layout.dialog_folderlist, parent, false);
 
       row.setTag(item);
-      ImageButton button = (ImageButton) row.findViewById(R.id.delButton);
       ImageView img_left = (ImageView) row.findViewById(R.id.leftImage);
-      button.setVisibility(View.GONE);
 
       if (null != folderList && position < folderList.length() + 1) {
         img_left.setImageResource(R.drawable.ic_type_folder);
