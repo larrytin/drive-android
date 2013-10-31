@@ -1,5 +1,12 @@
 package com.goodow.drive.android.toolutils;
 
+import com.goodow.drive.android.module.DriveModule;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.TypedValue;
@@ -9,10 +16,12 @@ public class Tools {
    * @author Administrator 各种MIME TYPE,欢迎添加;
    */
   public static enum MIME_TYPE_Table {
-    RES_3gp("3gp", "video/3gpp"), RES_pdf("pdf", "application/pdf"), RES_png("png", "image/png"), RES_txt("txt", "text/plain"), RES_doc(
-        "doc", "application/msword"), RES_xls("xls", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), RES_htm("htm",
-        "text/html"), RES_html("html", "text/html"), RES_bmp("bmp", "image/bmp"), RES_gif("gif", "image/gif"), RES_jpg("jpg", "image/jpeg"), RES_java(
-        "java", "text/plain"), RES_mp3("mp3", "audio/mp3"), RES_mp4("mp4", "video/mp4"), RES_flash("swf", "application/x-shockwave-flash"), RES_PRINT(
+    RES_3gp("3gp", "video/3gpp"), RES_pdf("pdf", "application/pdf"), RES_png("png", "image/png"), RES_txt(
+        "txt", "text/plain"), RES_doc("doc", "application/msword"), RES_xls("xls",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), RES_htm("htm",
+        "text/html"), RES_html("html", "text/html"), RES_bmp("bmp", "image/bmp"), RES_gif("gif",
+        "image/gif"), RES_jpg("jpg", "image/jpeg"), RES_java("java", "text/plain"), RES_mp3("mp3",
+        "audio/mp3"), RES_mp4("mp4", "video/mp4"), RES_flash("swf", "application/x-shockwave-flash"), RES_PRINT(
         "print", "application/x-print");
 
     private final String type;
@@ -34,6 +43,9 @@ public class Tools {
     }
 
   }
+
+  // private final static String TAG = Tools.class.getSimpleName();
+  private static final Logger LOGGER = Logger.getLogger(Tools.class.getName());
 
   /**
    * 根据支持格式获得对应的MIME TYPE
@@ -94,5 +106,21 @@ public class Tools {
     }
 
     return type;
+  }
+
+  public static String modifyThumbnailAddress(String thumbnailurl) {
+    if (!DriveModule.DRIVE_SERVER.contains(".goodow.com")) {
+      StringBuilder sb = new StringBuilder(DriveModule.DRIVE_SERVER);
+      String file = null;
+      try {
+        URL url = new URL(thumbnailurl);
+        file = url.getFile();
+      } catch (MalformedURLException e) {
+        LOGGER.log(Level.SEVERE, "Malformed URL Exception", e);
+      }
+      sb.append(file);
+      thumbnailurl = sb.toString();
+    }
+    return thumbnailurl;
   }
 }

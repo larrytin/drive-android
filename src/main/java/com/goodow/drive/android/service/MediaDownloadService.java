@@ -6,6 +6,7 @@ import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingle
 import com.goodow.drive.android.module.DriveModule;
 import com.goodow.drive.android.toolutils.FolderSize;
 import com.goodow.drive.android.toolutils.MyApplication;
+import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.realtime.CollaborativeMap;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -108,8 +109,16 @@ public class MediaDownloadService extends Service {
           // 本地文件不存在则开启下载,或者存在，但是大小为0
           if (!newFile.exists() || newFile.length() == 0) {
             downloadRes.set("status", GlobalConstant.DownloadStatusEnum.DOWNLOADING.getStatus());
-
-            final String urlString = downloadRes.get("url");
+            String urlString = downloadRes.get("url");
+            // 下载缩略图
+            if (downloadRes.get("type").toString().startsWith("image/")) {
+              String thumbnailurl = downloadRes.get("thumbnail");
+              // 修正缩略图地址
+              thumbnailurl = Tools.modifyThumbnailAddress(thumbnailurl);
+              int width = getResources().getDisplayMetrics().widthPixels;
+              int height = getResources().getDisplayMetrics().heightPixels;
+              urlString = thumbnailurl + "=s" + ((width > height ? width : height) * 8) / 10;
+            }
             long fileLength = 0;
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
