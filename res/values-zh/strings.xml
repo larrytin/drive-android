@@ -28,5 +28,8 @@
     <string name="rename">输入新名称：</string>
     <string name="add_folder">新增文件夹</string>
     <string name="test">测试</string>
+    <string name="move">移至...</string>
+    <string name="rechristen">重命名</string>
+    <string name="remove">删除</string>
 
 </resources>

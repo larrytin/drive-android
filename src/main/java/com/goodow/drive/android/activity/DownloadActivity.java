@@ -28,9 +28,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class DownloadActivity extends Activity {
-  /**
-   * InnerClass: 后台下载一张
-   */
+
   private class DownlaodTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {

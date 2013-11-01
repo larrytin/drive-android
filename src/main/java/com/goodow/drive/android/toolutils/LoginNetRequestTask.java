@@ -75,7 +75,8 @@ public class LoginNetRequestTask extends AsyncTask<String, String, AccountInfo> 
         break;
       }
       if (exceptionThrown != null) {
-        errorMessage = "网络状况异常!";
+        errorMessage = "网络连接异常,请检查网络!";
+        break;
       }
 
       if (null == result || result.containsKey("error_message")) {

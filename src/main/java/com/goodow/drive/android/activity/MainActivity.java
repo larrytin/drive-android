@@ -66,7 +66,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -377,8 +376,9 @@ public class MainActivity extends RoboActivity {
         LayoutInflater.from(this).inflate(R.layout.dialog_change_user_layout, null);
     final Dialog dialog = new Dialog(this, R.style.AlertDialog);
     dialog.show();
-    Window window = dialog.getWindow();
-    window.setContentView(dialogView);
+    dialog.setContentView(dialogView);
+    // Window window = dialog.getWindow();
+    // window.setContentView(dialogView);
 
     final EditText userNameEditText = (EditText) dialogView.findViewById(R.id.username_editText);
     final EditText passwordEditText = (EditText) dialogView.findViewById(R.id.password_editText);

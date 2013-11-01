@@ -23,6 +23,7 @@ import com.goodow.realtime.ObjectChangedEvent;
 import com.goodow.realtime.Realtime;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -306,7 +307,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
       @Override
       public void onClick(View v) {
         View view =
-            View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_rename, null);
+            View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_add_folder, null);
         final EditText editText = (EditText) view.findViewById(R.id.editText_rename);
         editText.setText("新建文件夹");
         editText.selectAll();
@@ -461,7 +462,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == 1) {
       View view =
-          View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_rename, null);
+          View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_add_folder, null);
       final EditText editText = (EditText) view.findViewById(R.id.editText_rename);
       editText.setText("新建文件夹");
       editText.selectAll();
@@ -524,53 +525,134 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
         // String type = clickItem.get("type");
         // String blobKey = clickItem.get("blobKey");
         // 长按后，弹出对话框
-        new AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle(
-            (String) clickItem.get("label")).setItems(new String[] {"移至...", "重命名", "删除"},
-            new OnClickListener() {
-              private String name;
 
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                // 移动
-                  case 0:
-                    moveFileorFolder(clickItem);
+        View operation_view =
+            View.inflate(getActivity().getWindow().getContext(), R.layout.dialog_pop_long, null);
+        final Dialog da =
+            new Dialog(getActivity().getWindow().getContext(), R.style.Theme_CustomDialog2);
+        da.setContentView(operation_view);
 
-                    break;
-                  // 重命名
-                  case 1:
-                    View view =
-                        View.inflate(getActivity().getWindow().getContext(),
-                            R.layout.fragment_rename, null);
-                    final EditText editText = (EditText) view.findViewById(R.id.editText_rename);
-                    editText.setText((String) clickItem.get("label"));
-                    editText.selectAll();
-                    if (clickItem.get("type") == null) {
-                      name = "文件夹重命名";
-                    } else {
-                      name = "文件重命名";
-                    }
-                    new AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle(name)
-                        .setView(view).setPositiveButton("确定", new OnClickListener() {
-                          @Override
-                          public void onClick(DialogInterface dialog, int which) {
-                            // 重命名
-                            clickItem.set("label", editText.getText().toString());
-                          }
-                        }).setNegativeButton("取消", null).show();
-                    break;
-                  // 删除
-                  case 2:
-                    deleteFileorFolder(clickItem);
-                    break;
-                }
+        // 得到布局中的控件
+        final TextView tv_operation = (TextView) operation_view.findViewById(R.id.dialog_operation);
+        // 移动
+        final TextView tv_move = (TextView) operation_view.findViewById(R.id.dialog_move);
+        // 重命名
+        final TextView tv_rename = (TextView) operation_view.findViewById(R.id.dialog_rename);
+        // 删除
+        final TextView tv_remove = (TextView) operation_view.findViewById(R.id.dialog_remove);
 
-              }
+        final CollaborativeAdapter collaborativeAdapter =
+            new CollaborativeAdapter(getActivity(), null, null, null);
 
-            }).show();
+        currentFolder =
+            model.getObject(currentPathList.get(currentPathList.length() - 1).asString());
+        if (null != currentFolder) {
+          // 设置当前的文件夹
+          setDialogCurrentFolder(currentFolder);
+          currentFolder.addObjectChangedListener(valuesChangeEventHandler);
+
+          collaborativeAdapter.setFolderList((CollaborativeList) getDialogCurrentFolder().get(
+              FOLDER_KEY));
+          collaborativeAdapter.setFileList((CollaborativeList) getDialogCurrentFolder().get(
+              FILE_KEY));
+          tv_operation.setText(clickItem.get("label").toString());
+          collaborativeAdapter.notifyDataSetChanged();
+        }
+
+        tv_move.setOnClickListener(new View.OnClickListener() {
+
+          @Override
+          public void onClick(View v) {
+            // TODO Auto-generated method stub
+            moveFileorFolder(clickItem);
+            da.dismiss();
+          }
+        });
+        tv_rename.setOnClickListener(new View.OnClickListener() {
+
+          @Override
+          public void onClick(View v) {
+            // TODO Auto-generated method stub
+            renameFileorFolder(clickItem);
+            da.dismiss();
+          }
+        });
+        tv_remove.setOnClickListener(new View.OnClickListener() {
+
+          @Override
+          public void onClick(View v) {
+            // TODO Auto-generated method stub
+            deleteFileorFolder(clickItem);
+            da.dismiss();
+
+          }
+        });
+        da.show();
+        // new AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle((String)
+        // clickItem.get("label")).setItems(
+        // new String[] {"移至...", "重命名", "删除"}, new OnClickListener() {
+        // private String name;
+        //
+        // @Override
+        // public void onClick(DialogInterface dialog, int which) {
+        // switch (which) {
+        // // 移动
+        // case 0:
+        // moveFileorFolder(clickItem);
+        //
+        // break;
+        // // 重命名
+        // case 1:
+        // renameFileorFolder(clickItem);
+        //
+        // break;
+        // // 删除
+        // case 2:
+        // deleteFileorFolder(clickItem);
+        // break;
+        // }
+        //
+        // }
+        //
+        // }).show();
         return true;
       }
     });
+  }
+
+  public void renameFileorFolder(final CollaborativeMap clickItem) {
+    // TODO Auto-generated method stub
+    View renameview =
+        View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_rename, null);
+    final Dialog da =
+        new Dialog(getActivity().getWindow().getContext(), R.style.Theme_CustomDialog2);
+    da.setContentView(renameview);
+    final EditText editText = (EditText) renameview.findViewById(R.id.editText_rename);
+    editText.setText((String) clickItem.get("label"));
+    editText.selectAll();
+    Button cancelbutton = (Button) renameview.findViewById(R.id.btn_cancel);
+    Button okbutton = (Button) renameview.findViewById(R.id.btn_ok);
+
+    cancelbutton.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        // TODO Auto-generated method stub
+        da.dismiss();
+      }
+    });
+    okbutton.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        // TODO Auto-generated method stub
+        // 重命名
+        clickItem.set("label", editText.getText().toString());
+        da.dismiss();
+      }
+    });
+
+    da.show();
   }
 
   public void setDialogCurrentFolder(CollaborativeMap dialogCurrentFolder) {
@@ -654,9 +736,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
   private void openState() {
     if (null != currentFolder) {
-      // 文件夹的list
       CollaborativeList folderList = currentFolder.get(FOLDER_KEY);
-      // 文件的list
       CollaborativeList fileList = currentFolder.get(FILE_KEY);
 
       MainActivity activity = (MainActivity) getActivity();
