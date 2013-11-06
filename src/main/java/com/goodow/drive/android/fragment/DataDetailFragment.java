@@ -6,6 +6,7 @@ import com.goodow.drive.android.activity.MainActivity;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DownloadStatusEnum;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.OfflineFileObserver;
+import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.realtime.CollaborativeMap;
 
 import java.io.File;
@@ -88,11 +89,13 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       imageView.setVisibility(View.VISIBLE);
       String thumbnail = file.get("thumbnail");
       if (null != thumbnail) {
+        // 修正缩略图地址
+        thumbnail = Tools.modifyThumbnailAddress(thumbnail);
         InitImageBitmapTask ibt = new InitImageBitmapTask();
-
         ibt.execute(thumbnail);
       } else {
-        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_thumbnail));
+        imageView.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+            R.drawable.ic_thumbnail));
       }
 
       String blobKey = file.get("blobKey");
@@ -112,7 +115,8 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
       // 本地文件
       // File files = new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath()
       // + "/" + blobKey);
-      String filePath = GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey;
+      String filePath =
+          GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/" + blobKey;
       // 加入下载的内容，里面有flash类型,那么加上".swf"
       if (file.get("type").equals("application/x-shockwave-flash")) {
         filePath = filePath + ".swf";
