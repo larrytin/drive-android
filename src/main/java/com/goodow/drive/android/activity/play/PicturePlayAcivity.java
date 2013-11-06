@@ -4,14 +4,11 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,173 +25,31 @@ import roboguice.inject.InjectView;
 
 @ContentView(R.layout.activity_picture_player)
 public class PicturePlayAcivity extends RoboActivity {
-
-  public class ImageDownloadTask extends AsyncTask<Object, Object, Bitmap> {
-    private ImageView imageView = null;
-    private int _displaywidth = 480;
-    private int _displayheight = 800;
-    private final int _displaypixels = _displaywidth * _displayheight;
-
-    private final DialogInterface.OnCancelListener progressDialogOnCancelListener = new DialogInterface.OnCancelListener() {
-
-      @Override
-      public void onCancel(DialogInterface dialog) {
-        // TODO Auto-generated method stub
-
-      }
-    };
-
-    /**
-     * 通过URL获得网上图片。如:http://www.xxxxxx.com/xx.jpg
-     * */
-    public Bitmap getBitmap(String url, int displaypixels, Boolean isBig) throws MalformedURLException, IOException {
-      Bitmap bmp = null;
-      BitmapFactory.Options opts = new BitmapFactory.Options();
-
-      InputStream stream = new URL(url).openStream();
-      byte[] bytes = getBytes(stream);
-      // 这3句是处理图片溢出的begin( 如果不需要处理溢出直接 opts.inSampleSize=1;)
-      opts.inJustDecodeBounds = true;
-      BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-      opts.inSampleSize = computeSampleSize(opts, -1, displaypixels);
-      // end
-      opts.inJustDecodeBounds = false;
-      bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, opts);
-      return bmp;
-    }
-
-    // 得到显示的高度
-    public int getDisplayHeight() {
-      return _displayheight;
-    }
-
-    // 得到显示的像素
-    public int getDisplayPixels() {
-      return _displaypixels;
-    }
-
-    // 得到显示的宽度
-    public int getDisplayWidth() {
-      return _displaywidth;
-    }
-
-    // 设置显示的高度
-    public void setDisplayHeight(int height) {
-      _displayheight = height;
-    }
-
-    /***
-     * 这里获取到手机的分辨率大小
-     * */
-    public void setDisplayWidth(int width) {
-      _displaywidth = width;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see android.os.AsyncTask#onPreExecute()
-     */
-
-    @Override
-    protected Bitmap doInBackground(Object... params) {
-      Bitmap bmp = null;
-      imageView = (ImageView) params[1];
-      try {
-        String url = (String) params[0];
-        bmp = getBitmap(url, _displaypixels, true);
-      } catch (Exception e) {
-        return null;
-      }
-      return bmp;
-    }
-
-    @Override
-    protected void onPostExecute(Bitmap result) {
-      SimpleProgressDialog.dismiss(PicturePlayAcivity.this);
-      if (imageView != null && result != null) {
-        imageView.setImageBitmap(result);
-        if (result.isRecycled() == false) {
-          System.gc();
-        }
-      }
-    }
-
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-      SimpleProgressDialog.show(PicturePlayAcivity.this, progressDialogOnCancelListener);
-    }
-
-    private int computeInitialSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels) {
-      double w = options.outWidth;
-      double h = options.outHeight;
-      int lowerBound = (maxNumOfPixels == -1) ? 1 : (int) Math.ceil(Math.sqrt(w * h / maxNumOfPixels));
-      int upperBound = (minSideLength == -1) ? 128 : (int) Math.min(Math.floor(w / minSideLength), Math.floor(h / minSideLength));
-      if (upperBound < lowerBound) {
-        return lowerBound;
-      }
-      if ((maxNumOfPixels == -1) && (minSideLength == -1)) {
-        return 1;
-      } else if (minSideLength == -1) {
-        return lowerBound;
-      } else {
-        return upperBound;
-      }
-    }
-
-    /****
-     * 处理图片bitmap size exceeds VM budget （Out Of Memory 内存溢出）
-     */
-    private int computeSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels) {
-      int initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels);
-      int roundedSize;
-      if (initialSize <= 8) {
-        roundedSize = 1;
-        while (roundedSize < initialSize) {
-          roundedSize <<= 1;
-        }
-      } else {
-        roundedSize = (initialSize + 7) / 8 * 8;
-      }
-      return roundedSize;
-    }
-
-    /**
-     * 数据流转成btyle[]数组
-     * */
-    private byte[] getBytes(InputStream is) {
-
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      byte[] b = new byte[2048];
-      int len = 0;
-      try {
-        while ((len = is.read(b, 0, 2048)) != -1) {
-          baos.write(b, 0, len);
-          baos.flush();
-        }
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      byte[] bytes = baos.toByteArray();
-      return bytes;
-    }
-  }
-
+  /**
+   * 
+   * 如果使用原图，可以用缓存到sd卡来处理，节省内存。 此处用的是缩略图
+   * 
+   */
   private class InitImageBitmapTask extends AsyncTask<String, Void, Bitmap> {
     @Override
     protected Bitmap doInBackground(String... params) {
       Bitmap bitmap = null;
-
       try {
         int width = PicturePlayAcivity.this.getResources().getDisplayMetrics().widthPixels;
         int height = PicturePlayAcivity.this.getResources().getDisplayMetrics().heightPixels;
 
-        URLConnection connection = (new URL(params[0] + "=s" + ((width > height ? width : height) * 8) / 10).openConnection());
+        URLConnection connection =
+            (new URL(params[0] + "=s" + ((width > height ? width : height) * 8) / 10)
+                .openConnection());
         connection.setDoInput(true);
         connection.connect();
         InputStream bitmapStream = connection.getInputStream();
-        bitmap = BitmapFactory.decodeStream(bitmapStream);
+        try {
+          bitmap = BitmapFactory.decodeStream(bitmapStream);
+        } catch (OutOfMemoryError e) {
+          e.printStackTrace();
+        }
+
         bitmapStream.close();
       } catch (IOException e) {
         e.printStackTrace();
@@ -205,11 +60,11 @@ public class PicturePlayAcivity extends RoboActivity {
 
     @Override
     protected void onPostExecute(Bitmap result) {
-      super.onPostExecute(result);
-
       setImage(result);
     }
   }
+
+  private Bitmap bmp;
 
   public static String PICTUREURL = "pictureUrl";
 
@@ -226,36 +81,33 @@ public class PicturePlayAcivity extends RoboActivity {
 
     Intent intent = getIntent();
     String picture = intent.getStringExtra(PICTUREURL);
-
     if (null != picture) {
       new InitImageBitmapTask().execute(picture);
-      // ImageDownloadTask imgtask = new ImageDownloadTask();
-      // /** 这里是获取手机屏幕的分辨率用来处理 图片 溢出问题的。begin */
-      // DisplayMetrics dm = new DisplayMetrics();
-      // getWindowManager().getDefaultDisplay().getMetrics(dm);
-      // imgtask.setDisplayWidth(dm.widthPixels);
-      // imgtask.setDisplayHeight(dm.heightPixels);
-      // imgtask.execute(pictureUrl, imageView);
     } else {
       picture = intent.getStringExtra(PICTUREPATH);
-
-      Bitmap bitmap = BitmapFactory.decodeFile(picture);
-
-      setImage(bitmap);
+      setImage(picture);
     }
   }
 
   @Override
   protected void onDestroy() {
     super.onDestroy();
-
-    // GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
+    if (bmp != null && !bmp.isRecycled()) {
+      bmp.recycle();
+    }
+    System.gc();
+    GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
   }
 
   @Override
   protected void onPause() {
     super.onPause();
     SimpleProgressDialog.resetByThisContext(this);
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
   }
 
   /**
@@ -265,28 +117,73 @@ public class PicturePlayAcivity extends RoboActivity {
     if (null == bitmap) {
       bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.load_picture_error);
     }
-
     int bitmapWidth = bitmap.getWidth();
     int bitmapHeight = bitmap.getHeight();
-    ;
-
     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
     int screenWidth = displayMetrics.widthPixels;
-
     float scale = 1;
     // 若图片宽度大于屏幕宽度,则按照比例缩放,否则就按原大小处理
     if (bitmapWidth > screenWidth) {
       scale = ((float) screenWidth) / bitmapWidth;
     }
+    if (scale != 1) {
+      Matrix matrix = new Matrix();
+      matrix.setScale(scale, scale);
 
-    Matrix matrix = new Matrix();
-    matrix.setScale(scale, scale);
-
-    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, matrix, true);
-
-    imageView.setImageBitmap(bitmap);
+      bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmapWidth, bitmapHeight, matrix, true);
+      if (!bitmap.isRecycled()) {
+        bitmap.recycle();
+      }
+      System.gc();
+    } else {
+      bmp = bitmap;
+    }
+    imageView.setImageBitmap(bmp);
     ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
     progressBar.setVisibility(View.GONE);
     imageView.setVisibility(View.VISIBLE);
   }
+
+  // 缓存到sd卡
+  private void setImage(String path) {
+    BitmapFactory.Options opt = new BitmapFactory.Options();
+    // 这个isjustdecodebounds很重要
+    opt.inJustDecodeBounds = true;
+    BitmapFactory.decodeFile(path, opt);
+
+    // 获取到这个图片的原始宽度和高度
+    int picWidth = opt.outWidth;
+    int picHeight = opt.outHeight;
+
+    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+    int screenWidth = displayMetrics.widthPixels;
+    int screenHeight = displayMetrics.heightPixels;
+
+    // 若图片宽度大于屏幕宽度,则按照比例缩放,否则就按原大小处理
+    if (picWidth > picHeight) {
+      if (picWidth > screenWidth) {
+        opt.inSampleSize = picWidth / screenWidth;
+      }
+    } else {
+      if (picHeight > screenHeight) {
+        opt.inSampleSize = picHeight / screenHeight;
+      }
+    }
+
+    // 这次再真正地生成一个有像素的，经过缩放了的bitmap
+    opt.inJustDecodeBounds = false;
+    try {
+      bmp = BitmapFactory.decodeFile(path, opt);
+    } catch (OutOfMemoryError e) {
+      e.printStackTrace();
+      // 内存溢出，显示默认图片
+      bmp = BitmapFactory.decodeResource(getResources(), R.drawable.load_picture_error);
+    }
+
+    imageView.setImageBitmap(bmp);
+    ProgressBar progressBar = (ProgressBar) findViewById(R.id.pictureProgressBar);
+    progressBar.setVisibility(View.GONE);
+    imageView.setVisibility(View.VISIBLE);
+  }
+
 }
