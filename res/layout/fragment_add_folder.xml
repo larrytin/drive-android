@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:text="@string/rename" />
+        android:text="@string/enter_new_name" />
     <EditText 
         android:layout_marginTop="20dip"
         android:id="@+id/editText_rename"

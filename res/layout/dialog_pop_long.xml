@@ -29,7 +29,7 @@
         android:layout_marginTop="10dip"
         android:layout_weight="1"
         android:textSize="@dimen/listGroupTextSize_large"
-        android:text="@string/move"/>
+        android:text="@string/menu_move_to"/>
     <View
         android:id="@+id/divider"
         android:layout_width="fill_parent"
@@ -39,7 +39,7 @@
         android:id="@+id/dialog_rename"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/rechristen"
+        android:text="@string/menu_rename"
         android:layout_marginTop="10dip"
         android:layout_weight="1"
         android:textSize="@dimen/listGroupTextSize_large"/>
@@ -52,7 +52,7 @@
         android:id="@+id/dialog_remove"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/remove"
+        android:text="@string/remove_button_confirm"
         android:layout_marginTop="10dip"
         android:layout_weight="1"
         android:textSize="@dimen/listGroupTextSize_large"

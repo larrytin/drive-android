@@ -9,21 +9,25 @@
     <string name="unsaved_dialog_cancel">Cancel</string>
     <string name="prefs_offline_category">Offline files</string>
     <string name="pick_entry_create_new_folder">create new folder</string>
+    <string name="enter_new_name">Enter new name:</string>
+    <string name="menu_move_to">Move to…</string>
+    <string name="menu_rename">Rename</string>
     <!-- 自己命名 -->
     <string name="contentDescription">description</string>
     <string name="app_name">KeRuiXing platform</string>    
     <string name="openfailure">The folder is empty!</string>
-    <string name="backFolderErro">Is the top folder!</string>
-    <string name="backButton">Back at the next higher level</string>
-    <string name="back_dailogMessage">Are you sure you want to exit?</string>
-    <string name="del_DailogMessage">Sure to delete?</string> 
+    <string name="backFolderErro">Is the top-level folder!</string>
+    <string name="backButton">On the return</string>
+    <string name="back_dailogMessage">Are you sure you want to quit?</string>
+    <string name="del_DailogMessage">Are you sure you want to delete?</string> 
     <string name="welcome_offer_fail_connect">Network connection...</string>
     <string name="create_new_favorites">My Favorites</string>    
-    <string name="lesson_class">I of course</string>
+    <string name="lesson_class">My Course</string>
     <string name="login">Login</string>
     <string name="pin_checkbox_label">operation</string>
     <string name="remoteControlError">Remote synchronization operation is unusual, please try to switch the menu</string>
-    <string name="downloaded">Have downloaded</string>
+    <string name="downloaded">The downloaded</string>
+    <string name="test">Test</string>
     
     
     <!-- 北京内网 -->
