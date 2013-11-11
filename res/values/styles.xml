@@ -39,5 +39,9 @@
     <style name="ProgressBarIndeterminate" parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
         <item name="android:indeterminateOnly">true</item>
     </style>
-
+    <style name="Theme.CustomDialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowBackground">@drawable/filled_box</item>
+        <item name="android:windowNoTitle">true</item>
+      
+    </style>
 </resources>
