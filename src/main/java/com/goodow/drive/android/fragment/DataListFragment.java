@@ -441,7 +441,7 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     // TODO Auto-generated method stub
     super.onCreateOptionsMenu(menu, inflater);
-    MenuItem addFolder = menu.add(0, 1, 0, R.string.add_folder);
+    MenuItem addFolder = menu.add(0, 1, 0, R.string.pick_entry_create_new_folder);
     addFolder.setIcon(R.drawable.ds_plussign_holo_light);
     addFolder.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
   }
@@ -569,7 +569,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
           // 设置当前的文件夹
           setDialogCurrentFolder(currentFolder);
           currentFolder.addObjectChangedListener(valuesChangeEventHandler);
-
           collaborativeAdapter.setFolderList((CollaborativeList) getDialogCurrentFolder().get(
               FOLDER_KEY));
           collaborativeAdapter.setFileList((CollaborativeList) getDialogCurrentFolder().get(

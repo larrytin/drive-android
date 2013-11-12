@@ -429,7 +429,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
-    MenuItem addFolder = menu.add(0, 1, 0, R.string.add_folder);
+    MenuItem addFolder = menu.add(0, 1, 0, R.string.pick_entry_create_new_folder);
     addFolder.setIcon(R.drawable.ds_plussign_holo_light);
     addFolder.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
   }
