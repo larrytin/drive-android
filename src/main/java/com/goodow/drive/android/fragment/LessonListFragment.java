@@ -22,13 +22,10 @@ import com.goodow.realtime.ModelInitializerHandler;
 import com.goodow.realtime.ObjectChangedEvent;
 import com.goodow.realtime.Realtime;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
@@ -60,12 +57,10 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
   private final String TAG = this.getClass().getSimpleName();
 
   private IRemoteControl path;
-  private JsonArray currentPathList;
   private CollaborativeMap currentFolder;
+  private JsonArray currentPathList;
   // 对话框中当前文件夹
   private CollaborativeMap dialogCurrentFolder;
-  // 上一个文件夹
-  private CollaborativeMap dialogLastFolder;
 
   private final IntentFilter intentFilter = new IntentFilter("DATA_CONTROL");
 
@@ -154,31 +149,8 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     }
   }
 
-  public void findlastFolder(CollaborativeMap tmp, CollaborativeMap lastMap) {
-    CollaborativeList list = lastMap.get(FOLDER_KEY);
-    for (int i = 0; i < list.length(); i++) {
-      CollaborativeMap map = list.get(i);
-      CollaborativeList list1 = map.get(FOLDER_KEY);
-      // 如果相等，那么返回值为值为上一层
-      if ((tmp.getId()).equals(map.getId())) {
-        dialogLastFolder = lastMap;
-        break;
-      } else if (list1.length() > 0) {
-        // 遍历子文件夹
-        findlastFolder(tmp, map);
-      }
-    }
-  }
-
   public CollaborativeMap getDialogCurrentFolder() {
     return dialogCurrentFolder;
-  }
-
-  // 查找上一层文件夹
-  public CollaborativeMap lastFolder(CollaborativeMap tmp) {
-    CollaborativeMap lastMap = root;
-    findlastFolder(tmp, lastMap);
-    return dialogLastFolder;
   }
 
   @Override
@@ -247,15 +219,15 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     Realtime.load(DOCID, onLoaded, initializer, null);
   }
 
-  public void moveFileorFolder(final CollaborativeMap clickItem) {
+  public void moveFileorFolder(final CollaborativeMap clickItem, final JsonArray currentPath) {
 
     View popupWindow_view =
         View.inflate(getActivity().getWindow().getContext(), R.layout.dialog_move, null);
     // 创建PopupWindow实例
     popupWindow =
         new PopupWindow(popupWindow_view, getActivity().getWindowManager().getDefaultDisplay()
-            .getWidth() * 5 / 12,
-            getActivity().getWindowManager().getDefaultDisplay().getHeight() - 12, true);
+            .getWidth() / 2, getActivity().getWindowManager().getDefaultDisplay().getHeight() - 12,
+            true);
     popupWindow_view.setFocusable(true);
     // 设置允许在外点击消失
     popupWindow.setOutsideTouchable(true);
@@ -287,34 +259,51 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     listView.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // 点击时，可见
-        if (lastLayout.getVisibility() == View.GONE) {
-          lastLayout.setVisibility(View.VISIBLE);
-        }
         CollaborativeMap dialogClickItem = (CollaborativeMap) view.getTag();
 
         // 只有当要点击的文件夹和当前的文件路径不同时
         if (dialogClickItem != clickItem) {
+          // 点击时，加入此文件的id到list
+          currentPath.set(currentPath.length(), dialogClickItem.getId());
           setDialogCurrentFolder(dialogClickItem);
           dialogAdapter.setFileList((CollaborativeList) getDialogCurrentFolder().get(FILE_KEY));
           dialogAdapter.setFolderList((CollaborativeList) getDialogCurrentFolder().get(FOLDER_KEY));
           tv_test.setText(getDialogCurrentFolder().get("label").toString());
           dialogAdapter.notifyDataSetChanged();
+          // 点击之后的处理
+          if (lastLayout.getVisibility() == View.GONE && currentPath.length() != 1) {
+            lastLayout.setVisibility(View.VISIBLE);
+          }
         }
       }
     });
     createFile.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        View view =
-            View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_add_folder, null);
-        final EditText editText = (EditText) view.findViewById(R.id.editText_rename);
-        editText.setText("新建文件夹");
+        LayoutInflater layoutInflater =
+            (LayoutInflater) getActivity().getWindow().getContext().getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+        View renameView = layoutInflater.inflate(R.layout.fragment_rename, null);
+        final Dialog mDialog =
+            new Dialog(getActivity().getWindow().getContext(), R.style.Theme_CustomDialog2);
+        mDialog.setContentView(renameView);
+        ((TextView) renameView.findViewById(R.id.dialogTextView)).setText(R.string.folderName);
+        final EditText editText = (EditText) renameView.findViewById(R.id.editText_rename);
+        editText.setText(R.string.pick_entry_create_new_folder);// 新建文件夹
         editText.selectAll();
-        new AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle("文件夹名称").setView(
-            view).setPositiveButton("确定", new OnClickListener() {
+        Button cancelbutton = (Button) renameView.findViewById(R.id.btn_cancel);
+        Button okbutton = (Button) renameView.findViewById(R.id.btn_ok);
+
+        cancelbutton.setOnClickListener(new View.OnClickListener() {
+
           @Override
-          public void onClick(DialogInterface dialog, int which) {
+          public void onClick(View v) {
+            mDialog.dismiss();
+          }
+        });
+        okbutton.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
             // 当目录下文件夹
             CollaborativeList currentList = getDialogCurrentFolder().get(FOLDER_KEY);
             // 创建新的文件夹
@@ -325,8 +314,11 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
             currentList.push(newMap);
             tv_test.setText(getDialogCurrentFolder().get("label").toString());
             dialogAdapter.notifyDataSetChanged();
+            mDialog.dismiss();
           }
-        }).setNegativeButton("取消", null).show();
+        });
+        mDialog.show();
+
       }
     });
     if (getDialogCurrentFolder() == root) {
@@ -338,12 +330,15 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
       @Override
       public void onClick(View v) {
-        CollaborativeMap lastFolder = lastFolder(getDialogCurrentFolder());
+        // 移除当前
+        currentPath.remove(currentPath.length() - 1);
+        CollaborativeMap lastFolder =
+            model.getObject(currentPath.get(currentPath.length() - 1).asString());
         setDialogCurrentFolder(lastFolder);
         dialogAdapter.setFileList((CollaborativeList) getDialogCurrentFolder().get(FILE_KEY));
         dialogAdapter.setFolderList((CollaborativeList) getDialogCurrentFolder().get(FOLDER_KEY));
         dialogAdapter.notifyDataSetChanged();
-        // 到最顶层是，不可见
+        // 到最顶层时，不可见
         if (lastFolder == root) {
           lastLayout.setVisibility(View.GONE);
         }
@@ -422,7 +417,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
       }
     });
     setListAdapter(adapter);
-
     initEventHandler();
   }
 
@@ -461,15 +455,31 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == 1) {
-      View view =
-          View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_add_folder, null);
-      final EditText editText = (EditText) view.findViewById(R.id.editText_rename);
-      editText.setText("新建文件夹");
+      LayoutInflater layoutInflater =
+          (LayoutInflater) getActivity().getWindow().getContext().getSystemService(
+              Context.LAYOUT_INFLATER_SERVICE);
+      View renameView = layoutInflater.inflate(R.layout.fragment_rename, null);
+      final Dialog mDialog =
+          new Dialog(getActivity().getWindow().getContext(), R.style.Theme_CustomDialog2);
+      mDialog.setContentView(renameView);
+      ((TextView) renameView.findViewById(R.id.dialogTextView)).setText(R.string.folderName);
+      final EditText editText = (EditText) renameView.findViewById(R.id.editText_rename);
+      editText.setText(R.string.pick_entry_create_new_folder);// 新建文件夹
       editText.selectAll();
-      new AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle("文件夹名称").setView(
-          view).setPositiveButton("确定", new OnClickListener() {
+      Button cancelbutton = (Button) renameView.findViewById(R.id.btn_cancel);
+      Button okbutton = (Button) renameView.findViewById(R.id.btn_ok);
+
+      cancelbutton.setOnClickListener(new View.OnClickListener() {
+
         @Override
-        public void onClick(DialogInterface dialog, int which) {
+        public void onClick(View v) {
+          mDialog.dismiss();
+        }
+      });
+      okbutton.setOnClickListener(new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
           // 当目录下文件夹
           CollaborativeList currentList = currentFolder.get(FOLDER_KEY);
           // 创建新的文件夹
@@ -479,8 +489,10 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
           newMap.set(FOLDER_KEY, model.createList());
           currentList.push(newMap);
           adapter.notifyDataSetChanged();
+          mDialog.dismiss();
         }
-      }).setNegativeButton("取消", null).show();
+      });
+      mDialog.show();
     }
     return super.onOptionsItemSelected(item);
   }
@@ -518,7 +530,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     // 长按一个条目时，弹出移动，重命名，删除按钮
     getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
       // final String[] itemStrings = new String[] {"移至...", "重命名", "删除"};
-
       @Override
       public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
         final CollaborativeMap clickItem = (CollaborativeMap) view.getTag();
@@ -543,7 +554,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
         final CollaborativeAdapter collaborativeAdapter =
             new CollaborativeAdapter(getActivity(), null, null, null);
-
         currentFolder =
             model.getObject(currentPathList.get(currentPathList.length() - 1).asString());
         if (null != currentFolder) {
@@ -563,8 +573,7 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
           @Override
           public void onClick(View v) {
-            // TODO Auto-generated method stub
-            moveFileorFolder(clickItem);
+            moveFileorFolder(clickItem, currentPathList);
             da.dismiss();
           }
         });
@@ -572,7 +581,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
           @Override
           public void onClick(View v) {
-            // TODO Auto-generated method stub
             renameFileorFolder(clickItem);
             da.dismiss();
           }
@@ -581,47 +589,18 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
           @Override
           public void onClick(View v) {
-            // TODO Auto-generated method stub
             deleteFileorFolder(clickItem);
             da.dismiss();
 
           }
         });
         da.show();
-        // new AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle((String)
-        // clickItem.get("label")).setItems(
-        // new String[] {"移至...", "重命名", "删除"}, new OnClickListener() {
-        // private String name;
-        //
-        // @Override
-        // public void onClick(DialogInterface dialog, int which) {
-        // switch (which) {
-        // // 移动
-        // case 0:
-        // moveFileorFolder(clickItem);
-        //
-        // break;
-        // // 重命名
-        // case 1:
-        // renameFileorFolder(clickItem);
-        //
-        // break;
-        // // 删除
-        // case 2:
-        // deleteFileorFolder(clickItem);
-        // break;
-        // }
-        //
-        // }
-        //
-        // }).show();
         return true;
       }
     });
   }
 
   public void renameFileorFolder(final CollaborativeMap clickItem) {
-    // TODO Auto-generated method stub
     View renameview =
         View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_rename, null);
     final Dialog da =
@@ -637,7 +616,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
       @Override
       public void onClick(View v) {
-        // TODO Auto-generated method stub
         da.dismiss();
       }
     });
@@ -645,7 +623,6 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
       @Override
       public void onClick(View v) {
-        // TODO Auto-generated method stub
         // 重命名
         clickItem.set("label", editText.getText().toString());
         da.dismiss();

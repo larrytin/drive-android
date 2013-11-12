@@ -28,6 +28,7 @@
     <string name="remoteControlError">远程同步操作异常,请尝试切换菜单。</string>
     <string name="downloaded">已下载</string>
     <string name="test">测试</string>
+    <string name="folderName">文件夹名称</string>
     
 
 </resources>

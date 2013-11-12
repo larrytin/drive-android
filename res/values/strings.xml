@@ -28,6 +28,7 @@
     <string name="remoteControlError">Remote synchronization operation is unusual, please try to switch the menu</string>
     <string name="downloaded">The downloaded</string>
     <string name="test">Test</string>
+    <string name="folderName">Folder Name</string>
     
     
     <!-- 北京内网 -->

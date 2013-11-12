@@ -5,6 +5,7 @@
     android:background="#ffb7dd"
     android:orientation="vertical" >
     <TextView
+        android:id="@+id/dialogTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
