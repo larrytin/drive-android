@@ -7,30 +7,36 @@
     android:paddingLeft="@dimen/activity_vertical_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <ImageView
-        android:id="@+id/leftImage"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="@dimen/listItemHeigh_large"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="20dp" />
+        android:layout_marginRight="200dip"
+        android:orientation="horizontal" >
 
-    <TextView
-        android:id="@+id/listItem"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/listItemHeigh_large"
-        android:layout_toRightOf="@id/leftImage"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/listItemTextSize_large" />
+        <ImageView
+            android:id="@+id/leftImage"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="20dp" />
+
+        <TextView
+            android:id="@+id/listItem"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:singleLine="true"
+            android:textSize="@dimen/listItemTextSize_large" />
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/delButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="40dp"
         android:layout_centerVertical="true"
+        android:layout_marginRight="40dp"
         android:background="@drawable/selector_delbutton_bg"
         android:src="@drawable/action_discussion_edit" />
 

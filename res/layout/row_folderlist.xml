@@ -3,41 +3,44 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
     android:gravity="center_vertical"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_vertical_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" >
+    android:paddingLeft="@dimen/activity_vertical_margin" >
 
-    <ImageView
-        android:id="@+id/leftImage"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="@dimen/listItemHeigh"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="10dp"
-        android:contentDescription="@string/contentDescription"
-        android:gravity="center_vertical" />
+        android:layout_marginRight="103dip"
+        android:orientation="horizontal" 
+        >
+        <ImageView
+            android:id="@+id/leftImage"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="20dp" />
 
-    <TextView
-        android:id="@+id/listItem"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/listItemHeigh"
-        android:layout_toRightOf="@id/leftImage"
-        android:gravity="center_vertical"
-        android:paddingLeft="5dip"
-        android:singleLine="true"
-        android:paddingRight="15dip"
-        android:textSize="@dimen/listGroupTextSize_large" />
+        <TextView
+            android:id="@+id/listItem"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:ellipsize="marquee"
+            android:layout_marginLeft="-15dp"
+            android:focusable="true"
+            android:singleLine="true"
+            android:textSize="@dimen/listGroupTextSize_large"
+            android:gravity="center_vertical" />
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/delButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
         android:layout_centerVertical="true"
+        android:layout_marginRight="15dp"
         android:background="@drawable/selector_delbutton_bg"
         android:contentDescription="@string/contentDescription"
         android:src="@drawable/action_discussion_edit" />
-
     <TextView
         android:id="@+id/downloaded"
         android:textColor="@color/blue"
