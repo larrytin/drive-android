@@ -35,7 +35,6 @@
             android:background="@drawable/selector_edittext_bg"
             android:hint="请输入您的用户名"
             android:inputType="textPersonName"
-            android:maxLength="10"
             android:paddingLeft="5dp"
             android:singleLine="true"
             android:textSize="15sp" >
@@ -63,7 +62,6 @@
             android:background="@drawable/selector_edittext_bg"
             android:hint="请输入您的密码"
             android:inputType="textPassword"
-            android:maxLength="10"
             android:paddingLeft="5dp"
             android:singleLine="true"
             android:textSize="15sp" />

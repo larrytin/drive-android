@@ -58,7 +58,6 @@
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:maxLength="12"
                 android:singleLine="true"
                 />
         </LinearLayout>
@@ -85,7 +84,6 @@
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:maxLength="12"
                 android:singleLine="true"
                 />
         </LinearLayout>
