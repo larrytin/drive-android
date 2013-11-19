@@ -6,6 +6,7 @@ import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingle
 import com.goodow.drive.android.module.DriveModule;
 import com.goodow.drive.android.toolutils.FolderSize;
 import com.goodow.drive.android.toolutils.MyApplication;
+import com.goodow.drive.android.toolutils.OfflineFileObserver;
 import com.goodow.drive.android.toolutils.Tools;
 import com.goodow.realtime.CollaborativeMap;
 
@@ -37,6 +38,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Binder;
@@ -76,6 +79,11 @@ public class MediaDownloadService extends Service {
         case MEDIA_COMPLETE:
           downloadRes.set("progress", "100");
           downloadRes.set("status", DownloadStatusEnum.COMPLETE.getStatus());
+          // 下载完成以后，文件名设置为空，下载状态为false
+          Editor editor = sp.edit();
+          editor.putString("DownLoadFileName", null);
+          editor.putBoolean("DownLoading", false);
+          editor.commit();
 
           Intent intent = new Intent();
           intent.setAction("DATA_CONTROL");
@@ -95,6 +103,14 @@ public class MediaDownloadService extends Service {
       try {
         while (true) {
           downloadRes = MediaDownloadService.this.downloadUrlQueue.take();
+          if (sp.getBoolean("DownLoading", false)) {
+            File tmpFile =
+                new File(GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/"
+                    + sp.getString("DownLoadFileName", null));
+            if (tmpFile.exists()) {
+              tmpFile.delete();
+            }
+          }
           String filePath =
               GlobalDataCacheForMemorySingleton.getInstance.getOfflineResDirPath() + "/"
                   + downloadRes.get("blobKey");
@@ -184,6 +200,8 @@ public class MediaDownloadService extends Service {
   private final Timer timer = new Timer();
   private TimerTask task;
 
+  private SharedPreferences sp;
+
   // 用来接收网络状态改变的广播
   private final BroadcastReceiver mConnectivityReceiver = new BroadcastReceiver() {
     // 标记
@@ -220,6 +238,8 @@ public class MediaDownloadService extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
+    // 获得sharedPreferences
+    sp = getSharedPreferences("config", MODE_PRIVATE);
     // 注册广播
     IntentFilter mFilter = new IntentFilter();
     mFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -230,6 +250,11 @@ public class MediaDownloadService extends Service {
       @Override
       public void run() {
         getDownloadThreadState();
+        // 每10s将离线文件加载一次到下载到队列里面
+        String docId =
+            "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+                + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
+        OfflineFileObserver.OFFLINEFILEOBSERVER.startObservation(docId, null);
       }
     };
     timer.schedule(task, 10000, 10000);
@@ -254,7 +279,11 @@ public class MediaDownloadService extends Service {
       if (downloadRes.get("type").equals("application/x-shockwave-flash")) {
         filePath = filePath + ".swf";
       }
-
+      // 存入正在下载的文件名，及其下载状态
+      Editor editor = sp.edit();
+      editor.putString("DownLoadFileName", filePath.substring(filePath.lastIndexOf("/") + 1));
+      editor.putBoolean("DownLoading", true);
+      editor.commit();
       File newFile = new File(filePath);
 
       FileOutputStream outputStream = new FileOutputStream(newFile);
