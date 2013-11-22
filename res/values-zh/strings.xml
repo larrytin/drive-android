@@ -29,6 +29,8 @@
     <string name="downloaded">已下载</string>
     <string name="test">测试</string>
     <string name="folderName">文件夹名称</string>
+    <string name="menu_addToFavorites">添加到收藏夹</string>
+    <string name="resourceArrange">资源安排到</string>
     
 
 </resources>

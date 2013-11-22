@@ -50,6 +50,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 
@@ -77,8 +78,12 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
   private CollaborativeAdapter adapter;
   private Document doc;
+  private Document lessonDoc;
   private Model model;
+  private Model lessonModel;
+
   private CollaborativeMap root;
+  private CollaborativeMap lessonRoot;
 
   private String DOCID;
 
@@ -92,6 +97,121 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
   public DataListFragment() {
     super();
+  }
+
+  public void arrangeResource(final CollaborativeMap clickItem, final CollaborativeMap root) {
+    // 创建一个我的课程的路径
+    final JsonArray currentFavoritePath = Json.createArray();
+    currentFavoritePath.set(0, "root");
+    View popupWindow_view =
+        View.inflate(getActivity().getWindow().getContext(), R.layout.dialog_move, null);
+    // 创建PopupWindow实例
+    popupWindow =
+        new PopupWindow(popupWindow_view, getActivity().getWindowManager().getDefaultDisplay()
+            .getWidth() / 2, getActivity().getWindowManager().getDefaultDisplay().getHeight() - 50,
+            true);
+    popupWindow_view.setFocusable(true);
+    // 设置允许在外点击消失
+    popupWindow.setOutsideTouchable(true);
+    // 点击返回键是，不改变背景
+    popupWindow.setBackgroundDrawable(new BitmapDrawable());
+
+    // 获得布局中的控件
+    // 上一层
+    final LinearLayout lastLayout = (LinearLayout) popupWindow_view.findViewById(R.id.last_layout);
+    // 创建文件夹
+    final ImageView createFile = (ImageView) popupWindow_view.findViewById(R.id.img_createfolder);
+    // 显示文件夹名称
+    final TextView tv_test = (TextView) popupWindow_view.findViewById(R.id.tv_test);
+    // listView
+    final ListView listView = (ListView) popupWindow_view.findViewById(R.id.dialog_listView);
+    // 取消
+    final Button bt_cancle = (Button) popupWindow_view.findViewById(R.id.bt_cancle);
+    // 确定
+    final Button bt_ok = (Button) popupWindow_view.findViewById(R.id.bt_ok);
+    // 对话框的适配器
+    final DialogListViewAdapter dialogAdapter =
+        new DialogListViewAdapter(getActivity(), null, null);
+    // 设置当前的文件夹
+    setDialogCurrentFolder(root);
+    dialogAdapter.setFileList((CollaborativeList) getDialogCurrentFolder().get(FILE_KEY));
+    dialogAdapter.setFolderList((CollaborativeList) getDialogCurrentFolder().get(FOLDER_KEY));
+    tv_test.setText(getDialogCurrentFolder().get("label").toString());
+    listView.setAdapter(dialogAdapter);
+    listView.setOnItemClickListener(new OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        CollaborativeMap dialogClickItem = (CollaborativeMap) view.getTag();
+        // 只有当要点击的文件夹和当前的文件路径不同时
+        if (dialogClickItem != clickItem) {
+          // 点击时，加入此文件的id到list
+          currentFavoritePath.set(currentFavoritePath.length(), dialogClickItem.getId());
+          setDialogCurrentFolder(dialogClickItem);
+          dialogAdapter.setFileList((CollaborativeList) getDialogCurrentFolder().get(FILE_KEY));
+          dialogAdapter.setFolderList((CollaborativeList) getDialogCurrentFolder().get(FOLDER_KEY));
+          tv_test.setText(getDialogCurrentFolder().get("label").toString());
+          dialogAdapter.notifyDataSetChanged();
+          // 点击之后的处理
+          if (lastLayout.getVisibility() == View.GONE && currentFavoritePath.length() != 1) {
+            lastLayout.setVisibility(View.VISIBLE);
+          }
+        }
+      }
+    });
+    createFile.setVisibility(View.GONE);
+
+    if (getDialogCurrentFolder() == root) {
+      lastLayout.setVisibility(View.GONE);
+    }
+
+    // 回到上一层目录
+    lastLayout.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        // 移除当前
+        currentFavoritePath.remove(currentFavoritePath.length() - 1);
+        CollaborativeMap lastFolder =
+            lessonModel.getObject(currentFavoritePath.get(currentFavoritePath.length() - 1)
+                .asString());
+        setDialogCurrentFolder(lastFolder);
+        dialogAdapter.setFileList((CollaborativeList) getDialogCurrentFolder().get(FILE_KEY));
+        dialogAdapter.setFolderList((CollaborativeList) getDialogCurrentFolder().get(FOLDER_KEY));
+        dialogAdapter.notifyDataSetChanged();
+        // 到最顶层时，不可见
+        if (lastFolder == root) {
+          lastLayout.setVisibility(View.GONE);
+        }
+        tv_test.setText(getDialogCurrentFolder().get("label").toString());
+      }
+    });
+    bt_ok.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        CollaborativeList currentList = null;
+        currentList = getDialogCurrentFolder().get(FILE_KEY);
+        CollaborativeMap newFile = lessonModel.createMap(null);
+        newFile.set("id", clickItem.get("id"));
+        newFile.set("label", clickItem.get("label"));
+        newFile.set("type", clickItem.get("type"));
+        newFile.set("blobKey", clickItem.get("blobKey"));
+        newFile.set("tags", clickItem.get("tags"));
+        newFile.set("status", clickItem.get("status"));
+        newFile.set("isfile", clickItem.get("isfile"));
+        currentList.push(newFile);
+        Toast.makeText(getActivity().getWindow().getContext(), "资源安排成功", Toast.LENGTH_SHORT).show();
+        popupWindow.dismiss();
+      }
+    });
+    bt_cancle.setOnClickListener(new View.OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        popupWindow.dismiss();
+      }
+    });
+    popupWindow.showAtLocation(getView(), Gravity.CENTER, 0, 0);
   }
 
   @Override
@@ -147,35 +267,12 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     }
   }
 
-  // public void findlastFolder(CollaborativeMap tmp, CollaborativeMap lastMap) {
-  // CollaborativeList list = lastMap.get(FOLDER_KEY);
-  // for (int i = 0; i < list.length(); i++) {
-  // CollaborativeMap map = list.get(i);
-  // CollaborativeList list1 = map.get(FOLDER_KEY);
-  // // 如果相等，那么返回值为值为上一层
-  // if ((tmp.getId()).equals(map.getId())) {
-  // dialogLastFolder = lastMap;
-  // break;
-  // } else if (list1.length() > 0) {
-  // // 遍历子文件夹
-  // findlastFolder(tmp, map);
-  // }
-  // }
-  // }
-
   /**
    * @return the dialogCurrentFolder
    */
   public CollaborativeMap getDialogCurrentFolder() {
     return dialogCurrentFolder;
   }
-
-  // // 查找上一层文件夹
-  // public CollaborativeMap lastFolder(CollaborativeMap tmp) {
-  // CollaborativeMap lastMap = root;
-  // findlastFolder(tmp, lastMap);
-  // return dialogLastFolder;
-  // }
 
   @Override
   public void loadDocument() {
@@ -247,7 +344,7 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     // 创建PopupWindow实例
     popupWindow =
         new PopupWindow(popupWindow_view, getActivity().getWindowManager().getDefaultDisplay()
-            .getWidth() / 2, getActivity().getWindowManager().getDefaultDisplay().getHeight() - 12,
+            .getWidth() / 2, getActivity().getWindowManager().getDefaultDisplay().getHeight() - 50,
             true);
     popupWindow_view.setFocusable(true);
     // 设置在外允许点击消失
@@ -632,22 +729,23 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
         final TextView tv_rename = (TextView) operationView.findViewById(R.id.dialog_rename);
         // 删除
         final TextView tv_remove = (TextView) operationView.findViewById(R.id.dialog_remove);
-
-        final CollaborativeAdapter collaborativeAdapter =
-            new CollaborativeAdapter(getActivity(), null, null, null);
-
+        // 资源安排到
+        final TextView tv_resourceArrange =
+            (TextView) operationView.findViewById(R.id.dialog_collect);
+        final View divider_collect = operationView.findViewById(R.id.divider_collect);
+        tv_resourceArrange.setText(R.string.resourceArrange);
+        // 如果是文件夹，隐藏收藏到
+        if (clickItem.get("type") == null) {
+          tv_resourceArrange.setVisibility(View.GONE);
+          divider_collect.setVisibility(View.GONE);
+        }
         currentFolder =
             model.getObject(currentPathList.get(currentPathList.length() - 1).asString());
         if (null != currentFolder) {
           // 设置当前的文件夹
           setDialogCurrentFolder(currentFolder);
           currentFolder.addObjectChangedListener(valuesChangeEventHandler);
-          collaborativeAdapter.setFolderList((CollaborativeList) getDialogCurrentFolder().get(
-              FOLDER_KEY));
-          collaborativeAdapter.setFileList((CollaborativeList) getDialogCurrentFolder().get(
-              FILE_KEY));
           tv_operation.setText(clickItem.get("label").toString());
-          collaborativeAdapter.notifyDataSetChanged();
         }
 
         tv_move.setOnClickListener(new View.OnClickListener() {
@@ -663,7 +761,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
           @Override
           public void onClick(View v) {
-            // TODO Auto-generated method stub
             renameFileorFolder(clickItem);
             da.dismiss();
           }
@@ -672,33 +769,32 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
           @Override
           public void onClick(View v) {
-            // TODO Auto-generated method stub
             deleteFileorFolder(clickItem);
             da.dismiss();
           }
         });
+        tv_resourceArrange.setOnClickListener(new View.OnClickListener() {
+
+          @Override
+          public void onClick(View v) {
+            DOCID =
+                "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+                    + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
+            // 文件Document
+            DocumentLoadedHandler onLoaded = new DocumentLoadedHandler() {
+              @Override
+              public void onLoaded(Document document) {
+                lessonDoc = document;
+                lessonModel = lessonDoc.getModel();
+                lessonRoot = lessonModel.getRoot();
+                arrangeResource(clickItem, lessonRoot);
+              }
+            };
+            Realtime.load(DOCID, onLoaded, null, null);
+            da.dismiss();
+          }
+        });
         da.show();
-        // new AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle((String)
-        // clickItem.get("label")).setItems(
-        // new String[] {"移至...", "重命名", "删除"}, new OnClickListener() {
-        // @Override
-        // public void onClick(DialogInterface dialog, int which) {
-        // // TODO Auto-generated method stub
-        // switch (which) {
-        // case 0:
-        // moveFileorFolder(clickItem);
-        // break;
-        // case 1:
-        // renameFileorFolder(clickItem);
-        // break;
-        // case 2:
-        // deleteFileorFolder(clickItem);
-        // break;
-        // default:
-        // break;
-        // }
-        // }
-        // }).show();
 
         return true;
       }

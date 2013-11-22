@@ -29,6 +29,8 @@
     <string name="downloaded">The downloaded</string>
     <string name="test">Test</string>
     <string name="folderName">Folder Name</string>
+    <string name="menu_addToFavorites">Add to Favorites</string>
+    <string name="resourceArrange">Resource arrange</string>
     
     
     <!-- 北京内网 -->
