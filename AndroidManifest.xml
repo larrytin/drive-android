@@ -92,12 +92,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.goodow.drive.android.activity.MainActivity" />
+        <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+            <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
+        </activity>
         <activity android:name="com.goodow.drive.android.activity.DownloadActivity" />
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.AudioPlayActivity" android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden|screenSize"/>
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.VideoPlayActivity" />
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.FlashPlayerActivity" android:screenOrientation="landscape" />
         <activity android:launchMode="singleTop" android:name="com.goodow.drive.android.activity.play.PicturePlayAcivity" />
+        
+        <provider
+            android:name="com.goodow.drive.android.provider.SearchSuggestionSampleProvider"
+            android:authorities="com.goodow.drive.android.provider.SearchSuggestionSampleProvider"></provider>
+        <meta-data android:name="android.app.default_searchable" android:value="com.goodow.drive.android.activity.MainActivity"/>
     </application>
 
 </manifest>

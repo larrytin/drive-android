@@ -12,6 +12,8 @@
     <string name="enter_new_name">输入新名称：</string>
     <string name="menu_move_to">移至...</string>
     <string name="menu_rename">重命名</string>
+    <string name="menu_search">搜索</string>
+    <string name="search_hint">搜索字词</string>
     <!-- 自己命名 -->
     <string name="contentDescription">description</string>
     <string name="app_name">科睿星平台</string>   

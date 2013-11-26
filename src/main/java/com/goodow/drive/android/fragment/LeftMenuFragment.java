@@ -1,6 +1,15 @@
 package com.goodow.drive.android.fragment;
 
+import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.ILocalFragment;
+import com.goodow.drive.android.activity.MainActivity;
+import com.goodow.drive.android.adapter.LeftMenuAdapter;
+import com.goodow.drive.android.global_data_cache.GlobalConstant;
+import com.goodow.drive.android.global_data_cache.GlobalConstant.MenuTypeEnum;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+
 import java.util.ArrayList;
+
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,13 +18,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ListView;
-import com.goodow.android.drive.R;
-import com.goodow.drive.android.Interface.ILocalFragment;
-import com.goodow.drive.android.activity.MainActivity;
-import com.goodow.drive.android.adapter.LeftMenuAdapter;
-import com.goodow.drive.android.global_data_cache.GlobalConstant;
-import com.goodow.drive.android.global_data_cache.GlobalConstant.MenuTypeEnum;
-import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
 
 public class LeftMenuFragment extends ListFragment implements ILocalFragment {
   private LeftMenuAdapter adapter;
@@ -38,6 +40,17 @@ public class LeftMenuFragment extends ListFragment implements ILocalFragment {
 
   @Override
   public void connectUi() {
+    // TODO Auto-generated method stub
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.goodow.drive.android.Interface.ILocalFragment#doSearch(java.lang.String)
+   */
+  @Override
+  public void doSearch(String search) {
     // TODO Auto-generated method stub
 
   }
@@ -86,43 +99,43 @@ public class LeftMenuFragment extends ListFragment implements ILocalFragment {
     MenuTypeEnum menuTypeEnum = (MenuTypeEnum) v.getTag();
 
     switch (menuTypeEnum) {
-    case USER_NAME:
-      mainActivity.showChangeUserDialog();
+      case USER_NAME:
+        mainActivity.showChangeUserDialog();
 
-      break;
-    case USER_REMOTE_DATA:
-      String favoritesDocId =
-          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-              + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue();
-      mainActivity.getRemoteControlObserver().changeDoc(favoritesDocId);
+        break;
+      case USER_REMOTE_DATA:
+        String favoritesDocId =
+            "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+                + GlobalConstant.DocumentIdAndDataKey.FAVORITESDOCID.getValue();
+        mainActivity.getRemoteControlObserver().changeDoc(favoritesDocId);
 
-      break;
-    case USER_LESSON_DATA:
-      String lessonDocId =
-          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-              + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
-      mainActivity.getRemoteControlObserver().changeDoc(lessonDocId);
+        break;
+      case USER_LESSON_DATA:
+        String lessonDocId =
+            "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+                + GlobalConstant.DocumentIdAndDataKey.LESSONDOCID.getValue();
+        mainActivity.getRemoteControlObserver().changeDoc(lessonDocId);
 
-      break;
-    case USER_OFFLINE_DATA:
-      String offlineDocId =
-          "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
-              + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
-      mainActivity.getRemoteControlObserver().changeDoc(offlineDocId);
+        break;
+      case USER_OFFLINE_DATA:
+        String offlineDocId =
+            "@tmp/" + GlobalDataCacheForMemorySingleton.getInstance().getUserId() + "/"
+                + GlobalConstant.DocumentIdAndDataKey.OFFLINEDOCID.getValue();
+        mainActivity.getRemoteControlObserver().changeDoc(offlineDocId);
 
-      break;
-    // case LOCAL_RES:
-    // FragmentTransaction fragmentTransaction;
-    // fragmentTransaction =
-    // mainActivity.getFragmentManager().beginTransaction();
-    // fragmentTransaction.replace(R.id.contentLayout,
-    // mainActivity.getLocalResFragment());
-    // fragmentTransaction.commit();
-    //
-    // break;
-    default:
+        break;
+      // case LOCAL_RES:
+      // FragmentTransaction fragmentTransaction;
+      // fragmentTransaction =
+      // mainActivity.getFragmentManager().beginTransaction();
+      // fragmentTransaction.replace(R.id.contentLayout,
+      // mainActivity.getLocalResFragment());
+      // fragmentTransaction.commit();
+      //
+      // break;
+      default:
 
-      break;
+        break;
     }
 
     mainActivity.hideLeftMenuLayout();

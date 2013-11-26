@@ -82,6 +82,17 @@ public class DataDetailFragment extends Fragment implements ILocalFragment {
 
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.goodow.drive.android.Interface.ILocalFragment#doSearch(java.lang.String)
+   */
+  @Override
+  public void doSearch(String search) {
+    // TODO Auto-generated method stub
+
+  }
+
   public void initView() {
     if (null != file) {
       fileName.setText((String) file.get("label"));

@@ -60,6 +60,8 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   private IRemoteControl path;
   private JsonArray currentPathList;
   private CollaborativeMap currentFolder;
+  private CollaborativeList searchFiles;
+  private CollaborativeList searchFolders;
 
   private PopupWindow popupWindow;
 
@@ -77,6 +79,7 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
   };
 
   private CollaborativeAdapter adapter;
+
   private Document doc;
   private Document lessonDoc;
   private Model model;
@@ -89,10 +92,11 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
   private static final String FOLDER_KEY = GlobalConstant.DocumentIdAndDataKey.FOLDERSKEY
       .getValue();
+
   private static final String FILE_KEY = GlobalConstant.DocumentIdAndDataKey.FILESKEY.getValue();
   private EventHandler<?> listEventHandler;
-
   private EventHandler<ObjectChangedEvent> valuesChangeEventHandler;
+
   private INotifyData iNotifyData;
 
   public DataListFragment() {
@@ -267,6 +271,26 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     }
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.goodow.drive.android.Interface.ILocalFragment#doSearch(java.lang.String)
+   */
+  @Override
+  public void doSearch(String search) {
+    if (null != model) {
+      searchFiles = model.createList();
+      searchFolders = model.createList();
+
+      getSearchItem(root, search);
+
+      adapter.setFileList(searchFiles);
+      adapter.setFolderList(searchFolders);
+
+      adapter.notifyDataSetInvalidated();
+    }
+  }
+
   /**
    * @return the dialogCurrentFolder
    */
@@ -376,10 +400,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     listView.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        // // 点击时，可见
-        // if (lastLayout.getVisibility() == View.GONE) {
-        // lastLayout.setVisibility(View.VISIBLE);
-        // }
         CollaborativeMap dialogClickItem = (CollaborativeMap) view.getTag();
 
         // 只有当要点击的文件夹和当前的文件路径不同时
@@ -438,29 +458,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
           }
         });
         mDialog.show();
-
-        // View view =
-        // View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_add_folder, null);
-        // final EditText editText = (EditText) view.findViewById(R.id.editText_rename);
-        // editText.setText("新建文件夹");
-        // editText.selectAll();
-        // new
-        // AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle("文件夹名称").setView(
-        // view).setPositiveButton("确定", new OnClickListener() {
-        // @Override
-        // public void onClick(DialogInterface dialog, int which) {
-        // // 当目录下文件夹
-        // CollaborativeList currentList = getDialogCurrentFolder().get(FOLDER_KEY);
-        // // 创建新的文件夹
-        // CollaborativeMap newMap = model.createMap(null);
-        // newMap.set("label", editText.getText().toString());
-        // newMap.set(FILE_KEY, model.createList());
-        // newMap.set(FOLDER_KEY, model.createList());
-        // currentList.push(newMap);
-        // tv_test.setText(getDialogCurrentFolder().get("label").toString());
-        // dialogAdapter.notifyDataSetChanged();
-        // }
-        // }).setNegativeButton("取消", null).show();
       }
     });
     if (getDialogCurrentFolder() == root) {
@@ -571,7 +568,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
    */
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    // TODO Auto-generated method stub
     super.onCreateOptionsMenu(menu, inflater);
     MenuItem addFolder = menu.add(0, 1, 0, R.string.pick_entry_create_new_folder);
     addFolder.setIcon(R.drawable.ds_plussign_holo_light);
@@ -608,7 +604,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
    */
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    // TODO Auto-generated method stub
     if (item.getItemId() == 1) {
       LayoutInflater layoutInflater =
           (LayoutInflater) getActivity().getWindow().getContext().getSystemService(
@@ -648,28 +643,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
         }
       });
       mDialog.show();
-      // View view =
-      // View.inflate(getActivity().getWindow().getContext(), R.layout.fragment_rename, null);
-      // final EditText editText = (EditText) view.findViewById(R.id.editText_rename);
-      // editText.setText("新建文件夹");
-      // editText.selectAll();
-      // new AlertDialog.Builder(getActivity().getWindow().getContext()).setTitle("文件夹名称").setView(
-      // view).setPositiveButton("确定", new OnClickListener() {
-      //
-      // @Override
-      // public void onClick(DialogInterface dialog, int which) {
-      // // TODO Auto-generated method stub
-      // // 当前目录下文件夹
-      // CollaborativeList currentList = currentFolder.get(FOLDER_KEY);
-      // // 创建新的文件夹
-      // CollaborativeMap newMap = model.createMap(null);
-      // newMap.set("label", editText.getText().toString());
-      // newMap.set(FILE_KEY, model.createList());
-      // newMap.set(FOLDER_KEY, model.createList());
-      // currentList.push(newMap);
-      // adapter.notifyDataSetChanged();
-      // }
-      // }).setNegativeButton("取消", null).show();
     }
     return super.onOptionsItemSelected(item);
   }
@@ -707,14 +680,12 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
    */
   @Override
   public void onStart() {
-    // TODO Auto-generated method stub
     super.onStart();
     // 长按listView条目时，弹出移至...，重命名，删除
     getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
       @Override
       public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        // TODO Auto-generated method stub
         final CollaborativeMap clickItem = (CollaborativeMap) view.getTag();
         View operationView =
             View.inflate(getActivity().getWindow().getContext(), R.layout.dialog_pop_long, null);
@@ -752,7 +723,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
           @Override
           public void onClick(View v) {
-            // TODO Auto-generated method stub
             moveFileorFolder(clickItem, currentPathList);
             da.dismiss();
           }
@@ -817,7 +787,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
       @Override
       public void onClick(View v) {
-        // TODO Auto-generated method stub
         da.dismiss();
       }
     });
@@ -825,7 +794,6 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
 
       @Override
       public void onClick(View v) {
-        // TODO Auto-generated method stub
         // 重命名
         clickItem.set("label", editText.getText().toString());
         da.dismiss();
@@ -866,6 +834,40 @@ public class DataListFragment extends ListFragment implements ILocalFragment {
     }
 
     openState();
+  }
+
+  /**
+   * 获取符合搜索条件的Item
+   */
+  private void getSearchItem(CollaborativeMap map, String search) {
+    if (null == map) {
+      return;
+    }
+
+    // 遍历文件List，将符合搜索参数的map加入到缓存中
+    CollaborativeList fileList = map.get(FILE_KEY);
+    if (null != fileList) {
+      for (int i = 0; i < fileList.length(); i++) {
+        CollaborativeMap file = fileList.get(i);
+        if (null != file.get("label") && ((String) file.get("label")).contains(search)) {
+          searchFiles.push(file);
+        }
+      }
+    }
+
+    // 遍历文件夹List，将符合搜索参数的map加入到缓存中
+    CollaborativeList folderList = map.get(FOLDER_KEY);
+    if (null != folderList) {
+      for (int i = 0; i < folderList.length(); i++) {
+        CollaborativeMap folder = folderList.get(i);
+        if (null != folder.get("label") && ((String) folder.get("label")).contains(search)) {
+          searchFolders.push(folder);
+        }
+
+        getSearchItem(folder, search);
+      }
+    }
+
   }
 
   private void initEventHandler() {

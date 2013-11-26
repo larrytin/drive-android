@@ -13,6 +13,7 @@ import com.goodow.drive.android.fragment.OfflineListFragment;
 import com.goodow.drive.android.global_data_cache.GlobalConstant;
 import com.goodow.drive.android.global_data_cache.GlobalConstant.DocumentIdAndDataKey;
 import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+import com.goodow.drive.android.provider.SearchSuggestionSampleProvider;
 import com.goodow.drive.android.toolutils.LoginNetRequestTask;
 import com.goodow.drive.android.toolutils.OverallUncaughtException;
 import com.goodow.drive.android.toolutils.OverallUncaughtException.LoginAgain;
@@ -45,6 +46,8 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -53,6 +56,7 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.SearchRecentSuggestions;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -77,6 +81,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import elemental.json.JsonArray;
@@ -91,6 +97,8 @@ public class MainActivity extends RoboActivity {
   private RemoteControlObserver remoteControlObserver;
   private ActionBar actionBar;
   private String title;
+  private SearchView searchView;
+  private Menu menu;
 
   @InjectView(R.id.leftMenuLayout)
   private LinearLayout leftMenu;
@@ -130,6 +138,43 @@ public class MainActivity extends RoboActivity {
   private float startPoint = 0;
 
   private boolean isShow = false;
+
+  OnQueryTextListener onQueryTextListener = new OnQueryTextListener() {
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+      if (null != currentFragment) {
+        // 显示Title
+        // actionBar.setDisplayShowTitleEnabled(true);
+        // actionBar.setTitle("搜索：“ " + query + " ”");
+        // actionBar.setDisplayShowCustomEnabled(false);
+        currentFragment.doSearch(query);
+      }
+
+      return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+      if (null != currentFragment) {
+        // 显示Title
+        // actionBar.setDisplayShowTitleEnabled(true);
+        // actionBar.setTitle("搜索：“ " + query + " ”");
+        // actionBar.setDisplayShowCustomEnabled(false);
+        currentFragment.doSearch(query);
+      }
+
+      return false;
+    }
+  };
+
+  // 清除历史记录
+  public void clearSearchHistory() {
+    SearchRecentSuggestions suggestions =
+        new SearchRecentSuggestions(this, SearchSuggestionSampleProvider.AUTHORITY,
+            SearchSuggestionSampleProvider.MODE);
+    suggestions.clearHistory();
+  }
 
   public DataDetailFragment getDataDetailFragment() {
     return dataDetailFragment;
@@ -193,11 +238,19 @@ public class MainActivity extends RoboActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
+    // this.menu = menu;
+    getMenuInflater().inflate(R.menu.main, menu);
+    // 搜索
+    SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    MenuItem searchItem = menu.findItem(R.id.search);
+    searchView = (SearchView) searchItem.getActionView();
+    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+    searchView.setOnQueryTextListener(onQueryTextListener);
 
+    // 退出
     MenuItem back2Login = menu.add(0, 0, 1, R.string.ds_dialog_exit_button_text);
     back2Login.setIcon(R.drawable.exit_program);
     back2Login.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
     return true;
   }
 
@@ -211,7 +264,6 @@ public class MainActivity extends RoboActivity {
           return true;
         }
       case KeyEvent.KEYCODE_HOME:
-
         return true;
       default:
         break;
@@ -255,10 +307,37 @@ public class MainActivity extends RoboActivity {
               }
             }).setTitle("温馨提示").setMessage(R.string.back_dailogMessage).create().show();
         return true;
+      case R.id.search:
+        onSearchRequested();
+        return true;
       default:
         return super.onOptionsItemSelected(item);
     }
 
+  } /*
+     * (non-Javadoc)
+     * 
+     * @see android.app.Activity#onSearchRequested()
+     */
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
+   */
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    this.menu = menu;
+    if (currentFragment == offlineListFragment) {
+      menu.removeItem(R.id.search);
+    }
+    return super.onPrepareOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onSearchRequested() {
+    Log.i("onSearchRequested", "onSearchRequested");
+    return true;
   }
 
   @Override
@@ -441,6 +520,24 @@ public class MainActivity extends RoboActivity {
     });
   }
 
+  /**
+   * 
+   */
+  public void showOrHiddenSearchView(boolean isShow) {
+    if (!isShow) {
+      menu.removeItem(R.id.search);
+    }
+  }
+
+  // /**
+  // *
+  // */
+  // public void showOrHiddenSearchView(Boolean isShow) {
+  // if (!isShow) {
+  // menu.removeItem(R.id.search);
+  // }
+  // }
+
   public void switchFragment(DocumentIdAndDataKey doc) {
     Fragment newFragment = null;
 
@@ -488,7 +585,6 @@ public class MainActivity extends RoboActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     GlobalDataCacheForMemorySingleton.getInstance.addActivity(this);
 
     // 添加捕获全局异常的处理方案
@@ -560,6 +656,24 @@ public class MainActivity extends RoboActivity {
     GlobalDataCacheForMemorySingleton.getInstance.removeActivity(this);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see roboguice.activity.RoboActivity#onNewIntent(android.content.Intent)
+   */
+  @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    Log.i("onNewIntent", "onNewIntent");
+    // 获得搜索框里的值
+    String query = intent.getStringExtra(SearchManager.QUERY);
+    // 保存搜索记录
+    SearchRecentSuggestions suggestions =
+        new SearchRecentSuggestions(this, SearchSuggestionSampleProvider.AUTHORITY,
+            SearchSuggestionSampleProvider.MODE);
+    suggestions.saveRecentQuery(query, null);
+  }
+
   @Override
   protected void onPause() {
     super.onPause();
@@ -626,11 +740,6 @@ public class MainActivity extends RoboActivity {
 
       isFirst = false;
     }
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-
   }
 
   @Override

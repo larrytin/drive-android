@@ -6,5 +6,7 @@ public interface ILocalFragment {
 
   public void connectUi();
 
+  public void doSearch(String search);
+
   public void loadDocument();
 }

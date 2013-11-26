@@ -97,6 +97,9 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
 
   private PopupWindow popupWindow;
 
+  private CollaborativeList searchFiles;
+  private CollaborativeList searchFolders;
+
   public LessonListFragment() {
     super();
   }
@@ -265,6 +268,26 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
       if (clickItem.getId().equals(map.getId())) {
         list.remove(i);
       }
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.goodow.drive.android.Interface.ILocalFragment#doSearch(java.lang.String)
+   */
+  @Override
+  public void doSearch(String search) {
+    if (null != model) {
+      searchFiles = model.createList();
+      searchFolders = model.createList();
+
+      getSearchItem(root, search);
+
+      adapter.setFileList(searchFiles);
+      adapter.setFolderList(searchFolders);
+
+      adapter.notifyDataSetInvalidated();
     }
   }
 
@@ -803,6 +826,40 @@ public class LessonListFragment extends ListFragment implements ILocalFragment {
     }
 
     openState();
+  }
+
+  /**
+   * 获取符合搜索条件的Item
+   */
+  private void getSearchItem(CollaborativeMap map, String search) {
+    if (null == map) {
+      return;
+    }
+
+    // 遍历文件List，将符合搜索参数的map加入到缓存中
+    CollaborativeList fileList = map.get(FILE_KEY);
+    if (null != fileList) {
+      for (int i = 0; i < fileList.length(); i++) {
+        CollaborativeMap file = fileList.get(i);
+        if (null != file.get("label") && ((String) file.get("label")).contains(search)) {
+          searchFiles.push(file);
+        }
+      }
+    }
+
+    // 遍历文件夹List，将符合搜索参数的map加入到缓存中
+    CollaborativeList folderList = map.get(FOLDER_KEY);
+    if (null != folderList) {
+      for (int i = 0; i < folderList.length(); i++) {
+        CollaborativeMap folder = folderList.get(i);
+        if (null != folder.get("label") && ((String) folder.get("label")).contains(search)) {
+          searchFolders.push(folder);
+        }
+
+        getSearchItem(folder, search);
+      }
+    }
+
   }
 
   private void initEventHandler() {

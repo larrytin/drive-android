@@ -63,14 +63,32 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
     super();
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.goodow.drive.android.Interface.ILocalFragment#backFragment()
+   */
   @Override
   public void backFragment() {
     // TODO Auto-generated method stub
-  };
 
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.goodow.drive.android.Interface.ILocalFragment#connectUi()
+   */
   @Override
   public void connectUi() {
     // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void doSearch(String search) {
+    // TODO Auto-generated method stub
+
   }
 
   @Override
@@ -149,6 +167,9 @@ public class OfflineListFragment extends ListFragment implements ILocalFragment 
 
       RelativeLayout relativeLayout = (RelativeLayout) activity.findViewById(R.id.mainConnect);
       relativeLayout.setVisibility(View.GONE);
+
+      // 隐藏搜索图标
+      activity.showOrHiddenSearchView(false);
     }
   }
 }

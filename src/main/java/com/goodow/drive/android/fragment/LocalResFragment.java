@@ -1,9 +1,19 @@
 package com.goodow.drive.android.fragment;
 
+import com.goodow.android.drive.R;
+import com.goodow.drive.android.Interface.ILocalFragment;
+import com.goodow.drive.android.activity.MainActivity;
+import com.goodow.drive.android.activity.play.VideoPlayActivity;
+import com.goodow.drive.android.adapter.LocalResAdapter;
+import com.goodow.drive.android.global_data_cache.GlobalConstant;
+import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
+import com.goodow.drive.android.toolutils.Tools;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import android.app.ListFragment;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,14 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.goodow.android.drive.R;
-import com.goodow.drive.android.Interface.ILocalFragment;
-import com.goodow.drive.android.activity.MainActivity;
-import com.goodow.drive.android.activity.play.VideoPlayActivity;
-import com.goodow.drive.android.adapter.LocalResAdapter;
-import com.goodow.drive.android.global_data_cache.GlobalConstant;
-import com.goodow.drive.android.global_data_cache.GlobalDataCacheForMemorySingleton;
-import com.goodow.drive.android.toolutils.Tools;
 
 public class LocalResFragment extends ListFragment implements ILocalFragment {
   private LocalResAdapter localResAdapter;
@@ -38,7 +40,8 @@ public class LocalResFragment extends ListFragment implements ILocalFragment {
     if (null != parentDirectory) {
       initDataSource(new File(parentDirectory));
 
-      if (parentDirectory.equals(GlobalDataCacheForMemorySingleton.getInstance().getOfflineResDirPath())) {
+      if (parentDirectory.equals(GlobalDataCacheForMemorySingleton.getInstance()
+          .getOfflineResDirPath())) {
 
         parentDirectory = null;// 如果返回至用户文件夹,则置空父文件路径
       } else {
@@ -77,6 +80,17 @@ public class LocalResFragment extends ListFragment implements ILocalFragment {
     }
 
     file.delete();
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.goodow.drive.android.Interface.ILocalFragment#doSearch(java.lang.String)
+   */
+  @Override
+  public void doSearch(String search) {
+    // TODO Auto-generated method stub
+
   }
 
   public void initDataSource(File dir) {
@@ -139,7 +153,8 @@ public class LocalResFragment extends ListFragment implements ILocalFragment {
           intent = new Intent(getActivity(), VideoPlayActivity.class);
 
           intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_NAME.name(), map.get("label"));
-          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(), resPath + map.get("blobKey"));
+          intent.putExtra(VideoPlayActivity.IntentExtraTagEnum.MP4_PATH.name(), resPath
+              + map.get("blobKey"));
         } else if (GlobalConstant.SupportResTypeEnum.FLASH.getTypeName().equals(map.get("type"))) {
           // TODO
         } else {
