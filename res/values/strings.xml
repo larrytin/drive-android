@@ -1,50 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- 与云端硬盘对应相同的 -->
-    <string name="ds_dialog_exit_button_text">Exit</string>
-    <string name="remove_button_confirm">Remove</string>
-    <string name="ds_menu_settings">Settings</string>
-    <string name="trix_sheets_tab_menu_ok">OK</string>
-    <string name="unsaved_dialog_cancel">Cancel</string>
-    <string name="prefs_offline_category">Offline files</string>
-    <string name="pick_entry_create_new_folder">create new folder</string>
-    <string name="enter_new_name">Enter new name:</string>
-    <string name="menu_move_to">Move to…</string>
-    <string name="menu_rename">Rename</string>
-    <string name="menu_search">Search</string>
-    <string name="search_hint">Search Term</string>
-    <!-- 自己命名 -->
-    <string name="contentDescription">description</string>
-    <string name="app_name">KeRuiXing platform</string>    
-    <string name="openfailure">The folder is empty!</string>
-    <string name="backFolderErro">Is the top-level folder!</string>
-    <string name="backButton">On the return</string>
-    <string name="back_dailogMessage">Are you sure you want to quit?</string>
-    <string name="del_DailogMessage">Are you sure you want to delete?</string> 
-    <string name="welcome_offer_fail_connect">Network connection...</string>
-    <string name="create_new_favorites">My Favorites</string>    
-    <string name="lesson_class">My Course</string>
-    <string name="login">Login</string>
-    <string name="pin_checkbox_label">operation</string>
-    <string name="remoteControlError">Remote synchronization operation is unusual, please try to switch the menu</string>
-    <string name="downloaded">The downloaded</string>
-    <string name="test">Test</string>
-    <string name="folderName">Folder Name</string>
-    <string name="menu_addToFavorites">Add to Favorites</string>
-    <string name="resourceArrange">Resource arrange</string>
-    
-    
-    <!-- 北京内网 -->
-    <!-- <string name="com.goodow.realtime.serverAddress">http://192.168.11.39:8080</string> -->
-
-    <!-- 无锡内网 -->
-<!--     <string name="com.goodow.realtime.serverAddress">http://drive.retechcorp.com:8080</string> -->
-    <!--测试账号 -->
-<!--     <string name="com.goodow.realtime.serverAddress">http://61.177.139.216:8084</string> -->
-    
-    
-
-    <!-- 不配置,是外部网络 -->
-
+    <string name="ds_menu_settings">setting</string>
+    <string name="app_name">KeRuiXing</string>
 </resources>

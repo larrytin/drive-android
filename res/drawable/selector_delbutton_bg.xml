@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- 如果是true，当被点击时显示该图片，如果是false没被按下时显示默认。 -->
-    <item android:drawable="@color/blue" android:state_pressed="true"/>
-    <!-- 默认图片 -->
-    <item android:drawable="@color/transparent"/>
-
-</selector>

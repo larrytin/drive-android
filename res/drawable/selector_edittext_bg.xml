@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:state_focused="false" android:drawable="@drawable/style_text_background" />
-    <!-- 如果是true，当被点击时显示该图片，如果是false没被按下时显示默认。 -->
-    <item android:state_focused="true" android:drawable="@drawable/style_text_background_focused" />
-
-</selector>

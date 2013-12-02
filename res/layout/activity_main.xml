@@ -1,79 +1,13 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@drawable/datadetail_bg"
-    android:orientation="vertical" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="hello_world" />
 
-        <ProgressBar
-            android:id="@+id/pb_indeterminate"
-            style="@style/ProgressBarIndeterminate"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginBottom="-7.0dip"
-            android:layout_marginTop="-6.0dip" />
-
-        <RelativeLayout
-            android:id="@+id/mainConnect"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:visibility="visible" >
-
-            <ProgressBar
-                android:id="@+id/mainProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/mainProgressBar"
-                android:layout_centerInParent="true"
-                android:text="@string/welcome_offer_fail_connect" />
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/contentLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:orientation="vertical" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/dataDetailLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="right"
-            android:background="@color/white"
-            android:orientation="horizontal"
-            android:visibility="invisible" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/middleLayout"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:alpha="0.6"
-            android:background="@android:color/black"
-            android:orientation="horizontal"
-            android:visibility="invisible" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/leftMenuLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_gravity="left"
-            android:orientation="vertical"
-            android:visibility="invisible" >
-        </LinearLayout>
-    </FrameLayout>
-
-</LinearLayout>
+</RelativeLayout>
