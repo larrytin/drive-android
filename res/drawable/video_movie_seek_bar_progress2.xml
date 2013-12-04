@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<clip xmlns:android="http://schemas.android.com/apk/res/android">
+    <shape>
+        <corners android:radius="3.0dip" />
+        <gradient android:startColor="#ff9e9e9e" android:endColor="#ff6c6c6c" android:angle="270.0" android:centerY="0.5" android:centerColor="#ff848484" />
+        <stroke android:width="1.0dip" android:color="#ff4a4a4a" />
+    </shape>
+</clip>

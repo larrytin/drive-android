@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- PDF -->
+    <color name="pdf_canvas">#FF404040</color>
+    <color name="pdf_bar">#C0202020</color>
+    
+    <!-- VIDEO -->
+    <color name="video_background">#FF000000</color>
+	<color name="video_white">#ffffffff</color>
+	<color name="video_transparent_bg">#a0000000</color>
+	<color name="video_dialog_back">#A0181818</color>
+</resources>

@@ -32,7 +32,7 @@
          >
 
         <activity
-            android:name="com.goodow.drive.android.activity.MainActivity"
+            android:name="com.goodow.drive.android.activity.SampleVideo"
             android:label="@string/app_name"
             >
             <intent-filter>
@@ -40,7 +40,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <!-- PDF播放器 -->
+        <activity android:name="com.artifex.mupdf.MuPDFActivity" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"></activity>
+        <activity android:name="com.artifex.mupdf.OutlineActivity" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"></activity>
 
+        <!-- VIDEO播放器 -->
+        <activity android:name="com.goodow.drive.android.video.VideoActivity" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"></activity>
     </application>
 
 </manifest>

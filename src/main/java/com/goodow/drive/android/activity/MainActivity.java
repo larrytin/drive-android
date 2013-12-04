@@ -1,12 +1,11 @@
 package com.goodow.drive.android.activity;
 
-import com.goodow.android.drive.R;
-
-import android.app.Activity;
 import android.os.Bundle;
 
+import com.goodow.android.drive.R;
 
-public class MainActivity extends Activity {
+
+public class MainActivity extends BaseActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

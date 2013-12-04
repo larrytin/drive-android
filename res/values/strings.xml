@@ -2,4 +2,23 @@
 <resources>
     <string name="ds_menu_settings">setting</string>
     <string name="app_name">KeRuiXing</string>
+    
+    
+    
+    <!-- PDF -->
+    <string name="pdf_cancel">Cancel</string>
+    <string name="pdf_search_backwards">Search backwards</string>
+    <string name="pdf_search_forwards">Search forwards</string>
+    <string name="pdf_search_document">Search document</string>
+    <string name="pdf_outline_title">Table of Contents</string>
+    <string name="pdf_text_not_found">Text not found</string>
+    <string name="pdf_searching">Searching#8230;</string>
+    <string name="pdf_no_further_occurences_found">No further occurrences found</string>
+    <string name="pdf_progress_title">Generateing pdf#8230;</string>
+    
+    <!-- video -->
+    <string name="video_volume_controler_title">音量调节</string>
+    <string name="video_brightness_controler_title">亮度调节</string>
+    <string name="video_return_btn">返回</string>
+    <string name="video_back">返回</string>
 </resources>
