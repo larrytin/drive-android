@@ -9,7 +9,6 @@
 	    android:layout_height="wrap_content"
 	    android:layout_centerInParent="true"
         android:text="播放"
-        android:onClick="cast"
         />
     
 

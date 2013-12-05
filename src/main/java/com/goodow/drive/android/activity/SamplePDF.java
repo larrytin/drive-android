@@ -1,5 +1,7 @@
 package com.goodow.drive.android.activity;
 
+import com.goodow.realtime.json.JsonObject;
+
 import com.artifex.mupdf.MuPDFActivity;
 
 import java.io.File;
@@ -19,11 +21,11 @@ import android.os.Bundle;
  * @version V1.0
  */
 public class SamplePDF extends Activity {
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    File newFile = new File("/mnt/sdcard/" + getIntent().getExtras().getString("path"));
-    if (newFile != null && newFile.exists()) {
+    JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
+    File newFile = new File("/mnt/sdcard/" + jsonObject.getString("path"));
+    if (newFile.exists()) {
       Uri uri = Uri.parse(newFile.getPath());
       Intent intent = new Intent(this, MuPDFActivity.class);
       intent.setAction(Intent.ACTION_VIEW);

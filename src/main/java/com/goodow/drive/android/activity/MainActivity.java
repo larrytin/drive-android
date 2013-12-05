@@ -44,7 +44,7 @@ public class MainActivity extends BaseActivity {
       @Override
       public void handler(JsonObject message, EventHandler<JsonObject> reply) {
         Intent intent = new Intent(MainActivity.this, SamplePDF.class);
-        intent.putExtra("path", message.getString("path"));
+        intent.putExtra("msg", message);
         startActivity(intent);
       }
     });
@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity {
       @Override
       public void handler(JsonObject message, EventHandler<JsonObject> reply) {
         Intent intent = new Intent(MainActivity.this, SampleVideo.class);
-        intent.putExtra("path", message.getString("path"));
+        intent.putExtra("msg", message);
         startActivity(intent);
       }
     });

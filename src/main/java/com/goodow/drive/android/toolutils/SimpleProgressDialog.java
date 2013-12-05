@@ -12,7 +12,6 @@ import android.content.DialogInterface;
  */
 public final class SimpleProgressDialog {
   private static final String TAG = "SimpleProgressDialog";
-
   private static ProgressDialog progressDialog;
 
   // 引用计数器
@@ -62,7 +61,8 @@ public final class SimpleProgressDialog {
    * 
    * @param context
    */
-  public static synchronized void show(Context context, final DialogInterface.OnCancelListener dialogCancelDelegate) {
+  public static synchronized void show(Context context,
+      final DialogInterface.OnCancelListener dialogCancelDelegate) {
     if (context == null) {
       DebugLog.e(TAG, "入参 context 为 null ! ");
       return;
@@ -75,7 +75,8 @@ public final class SimpleProgressDialog {
 
     referenceCounter++;
 
-    DebugLog.i(TAG, "在类 <" + context.getClass().getSimpleName() + "> 中调用 show(), 最新计数器=" + referenceCounter);
+    DebugLog.i(TAG, "在类 <" + context.getClass().getSimpleName() + "> 中调用 show(), 最新计数器="
+        + referenceCounter);
 
     if (progressDialog == null) {
       progressDialog = ProgressDialog.show(context, "网络访问中", "请耐心等待...");

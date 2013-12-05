@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.drive.android.video.VideoActivity;
+import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,11 +18,11 @@ import android.os.Bundle;
  * @version V1.0
  */
 public class SampleVideo extends Activity {
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
     Intent intent = new Intent(this, VideoActivity.class);
-    intent.setData(Uri.parse("file:///mnt/sdcard/" + getIntent().getExtras().getString("path")));
+    intent.setData(Uri.parse("file:///mnt/sdcard/" + jsonObject.getString("path")));
     this.startActivity(intent);
     super.onCreate(savedInstanceState);
   }

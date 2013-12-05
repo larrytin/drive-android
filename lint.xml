@@ -4,4 +4,5 @@
     <issue id="HandlerLeak" severity="ignore" />
     <issue id="OldTargetApi" severity="ignore" />
     <issue id="SdCardPath" severity="ignore" />
+    <issue id="ViewConstructor" severity="ignore" />
 </lint>

@@ -10,8 +10,7 @@ import java.util.Set;
 
 public class FolderSize {
   // 递归
-  public static long getFileSize(File f, Map<String, Long> map) throws Exception// 取得文件夹大小
-  {
+  public static long getFileSize(File f, Map<String, Long> map) throws Exception {
     long size = 0;
     File flist[] = f.listFiles();
     for (int i = 0; i < flist.length; i++) {
@@ -33,8 +32,8 @@ public class FolderSize {
    * @param map
    * @return Map.Entry[]
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
-public static Map.Entry[] getSortedHashtableByValue(Map<String, Long> map) {
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static Map.Entry[] getSortedHashtableByValue(Map<String, Long> map) {
     Set set = map.entrySet();
     Map.Entry[] entries = (Map.Entry[]) set.toArray(new Map.Entry[set.size()]);
     Arrays.sort(entries, new Comparator() {
@@ -48,8 +47,8 @@ public static Map.Entry[] getSortedHashtableByValue(Map<String, Long> map) {
     return entries;
   }
 
-  @SuppressWarnings({ "static-access", "rawtypes" })
-public static void main(String[] args) {
+  @SuppressWarnings({"static-access", "rawtypes"})
+  public static void main(String[] args) {
     Map<String, Long> map = new HashMap<String, Long>();
     FolderSize folder = new FolderSize();
     long fileSize = 0;

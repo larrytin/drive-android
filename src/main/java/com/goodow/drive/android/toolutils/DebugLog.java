@@ -6,7 +6,6 @@ import android.util.Log;
  * 程序中不要使用系统原生的Log类来输出打印消息, 统一使用当前调试Log类
  * 
  * @author zhihua.tang
- * 
  */
 public final class DebugLog {
   private final static String TAG = DebugLog.class.getSimpleName();
