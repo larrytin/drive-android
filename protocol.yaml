@@ -1,0 +1,32 @@
+--- # 播放PDF address: sid.pdf
+path: sample.pdf
+url: http://goodow.com/sample.pdf
+...
+
+--- # 播放mp4 address: sid.mp4
+path: sample.mp4
+url: http://goodow.com/sample.mp4
+...
+
+--- # 请求一个课程下的所有文件 address: sid.getFiles
+grade: 小班
+term: 上学期
+domain: 健康
+subject: 找朋友
+...
+
+--- # 回应请求 address: sid.getFiles
+files: 
+  pdf: 
+    - filename: 找朋友 活动设计.pdf
+      path: /mnt/sdcard/xx/xx.pdf
+    - filename: 找朋友 文学作品.pdf
+      path: xx
+  jpg: 
+    - filename: 苹果胸牌A3参考线-01.jpg
+      path: xx
+  swf: 
+    - filename: 苹果胸牌A3参考线-01.jpg
+      path: xx    
+...
+
