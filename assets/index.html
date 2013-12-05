@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
+
+	<style type="text/css">
+	<!--
+		body {
+			margin: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #FFFFFF;
+			color: #FFFFFF;
+		}
+	-->
+	</style>
+<title>empty</title>
+</head>
+<body>
+<center>
+<table cellpadding="0" cellspacing="0" border="0"> 
+	<tr>
+		<td align="center" valign="middle">
+		<object type="application/x-shockwave-flash"
+			id='movie' 
+			align="middle"
+			height="300" 
+			width="400">
+				<param name="movie" value="" />
+				<param name="quality" value="" />
+				<param name="wmode" value="" />
+				<param name="bgColor" value="#FFFFFF" />
+				<param name="allowScriptAccess" value="always" />
+				<param name="menu" value="false" />
+				<param name="scale" value="" />
+				<param name="allowFullScreen" value="true" />
+		</object>
+		<script type='text/javascript'>
+		var total;//定义flash影片总桢数
+		var frame_number;//定义flash影片当前桢数
+		var rate = 12;//帧频
+		
+
+		//动态显示播放影片的当前桢/总桢数(进度条显示)
+		function showcount(){
+			total = movie.TotalFrames();
+			frame_number = movie.CurrentFrame();
+			frame_number++;
+			var progressSize = 500*(frame_number/total);
+			CallJava.consoleFlashProgress(progressSize,total/12);
+		}
+
+		//播放影片 
+		function Play(){
+			movie.Play();
+			showcount();
+		}
+		
+		//暂停播放
+		function Pause(){
+			movie.StopPlay();
+		}
+
+		//开始载入flash影片
+		function loadSWF(fsrc, fwidth, fheight){
+			if(!movie.data){
+  			  movie.data = fsrc;
+			  movie.value = fsrc;
+			}
+			//movie.LoadMovie(0, fsrc);
+			movie.width = fwidth;
+			movie.height = fheight;
+			frame_number = movie.CurrentFrame();
+		}
+<!--		
+		//快进或者快退
+		function GoToFrame(progress){
+			total = movie.TotalFrames();
+			if(movie.IsPlaying())
+				Pause();
+			frame_number = total*progress/500;
+			movie.GotoFrame(frame_number);
+			Play();
+		}
+		
+		//flash插件不存在
+		function error(){
+			document.body.style.backgroundImage="url(flash_view_back_7490.jpg)";
+			document.getElementById("flash_page").innerHTML = "<div style='color:#F00;" +
+					" font-size:20px; text-align:center; margin-top:50px; margin-left:50px;'>" +
+					"缺少支持flash播放的插件，请安装后再试！</div>";
+		}
+		
+		//设置flash的高
+		function setHeight(height){
+			movie.height = height;
+			document.getElementById("flash_page").style.height = height;
+		}
+-->
+		</script>
+		</td> 
+	</tr> 
+</table> 
+</center>
+
+</body>
+</html>

@@ -50,6 +50,15 @@
         
         <activity android:name="com.goodow.drive.android.activity.SamplePDF" />
         <activity android:name="com.goodow.drive.android.activity.SampleVideo" />
+        
+        <!-- FLASH播放器 -->
+        <activity
+            android:name="com.goodow.drive.android.flash.FlashPlayerActivity"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
     </application>
 
 </manifest>

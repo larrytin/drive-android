@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.flash.FlashPlayerActivity;
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.EventBus;
 import com.goodow.realtime.channel.EventBus.EventBusHandler;
@@ -52,6 +53,14 @@ public class MainActivity extends BaseActivity {
       public void handler(JsonObject message, EventHandler<JsonObject> reply) {
         Intent intent = new Intent(MainActivity.this, SampleVideo.class);
         intent.putExtra("path", message.getString("path"));
+        startActivity(intent);
+      }
+    });
+    eb.registerHandler(SID + "swf", new EventHandler<JsonObject>() {
+      @Override
+      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+        Intent intent = new Intent(MainActivity.this, FlashPlayerActivity.class);
+        intent.putExtra("msg", message);
         startActivity(intent);
       }
     });

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="ds_menu_settings">setting</string>
     <string name="app_name">KeRuiXing</string>
-    
-    
-    
+
     <!-- PDF -->
     <string name="pdf_cancel">Cancel</string>
     <string name="pdf_search_backwards">Search backwards</string>
@@ -15,10 +14,15 @@
     <string name="pdf_searching">Searching#8230;</string>
     <string name="pdf_no_further_occurences_found">No further occurrences found</string>
     <string name="pdf_progress_title">Generateing pdf#8230;</string>
-    
+
     <!-- video -->
     <string name="video_volume_controler_title">音量调节</string>
     <string name="video_brightness_controler_title">亮度调节</string>
     <string name="video_return_btn">返回</string>
     <string name="video_back">返回</string>
+
+    <!-- flash -->
+    <string name="prompt_flash_Plugins">Please Install the Flash Plugin</string>
+    <string name="name_flashplayer">Flash Player</string>
+
 </resources>
