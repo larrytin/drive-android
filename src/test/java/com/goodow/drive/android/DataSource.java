@@ -21,8 +21,6 @@ public class DataSource {
   public static void main(String[] args) throws IOException {
     final EventBus eb = new EventBus("ws://data.goodow.com:8080/eventbus/websocket", null);
 
-    registerHandlers(eb);
-
     eb.setListener(new EventBusHandler() {
       @Override
       public void onClose() {
@@ -31,6 +29,7 @@ public class DataSource {
 
       @Override
       public void onOpen() {
+        registerHandlers(eb);
         JsonObject msg = Json.createObject();
         msg.set("path", "sample.pdf");
         eb.send("dan.pdf", msg, null);
