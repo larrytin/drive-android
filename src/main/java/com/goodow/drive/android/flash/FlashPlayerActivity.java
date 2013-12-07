@@ -1,7 +1,6 @@
 package com.goodow.drive.android.flash;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.toolutils.DebugLog;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.List;
@@ -11,6 +10,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 public class FlashPlayerActivity extends Activity {
@@ -29,7 +29,7 @@ public class FlashPlayerActivity extends Activity {
       JsonObject msg = (JsonObject) getIntent().getExtras().get("msg");
       String path = msg.get("path");
       path = "/mnt/sdcard/" + path;
-      DebugLog.i(TAG, path);
+      Log.i(TAG, path);
       flash.load();
       flash.setFlashPath(path);
       flash.start();

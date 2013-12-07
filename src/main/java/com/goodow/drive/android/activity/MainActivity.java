@@ -64,5 +64,13 @@ public class MainActivity extends BaseActivity {
         startActivity(intent);
       }
     });
+    eb.registerHandler(SID + "jpg", new EventHandler<JsonObject>() {
+      @Override
+      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+        Intent intent = new Intent(MainActivity.this, PicturePlayAcivity.class);
+        intent.putExtra("msg", message);
+        startActivity(intent);
+      }
+    });
   }
 }

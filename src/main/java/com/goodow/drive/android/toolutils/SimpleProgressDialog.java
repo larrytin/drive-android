@@ -3,6 +3,7 @@ package com.goodow.drive.android.toolutils;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 
 /**
  * 对 ProgressDialog 的简单封装 特点 : 1.调用者必须保证 show() 和 dismiss()的成对调用; 2.包含引用计数器机制,
@@ -30,7 +31,7 @@ public final class SimpleProgressDialog {
 
     referenceCounter--;
 
-    DebugLog.i(TAG, "调用 dismiss(), 最新计数器=" + referenceCounter);
+    Log.i(TAG, "调用 dismiss(), 最新计数器=" + referenceCounter);
 
     if (lastContext == null || referenceCounter <= 0 || progressDialog == null) {
       reset();
@@ -64,7 +65,7 @@ public final class SimpleProgressDialog {
   public static synchronized void show(Context context,
       final DialogInterface.OnCancelListener dialogCancelDelegate) {
     if (context == null) {
-      DebugLog.e(TAG, "入参 context 为 null ! ");
+      Log.e(TAG, "入参 context 为 null ! ");
       return;
     }
 
@@ -75,7 +76,7 @@ public final class SimpleProgressDialog {
 
     referenceCounter++;
 
-    DebugLog.i(TAG, "在类 <" + context.getClass().getSimpleName() + "> 中调用 show(), 最新计数器="
+    Log.i(TAG, "在类 <" + context.getClass().getSimpleName() + "> 中调用 show(), 最新计数器="
         + referenceCounter);
 
     if (progressDialog == null) {

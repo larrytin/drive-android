@@ -1,7 +1,6 @@
 package com.goodow.drive.android.flash;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.toolutils.DebugLog;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -153,11 +153,11 @@ public class FlashView extends RelativeLayout {
     });
     // 实时更新进度
     handler = new Handler();
-    DebugLog.i(TAG, "onCreate");
+    Log.i(TAG, "onCreate");
   }
 
   public void pause() {
-    DebugLog.i(TAG, "pause");
+    Log.i(TAG, "pause");
     if (null != flashPath) {
       flash_view.loadUrl("javascript:Pause()");
       handler.removeCallbacks(update_progress);
@@ -186,7 +186,7 @@ public class FlashView extends RelativeLayout {
   }
 
   public void start() {
-    DebugLog.i(TAG, "start");
+    Log.i(TAG, "start");
     if (null != flashPath) {
       flash_view.loadUrl("javascript:Pause()");
       try {
@@ -212,7 +212,7 @@ public class FlashView extends RelativeLayout {
 
   // 重新播放
   private void replay() {
-    DebugLog.i(TAG, "replay");
+    Log.i(TAG, "replay");
     flash_view.reload();
     load();
     try {

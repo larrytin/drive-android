@@ -28,29 +28,35 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-         >
-
+        android:label="@string/app_name" >
         <activity
             android:name="com.goodow.drive.android.activity.MainActivity"
-            android:label="@string/app_name"
-            >
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <!-- PDF播放器 -->
-        <activity android:name="com.artifex.mupdf.MuPDFActivity" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"></activity>
-        <activity android:name="com.artifex.mupdf.OutlineActivity" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"></activity>
+        <activity
+            android:name="com.artifex.mupdf.MuPDFActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
+            android:name="com.artifex.mupdf.OutlineActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+        </activity>
 
         <!-- VIDEO播放器 -->
-        <activity android:name="com.goodow.drive.android.video.VideoActivity" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"></activity>
-        
+        <activity
+            android:name="com.goodow.drive.android.video.VideoActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+        </activity>
         <activity android:name="com.goodow.drive.android.activity.SamplePDF" />
         <activity android:name="com.goodow.drive.android.activity.SampleVideo" />
-        
+
         <!-- FLASH播放器 -->
         <activity
             android:name="com.goodow.drive.android.flash.FlashPlayerActivity"
@@ -58,6 +64,14 @@
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+
+        <!-- 图片查看器 -->
+        <activity
+            android:name="com.goodow.drive.android.activity.PicturePlayAcivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
     </application>
 
