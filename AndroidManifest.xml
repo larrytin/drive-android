@@ -73,6 +73,15 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
         </activity>
+        
+        <!-- AUDIO播放器 -->
+        <activity
+            android:name="com.goodow.drive.android.activity.AudioPlayActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        
     </application>
 
 </manifest>
