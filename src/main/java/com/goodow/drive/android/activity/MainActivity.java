@@ -1,16 +1,14 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.flash.FlashPlayerActivity;
+import com.goodow.drive.android.player.PlayerRegistry;
+import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.EventBus;
 import com.goodow.realtime.channel.EventBus.EventBusHandler;
-import com.goodow.realtime.channel.EventHandler;
-import com.goodow.realtime.json.JsonObject;
 
 import java.util.logging.Logger;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 public class MainActivity extends BaseActivity {
@@ -40,45 +38,7 @@ public class MainActivity extends BaseActivity {
   }
 
   private void handlerEventBusOpened() {
-    eb.registerHandler(SID + "pdf", new EventHandler<JsonObject>() {
-      @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-        Intent intent = new Intent(MainActivity.this, SamplePDF.class);
-        intent.putExtra("msg", message);
-        startActivity(intent);
-      }
-    });
-    eb.registerHandler(SID + "mp4", new EventHandler<JsonObject>() {
-      @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-        Intent intent = new Intent(MainActivity.this, SampleVideo.class);
-        intent.putExtra("msg", message);
-        startActivity(intent);
-      }
-    });
-    eb.registerHandler(SID + "swf", new EventHandler<JsonObject>() {
-      @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-        Intent intent = new Intent(MainActivity.this, FlashPlayerActivity.class);
-        intent.putExtra("msg", message);
-        startActivity(intent);
-      }
-    });
-    eb.registerHandler(SID + "jpg", new EventHandler<JsonObject>() {
-      @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-        Intent intent = new Intent(MainActivity.this, PicturePlayAcivity.class);
-        intent.putExtra("msg", message);
-        startActivity(intent);
-      }
-    });
-    eb.registerHandler(SID + "mp3", new EventHandler<JsonObject>() {
-      @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-        Intent intent = new Intent(MainActivity.this, AudioPlayActivity.class);
-        intent.putExtra("msg", message);
-        startActivity(intent);
-      }
-    });
+    new PlayerRegistry(eb, SID, MainActivity.this).handlerEventBus();
+    new SettingsRegistry(eb, SID, MainActivity.this).handlerEventBus();
   }
 }

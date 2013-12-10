@@ -1,6 +1,5 @@
-package com.goodow.drive.android.activity;
+package com.goodow.drive.android.player;
 
-import com.goodow.drive.android.video.VideoActivity;
 import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;

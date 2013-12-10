@@ -1,4 +1,4 @@
-package com.goodow.drive.android.flash;
+package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 import com.goodow.realtime.json.JsonObject;

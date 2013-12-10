@@ -48,18 +48,18 @@
             android:name="com.artifex.mupdf.OutlineActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
         </activity>
+        <activity android:name="com.goodow.drive.android.player.SamplePDF" />
 
         <!-- VIDEO播放器 -->
         <activity
-            android:name="com.goodow.drive.android.video.VideoActivity"
+            android:name="com.goodow.drive.android.player.VideoActivity"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
         </activity>
-        <activity android:name="com.goodow.drive.android.activity.SamplePDF" />
-        <activity android:name="com.goodow.drive.android.activity.SampleVideo" />
+        <activity android:name="com.goodow.drive.android.player.SampleVideo" />
 
         <!-- FLASH播放器 -->
         <activity
-            android:name="com.goodow.drive.android.flash.FlashPlayerActivity"
+            android:name="com.goodow.drive.android.player.FlashPlayerActivity"
             android:hardwareAccelerated="true"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
@@ -68,20 +68,19 @@
 
         <!-- 图片查看器 -->
         <activity
-            android:name="com.goodow.drive.android.activity.PicturePlayAcivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-        </activity>
-        
-        <!-- AUDIO播放器 -->
-        <activity
-            android:name="com.goodow.drive.android.activity.AudioPlayActivity"
+            android:name="com.goodow.drive.android.player.PicturePlayAcivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
-        
+
+        <!-- AUDIO播放器 -->
+        <activity
+            android:name="com.goodow.drive.android.player.AudioPlayActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
     </application>
 
 </manifest>

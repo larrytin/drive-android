@@ -1,4 +1,4 @@
-package com.goodow.drive.android.video;
+package com.goodow.drive.android.player;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.MediaController;
 import android.widget.MediaController.MediaPlayerControl;
 
-public class VideoView extends SurfaceView implements MediaPlayerControl {
+class VideoView extends SurfaceView implements MediaPlayerControl {
   /**
    * 自定义尺寸 改变的事件监听（接口）
    */

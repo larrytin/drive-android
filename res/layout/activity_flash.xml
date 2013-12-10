@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<com.goodow.drive.android.flash.FlashView
+<com.goodow.drive.android.player.FlashView
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent" 
     android:id="@+id/flash"

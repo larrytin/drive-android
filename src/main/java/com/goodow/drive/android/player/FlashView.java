@@ -1,4 +1,4 @@
-package com.goodow.drive.android.flash;
+package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 
@@ -20,7 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-public class FlashView extends RelativeLayout {
+class FlashView extends RelativeLayout {
   private final class CallJava {
     public void consoleFlashProgress(float progressSize, int total) {
       showFlashProgress(progressSize, total);

@@ -1,8 +1,8 @@
-package com.goodow.drive.android.video;
+package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.activity.BaseActivity;
-import com.goodow.drive.android.video.VideoView.MySizeChangeLinstener;
+import com.goodow.drive.android.player.VideoView.MySizeChangeLinstener;
 
 import android.app.Activity;
 import android.app.AlertDialog;
