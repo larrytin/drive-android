@@ -84,7 +84,9 @@ public abstract class PageView extends ViewGroup {
         mPatch = new OpaqueImageView(mContext);
         mPatch.setScaleType(ImageView.ScaleType.FIT_CENTER);
         addView(mPatch);
-        mSearchView.bringToFront();
+        if (mSearchView != null) {
+          mSearchView.bringToFront();
+        }
       }
 
       Bitmap bm =

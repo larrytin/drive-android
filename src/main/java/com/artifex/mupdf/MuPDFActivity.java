@@ -14,6 +14,7 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
@@ -82,6 +83,20 @@ public class MuPDFActivity extends Activity {
     // gesture recognition
     mDocView = new ReaderView(this) {
       private boolean showButtonsDisabled;
+
+      private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+          switch (msg.what) {
+            case 0:
+              ((PageView) msg.obj).addHq();
+              break;
+
+            default:
+              break;
+          }
+        }
+      };
 
       @Override
       public boolean onScaleBegin(ScaleGestureDetector d) {
@@ -170,10 +185,13 @@ public class MuPDFActivity extends Activity {
       }
 
       @Override
-      protected void onSettle(View v) {
+      protected void onSettle(final View v) {
         // When the layout has settled ask the page to render
         // in HQ
-        ((PageView) v).addHq();
+        Message msg = new Message();
+        msg.what = 0;
+        msg.obj = v;
+        handler.sendMessageDelayed(msg, 300);
       }
 
       @Override

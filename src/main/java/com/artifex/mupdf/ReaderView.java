@@ -68,7 +68,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
   private final LinkedList<View> mViewCache = new LinkedList<View>();
   private boolean mUserInteracting; // Whether the user is interacting
   private boolean mScaling; // Whether the user is currently pinch zooming
-  private float mScale = 1.0f;
+  private float mScale = 2.5f;
   private int mXScroll; // Scroll amounts recorded from events.
   private int mYScroll; // and then accounted for in onLayout
   private final GestureDetector mGestureDetector;

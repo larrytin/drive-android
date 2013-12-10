@@ -15,7 +15,7 @@ public class MainActivity extends BaseActivity {
   static {
     AndroidPlatform.register();
   }
-  private static final String SID = "dan.";
+  private static final String SID = "ding.";
   private static final Logger log = Logger.getLogger(MainActivity.class.getName());
   private final EventBus eb = new EventBus("ws://data.goodow.com:8080/eventbus/websocket", null);
 

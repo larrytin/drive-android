@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 /**
  * @title: SamplePDF.java
@@ -32,6 +33,8 @@ public class SamplePDF extends Activity {
       intent.setData(uri);
       startActivity(intent);
       this.finish();
+    } else {
+      Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
     }
     super.onCreate(savedInstanceState);
   }
