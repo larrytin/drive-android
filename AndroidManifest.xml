@@ -31,55 +31,67 @@
         android:label="@string/app_name" >
         <activity
             android:name="com.goodow.drive.android.activity.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <!-- PDF播放器 -->
         <activity
-            android:name="com.artifex.mupdf.MuPDFActivity"
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+            android:name="com.artifex.mupdf.MuPDFActivity" 
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
         </activity>
         <activity
-            android:name="com.artifex.mupdf.OutlineActivity"
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+            android:name="com.artifex.mupdf.OutlineActivity" 
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
         </activity>
-        <activity android:name="com.goodow.drive.android.player.SamplePDF" />
+        <activity 
+            android:name="com.goodow.drive.android.player.SamplePDF" 
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
+        </activity>
 
         <!-- VIDEO播放器 -->
         <activity
             android:name="com.goodow.drive.android.player.VideoActivity"
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
         </activity>
-        <activity android:name="com.goodow.drive.android.player.SampleVideo" />
+        <activity 
+            android:name="com.goodow.drive.android.player.SampleVideo" 
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
+         </activity>
 
         <!-- FLASH播放器 -->
         <activity
             android:name="com.goodow.drive.android.player.FlashPlayerActivity"
             android:hardwareAccelerated="true"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
         </activity>
 
         <!-- 图片查看器 -->
         <activity
             android:name="com.goodow.drive.android.player.PicturePlayAcivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
         </activity>
 
         <!-- AUDIO播放器 -->
         <activity
             android:name="com.goodow.drive.android.player.AudioPlayActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
         </activity>
     </application>
 
