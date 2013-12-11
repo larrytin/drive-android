@@ -17,7 +17,7 @@ public class PlayerRegistry {
     this.mContext = mContext;
   }
 
-  public void handlerEventBus() {
+  public void subscribe() {
     eb.registerHandler(PREFIX + "pdf", new EventHandler<JsonObject>() {
       @Override
       public void handler(JsonObject message, EventHandler<JsonObject> reply) {

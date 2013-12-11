@@ -25,7 +25,7 @@ public class SettingsRegistry {
     this.mContext = mContext;
   }
 
-  public void handlerEventBus() {
+  public void subscribe() {
     eb.registerHandler(PREFIX + "audio", new EventHandler<JsonObject>() {
       @Override
       public void handler(JsonObject message, EventHandler<JsonObject> reply) {

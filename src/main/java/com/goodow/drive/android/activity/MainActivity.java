@@ -14,6 +14,7 @@ import android.os.Bundle;
 public class MainActivity extends BaseActivity {
   // private static final Logger log = Logger.getLogger(MainActivity.class.getName());
   private final EventBus eb = BusProvider.get();
+  private static boolean registried;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -21,19 +22,22 @@ public class MainActivity extends BaseActivity {
     this.setContentView(R.layout.activity_main);
 
     if (eb.getReadyState() == State.OPEN) {
-      handlerEventBusOpened();
+      subscribe();
     } else {
       eb.registerHandler(BusProvider.EVENTBUS_OPEN, new EventHandler<JsonElement>() {
         @Override
         public void handler(JsonElement message, EventHandler<JsonElement> reply) {
-          handlerEventBusOpened();
+          subscribe();
         }
       });
     }
   }
 
-  private void handlerEventBusOpened() {
-    new PlayerRegistry(MainActivity.this).handlerEventBus();
-    new SettingsRegistry(MainActivity.this).handlerEventBus();
+  private void subscribe() {
+    if (!registried) {
+      registried = true;
+      new PlayerRegistry(MainActivity.this).subscribe();
+      new SettingsRegistry(MainActivity.this).subscribe();
+    }
   }
 }
