@@ -1,6 +1,10 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.BusProvider;
+import com.goodow.realtime.channel.EventBus;
+import com.goodow.realtime.channel.EventHandler;
+import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import java.io.IOException;
@@ -24,79 +28,49 @@ public class AudioPlayActivity extends Activity {
     @Override
     public void onClick(View v) {
       try {
+        JsonObject msg = Json.createObject();
         switch (v.getId()) {// 通过传过来的Buttonid可以判断Button的类型
           case R.id.play_Button:// 播放
-            isVisible = true;
-
-            mediaPlayer.seekTo(0);
-            mediaPlayer.start();
-
-            pauseButton.setText("暂停");
-            pauseButton.setEnabled(true);
-            stopButton.setEnabled(true);
-
-            handler.post(start);
+            msg.set("play", true);
             break;
           case R.id.pause_Button:// 暂停&继续
-            if (mediaPlayer.isPlaying()) {
-              mediaPlayer.pause();
-              pauseButton.setText("继续");
-            } else {
-              mediaPlayer.start();
-              pauseButton.setText("暂停");
-            }
-
+            msg.set("pause", true);
             break;
-
           case R.id.stop_Button:// 停止
-            mediaPlayer.seekTo(0);
-            mediaPlayer.pause();
-
-            pauseButton.setText("暂停");
-            progressSeekBar.setProgress(0);
-            curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration()
-                / 1000 + " 秒");
-
-            pauseButton.setEnabled(false);
-            stopButton.setEnabled(false);
-
+            msg.set("stop", true);
             break;
         }
+        BusProvider.get().send(EventBus.LOCAL + CONTROL, msg, null);
       } catch (Exception e) {// 抛出异常
         e.printStackTrace();
       }
     }
-  };
+  }
+
+  private static final String CONTROL = PlayerRegistry.PREFIX + "mp3.control";
 
   private static final String TAG = AudioPlayActivity.class.getSimpleName();
+
   private ButtonClickListener listener;
-  private Button stopButton;
+  private Button stopButton;;
   private final MediaPlayer mediaPlayer = new MediaPlayer();
-
   private String audioFilePath;
-
   // 进度拖条
   private SeekBar progressSeekBar = null;
-
   // 当前时间和总时间
   private TextView curtimeAndTotalTime = null;
 
   // 音频文件的名字
   private TextView audioFileNameTextView;
-
   private Button pauseButton;
-
   private boolean isVisible = false;
-
   private final Handler handler = new Handler();
-
   private final Runnable start = new Runnable() {
     @Override
     public void run() {
       handler.post(updatesb);
     }
   };
-
   private final Runnable updatesb = new Runnable() {
     @Override
     public void run() {
@@ -117,6 +91,21 @@ public class AudioPlayActivity extends Activity {
 
       // 每秒钟更新一次
       handler.postDelayed(updatesb, 1000);
+    }
+  };
+  private final EventHandler<JsonObject> eventHandler = new EventHandler<JsonObject>() {
+
+    @Override
+    public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      if (message.has("exit")) {
+        AudioPlayActivity.this.finish();
+      } else if (message.has("play")) {
+        play_Button();
+      } else if (message.has("stop")) {
+        stop_Button();
+      } else if (message.has("pause")) {
+        pause_Button();
+      }
     }
   };
 
@@ -220,19 +209,33 @@ public class AudioPlayActivity extends Activity {
 
   @Override
   protected void onPause() {// 如果突然电话到来，停止播放音乐
+    super.onPause();
     this.isVisible = false;
     if (mediaPlayer.isPlaying()) {
       mediaPlayer.pause();
     }
-    super.onPause();
-    Log.i(TAG, "onPause()");
+
+    // Always unregister when an handler no longer should be on the bus.
+    BusProvider.get().unregisterHandler(CONTROL, eventHandler);
   }
 
   @Override
   protected void onResume() {
     this.isVisible = true;
     super.onResume();
-    Log.i(TAG, "onResume");
+
+    // Register handlers so that we can receive event messages.
+    BusProvider.get().registerHandler(CONTROL, eventHandler);
+  }
+
+  private void pause_Button() {
+    if (mediaPlayer.isPlaying()) {
+      mediaPlayer.pause();
+      pauseButton.setText("继续");
+    } else {
+      mediaPlayer.start();
+      pauseButton.setText("暂停");
+    }
   }
 
   private void play() throws IOException {
@@ -244,5 +247,31 @@ public class AudioPlayActivity extends Activity {
     mediaPlayer.prepare();
 
     handler.post(start);
+  }
+
+  private void play_Button() {
+    isVisible = true;
+
+    mediaPlayer.seekTo(0);
+    mediaPlayer.start();
+
+    pauseButton.setText("暂停");
+    pauseButton.setEnabled(true);
+    stopButton.setEnabled(true);
+
+    handler.post(start);
+  }
+
+  private void stop_Button() {
+    mediaPlayer.seekTo(0);
+    mediaPlayer.pause();
+
+    pauseButton.setText("暂停");
+    progressSeekBar.setProgress(0);
+    curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration() / 1000
+        + " 秒");
+
+    pauseButton.setEnabled(false);
+    stopButton.setEnabled(false);
   }
 }

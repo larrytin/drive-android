@@ -1,44 +1,39 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.player.PlayerRegistry;
 import com.goodow.drive.android.settings.SettingsRegistry;
-import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.EventBus;
-import com.goodow.realtime.channel.EventBus.EventBusHandler;
-
-import java.util.logging.Logger;
+import com.goodow.realtime.channel.EventHandler;
+import com.goodow.realtime.core.WebSocket.State;
+import com.goodow.realtime.json.JsonElement;
 
 import android.os.Bundle;
 
 public class MainActivity extends BaseActivity {
-  static {
-    AndroidPlatform.register();
-  }
-  private static final String SID = "ding.";
-  private static final Logger log = Logger.getLogger(MainActivity.class.getName());
-  private final EventBus eb = new EventBus("ws://data.goodow.com:8080/eventbus/websocket", null);
+  // private static final Logger log = Logger.getLogger(MainActivity.class.getName());
+  private final EventBus eb = BusProvider.get();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_main);
 
-    eb.setListener(new EventBusHandler() {
-      @Override
-      public void onClose() {
-        log.info("EventBus closed");
-      }
-
-      @Override
-      public void onOpen() {
-        handlerEventBusOpened();
-      }
-    });
+    if (eb.getReadyState() == State.OPEN) {
+      handlerEventBusOpened();
+    } else {
+      eb.registerHandler(BusProvider.EVENTBUS_OPEN, new EventHandler<JsonElement>() {
+        @Override
+        public void handler(JsonElement message, EventHandler<JsonElement> reply) {
+          handlerEventBusOpened();
+        }
+      });
+    }
   }
 
   private void handlerEventBusOpened() {
-    new PlayerRegistry(eb, SID, MainActivity.this).handlerEventBus();
-    new SettingsRegistry(eb, SID, MainActivity.this).handlerEventBus();
+    new PlayerRegistry(MainActivity.this).handlerEventBus();
+    new SettingsRegistry(MainActivity.this).handlerEventBus();
   }
 }
