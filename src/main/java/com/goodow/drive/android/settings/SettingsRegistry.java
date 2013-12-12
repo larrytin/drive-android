@@ -37,19 +37,12 @@ public class SettingsRegistry {
           double volume = message.getNumber("volume");
           mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
               .getStreamMaxVolume(AudioManager.STREAM_MUSIC) * volume), AudioManager.FLAG_SHOW_UI);
-        } else if (message.has("increase")) {
-          double inCrease = message.getNumber("increase");
+        } else if (message.has("range")) {
+          double range = message.getNumber("range");
           mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
               .getStreamVolume(AudioManager.STREAM_MUSIC) + mAudioManager
               .getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-              * inCrease), AudioManager.FLAG_SHOW_UI);
-          Log.i(TAG, mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + "");
-        } else if (message.has("decrease")) {
-          double decrease = message.getNumber("decrease");
-          mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
-              .getStreamVolume(AudioManager.STREAM_MUSIC) - mAudioManager
-              .getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-              * decrease), AudioManager.FLAG_SHOW_UI);
+              * range), AudioManager.FLAG_SHOW_UI);
           Log.i(TAG, mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + "");
         }
       }
