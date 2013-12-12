@@ -26,23 +26,25 @@ import java.util.logging.Logger;
  */
 public final class BusProvider {
   public static final String SID = "sid.drive.";
-  public static final String EVENTBUS_OPEN = "@eventbus.open";
+  public static final String EVENTBUS_OPEN = EventBus.LOCAL + "eventbus.open";
+  public static final String EVENTBUS_CLOSE = EventBus.LOCAL + "eventbus.close";
   private static final String HOST = "data.goodow.com:8080";
+  private static final Logger log = Logger.getLogger(BusProvider.class.getName());
   static {
     AndroidPlatform.register();
   }
-  private static final Logger log = Logger.getLogger(BusProvider.class.getName());
   private static final EventBus BUS = new EventBus("ws://" + HOST + "/eventbus/websocket", null);
   static {
     BUS.setListener(new EventBusHandler() {
       @Override
       public void onClose() {
         log.info("EventBus closed");
+        BUS.publish(EventBus.LOCAL + EVENTBUS_CLOSE, Json.createObject());
       }
 
       @Override
       public void onOpen() {
-        BUS.publish("@" + EVENTBUS_OPEN, Json.createObject());
+        BUS.publish(EventBus.LOCAL + EVENTBUS_OPEN, Json.createObject());
       }
     });
   }
