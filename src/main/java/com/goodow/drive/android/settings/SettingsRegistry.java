@@ -1,6 +1,7 @@
 package com.goodow.drive.android.settings;
 
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.EventBus;
 import com.goodow.realtime.channel.EventHandler;
 import com.goodow.realtime.json.Json;
@@ -80,6 +81,26 @@ public class SettingsRegistry {
             msg.set("Longitude", cdmaLocation.getBaseStationLongitude());
           }
         }
+        reply.handler(msg, null);
+      }
+    });
+    eb.registerHandler(PREFIX + "information", new EventHandler<JsonObject>() {
+      @Override
+      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+        JsonObject msg = Json.createObject();
+        JsonObject hardwareMsg = Json.createObject();
+        JsonObject softwareMsg = Json.createObject();
+        // Hardware
+        msg.set("hardware", hardwareMsg);
+        hardwareMsg.set("MAC", DeviceInformationTools.getLocalMacAddressFromWifiInfo(mContext));
+        hardwareMsg.set("IMEI", DeviceInformationTools.getIMEI(mContext));
+        // Software
+        msg.set("software", softwareMsg);
+        softwareMsg.set("AndroidId", DeviceInformationTools.getAndroidId(mContext));
+        softwareMsg.set("IP", DeviceInformationTools.getIp(mContext));
+        softwareMsg.set("Model", DeviceInformationTools.getOsModel());
+        softwareMsg.set("Version", DeviceInformationTools.getOsVersion());
+        softwareMsg.set("SDK", DeviceInformationTools.getSDK());
         reply.handler(msg, null);
       }
     });
