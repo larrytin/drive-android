@@ -25,15 +25,7 @@ public class FlashPlayerActivity extends Activity {
     flash = (FlashView) findViewById(R.id.flash);
     // 检测flash插件是否存在
     if (checkinstallornotadobeflashapk()) {
-      Intent intent = getIntent();
-      // 得到路径
-      JsonObject msg = (JsonObject) getIntent().getExtras().get("msg");
-      String path = msg.get("path");
-      path = GlobalConstant.STORAGEDIR + path;
-      Log.i(TAG, path);
-      flash.load();
-      flash.setFlashPath(path);
-      flash.start();
+      flashPlay(getIntent());
     } else {
       Toast.makeText(this, R.string.prompt_flash_Plugins, Toast.LENGTH_LONG).show();
     }
@@ -43,8 +35,27 @@ public class FlashPlayerActivity extends Activity {
   @Override
   protected void onDestroy() {
     this.finish();
+    flash.onDestory();
     System.gc();
     super.onDestroy();
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    flashPlay(intent);
+    super.onNewIntent(intent);
+  }
+
+  @Override
+  protected void onPause() {
+    super.onPause();
+    flash.onPause();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    flash.onResume();
   }
 
   // 检查机子是否安装的有Adobe Flash相关APK
@@ -57,6 +68,17 @@ public class FlashPlayerActivity extends Activity {
       }
     }
     return false;
+  }
+
+  private void flashPlay(Intent intent) {
+    // 得到路径
+    JsonObject msg = (JsonObject) intent.getExtras().get("msg");
+    String path = msg.get("path");
+    path = GlobalConstant.STORAGEDIR + path;
+    Log.i(TAG, path);
+    flash.load();
+    flash.setFlashPath(path);
+    flash.start();
   }
 
 }

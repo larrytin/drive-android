@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class SettingsRegistry {
   private final static String TAG = SettingsRegistry.class.getSimpleName();
-  private static final String PREFIX = BusProvider.SID + "settings.";
+  public static final String PREFIX = BusProvider.SID + "settings.";
   private final EventBus eb = BusProvider.get();
   private final Context mContext;
 

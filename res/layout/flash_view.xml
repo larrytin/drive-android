@@ -2,75 +2,76 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-    
+
     <WebView
-    	android:id="@+id/flash_web_view"
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:layout_alignParentTop="true"
-    	android:layout_marginRight="0dip"
-    	android:scrollbars="none"/>
+        android:id="@+id/flash_web_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="0dip"
+        android:scrollbars="none" />
 
-	<LinearLayout
-   		android:id="@+id/flash_back_layout"
-    	android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:layout_alignParentBottom="true"
-    	android:background="#ffacfeb6"
-    	android:orientation="horizontal"
-    	android:gravity="center"
-        android:layout_marginBottom="0dip">
-		
-		<ImageButton
-   			android:id="@+id/flash_button_stop"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:layout_marginRight="10dip"
-    		android:background="#00000000"
-    		android:src="@drawable/stop"/>
-		<ImageButton
-   			android:id="@+id/flash_button_replay"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:layout_marginRight="10dip"
-    		android:background="#00000000"
-    		android:src="@drawable/replay"/>
+    <LinearLayout
+        android:id="@+id/flash_back_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dip"
+        android:background="#ffacfeb6"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="visible" >
 
-    	<ImageButton
-   			android:id="@+id/flash_button_play"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:layout_marginRight="10dip"
-    		android:background="#00000000"
-    		android:src="@drawable/play"/>
-    	
-   		<ProgressBar
-			android:id="@+id/flash_play_progress"
-        	style="?android:attr/progressBarStyleHorizontal"
-        	android:layout_width="wrap_content"
-        	android:layout_height="10dip"
-        	android:layout_above="@+id/flash_linear_layout"
-        	android:layout_alignLeft="@+id/flash_linear_layout"
-        	android:indeterminate="false"
-        	android:progressDrawable="@drawable/seekbar_style"
-    		android:layout_marginRight="10dip"
-        	android:max="500"/>
-    	
-    	<ImageView
-    	    android:id="@+id/flash_sound_off"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:layout_marginRight="0dip"
-    		android:src="@drawable/sound"/>
-    	
-    	<SeekBar
-			android:id="@+id/flash_sound_progress"
-        	style="?android:attr/progressBarStyleHorizontal"
-        	android:layout_width="120dip"
-        	android:layout_height="wrap_content"
-        	android:indeterminate="false"
-        	android:progressDrawable="@drawable/seekbar_style"/>
-    
+        <ImageButton
+            android:id="@+id/flash_button_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:background="#00000000"
+            android:src="@drawable/stop" />
+
+        <ImageButton
+            android:id="@+id/flash_button_replay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:background="#00000000"
+            android:src="@drawable/replay" />
+
+        <ImageButton
+            android:id="@+id/flash_button_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:background="#00000000"
+            android:src="@drawable/play" />
+
+        <ProgressBar
+            android:id="@+id/flash_play_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="10dip"
+            android:layout_above="@+id/flash_linear_layout"
+            android:layout_alignLeft="@+id/flash_linear_layout"
+            android:layout_marginRight="10dip"
+            android:indeterminate="false"
+            android:max="500"
+            android:progressDrawable="@drawable/seekbar_style" />
+
+        <ImageView
+            android:id="@+id/flash_sound_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dip"
+            android:src="@drawable/sound" />
+
+        <SeekBar
+            android:id="@+id/flash_sound_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="120dip"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/seekbar_style" />
     </LinearLayout>
 
 </RelativeLayout>

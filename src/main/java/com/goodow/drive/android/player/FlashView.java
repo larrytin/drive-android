@@ -1,49 +1,80 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.settings.SettingsRegistry;
+import com.goodow.realtime.channel.EventBus;
+import com.goodow.realtime.channel.EventHandler;
+import com.goodow.realtime.json.Json;
+import com.goodow.realtime.json.JsonObject;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
-class FlashView extends RelativeLayout {
+class FlashView extends RelativeLayout implements OnTouchListener {
   private final class CallJava {
     public void consoleFlashProgress(float progressSize, int total) {
       showFlashProgress(progressSize, total);
     }
   }
 
+  private class FlashViewBroadCastReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      if ("android.media.VOLUME_CHANGED_ACTION".equals(intent.getAction())) {
+        sound_progress.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+      } else if ("com.goodow.drive.android.activity.finish".equals(intent.getAction())) {
+        stop();
+      }
+    }
+  }
+
   private final static String TAG = FlashView.class.getSimpleName();
+  private static final String CONTROL = PlayerRegistry.PREFIX + "swf.control";
   private String flashPath;
   private WebView flash_view;
   private ProgressBar play_progress;
   private SeekBar sound_progress;
   private ImageButton play;
-  private ImageButton stop;
 
+  private ImageButton stop;
   private ImageButton replay;
   private int width;
-  private int height;
-  private int bottom_height;
 
+  private int height;
   private boolean playing;
+
   private Handler handler;
 
   private AudioManager audioManager;
+
+  private LinearLayout mControlLinearLayout;
+  private float startY;
+
+  private Context mContext;
+  private FlashViewBroadCastReceiver flashViewBroadCastReceiver;
 
   Runnable update_progress = new Runnable() {
     @Override
@@ -52,16 +83,31 @@ class FlashView extends RelativeLayout {
       handler.postDelayed(update_progress, 1000);
     }
   };
+  private final EventHandler<JsonObject> eventHandler = new EventHandler<JsonObject>() {
+
+    @Override
+    public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      if (message.has("play")) {
+        playButton();
+      } else if (message.has("pause")) {
+        pauseButton();
+      } else if (message.has("replay")) {
+        replay();
+      }
+    }
+  };
 
   // 构造方法
   public FlashView(Context context) {
     super(context);
+    mContext = context;
     onCreate();
   }
 
   // 构造方法，必有
   public FlashView(Context context, AttributeSet attrs) {
     super(context, attrs);
+    mContext = context;
     onCreate();
   }
 
@@ -78,10 +124,11 @@ class FlashView extends RelativeLayout {
     LayoutInflater inflater =
         (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     inflater.inflate(R.layout.flash_view, FlashView.this);
+    mControlLinearLayout = (LinearLayout) findViewById(R.id.flash_back_layout);
     // 获取屏幕的宽和高
     width = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getWidth();
     height = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getHeight();
-    bottom_height = BitmapFactory.decodeResource(getResources(), R.drawable.play).getHeight();
+    // bottom_height = BitmapFactory.decodeResource(getResources(), R.drawable.play).getHeight();
     // 加载播放flash控件
     flash_view = (WebView) findViewById(R.id.flash_web_view);
     flash_view.getSettings().setJavaScriptEnabled(true);
@@ -92,8 +139,9 @@ class FlashView extends RelativeLayout {
     flash_view.getSettings().setSupportZoom(true);
     flash_view.getSettings().setAppCacheEnabled(true);
     flash_view.addJavascriptInterface(new CallJava(), "CallJava");
-    flash_view.getLayoutParams().height = height - bottom_height;
+    flash_view.getLayoutParams().height = height;
     flash_view.loadUrl("file:///android_asset/index.html");
+    flash_view.setOnTouchListener(this);
 
     // 加载播放进度条
     play_progress = (ProgressBar) findViewById(R.id.flash_play_progress);
@@ -103,12 +151,16 @@ class FlashView extends RelativeLayout {
     play.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
+        JsonObject msg = Json.createObject();
         if (!playing) {
-          start();
+          msg.set("play", true);
         } else {
-          pause();
+          msg.set("pause", true);
         }
+        BusProvider.get().send(EventBus.LOCAL + CONTROL, msg, null);
+
       }
+
     });
 
     replay = (ImageButton) findViewById(R.id.flash_button_replay);
@@ -116,11 +168,13 @@ class FlashView extends RelativeLayout {
     replay.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        replay();
+        JsonObject msg = Json.createObject();
+        msg.set("replay", true);
+        BusProvider.get().send(EventBus.LOCAL + CONTROL, msg, null);
       }
 
     });
-
+    flashViewBroadCastReceiver = new FlashViewBroadCastReceiver();
     // 加载声音进度条
     sound_progress = (SeekBar) findViewById(R.id.flash_sound_progress);
     audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
@@ -130,7 +184,10 @@ class FlashView extends RelativeLayout {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
-          audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, -2);
+          // audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, -2);
+          JsonObject msg = Json.createObject();
+          msg.set("volume", (float) progress / sound_progress.getMax());
+          BusProvider.get().send(EventBus.LOCAL + SettingsRegistry.PREFIX + "audio", msg, null);
         }
       }
 
@@ -148,12 +205,69 @@ class FlashView extends RelativeLayout {
     stop.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        stop();
+        JsonObject msg = Json.createObject();
+        msg.set("back", true);
+        BusProvider.get().send(EventBus.LOCAL + PlayerRegistry.PREFIX + "control", msg, null);
       }
     });
     // 实时更新进度
     handler = new Handler();
     Log.i(TAG, "onCreate");
+  }
+
+  public void onDestory() {
+    flash_view.clearCache(true);
+    flash_view.removeAllViews();
+  }
+
+  /**
+   * 失去焦点时，调用
+   */
+  public void onPause() {
+    mContext.unregisterReceiver(flashViewBroadCastReceiver);
+    BusProvider.get().unregisterHandler(CONTROL, eventHandler);
+  }
+
+  /**
+   * 获得焦点时，调用
+   */
+  public void onResume() {
+    IntentFilter mIntentFilter = new IntentFilter();
+    mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
+    mIntentFilter.addAction("com.goodow.drive.android.activity.finish");
+    mContext.registerReceiver(flashViewBroadCastReceiver, mIntentFilter);
+    BusProvider.get().registerHandler(CONTROL, eventHandler);
+  }
+
+  @Override
+  public boolean onTouch(View v, MotionEvent event) {
+    Log.i(TAG, "onTouch()");
+    switch (event.getAction()) {
+      case MotionEvent.ACTION_DOWN:
+        startY = event.getY();
+      case MotionEvent.ACTION_UP:
+        if (startY - event.getY() > 200) {
+          mControlLinearLayout.animate().alpha(0f).setDuration(1000).setListener(
+              new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                  mControlLinearLayout.setVisibility(View.GONE);
+                }
+              });
+        }
+        if (event.getY() - startY > 200) {
+          mControlLinearLayout.animate().alpha(1.0f).setDuration(1000).setListener(
+              new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                  mControlLinearLayout.setVisibility(View.VISIBLE);
+                }
+              });
+        }
+      default:
+        break;
+    }
+    return false;
   }
 
   public void pause() {
@@ -171,8 +285,8 @@ class FlashView extends RelativeLayout {
   }
 
   public void show() {
-    if (flash_view.getLayoutParams().height != height - bottom_height) {
-      flash_view.getLayoutParams().height = height - bottom_height;
+    if (flash_view.getLayoutParams().height != height) {
+      flash_view.getLayoutParams().height = height;
     }
   }
 
@@ -190,12 +304,12 @@ class FlashView extends RelativeLayout {
     if (null != flashPath) {
       flash_view.loadUrl("javascript:Pause()");
       try {
-        Thread.sleep(100);
+        Thread.sleep(1000);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-      flash_view.loadUrl("javascript:loadSWF(\"" + flashPath + "\", \"" + width + "\", \""
-          + (height - bottom_height) + "\")");
+      flash_view.loadUrl("javascript:loadSWF(\"" + flashPath + "\", \"" + width + "\", \"" + height
+          + "\")");
       flash_view.loadUrl("javascript:Play()");
       handler.post(update_progress);
       play.setImageResource(R.drawable.pause);
@@ -207,7 +321,20 @@ class FlashView extends RelativeLayout {
   public void stop() {
     // 暂停，就会无声音
     pause();
+    onDestory();
     ((Activity) getContext()).finish();
+  }
+
+  private void pauseButton() {
+    if (playing) {
+      pause();
+    }
+  }
+
+  private void playButton() {
+    if (!playing) {
+      start();
+    }
   }
 
   // 重新播放
