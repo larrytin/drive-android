@@ -2,6 +2,7 @@ package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.GlobalConstant;
 import com.goodow.realtime.channel.EventBus;
 import com.goodow.realtime.channel.EventHandler;
 import com.goodow.realtime.json.Json;
@@ -115,7 +116,7 @@ public class AudioPlayActivity extends Activity {
     this.setContentView(R.layout.activity_audio_player);
     audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
-    audioFilePath = "/mnt/sdcard/" + jsonObject.getString("path");
+    audioFilePath = GlobalConstant.STORAGEDIR + jsonObject.getString("path");
     String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
     audioFileNameTextView.setText(mp3Name);
 
@@ -191,7 +192,7 @@ public class AudioPlayActivity extends Activity {
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
-    audioFilePath = "/mnt/sdcard/" + jsonObject.getString("path");
+    audioFilePath = GlobalConstant.STORAGEDIR + jsonObject.getString("path");
     Log.i(TAG, audioFilePath);
     String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
     Log.i(TAG, mp3Name);

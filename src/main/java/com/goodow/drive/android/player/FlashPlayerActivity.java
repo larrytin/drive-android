@@ -1,6 +1,7 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.GlobalConstant;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class FlashPlayerActivity extends Activity {
       // 得到路径
       JsonObject msg = (JsonObject) getIntent().getExtras().get("msg");
       String path = msg.get("path");
-      path = "/mnt/sdcard/" + path;
+      path = GlobalConstant.STORAGEDIR + path;
       Log.i(TAG, path);
       flash.load();
       flash.setFlashPath(path);
