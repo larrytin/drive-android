@@ -1,8 +1,9 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.drive.android.BusProvider;
-import com.goodow.realtime.channel.EventBus;
-import com.goodow.realtime.channel.EventHandler;
+import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
@@ -12,7 +13,7 @@ import android.util.Log;
 public class PlayerRegistry {
   static final String PREFIX = BusProvider.SID + "player.";
   private static final String TAG = PlayerRegistry.class.getSimpleName();
-  private final EventBus eb = BusProvider.get();
+  private final Bus bus = BusProvider.get();
   private final Context mContext;
 
   public PlayerRegistry(Context mContext) {
@@ -20,50 +21,50 @@ public class PlayerRegistry {
   }
 
   public void subscribe() {
-    eb.registerHandler(PREFIX + "pdf", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "pdf", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(mContext, SamplePDF.class);
-        intent.putExtra("msg", message);
+        intent.putExtra("msg", message.body());
         mContext.startActivity(intent);
       }
     });
-    eb.registerHandler(PREFIX + "mp4", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "mp4", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(mContext, SampleVideo.class);
-        intent.putExtra("msg", message);
+        intent.putExtra("msg", message.body());
         mContext.startActivity(intent);
       }
     });
-    eb.registerHandler(PREFIX + "swf", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "swf", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(mContext, FlashPlayerActivity.class);
-        intent.putExtra("msg", message);
+        intent.putExtra("msg", message.body());
         mContext.startActivity(intent);
       }
     });
-    eb.registerHandler(PREFIX + "jpg", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "jpg", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(mContext, PicturePlayAcivity.class);
-        intent.putExtra("msg", message);
+        intent.putExtra("msg", message.body());
         mContext.startActivity(intent);
       }
     });
-    eb.registerHandler(PREFIX + "mp3", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "mp3", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(mContext, AudioPlayActivity.class);
-        intent.putExtra("msg", message);
+        intent.putExtra("msg", message.body());
         mContext.startActivity(intent);
       }
     });
-    eb.registerHandler(PREFIX + "control", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "control", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-        if (message.has("back")) {
+      public void handle(Message<JsonObject> message) {
+        if (message.body().has("back")) {
           // ActivityManager mActivityManager =
           // (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
           // String activityName =

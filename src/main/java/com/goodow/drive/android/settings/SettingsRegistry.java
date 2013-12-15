@@ -2,8 +2,9 @@ package com.goodow.drive.android.settings;
 
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
-import com.goodow.realtime.channel.EventBus;
-import com.goodow.realtime.channel.EventHandler;
+import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -19,7 +20,7 @@ import android.util.Log;
 public class SettingsRegistry {
   private final static String TAG = SettingsRegistry.class.getSimpleName();
   public static final String PREFIX = BusProvider.SID + "settings.";
-  private final EventBus eb = BusProvider.get();
+  private final Bus bus = BusProvider.get();
   private final Context mContext;
 
   public SettingsRegistry(Context mContext) {
@@ -27,19 +28,20 @@ public class SettingsRegistry {
   }
 
   public void subscribe() {
-    eb.registerHandler(PREFIX + "audio", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "audio", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
         AudioManager mAudioManager =
             (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        if (message.has("mute")) {
+        if (msg.has("mute")) {
           mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, AudioManager.FLAG_SHOW_UI);
-        } else if (message.has("volume")) {
-          double volume = message.getNumber("volume");
+        } else if (msg.has("volume")) {
+          double volume = msg.getNumber("volume");
           mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
               .getStreamMaxVolume(AudioManager.STREAM_MUSIC) * volume), AudioManager.FLAG_SHOW_UI);
-        } else if (message.has("range")) {
-          double range = message.getNumber("range");
+        } else if (msg.has("range")) {
+          double range = msg.getNumber("range");
           mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
               .getStreamVolume(AudioManager.STREAM_MUSIC) + mAudioManager
               .getStreamMaxVolume(AudioManager.STREAM_MUSIC)
@@ -48,9 +50,9 @@ public class SettingsRegistry {
         }
       }
     });
-    eb.registerHandler(PREFIX + "location", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "location", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      public void handle(Message<JsonObject> message) {
         JsonObject msg = Json.createObject();
         ConnectivityManager mConnectivityManager =
             (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -81,12 +83,12 @@ public class SettingsRegistry {
             msg.set("Longitude", cdmaLocation.getBaseStationLongitude());
           }
         }
-        reply.handler(msg, null);
+        message.reply(msg);
       }
     });
-    eb.registerHandler(PREFIX + "information", new EventHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "information", new MessageHandler<JsonObject>() {
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
+      public void handle(Message<JsonObject> message) {
         JsonObject msg = Json.createObject();
         JsonObject hardwareMsg = Json.createObject();
         JsonObject softwareMsg = Json.createObject();
@@ -101,7 +103,7 @@ public class SettingsRegistry {
         softwareMsg.set("Model", DeviceInformationTools.getOsModel());
         softwareMsg.set("Version", DeviceInformationTools.getOsVersion());
         softwareMsg.set("SDK", DeviceInformationTools.getSDK());
-        reply.handler(msg, null);
+        message.reply(msg);
       }
     });
   }

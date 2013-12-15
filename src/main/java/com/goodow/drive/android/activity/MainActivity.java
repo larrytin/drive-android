@@ -4,16 +4,16 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.player.PlayerRegistry;
 import com.goodow.drive.android.settings.SettingsRegistry;
-import com.goodow.realtime.channel.EventBus;
-import com.goodow.realtime.channel.EventHandler;
-import com.goodow.realtime.core.WebSocket.State;
+import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.JsonElement;
 
 import android.os.Bundle;
 
 public class MainActivity extends BaseActivity {
   // private static final Logger log = Logger.getLogger(MainActivity.class.getName());
-  private final EventBus eb = BusProvider.get();
+  private final Bus bus = BusProvider.get();
   private static boolean registried;
 
   @Override
@@ -21,16 +21,16 @@ public class MainActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_main);
 
-    if (eb.getReadyState() == State.OPEN) {
-      subscribe();
-    } else {
-      eb.registerHandler(BusProvider.EVENTBUS_OPEN, new EventHandler<JsonElement>() {
-        @Override
-        public void handler(JsonElement message, EventHandler<JsonElement> reply) {
-          subscribe();
-        }
-      });
-    }
+    // if (((BusClient) eb).getReadyState() == State.OPEN) {
+    // subscribe();
+    // } else {
+    bus.registerHandler(BusProvider.EVENTBUS_OPEN, new MessageHandler<JsonElement>() {
+      @Override
+      public void handle(Message<JsonElement> message) {
+        subscribe();
+      }
+    });
+    // }
   }
 
   private void subscribe() {

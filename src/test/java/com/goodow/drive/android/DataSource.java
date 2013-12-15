@@ -1,8 +1,9 @@
 package com.goodow.drive.android;
 
-import com.goodow.realtime.channel.EventBus;
-import com.goodow.realtime.channel.EventBus.EventBusHandler;
-import com.goodow.realtime.channel.EventHandler;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.channel.impl.BusClient;
+import com.goodow.realtime.channel.impl.BusClientHandler;
 import com.goodow.realtime.java.JavaPlatform;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
@@ -19,12 +20,12 @@ public class DataSource {
   }
 
   public static void main(String[] args) throws IOException {
-    final EventBus eb = new EventBus("ws://data.goodow.com:8080/eventbus/websocket", null);
+    final BusClient eb = new BusClient("ws://data.goodow.com:8080/eventbus/websocket", null);
 
-    eb.setListener(new EventBusHandler() {
+    eb.setListener(new BusClientHandler() {
       @Override
       public void onClose() {
-        log.info("EventBus closed");
+        log.info("BusClient closed");
       }
 
       @Override
@@ -39,11 +40,11 @@ public class DataSource {
         request.set("term", "上学期");
         request.set("domain", "健康");
         request.set("subject", "找朋友");
-        eb.send("dan.getFiles", request, new EventHandler<JsonObject>() {
+        eb.send("dan.getFiles", request, new MessageHandler<JsonObject>() {
 
           @Override
-          public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-            assert reply == null;
+          public void handle(Message<JsonObject> message) {
+            assert message.replyAddress() == null;
           }
         });
       }
@@ -53,15 +54,15 @@ public class DataSource {
     System.in.read();
   }
 
-  private static void registerHandlers(final EventBus eb) {
-    eb.registerHandler("dan.getFiles", new EventHandler<JsonObject>() {
+  private static void registerHandlers(final BusClient eb) {
+    eb.registerHandler("dan.getFiles", new MessageHandler<JsonObject>() {
 
       @Override
-      public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-        if (!"找朋友".equals(message.get("subject"))) {
+      public void handle(Message<JsonObject> message) {
+        if (!"找朋友".equals(message.body().get("subject"))) {
           return;
         }
-        assert reply != null;
+        assert message.replyAddress() != null;
 
         JsonObject msg = Json.createObject();
         JsonObject files = Json.createObject();
@@ -74,7 +75,7 @@ public class DataSource {
         pdf1.set("path", "/mnt/sdcard/xx/xx.pdf");
         pdfs.push(pdf1);
 
-        reply.handler(msg, null);
+        message.reply(msg);
       }
     });
   }

@@ -3,8 +3,9 @@ package com.goodow.drive.android.player;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.GlobalConstant;
-import com.goodow.realtime.channel.EventBus;
-import com.goodow.realtime.channel.EventHandler;
+import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -41,7 +42,7 @@ public class AudioPlayActivity extends Activity {
             msg.set("stop", true);
             break;
         }
-        BusProvider.get().send(EventBus.LOCAL + CONTROL, msg, null);
+        bus.send(Bus.LOCAL + CONTROL, msg, null);
       } catch (Exception e) {// 抛出异常
         e.printStackTrace();
       }
@@ -51,7 +52,7 @@ public class AudioPlayActivity extends Activity {
   private static final String CONTROL = PlayerRegistry.PREFIX + "mp3.control";
 
   private static final String TAG = AudioPlayActivity.class.getSimpleName();
-
+  private final Bus bus = BusProvider.get();
   private ButtonClickListener listener;
   private Button stopButton;;
   private final MediaPlayer mediaPlayer = new MediaPlayer();
@@ -94,17 +95,18 @@ public class AudioPlayActivity extends Activity {
       handler.postDelayed(updatesb, 1000);
     }
   };
-  private final EventHandler<JsonObject> eventHandler = new EventHandler<JsonObject>() {
+  private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
 
     @Override
-    public void handler(JsonObject message, EventHandler<JsonObject> reply) {
-      if (message.has("exit")) {
+    public void handle(Message<JsonObject> message) {
+      JsonObject msg = message.body();
+      if (msg.has("exit")) {
         AudioPlayActivity.this.finish();
-      } else if (message.has("play")) {
+      } else if (msg.has("play")) {
         play_Button();
-      } else if (message.has("stop")) {
+      } else if (msg.has("stop")) {
         stop_Button();
-      } else if (message.has("pause")) {
+      } else if (msg.has("pause")) {
         pause_Button();
       }
     }
@@ -217,7 +219,7 @@ public class AudioPlayActivity extends Activity {
     }
 
     // Always unregister when an handler no longer should be on the bus.
-    BusProvider.get().unregisterHandler(CONTROL, eventHandler);
+    bus.unregisterHandler(CONTROL, eventHandler);
   }
 
   @Override
@@ -226,7 +228,7 @@ public class AudioPlayActivity extends Activity {
     super.onResume();
 
     // Register handlers so that we can receive event messages.
-    BusProvider.get().registerHandler(CONTROL, eventHandler);
+    bus.registerHandler(CONTROL, eventHandler);
   }
 
   private void pause_Button() {
