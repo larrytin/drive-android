@@ -5,6 +5,7 @@
     <string name="app_name">KeRuiXing</string>
 
     <!-- PDF -->
+    <string name="pdf_file_no_exist">文件不存在</string>
     <string name="pdf_cancel">Cancel</string>
     <string name="pdf_search_backwards">Search backwards</string>
     <string name="pdf_search_forwards">Search forwards</string>

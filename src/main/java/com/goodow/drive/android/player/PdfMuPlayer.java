@@ -1,5 +1,6 @@
 package com.goodow.drive.android.player;
 
+import com.goodow.android.drive.R;
 import com.goodow.drive.android.GlobalConstant;
 import com.goodow.realtime.json.JsonObject;
 
@@ -22,7 +23,7 @@ import android.widget.Toast;
  * @updateDate 2013 2013-12-4 上午10:48:34
  * @version V1.0
  */
-public class SamplePDF extends Activity {
+public class PdfMuPlayer extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
@@ -35,7 +36,7 @@ public class SamplePDF extends Activity {
       startActivity(intent);
       this.finish();
     } else {
-      Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
+      Toast.makeText(this, this.getString(R.string.pdf_file_no_exist), Toast.LENGTH_SHORT).show();
     }
     super.onCreate(savedInstanceState);
   }

@@ -62,6 +62,7 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
   private Adapter mAdapter;
   private int mCurrent; // Adapter's index for the current view
   private boolean mResetLayout;
+
   private final SparseArray<View> mChildViews = new SparseArray<View>(3);
   // Shadows the children of the adapter view
   // but with more sensible indexing
@@ -70,14 +71,13 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
   private boolean mScaling; // Whether the user is currently pinch zooming
   private float mScale = 2.5f;
   private int mXScroll; // Scroll amounts recorded from events.
+
   private int mYScroll; // and then accounted for in onLayout
   private final GestureDetector mGestureDetector;
   private final ScaleGestureDetector mScaleGestureDetector;
   private final Scroller mScroller;
   private int mScrollerLastX;
-
   private int mScrollerLastY;
-
   private boolean mScrollDisabled;
 
   @SuppressWarnings("deprecation")
@@ -116,6 +116,10 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
 
   public int getDisplayedViewIndex() {
     return mCurrent;
+  }
+
+  public float getmScale() {
+    return mScale;
   }
 
   @Override
@@ -297,6 +301,19 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     return true;
   }
 
+  public void postSettle(final View v) {
+    // onSettle and onUnsettle are posted so that the calls
+    // wont be executed until after the system has performed
+    // layout.
+    post(new Runnable() {
+      @Override
+      public void run() {
+        onSettle(v);
+      }
+    });
+
+  }
+
   public void resetupChildren() {
     for (int i = 0; i < mChildViews.size(); i++) {
       onChildSetup(mChildViews.keyAt(i), mChildViews.valueAt(i));
@@ -321,6 +338,23 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
       View v = mChildViews.get(mCurrent);
       postSettle(v);
     }
+  }
+
+  public void scale(float scale) {
+    onScaleBegin(null);
+    float previousScale = mScale;
+    mScale = Math.min(Math.max(scale, MIN_SCALE), MAX_SCALE);
+    float factor = mScale / previousScale;
+
+    View v = mChildViews.get(mCurrent);
+    if (v != null) {
+      int viewFocusX = 500 - (v.getLeft() + mXScroll);
+      int viewFocusY = 400 - (v.getTop() + mYScroll);
+      mXScroll += viewFocusX - viewFocusX * factor;
+      mYScroll += viewFocusY - viewFocusY * factor;
+      requestLayout();
+    }
+    onScaleEnd(null);
   }
 
   @Override
@@ -589,18 +623,6 @@ public class ReaderView extends AdapterView<Adapter> implements GestureDetector.
     // Use the fitting values scaled by our current scale factor
     v.measure(View.MeasureSpec.EXACTLY | (int) (v.getMeasuredWidth() * scale * mScale),
         View.MeasureSpec.EXACTLY | (int) (v.getMeasuredHeight() * scale * mScale));
-  }
-
-  private void postSettle(final View v) {
-    // onSettle and onUnsettle are posted so that the calls
-    // wont be executed until after the system has performed
-    // layout.
-    post(new Runnable() {
-      @Override
-      public void run() {
-        onSettle(v);
-      }
-    });
   }
 
   private void postUnsettle(final View v) {

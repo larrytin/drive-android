@@ -29,6 +29,11 @@
       <artifactId>realtime-android</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.joanzapata.pdfview</groupId>
+      <artifactId>android-pdfview</artifactId>
+      <version>1.0.0</version>
+    </dependency>
   </dependencies>
   
   <build>

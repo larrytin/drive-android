@@ -22,13 +22,31 @@ public class PlayerRegistry {
 
   public void subscribe() {
     bus.registerHandler(PREFIX + "pdf", new MessageHandler<JsonObject>() {
+      @SuppressWarnings("static-access")
       @Override
       public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, SamplePDF.class);
+        bus.send(bus.LOCAL + PREFIX + "pdf" + ".mu", message.body(), null);
+      }
+    });
+
+    bus.registerHandler(PREFIX + "pdf.jz", new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Intent intent = new Intent(mContext, PdfPlayer.class);
         intent.putExtra("msg", message.body());
         mContext.startActivity(intent);
       }
     });
+
+    bus.registerHandler(PREFIX + "pdf.mu", new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Intent intent = new Intent(mContext, PdfMuPlayer.class);
+        intent.putExtra("msg", message.body());
+        mContext.startActivity(intent);
+      }
+    });
+
     bus.registerHandler(PREFIX + "mp4", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

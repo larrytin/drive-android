@@ -1,6 +1,10 @@
 package com.artifex.mupdf;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.BusProvider;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -58,7 +62,7 @@ public class MuPDFActivity extends Activity {
   private ImageButton mCancelButton;
   private ImageButton mOutlineButton;
   private ViewSwitcher mTopBarSwitcher;
-
+  private View tempView = null;
   private boolean mTopBarIsSearch;// mTopBarIsSearch private ImageButton mLinkButton;
   private ImageButton mSearchBack;
   private ImageButton mSearchFwd;
@@ -69,7 +73,10 @@ public class MuPDFActivity extends Activity {
   private LinkState mLinkState = LinkState.DEFAULT;
   private final Handler mHandler = new Handler();
 
-  private static float scale = 1.0f;
+  private static float scale = 2.5f;
+
+  private static final String CONTROL = BusProvider.SID + "player." + "pdf.control";
+  private MessageHandler<JsonObject> eventHandler = null;
 
   public void createUI(Bundle savedInstanceState) {
     if (core == null) {
@@ -80,9 +87,9 @@ public class MuPDFActivity extends Activity {
     // First create the document view making use of the ReaderView's
     // internal
     // gesture recognition
+
     mDocView = new ReaderView(this) {
       private boolean showButtonsDisabled;
-      private View tempView = null;
 
       @Override
       public boolean onScaleBegin(ScaleGestureDetector d) {
@@ -133,6 +140,7 @@ public class MuPDFActivity extends Activity {
 
       @Override
       public boolean onTouchEvent(MotionEvent event) {
+        scale = this.getmScale();
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
           showButtonsDisabled = false;
         }
@@ -344,7 +352,7 @@ public class MuPDFActivity extends Activity {
     }
 
     // Stick the document view and the buttons overlay into a parent view
-    RelativeLayout layout = new RelativeLayout(this);
+    final RelativeLayout layout = new RelativeLayout(this);
 
     layout.addView(mDocView);
     // layout.addView(mButtonsView);
@@ -370,6 +378,65 @@ public class MuPDFActivity extends Activity {
     controler.addView(next);
     controler.addView(zoomIn);
     controler.addView(zoomOut);
+
+    eventHandler = new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        if (body.has("move")) {
+          /*
+           * move 相对于当前页码的偏移量移动
+           */
+          if (mDocView != null) {
+            int offset = (mDocView.getDisplayedViewIndex() + (int) body.getNumber("move"));
+            mDocView.setDisplayedViewIndex(offset);
+
+            setContentView(layout);
+          }
+
+        } else if (body.has("page")) {
+          /*
+           * page 指定页码的移动
+           */
+          if (mDocView != null) {
+            mDocView.setDisplayedViewIndex((int) body.getNumber("page"));
+            setContentView(layout);
+          }
+        } else if (body.has("scale")) {
+          /*
+           * scale 指定缩放数值,基数是1
+           */
+          if (mDocView != null) {
+            scale = (float) body.getNumber("scale");
+            if (scale > 2.5f) {
+              scale = 2.5f;
+            }
+            if (scale < 0.0f) {
+              scale = 0.5f;
+            }
+            mDocView.scale(scale);
+            mDocView.onSettle(null);
+          }
+
+        } else if (body.has("zoom")) {
+          /*
+           * zoom 指定缩放系数,基数是当前缩放值
+           */
+          if (mDocView != null) {
+            float temp = mDocView.getmScale() * (float) body.getNumber("zoom");
+            if (temp > 5f) {
+              temp = 5f;
+            }
+            if (temp < 0.5f) {
+              temp -= 0.5;
+            }
+            scale = temp;
+            mDocView.scale(scale);
+            mDocView.onSettle(null);
+          }
+        }
+      }
+    };
 
     previous.setOnClickListener(new OnClickListener() {
       @Override
@@ -421,6 +488,7 @@ public class MuPDFActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
     mAlertBuilder = new AlertDialog.Builder(this);
 
     if (core == null) {
@@ -557,6 +625,13 @@ public class MuPDFActivity extends Activity {
       edit.putInt("page" + mFileName, mDocView.getDisplayedViewIndex());
       edit.commit();
     }
+    BusProvider.get().unregisterHandler(CONTROL, eventHandler);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    BusProvider.get().registerHandler(CONTROL, eventHandler);
   }
 
   @Override

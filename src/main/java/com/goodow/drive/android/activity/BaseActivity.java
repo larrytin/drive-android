@@ -12,4 +12,5 @@ import android.app.Activity;
  * @version V1.0
  */
 public class BaseActivity extends Activity {
+
 }

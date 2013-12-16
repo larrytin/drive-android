@@ -41,19 +41,25 @@
         </activity>
 
         <!-- PDF播放器 -->
-        <activity
-            android:name="com.artifex.mupdf.MuPDFActivity" 
+        <activity 
+            android:name="com.goodow.drive.android.player.PdfPlayer" 
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
-            >
-        </activity>
-        <activity
-            android:name="com.artifex.mupdf.OutlineActivity" 
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
         <activity 
-            android:name="com.goodow.drive.android.player.SamplePDF" 
+            android:name="com.goodow.drive.android.player.PdfMuPlayer" 
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+        </activity>
+        <activity 
+            android:name="com.artifex.mupdf.MuPDFActivity" 
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
 

@@ -103,6 +103,8 @@ public class SettingsRegistry {
         softwareMsg.set("Model", DeviceInformationTools.getOsModel());
         softwareMsg.set("Version", DeviceInformationTools.getOsVersion());
         softwareMsg.set("SDK", DeviceInformationTools.getSDK());
+        softwareMsg.set("SCREENHEIGH", DeviceInformationTools.getScreenHeight(mContext));
+        softwareMsg.set("SCREENWIDTH", DeviceInformationTools.getScreenWidth(mContext));
         message.reply(msg);
       }
     });

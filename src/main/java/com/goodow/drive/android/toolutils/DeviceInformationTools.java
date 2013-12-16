@@ -7,12 +7,15 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 
 public class DeviceInformationTools {
+
   /*
    * 如果一个手机设备第一次启动随即产生的一个数字，如果系统改变，该号可能会改变。
    */
@@ -85,6 +88,27 @@ public class DeviceInformationTools {
   // 获取device的os version 固件版本
   public static String getOsVersion() {
     return android.os.Build.VERSION.RELEASE;
+  }
+
+  /*
+   * 获取屏幕高度
+   */
+  public static int getScreenHeight(Context context) {
+    DisplayMetrics dm = new DisplayMetrics();
+    ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
+    int height = dm.heightPixels;
+    return height;
+  }
+
+  /*
+   * 获取屏幕宽度
+   */
+  public static int getScreenWidth(Context context) {
+    DisplayMetrics dm = new DisplayMetrics();
+    ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(dm);
+    System.out.println("info:" + dm.toString());
+    int width = dm.widthPixels;
+    return width;
   }
 
   // 获得SDK版本
