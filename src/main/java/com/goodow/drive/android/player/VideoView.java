@@ -266,10 +266,8 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
   }
 
   @Override
-  public int getBufferPercentage() {// 获得缓冲区的百分比
-    if (mMediaPlayer != null) {
-      return mCurrentBufferPercentage;
-    }
+  public int getAudioSessionId() {
+    // TODO Auto-generated method stub
     return 0;
   }
 
@@ -280,6 +278,14 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
   // mMediaController = controller;
   // attachMediaController();//附加媒体控制器
   // }
+
+  @Override
+  public int getBufferPercentage() {// 获得缓冲区的百分比
+    if (mMediaPlayer != null) {
+      return mCurrentBufferPercentage;
+    }
+    return 0;
+  }
 
   @Override
   public int getCurrentPosition() {// 获得当前播放位置

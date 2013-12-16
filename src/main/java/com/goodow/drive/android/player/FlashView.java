@@ -11,6 +11,7 @@ import com.goodow.realtime.json.JsonObject;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -34,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+@SuppressLint("JavascriptInterface")
 class FlashView extends RelativeLayout implements OnTouchListener {
   private final class CallJava {
     public void consoleFlashProgress(float progressSize, int total) {
@@ -138,7 +140,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     flash_view.getSettings().setPluginState(PluginState.ON);
     flash_view.setWebChromeClient(new WebChromeClient());
     flash_view.getSettings().setAllowFileAccess(true);
-    flash_view.getSettings().setPluginsEnabled(true);
+    // flash_view.getSettings().setPluginsEnabled(true);
     flash_view.getSettings().setSupportZoom(true);
     flash_view.getSettings().setAppCacheEnabled(true);
     flash_view.addJavascriptInterface(new CallJava(), "CallJava");
