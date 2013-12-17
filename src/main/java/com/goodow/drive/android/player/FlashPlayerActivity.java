@@ -5,6 +5,7 @@ import com.goodow.drive.android.GlobalConstant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.json.JsonObject;
 
+import java.io.File;
 import java.util.List;
 
 import android.content.Intent;
@@ -34,6 +35,7 @@ public class FlashPlayerActivity extends BaseActivity {
 
   @Override
   protected void onDestroy() {
+    Log.d(TAG, "onDestory");
     this.finish();
     flash.onDestory();
     System.gc();
@@ -75,10 +77,15 @@ public class FlashPlayerActivity extends BaseActivity {
     JsonObject msg = (JsonObject) intent.getExtras().get("msg");
     String path = msg.get("path");
     path = GlobalConstant.STORAGEDIR + path;
-    Log.i(TAG, path);
-    flash.load();
-    flash.setFlashPath(path);
-    flash.start();
-  }
+    Log.d(TAG, path);
+    File mFile = new File(path);
+    if (mFile.exists()) {
+      flash.load();
+      flash.setFlashPath(path);
+      flash.start();
+    } else {
+      Toast.makeText(this, R.string.pdf_file_no_exist, Toast.LENGTH_LONG).show();
+    }
 
+  }
 }

@@ -213,7 +213,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     });
     // 实时更新进度
     handler = new Handler();
-    Log.i(TAG, "onCreate");
+    Log.d(TAG, "onCreate");
   }
 
   public void onDestory() {
@@ -225,6 +225,8 @@ class FlashView extends RelativeLayout implements OnTouchListener {
    * 失去焦点时，调用
    */
   public void onPause() {
+    Log.d(TAG, "onPause()");
+    pause();
     mContext.unregisterReceiver(flashViewBroadCastReceiver);
     bus.unregisterHandler(CONTROL, eventHandler);
   }
@@ -233,6 +235,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
    * 获得焦点时，调用
    */
   public void onResume() {
+    Log.d(TAG, "onResume()");
     IntentFilter mIntentFilter = new IntentFilter();
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
     mContext.registerReceiver(flashViewBroadCastReceiver, mIntentFilter);
@@ -241,7 +244,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
 
   @Override
   public boolean onTouch(View v, MotionEvent event) {
-    Log.i(TAG, "onTouch()");
+    Log.d(TAG, "onTouch()");
     switch (event.getAction()) {
       case MotionEvent.ACTION_DOWN:
         startY = event.getY();
@@ -271,7 +274,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
   }
 
   public void pause() {
-    Log.i(TAG, "pause");
+    Log.d(TAG, "pause");
     if (null != flashPath) {
       flash_view.loadUrl("javascript:Pause()");
       handler.removeCallbacks(update_progress);
@@ -300,7 +303,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
   }
 
   public void start() {
-    Log.i(TAG, "start");
+    Log.d(TAG, "start");
     if (null != flashPath) {
       flash_view.loadUrl("javascript:Pause()");
       try {
@@ -339,7 +342,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
 
   // 重新播放
   private void replay() {
-    Log.i(TAG, "replay");
+    Log.d(TAG, "replay");
     flash_view.reload();
     load();
     try {
