@@ -19,7 +19,7 @@ import android.app.Activity;
  * @version V1.0
  */
 public class BaseActivity extends Activity {
-  private static final String CONTROL = PlayerRegistry.PREFIX + "control";
+  public static final String CONTROL = BusProvider.SID + "control";
   protected final Bus bus = BusProvider.get();
 
   private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
