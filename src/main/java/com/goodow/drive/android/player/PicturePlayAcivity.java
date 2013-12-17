@@ -2,9 +2,9 @@ package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.GlobalConstant;
+import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.json.JsonObject;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-public class PicturePlayAcivity extends Activity {
+public class PicturePlayAcivity extends BaseActivity {
   private final static String TAG = PicturePlayAcivity.class.getSimpleName();
   private ImageView mImageView;
   private Bitmap mBitmap;

@@ -46,11 +46,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
   private class FlashViewBroadCastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      if ("android.media.VOLUME_CHANGED_ACTION".equals(intent.getAction())) {
-        sound_progress.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
-      } else if ("com.goodow.drive.android.activity.finish".equals(intent.getAction())) {
-        stop();
-      }
+      sound_progress.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
     }
   }
 
@@ -239,7 +235,6 @@ class FlashView extends RelativeLayout implements OnTouchListener {
   public void onResume() {
     IntentFilter mIntentFilter = new IntentFilter();
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
-    mIntentFilter.addAction("com.goodow.drive.android.activity.finish");
     mContext.registerReceiver(flashViewBroadCastReceiver, mIntentFilter);
     bus.registerHandler(CONTROL, eventHandler);
   }

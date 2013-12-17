@@ -9,9 +9,10 @@ import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.JsonElement;
 
+import android.app.Activity;
 import android.os.Bundle;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends Activity {
   // private static final Logger log = Logger.getLogger(MainActivity.class.getName());
   private final Bus bus = BusProvider.get();
   private static boolean registried;

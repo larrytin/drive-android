@@ -2,11 +2,11 @@ package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.GlobalConstant;
+import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-public class FlashPlayerActivity extends Activity {
+public class FlashPlayerActivity extends BaseActivity {
   private final static String TAG = FlashPlayerActivity.class.getSimpleName();
   private FlashView flash;
 

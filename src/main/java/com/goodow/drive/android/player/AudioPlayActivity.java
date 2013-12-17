@@ -1,8 +1,8 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.GlobalConstant;
+import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -11,7 +11,6 @@ import com.goodow.realtime.json.JsonObject;
 
 import java.io.IOException;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -25,7 +24,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class AudioPlayActivity extends Activity {
+public class AudioPlayActivity extends BaseActivity {
   private final class ButtonClickListener implements View.OnClickListener {
     @Override
     public void onClick(View v) {
@@ -52,7 +51,6 @@ public class AudioPlayActivity extends Activity {
   private static final String CONTROL = PlayerRegistry.PREFIX + "mp3.control";
 
   private static final String TAG = AudioPlayActivity.class.getSimpleName();
-  private final Bus bus = BusProvider.get();
   private ButtonClickListener listener;
   private Button stopButton;;
   private final MediaPlayer mediaPlayer = new MediaPlayer();
