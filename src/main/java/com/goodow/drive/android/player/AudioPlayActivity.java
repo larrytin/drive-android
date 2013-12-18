@@ -9,6 +9,7 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AudioPlayActivity extends BaseActivity {
   private final class ButtonClickListener implements View.OnClickListener {
@@ -37,8 +39,8 @@ public class AudioPlayActivity extends BaseActivity {
           case R.id.pause_Button:// 暂停&继续
             msg.set("pause", true);
             break;
-          case R.id.stop_Button:// 停止
-            msg.set("stop", true);
+          case R.id.stop_Button:// 重播
+            msg.set("replay", true);
             break;
         }
         bus.send(Bus.LOCAL + CONTROL, msg, null);
@@ -65,12 +67,14 @@ public class AudioPlayActivity extends BaseActivity {
   private Button pauseButton;
   private boolean isVisible = false;
   private final Handler handler = new Handler();
-  private final Runnable start = new Runnable() {
-    @Override
-    public void run() {
-      handler.post(updatesb);
-    }
-  };
+  // private final Runnable start = new Runnable() {
+  // @Override
+  // public void run() {
+  // handler.post(updatesb);
+  // }
+  // };
+
+  private boolean tag = true;
   private final Runnable updatesb = new Runnable() {
     @Override
     public void run() {
@@ -83,7 +87,9 @@ public class AudioPlayActivity extends BaseActivity {
       int sMax = progressSeekBar.getMax();
       int progress = progressSeekBar.getProgress();
       if (100 != progress) {
-        progressSeekBar.setProgress(position * sMax / mMax);
+        if (tag) {
+          progressSeekBar.setProgress(position * sMax / mMax);
+        }
         curtimeAndTotalTime.setText("时间：" + position / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
       } else if (100 == progress) {
         curtimeAndTotalTime.setText("时间：" + mMax / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
@@ -98,14 +104,31 @@ public class AudioPlayActivity extends BaseActivity {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject msg = message.body();
-      if (msg.has("exit")) {
-        AudioPlayActivity.this.finish();
-      } else if (msg.has("play")) {
-        play_Button();
+      // if (msg.has("exit")) {
+      // AudioPlayActivity.this.finish();
+      // } else if (msg.has("play")) {
+      // play_Button();
+      // } else if (msg.has("stop")) {
+      // stop_Button();
+      // } else if (msg.has("pause")) {
+      // pause_Button();
+      // }
+      if (msg.has("play")) {
+        play_button();
+      } else if (msg.has("pause")) {
+        pause_button();
+      } else if (msg.has("replay")) {
+        replay_button();
       } else if (msg.has("stop")) {
         stop_Button();
-      } else if (msg.has("pause")) {
-        pause_Button();
+      } else if (msg.has("progress")) {
+        double progress = msg.getNumber("progress");
+        // progressSeekBar.setProgress((int) progress * progressSeekBar.getMax());
+        Log.d(TAG, (int) progress * progressSeekBar.getMax() + "");
+        Log.d(TAG, progress * progressSeekBar.getMax() + ":handler");
+        Log.d(TAG, "test:" + progress * progressSeekBar.getMax() + "");
+        mediaPlayer.seekTo((int) (mediaPlayer.getDuration() * progress));
+        mediaPlayer.start();
       }
     }
   };
@@ -117,75 +140,100 @@ public class AudioPlayActivity extends BaseActivity {
     audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
     audioFilePath = GlobalConstant.STORAGEDIR + jsonObject.getString("path");
-    String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
-    audioFileNameTextView.setText(mp3Name);
+    File mFile = new File(audioFilePath);
+    Log.d(TAG, audioFilePath);
+    if (mFile.exists()) {
+      String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
+      audioFileNameTextView.setText(mp3Name);
 
-    listener = new ButtonClickListener();
-    final Button playButton = (Button) this.findViewById(R.id.play_Button);
-    pauseButton = (Button) this.findViewById(R.id.pause_Button);
-    stopButton = (Button) this.findViewById(R.id.stop_Button);
-    playButton.setOnClickListener(listener);
-    pauseButton.setOnClickListener(listener);
-    stopButton.setOnClickListener(listener);
+      listener = new ButtonClickListener();
+      final Button playButton = (Button) this.findViewById(R.id.play_Button);
+      pauseButton = (Button) this.findViewById(R.id.pause_Button);
+      stopButton = (Button) this.findViewById(R.id.stop_Button);
+      playButton.setOnClickListener(listener);
+      pauseButton.setOnClickListener(listener);
+      stopButton.setOnClickListener(listener);
 
-    progressSeekBar = (SeekBar) findViewById(R.id.progress_rate_SeekBar);
-    curtimeAndTotalTime = (TextView) findViewById(R.id.curtime_and_total_time_TextView);
-    progressSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-      @Override
-      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        isVisible = true;
-      }
-
-      @Override
-      public void onStartTrackingTouch(SeekBar seekBar) {
-        if (mediaPlayer.isPlaying()) {
-          mediaPlayer.pause();
+      progressSeekBar = (SeekBar) findViewById(R.id.progress_rate_SeekBar);
+      curtimeAndTotalTime = (TextView) findViewById(R.id.curtime_and_total_time_TextView);
+      progressSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+          Log.d(TAG, "onProgressChanged()");
+          isVisible = true;
+          if (fromUser) {
+            Log.d(TAG, "onProgressChanged()+user");
+            JsonObject msg = Json.createObject();
+            msg.set("progress", (double) progress / progressSeekBar.getMax());
+            bus.send(Bus.LOCAL + CONTROL, msg, null);
+          }
         }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+          Log.d(TAG, "onStartTrackingTouch()");
+          if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+          }
+          tag = false;
+          // Log.d(TAG, seekBar.getProgress() + "");
+          // System.out.println();
+          // progressSeekBar.setProgress(seekBar.getProgress());
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+          Log.d(TAG, "onstoptrackingtouch");
+          tag = true;
+          // int mMax = mediaPlayer.getDuration();
+          // int dest = seekBar.getProgress();
+          // int sMax = progressSeekBar.getMax();
+          // mediaPlayer.seekTo(mMax * dest / sMax);
+          // mediaPlayer.start();
+          // pauseButton.setText("暂停");
+          // pauseButton.setEnabled(true);
+          // stopButton.setEnabled(true);
+
+          // JsonObject msg = Json.createObject();
+          // msg.set("progress", (double) seekBar.getProgress() / progressSeekBar.getMax());
+          // bus.send(Bus.LOCAL + CONTROL, msg, null);
+          // Log.d(TAG, "onstoptrackingtouch:" + seekBar.getProgress() / progressSeekBar.getMax());
+        }
+      });
+
+      mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer arg0) {
+          // mediaPlayer.seekTo(0);
+          //
+          // pauseButton.setText("暂停");
+          // progressSeekBar.setProgress(0);
+          // curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration()
+          // / 1000 + " 秒");
+          //
+          // pauseButton.setEnabled(false);
+          // stopButton.setEnabled(false);
+        }
+      });
+
+      // pauseButton.setEnabled(false);
+      // stopButton.setEnabled(false);
+      try {
+        play();
+      } catch (IOException e) {
+        e.printStackTrace();
       }
-
-      @Override
-      public void onStopTrackingTouch(SeekBar seekBar) {
-        int mMax = mediaPlayer.getDuration();
-        int dest = seekBar.getProgress();
-        int sMax = progressSeekBar.getMax();
-        mediaPlayer.seekTo(mMax * dest / sMax);
-        mediaPlayer.start();
-
-        pauseButton.setText("暂停");
-        pauseButton.setEnabled(true);
-        stopButton.setEnabled(true);
-      }
-    });
-
-    mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-      @Override
-      public void onCompletion(MediaPlayer arg0) {
-        mediaPlayer.seekTo(0);
-
-        pauseButton.setText("暂停");
-        progressSeekBar.setProgress(0);
-        curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration()
-            / 1000 + " 秒");
-
-        pauseButton.setEnabled(false);
-        stopButton.setEnabled(false);
-      }
-    });
-
-    pauseButton.setEnabled(false);
-    stopButton.setEnabled(false);
-    try {
-      play();
-    } catch (IOException e) {
-      e.printStackTrace();
+    } else {
+      Toast.makeText(this, R.string.pdf_file_no_exist, Toast.LENGTH_LONG).show();
     }
+
   }
 
   @Override
   protected void onDestroy() {
     mediaPlayer.release();
     super.onDestroy();
-    Log.i(TAG, "onDestroy()");
+    Log.d(TAG, "onDestroy()");
   }
 
   @Override
@@ -193,19 +241,25 @@ public class AudioPlayActivity extends BaseActivity {
     super.onNewIntent(intent);
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
     audioFilePath = GlobalConstant.STORAGEDIR + jsonObject.getString("path");
-    Log.i(TAG, audioFilePath);
-    String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
-    Log.i(TAG, mp3Name);
-    audioFileNameTextView.setText(mp3Name);
-    // Resets the MediaPlayer to its uninitialized state. After calling this method, you will have
-    // to initialize it again by setting the data source and calling prepare().
-    mediaPlayer.reset();
-    try {
-      play();
-    } catch (IOException e) {
-      e.printStackTrace();
+    File mFile = new File(audioFilePath);
+    Log.d(TAG, audioFilePath);
+    if (mFile.exists()) {
+      String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
+      Log.d(TAG, mp3Name);
+      audioFileNameTextView.setText(mp3Name);
+      // Resets the MediaPlayer to its uninitialized state. After calling this method, you will have
+      // to initialize it again by setting the data source and calling prepare().
+      mediaPlayer.reset();
+      try {
+        play();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } else {
+      Toast.makeText(this, R.string.pdf_file_no_exist, Toast.LENGTH_LONG).show();
     }
-    Log.i(TAG, "onNewIntent()");
+
+    Log.d(TAG, "onNewIntent()");
   }
 
   @Override
@@ -229,15 +283,23 @@ public class AudioPlayActivity extends BaseActivity {
     bus.registerHandler(CONTROL, eventHandler);
   }
 
-  private void pause_Button() {
+  // 正在播放时候，暂停，button变为继续
+  private void pause_button() {
     if (mediaPlayer.isPlaying()) {
+      // pauseButton.setText("继续");
       mediaPlayer.pause();
-      pauseButton.setText("继续");
-    } else {
-      mediaPlayer.start();
-      pauseButton.setText("暂停");
     }
   }
+
+  // private void pause_Button() {
+  // if (mediaPlayer.isPlaying()) {
+  // mediaPlayer.pause();
+  // pauseButton.setText("继续");
+  // } else {
+  // mediaPlayer.start();
+  // pauseButton.setText("暂停");
+  // }
+  // }
 
   private void play() throws IOException {
     progressSeekBar.setProgress(0);
@@ -247,32 +309,67 @@ public class AudioPlayActivity extends BaseActivity {
     mediaPlayer.setDataSource(audioFilePath);
     mediaPlayer.prepare();
 
-    handler.post(start);
+    handler.post(updatesb);
+    // 一进去就开始播放
+    mediaPlayer.start();
   }
 
-  private void play_Button() {
+  private void play_button() {
+    isVisible = true;
+    if (!mediaPlayer.isPlaying() && mediaPlayer.getCurrentPosition() != mediaPlayer.getDuration()) {
+      mediaPlayer.start();
+      // pauseButton.setText("暂停");
+    }
+    // else if (mediaPlayer.getCurrentPosition() == mediaPlayer.getDuration()) {
+    // Log.d(TAG, "play_button");
+    // mediaPlayer.seekTo(0);
+    // mediaPlayer.start();
+    // pauseButton.setText("暂停");
+    // pauseButton.setEnabled(true);
+    // stopButton.setEnabled(true);
+    // }
+    // handler.post(start);
+    // pauseButton.setEnabled(true);
+    // stopButton.setEnabled(true);
+    handler.post(updatesb);
+  }
+
+  // private void play_Button() {
+  // isVisible = true;
+  //
+  // mediaPlayer.seekTo(0);
+  // mediaPlayer.start();
+  //
+  // pauseButton.setText("暂停");
+  // pauseButton.setEnabled(true);
+  // stopButton.setEnabled(true);
+  //
+  // handler.post(start);
+  // }
+
+  private void replay_button() {
     isVisible = true;
 
     mediaPlayer.seekTo(0);
     mediaPlayer.start();
-
+    progressSeekBar.setProgress(0);
     pauseButton.setText("暂停");
     pauseButton.setEnabled(true);
     stopButton.setEnabled(true);
 
-    handler.post(start);
+    handler.post(updatesb);
   }
 
   private void stop_Button() {
     mediaPlayer.seekTo(0);
     mediaPlayer.pause();
 
-    pauseButton.setText("暂停");
+    // pauseButton.setText("暂停");
     progressSeekBar.setProgress(0);
     curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration() / 1000
         + " 秒");
-
-    pauseButton.setEnabled(false);
-    stopButton.setEnabled(false);
+    //
+    // pauseButton.setEnabled(false);
+    // stopButton.setEnabled(false);
   }
 }
