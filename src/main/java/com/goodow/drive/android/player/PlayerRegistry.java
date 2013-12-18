@@ -21,10 +21,9 @@ public class PlayerRegistry {
 
   public void subscribe() {
     bus.registerHandler(PREFIX + "pdf", new MessageHandler<JsonObject>() {
-      @SuppressWarnings("static-access")
       @Override
       public void handle(Message<JsonObject> message) {
-        bus.send(bus.LOCAL + PREFIX + "pdf" + ".mu", message.body(), null);
+        bus.send(Bus.LOCAL + PREFIX + "pdf" + ".mu", message.body(), null);
       }
     });
 

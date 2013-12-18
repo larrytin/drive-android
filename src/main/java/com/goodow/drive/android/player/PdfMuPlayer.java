@@ -2,13 +2,13 @@ package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.GlobalConstant;
+import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.json.JsonObject;
 
 import com.artifex.mupdf.MuPDFActivity;
 
 import java.io.File;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,7 +23,7 @@ import android.widget.Toast;
  * @updateDate 2013 2013-12-4 上午10:48:34
  * @version V1.0
  */
-public class PdfMuPlayer extends Activity {
+public class PdfMuPlayer extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");

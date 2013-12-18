@@ -96,6 +96,8 @@ public class SettingsRegistry {
         msg.set("hardware", hardwareMsg);
         hardwareMsg.set("MAC", DeviceInformationTools.getLocalMacAddressFromWifiInfo(mContext));
         hardwareMsg.set("IMEI", DeviceInformationTools.getIMEI(mContext));
+        hardwareMsg.set("SCREENHEIGH", DeviceInformationTools.getScreenHeight(mContext));
+        hardwareMsg.set("SCREENWIDTH", DeviceInformationTools.getScreenWidth(mContext));
         // Software
         msg.set("software", softwareMsg);
         softwareMsg.set("AndroidId", DeviceInformationTools.getAndroidId(mContext));
@@ -103,8 +105,6 @@ public class SettingsRegistry {
         softwareMsg.set("Model", DeviceInformationTools.getOsModel());
         softwareMsg.set("Version", DeviceInformationTools.getOsVersion());
         softwareMsg.set("SDK", DeviceInformationTools.getSDK());
-        softwareMsg.set("SCREENHEIGH", DeviceInformationTools.getScreenHeight(mContext));
-        softwareMsg.set("SCREENWIDTH", DeviceInformationTools.getScreenWidth(mContext));
         message.reply(msg);
       }
     });
