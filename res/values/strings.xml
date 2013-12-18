@@ -17,6 +17,7 @@
     <string name="pdf_progress_title">Generateing pdf#8230;</string>
 
     <!-- video -->
+    <string name="video_file_no_exist">文件不存在或格式错误</string>
     <string name="video_volume_controler_title">音量调节</string>
     <string name="video_brightness_controler_title">亮度调节</string>
     <string name="video_return_btn">返回</string>

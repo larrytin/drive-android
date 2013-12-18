@@ -66,14 +66,10 @@
         <!-- VIDEO播放器 -->
         <activity
             android:name="com.goodow.drive.android.player.VideoActivity"
+            android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
-        <activity 
-            android:name="com.goodow.drive.android.player.SampleVideo" 
-            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
-            >
-         </activity>
 
         <!-- FLASH播放器 -->
         <activity

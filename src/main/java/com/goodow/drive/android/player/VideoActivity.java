@@ -1,8 +1,10 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.GlobalConstant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.player.VideoView.MySizeChangeLinstener;
+import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -37,6 +39,7 @@ import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * @title: VideoActivity.java
@@ -174,8 +177,10 @@ public class VideoActivity extends BaseActivity {
         (ImageButton) this.controlView.findViewById(R.id.ibtn_media_controler_play_pause);
     this.btn_media_controler_sound =
         (Button) this.controlView.findViewById(R.id.btn_media_controler_sound);
+    this.btn_media_controler_sound.setVisibility(View.GONE);
     this.btn_media_controler_brightness =
         (Button) this.controlView.findViewById(R.id.btn_media_controler_brightness);
+    this.btn_media_controler_brightness.setVisibility(View.GONE);
 
     Looper.myQueue().addIdleHandler(new IdleHandler() {
       @Override
@@ -400,13 +405,23 @@ public class VideoActivity extends BaseActivity {
       }
     });
 
-    Uri uri = getIntent().getData();
-    if (uri != null) {
-      this.videoView.stopPlayback();// 停止视频播放
-      this.videoView.setVideoURI(uri);// 设置视频文件URI
-      this.isOnline = true;
-      this.ibtn_media_controler_play_pause.setImageResource(R.drawable.video_selector_player_pause);
-      ((TextView) this.titleView.findViewById(R.id.tv_media_title_name)).setText("我叫大白菜");
+    try {
+      JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
+      String vidoePath = jsonObject.getString("path");
+      String videoName =
+          vidoePath.substring(vidoePath.lastIndexOf("/") + 1, vidoePath.lastIndexOf("."));
+      Uri uri = Uri.parse("file:/" + GlobalConstant.STORAGEDIR + vidoePath);
+      if (uri != null) {
+        this.videoView.stopPlayback();// 停止视频播放
+        this.videoView.setVideoURI(uri);// 设置视频文件URI
+        this.isOnline = true;
+        this.ibtn_media_controler_play_pause
+            .setImageResource(R.drawable.video_selector_player_pause);
+        ((TextView) this.titleView.findViewById(R.id.tv_media_title_name)).setText(videoName);
+      }
+
+    } catch (Exception e) {
+      Toast.makeText(this, getString(R.string.video_file_no_exist), Toast.LENGTH_SHORT).show();
     }
   }
 

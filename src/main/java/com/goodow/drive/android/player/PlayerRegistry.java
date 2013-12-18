@@ -49,7 +49,7 @@ public class PlayerRegistry {
     bus.registerHandler(PREFIX + "mp4", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, SampleVideo.class);
+        Intent intent = new Intent(mContext, VideoActivity.class);
         intent.putExtra("msg", message.body());
         mContext.startActivity(intent);
       }
