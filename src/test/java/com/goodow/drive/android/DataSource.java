@@ -1,10 +1,9 @@
 package com.goodow.drive.android;
 
+import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.channel.impl.BusClient;
-import com.goodow.realtime.channel.impl.BusClientHandler;
-import com.goodow.realtime.java.JavaPlatform;
+import com.goodow.realtime.channel.impl.SimpleBus;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -15,33 +14,24 @@ import java.util.logging.Logger;
 public class DataSource {
   private static final Logger log = Logger.getLogger(DataSource.class.getName());
 
-  static {
-    JavaPlatform.register();
-  }
-
   public static void main(String[] args) throws IOException {
-    final BusClient eb = new BusClient("ws://data.goodow.com:8080/eventbus/websocket", null);
+    final Bus bus = new SimpleBus();
 
-    eb.setListener(new BusClientHandler() {
+    bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
       @Override
-      public void onClose() {
-        log.info("BusClient closed");
-      }
+      public void handle(Message<JsonObject> message) {
+        registerHandlers(bus);
 
-      @Override
-      public void onOpen() {
-        registerHandlers(eb);
         JsonObject msg = Json.createObject();
         msg.set("path", "sample.pdf");
-        eb.send("dan.pdf", msg, null);
+        bus.send("dan.pdf", msg, null);
 
         JsonObject request = Json.createObject();
         request.set("grade", "小班");
         request.set("term", "上学期");
         request.set("domain", "健康");
         request.set("subject", "找朋友");
-        eb.send("dan.getFiles", request, new MessageHandler<JsonObject>() {
-
+        bus.send("dan.getFiles", request, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             assert message.replyAddress() == null;
@@ -50,12 +40,19 @@ public class DataSource {
       }
     });
 
+    bus.registerHandler(Bus.LOCAL_ON_CLOSE, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        log.info("EventBus closed");
+      }
+    });
+
     // Prevent the JVM from exiting
     System.in.read();
   }
 
-  private static void registerHandlers(final BusClient eb) {
-    eb.registerHandler("dan.getFiles", new MessageHandler<JsonObject>() {
+  private static void registerHandlers(final Bus bus) {
+    bus.registerHandler("sid.getFiles", new MessageHandler<JsonObject>() {
 
       @Override
       public void handle(Message<JsonObject> message) {

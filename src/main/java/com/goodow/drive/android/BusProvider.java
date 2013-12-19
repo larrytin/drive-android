@@ -15,8 +15,10 @@ package com.goodow.drive.android;
 
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.Bus;
-import com.goodow.realtime.channel.impl.BusClient;
-import com.goodow.realtime.channel.impl.BusClientHandler;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.channel.impl.WebSocketBusClient;
+import com.goodow.realtime.json.JsonObject;
 
 import java.util.logging.Logger;
 
@@ -26,25 +28,18 @@ import java.util.logging.Logger;
  */
 public final class BusProvider {
   public static final String SID = "sid.drive.";
-  public static final String EVENTBUS_OPEN = Bus.LOCAL + "eventbus.open";
-  public static final String EVENTBUS_CLOSE = Bus.LOCAL + "eventbus.close";
   private static final String HOST = "data.goodow.com:8080";
   private static final Logger log = Logger.getLogger(BusProvider.class.getName());
   static {
     AndroidPlatform.register();
   }
-  private static final BusClient BUS = new BusClient("ws://" + HOST + "/eventbus/websocket", null);
+  private static final Bus BUS = new WebSocketBusClient("ws://" + HOST + "/eventbus/websocket",
+      null);
   static {
-    BUS.setListener(new BusClientHandler() {
+    BUS.registerHandler(Bus.LOCAL_ON_CLOSE, new MessageHandler<JsonObject>() {
       @Override
-      public void onClose() {
-        log.info("BusClient closed");
-        BUS.publish(Bus.LOCAL + EVENTBUS_CLOSE, null);
-      }
-
-      @Override
-      public void onOpen() {
-        BUS.publish(Bus.LOCAL + EVENTBUS_OPEN, null);
+      public void handle(Message<JsonObject> message) {
+        log.info("EventBus closed");
       }
     });
   }

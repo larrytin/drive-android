@@ -7,6 +7,7 @@ import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.channel.State;
 import com.goodow.realtime.json.JsonElement;
 
 import android.app.Activity;
@@ -22,16 +23,16 @@ public class MainActivity extends Activity {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_main);
 
-    // if (((BusClient) eb).getReadyState() == State.OPEN) {
-    // subscribe();
-    // } else {
-    bus.registerHandler(BusProvider.EVENTBUS_OPEN, new MessageHandler<JsonElement>() {
-      @Override
-      public void handle(Message<JsonElement> message) {
-        subscribe();
-      }
-    });
-    // }
+    if (bus.getReadyState() == State.OPEN) {
+      subscribe();
+    } else {
+      bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonElement>() {
+        @Override
+        public void handle(Message<JsonElement> message) {
+          subscribe();
+        }
+      });
+    }
   }
 
   private void subscribe() {
