@@ -54,12 +54,30 @@ public class PlayerRegistry {
       }
     });
     bus.registerHandler(PREFIX + "swf", new MessageHandler<JsonObject>() {
+
+      @Override
+      public void handle(Message<JsonObject> message) {
+        bus.send(Bus.LOCAL + PREFIX + "swf.webview", message.body(), null);
+      }
+
+    });
+    bus.registerHandler(PREFIX + "swf.button", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(mContext, FlashPlayerActivity.class);
         intent.putExtra("msg", message.body());
         mContext.startActivity(intent);
       }
+    });
+    bus.registerHandler(PREFIX + "swf.webview", new MessageHandler<JsonObject>() {
+
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Intent intent = new Intent(mContext, WebViewFlashPlayer.class);
+        intent.putExtra("msg", message.body());
+        mContext.startActivity(intent);
+      }
+
     });
     bus.registerHandler(PREFIX + "jpg", new MessageHandler<JsonObject>() {
       @Override

@@ -44,7 +44,11 @@ public class FlashPlayerActivity extends BaseActivity {
 
   @Override
   protected void onNewIntent(Intent intent) {
-    flashPlay(intent);
+    if (checkinstallornotadobeflashapk()) {
+      flashPlay(getIntent());
+    } else {
+      Toast.makeText(this, R.string.prompt_flash_Plugins, Toast.LENGTH_LONG).show();
+    }
     super.onNewIntent(intent);
   }
 

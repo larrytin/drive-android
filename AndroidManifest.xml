@@ -79,6 +79,14 @@
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
+        
+        <activity
+            android:name="com.goodow.drive.android.player.WebViewFlashPlayer"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
+        </activity>
 
         <!-- 图片查看器 -->
         <activity
