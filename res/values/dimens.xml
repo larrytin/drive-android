@@ -1,0 +1,31 @@
+<resources>
+
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
+    -->
+    
+    
+    <!-- 首页四个功能栏 收藏 锁屏  设置  关机的父布局位置 -->
+    <dimen name="index_rl_sys_fun_layout_marginLeft">80dp</dimen>
+    <dimen name="index_rl_sys_fun_layout_marginTop">150dp</dimen>
+    
+    <!-- 和谐  托班 的父布局位置 -->
+    <dimen name="index_rl_har_ship_layout_marginLeft">310dp</dimen>
+    <dimen name="index_rl_har_ship_layout_marginTop">250dp</dimen>
+    
+    <!-- 示范课程的布局位置 -->
+    <dimen name="index_rl_tech_layout_marginLeft">280dp</dimen>
+    <dimen name="index_rl_tech_layout_marginTop">520dp</dimen>
+    
+    <!-- 入学准备  智能开发  图画书的父布局位置 -->
+    <dimen name="index_rl_pre_smart_ebk_layout_marginTop">365dp</dimen>
+    <dimen name="index_rl_pre_smart_ebk_layout_marginRight">360dp</dimen>
+    
+    
+    
+    
+    
+    
+
+</resources>

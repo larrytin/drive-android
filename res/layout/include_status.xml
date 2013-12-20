@@ -1,39 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+<com.goodow.drive.android.cusview.StatusView xmlns:android="http://schemas.android.com/apk/res/android" 
     android:layout_width="270dp"
     android:layout_height="wrap_content"
     android:background="@drawable/index_status_bg"
     android:layout_alignParentTop="true"
     android:layout_alignParentRight="true"
-    android:layout_marginTop="50dp"
+    android:layout_marginTop="20dp"
     android:layout_marginRight="100dp"
     android:orientation="horizontal"
     >
-    <TextView 
-        android:id="@+id/tv_inc_status_net_type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3G"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="30dp"
-      />
     
-    <ImageView 
-        android:id="@+id/iv_inc_status_net_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        />
-
-    <TextView 
-        android:id="@+id/tv_inc_status_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:text="12月16日 AM11:35"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="30dp"
-      />
-    
-</RelativeLayout>
+</com.goodow.drive.android.cusview.StatusView>

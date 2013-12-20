@@ -131,6 +131,14 @@ public class ViewRegistry {
         Toast.makeText(ctx, "打开图画书", Toast.LENGTH_LONG).show();
       }
     });
+    bus.registerHandler(PREFIX + "status", new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Intent intent = new Intent(ctx, StatusBarActivity.class);
+        intent.putExtra("msg", message.body());
+        ctx.startActivity(intent);
+      }
+    });
 
   }
 }

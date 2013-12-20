@@ -22,10 +22,10 @@ public class SettingsRegistry {
   private final static String TAG = SettingsRegistry.class.getSimpleName();
   public static final String PREFIX = BusProvider.SID + "settings.";
   private final Bus bus = BusProvider.get();
-  private final Context mContext;
+  private final Context ctx;
 
-  public SettingsRegistry(Context mContext) {
-    this.mContext = mContext;
+  public SettingsRegistry(Context ctx) {
+    this.ctx = ctx;
   }
 
   public void subscribe() {
@@ -33,8 +33,7 @@ public class SettingsRegistry {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
-        AudioManager mAudioManager =
-            (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager mAudioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
         if (msg.has("mute")) {
           mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, AudioManager.FLAG_SHOW_UI);
         } else if (msg.has("volume")) {
@@ -56,14 +55,14 @@ public class SettingsRegistry {
       public void handle(Message<JsonObject> message) {
         JsonObject msg = Json.createObject();
         ConnectivityManager mConnectivityManager =
-            (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+            (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
           msg.set("NetWorkType", networkInfo.getTypeName());
         } else if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
           msg.set("NetWorkType", networkInfo.getTypeName());
           TelephonyManager mTelephonyManager =
-              (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+              (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
           // 返回值MCC + MNC
           String operator = mTelephonyManager.getNetworkOperator();
           msg.set("MCC+MNC", operator);
@@ -95,14 +94,14 @@ public class SettingsRegistry {
         JsonObject softwareMsg = Json.createObject();
         // Hardware
         msg.set("hardware", hardwareMsg);
-        hardwareMsg.set("MAC", DeviceInformationTools.getLocalMacAddressFromWifiInfo(mContext));
-        hardwareMsg.set("IMEI", DeviceInformationTools.getIMEI(mContext));
-        hardwareMsg.set("SCREENHEIGH", DeviceInformationTools.getScreenHeight(mContext));
-        hardwareMsg.set("SCREENWIDTH", DeviceInformationTools.getScreenWidth(mContext));
+        hardwareMsg.set("MAC", DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx));
+        hardwareMsg.set("IMEI", DeviceInformationTools.getIMEI(ctx));
+        hardwareMsg.set("SCREENHEIGH", DeviceInformationTools.getScreenHeight(ctx));
+        hardwareMsg.set("SCREENWIDTH", DeviceInformationTools.getScreenWidth(ctx));
         // Software
         msg.set("software", softwareMsg);
-        softwareMsg.set("AndroidId", DeviceInformationTools.getAndroidId(mContext));
-        softwareMsg.set("IP", DeviceInformationTools.getIp(mContext));
+        softwareMsg.set("AndroidId", DeviceInformationTools.getAndroidId(ctx));
+        softwareMsg.set("IP", DeviceInformationTools.getIp(ctx));
         softwareMsg.set("Model", DeviceInformationTools.getOsModel());
         softwareMsg.set("Version", DeviceInformationTools.getOsVersion());
         softwareMsg.set("SDK", DeviceInformationTools.getSDK());
@@ -113,7 +112,7 @@ public class SettingsRegistry {
     bus.registerHandler(PREFIX + "reboot", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        Toast.makeText(mContext, "重启", Toast.LENGTH_LONG).show();
+        Toast.makeText(ctx, "重启", Toast.LENGTH_LONG).show();
       }
     });
   }

@@ -50,6 +50,16 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
+        
+        <!-- 状态栏测试 -->
+        <activity 
+            android:name="com.goodow.drive.android.activity.StatusBarActivity" 
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+        </activity>
+        
 
         <!-- PDF播放器 -->
         <activity 
@@ -123,6 +133,7 @@
             android:screenOrientation="landscape"
             >
         </activity>
+
     </application>
 
 </manifest>
