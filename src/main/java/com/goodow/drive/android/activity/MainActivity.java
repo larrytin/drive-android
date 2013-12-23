@@ -38,8 +38,9 @@ public class MainActivity extends Activity {
   private void subscribe() {
     if (!registried) {
       registried = true;
-      new PlayerRegistry(MainActivity.this).subscribe();
-      new SettingsRegistry(MainActivity.this).subscribe();
+      new ViewRegistry(this).subscribe();
+      new PlayerRegistry(this).subscribe();
+      new SettingsRegistry(this).subscribe();
     }
   }
 }
