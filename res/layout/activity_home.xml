@@ -1,0 +1,107 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/index_bg"
+    tools:context=".MainActivity" >
+
+    <!-- 状态栏 -->
+    <include layout="@layout/include_status" />
+    
+    <!-- 收藏  锁定屏幕  设置  关机 -->
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/index_rl_sys_fun_layout_marginLeft"
+        android:layout_marginTop="@dimen/index_rl_sys_fun_layout_marginTop"
+        >
+      <ImageView
+          android:id="@+id/iv_act_main_coll"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_coll"
+          />
+      <ImageView
+          android:id="@+id/iv_act_main_loc"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_loc"
+          android:layout_below="@+id/iv_act_main_coll"
+          />
+      <ImageView
+          android:id="@+id/iv_act_main_set"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_set"
+          android:layout_below="@+id/iv_act_main_loc"
+          />
+      <ImageView
+          android:id="@+id/iv_act_main_clo"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_clo"
+          android:layout_below="@+id/iv_act_main_set"
+          />
+    </RelativeLayout>
+    
+    
+    <!-- 和谐  托班 -->
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/index_rl_har_ship_layout_marginLeft"
+        android:layout_marginTop="@dimen/index_rl_har_ship_layout_marginTop"
+        >
+      <ImageView
+          android:id="@+id/iv_act_main_har"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_har"
+          />
+      <ImageView
+          android:id="@+id/iv_act_main_ship"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_ship"
+          android:layout_below="@+id/iv_act_main_har"
+          />
+    </RelativeLayout>
+    
+    <!-- 示范课程 -->
+    <ImageView 
+        android:id="@+id/iv_act_main_tech"
+        style="@style/index_sys_fun"
+        android:src="@drawable/index_selector_tech"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/index_rl_tech_layout_marginLeft"
+        android:layout_marginTop="@dimen/index_rl_tech_layout_marginTop"
+        />
+    
+    
+    <!-- 入学准备  智能开发  图画书 -->
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/index_rl_pre_smart_ebk_layout_marginTop"
+        android:layout_marginRight="@dimen/index_rl_pre_smart_ebk_layout_marginRight"
+        >
+      <ImageView
+          android:id="@+id/iv_act_main_pre"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_pre"
+          />
+      <ImageView
+          android:id="@+id/iv_act_main_smart"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_smart"
+          android:layout_below="@+id/iv_act_main_pre"
+          />
+      <ImageView
+          android:id="@+id/iv_act_main_ebk"
+          style="@style/index_sys_fun"
+          android:src="@drawable/index_selector_ebk"
+          android:layout_below="@+id/iv_act_main_smart"
+          />
+    </RelativeLayout>
+
+
+</RelativeLayout>

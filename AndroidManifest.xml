@@ -41,6 +41,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+  
+        <!-- 首页 -->
+        <activity 
+            android:name="com.goodow.drive.android.activity.HomeActivity" 
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+        </activity>
 
         <!-- PDF播放器 -->
         <activity 
