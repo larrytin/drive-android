@@ -17,38 +17,21 @@ public class DataSource {
   public static void main(String[] args) throws IOException {
     final Bus bus = new SimpleBus();
 
-    bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
+    registerHandlers(bus);
+
+    JsonObject msg = Json.createObject();
+
+    JsonObject request = Json.createObject();
+    request.set("grade", "小班");
+    request.set("term", "上学期");
+    request.set("domain", "健康");
+    request.set("subject", "找朋友");
+    bus.send("sid.getFiles", request, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        registerHandlers(bus);
-
-        JsonObject msg = Json.createObject();
-        msg.set("path", "sample.pdf");
-        bus.send("dan.pdf", msg, null);
-
-        JsonObject request = Json.createObject();
-        request.set("grade", "小班");
-        request.set("term", "上学期");
-        request.set("domain", "健康");
-        request.set("subject", "找朋友");
-        bus.send("dan.getFiles", request, new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            assert message.replyAddress() == null;
-          }
-        });
+        assert message.replyAddress() == null;
       }
     });
-
-    bus.registerHandler(Bus.LOCAL_ON_CLOSE, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        log.info("EventBus closed");
-      }
-    });
-
-    // Prevent the JVM from exiting
-    System.in.read();
   }
 
   private static void registerHandlers(final Bus bus) {
