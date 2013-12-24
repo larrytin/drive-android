@@ -20,12 +20,12 @@
       <ImageView
           android:id="@+id/iv_act_main_coll"
           style="@style/index_sys_fun"
-          android:src="@drawable/index_selector_coll"
+          android:src="@drawable/common_selector_coll"
           />
       <ImageView
           android:id="@+id/iv_act_main_loc"
           style="@style/index_sys_fun"
-          android:src="@drawable/index_selector_loc"
+          android:src="@drawable/common_selector_loc"
           android:layout_below="@+id/iv_act_main_coll"
           />
       <ImageView

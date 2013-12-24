@@ -42,7 +42,7 @@ public class StatusView extends LinearLayout {
     public void handle(Message<JsonObject> message) {
       JsonObject body = message.body();
       String action = body.getString("action");
-      if ("get".equalsIgnoreCase(action)) {
+      if (action != null && !"post".equalsIgnoreCase(action)) {
         return;
       }
 
@@ -84,9 +84,9 @@ public class StatusView extends LinearLayout {
 
       if (netStrength <= 0.0f) {
         currentImageId = R.drawable.status_network_null;
-      } else if (netStrength > 0.0f && netStrength <= 0.3f) {
+      } else if (netStrength > 0.0f && netStrength <= 30.0f) {
         currentImageId = R.drawable.status_network_mid;
-      } else if (netStrength > 0.3f && netStrength <= 1.0f) {
+      } else if (netStrength > 30.0f && netStrength <= 100.0f) {
         currentImageId = R.drawable.status_network_all;
       }
       String tempCurrenttime = body.getString("time");
@@ -151,12 +151,7 @@ public class StatusView extends LinearLayout {
     this.settingReceiver.registerReceiver();
     bus.registerHandler(SettingReceiver.ADDR, eventHandler);
     bus.send(Bus.LOCAL + SettingReceiver.ADDR, Json.createObject().set("action", "get"),
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            eventHandler.handle(message);
-          }
-        });
+        eventHandler);
   }
 
   @Override

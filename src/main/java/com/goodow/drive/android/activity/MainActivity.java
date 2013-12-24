@@ -2,6 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.data.DataRegistry;
 import com.goodow.drive.android.player.PlayerRegistry;
 import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
@@ -41,6 +42,7 @@ public class MainActivity extends Activity {
       new ViewRegistry(this).subscribe();
       new PlayerRegistry(this).subscribe();
       new SettingsRegistry(this).subscribe();
+      new DataRegistry().subscribe();
     }
   }
 }

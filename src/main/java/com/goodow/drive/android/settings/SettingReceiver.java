@@ -17,7 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
@@ -144,17 +143,10 @@ public class SettingReceiver {
    * @return
    */
   private float getWifiStrength() {
-    float strength = 0;
     WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-    WifiInfo info = wifiManager.getConnectionInfo();
-    int rssi = info.getRssi();
-    if (-65 <= rssi && rssi <= -40) {
-      strength = 1.0f;
-    } else if (-80 <= rssi && rssi < -65) {
-      strength = 0.3f;
-    } else {
-      strength = 0.0f;
-    }
-    return strength;
+    int rssi = wifiManager.getConnectionInfo().getRssi();
+    int level = WifiManager.calculateSignalLevel(rssi, 10);
+    int percentage = (int) ((level / 10.0) * 100);
+    return percentage;
   }
 }

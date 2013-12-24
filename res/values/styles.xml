@@ -32,4 +32,30 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <!-- 和谐页面班级样式 -->
+    <style name="harmony_grade">
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">55dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:focusable">false</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/harmony_selector_grade_term</item>
+        <item name="android:background">@drawable/harm_selector_grade</item>
+        <item name="android:button">@null</item>
+    </style>
+    
+    <!-- 和谐页面类别样式 -->
+    <style name="harmony_class">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:focusable">false</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/harmony_selector_class</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/harm_selector_class</item>
+    </style>
+    
 </resources>

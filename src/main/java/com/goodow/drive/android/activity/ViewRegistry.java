@@ -73,9 +73,8 @@ public class ViewRegistry {
     bus.registerHandler(PREFIX + "harmony", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "打开和谐页", Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(ctx, HarmonyActivity.class);
+        ctx.startActivity(intent);
       }
     });
     // 打开设置
@@ -135,7 +134,6 @@ public class ViewRegistry {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, StatusBarActivity.class);
-        intent.putExtra("msg", message.body());
         ctx.startActivity(intent);
       }
     });
