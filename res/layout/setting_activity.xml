@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/setting_bg"
+    android:orientation="vertical"
+    android:weightSum="3" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            
+            <!-- 后退键 -->
+            <ImageView
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="40dp"
+            android:id="@+id/iv_common_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/common_selector_back" />
+
+            <!-- 状态栏 -->
+            <include layout="@layout/include_status" />
+        </RelativeLayout>
+                
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+        
+        <!-- 一堆按钮 -->
+        <Button
+            android:id="@+id/bt_setting_wifi"
+            android:text="@string/setting_wifi"
+            style="@style/setting_bt" />
+
+        <Button
+            android:id="@+id/bt_setting_resolution"
+            android:text="@string/setting_resolution"
+            style="@style/setting_bt" />
+
+        <Button
+            android:id="@+id/bt_setting_screen_offset"
+            android:text="@string/setting_screen_offset"
+            style="@style/setting_bt" />
+
+        <Button
+            android:id="@+id/bt_setting_about"
+            android:text="@string/setting_about"
+            style="@style/setting_bt" />
+
+        <Button
+            android:id="@+id/bt_setting_reboot"
+            android:text="@string/setting_reboot"
+            style="@style/setting_bt" />
+    </LinearLayout>
+
+</LinearLayout>

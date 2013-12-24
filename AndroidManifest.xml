@@ -114,6 +114,15 @@
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
+
+        <!-- setting -->
+        <activity
+            android:name="com.goodow.drive.android.activity.SettingActivity"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:screenOrientation="landscape"
+            >
+        </activity>
     </application>
 
 </manifest>

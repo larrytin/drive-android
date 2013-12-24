@@ -26,5 +26,11 @@
     <!-- flash -->
     <string name="prompt_flash_Plugins">Please Install the Flash Plugin</string>
     <string name="name_flashplayer">Flash Player</string>
+    <string name="setting_wifi">wifi设置</string>
+    <string name="setting_3G">3G设置</string>
+    <string name="setting_resolution">分辨率输出</string>
+    <string name="setting_screen_offset">屏幕偏移</string>
+    <string name="setting_about">关于我们</string>
+    <string name="setting_reboot">重启</string>
 
 </resources>
