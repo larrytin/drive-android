@@ -4,5 +4,26 @@
          Customize dimensions originally defined in res/values/dimens.xml (such as
          screen margins) for sw600dp devices (e.g. 7" tablets) here.
     -->
-
+    
+    <!-- ***************7寸平板,7寸屏galaxy_tab3,7寸屏nexus_7测试**************** -->
+    
+    <!-- ****************公用返回键**************** -->
+    <!-- 返回键宽度和高度 -->
+    <dimen name="common_back_width">54dp</dimen>
+    <dimen name="common_back_height">54dp</dimen>
+    <!-- 返回键对于左上角的margin -->
+    <dimen name="common_back_margin">27dp</dimen>
+    
+    <!-- ****************公用状态栏**************** -->
+    <!-- 状态栏距离顶部和左侧距离 -->
+    <dimen name="status_margin_top">27dp</dimen>
+    <dimen name="status_margin_right">27dp</dimen>
+    <dimen name="status_text_size">18sp</dimen>
+    
+    <!-- ****************setting界面**************** -->
+    <!-- 按钮的高度,字体大小,按钮间间距 -->
+    <dimen name="setting_item_bt_height">51dp</dimen>
+    <dimen name="setting_item_bt_text_size">21sp</dimen>
+    <dimen name="setting_item_bt_spacing">15dp</dimen>
+        
 </resources>

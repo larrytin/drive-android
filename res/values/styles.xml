@@ -23,12 +23,12 @@
     
     <!-- setting页面按钮style -->
     <style name="setting_bt">
-        <item name="android:layout_width">350dp</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginTop">10dp</item>
-        <item name="android:background">@drawable/setting_tiem_bg</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/setting_item_bt_height</item>
+        <item name="android:layout_marginTop">@dimen/setting_item_bt_spacing</item>
+        <item name="android:background">@drawable/setting_item_bg</item>
         <item name="android:textColor">#ffffff</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">@dimen/setting_item_bt_text_size</item>
         <item name="android:textStyle">bold</item>
     </style>
 

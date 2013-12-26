@@ -23,9 +23,30 @@
     <dimen name="index_rl_pre_smart_ebk_layout_marginRight">360dp</dimen>
     
     
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for mobile phone devices (e.g. 5" moblie phone) here.
+    -->
+
+    <!-- ****************手机用,4寸屏小米1,5寸屏galaxy_s4测试 *******************-->
     
+    <!-- ****************公用返回键**************** -->
+    <!-- 返回键宽度和高度 -->
+    <dimen name="common_back_width">36dp</dimen>
+    <dimen name="common_back_height">30dp</dimen>
+    <!-- 返回键对于左上角的margin -->
+    <dimen name="common_back_margin">18dp</dimen>
     
+    <!-- ****************公用状态栏**************** -->
+    <!-- 状态栏距离顶部和左侧距离 -->
+    <dimen name="status_margin_top">18dp</dimen>
+    <dimen name="status_margin_right">18dp</dimen>
+    <dimen name="status_text_size">12sp</dimen>
     
-    
+    <!-- ****************setting界面**************** -->
+    <!-- 按钮的高度,字体大小,按钮间间距 -->
+    <dimen name="setting_item_bt_height">34dp</dimen>
+    <dimen name="setting_item_bt_text_size">14sp</dimen>
+    <dimen name="setting_item_bt_spacing">10dp</dimen>
 
 </resources>
