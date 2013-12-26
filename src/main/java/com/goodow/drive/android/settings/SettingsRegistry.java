@@ -16,6 +16,7 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+import android.widget.Toast;
 
 public class SettingsRegistry {
   private final static String TAG = SettingsRegistry.class.getSimpleName();
@@ -106,6 +107,13 @@ public class SettingsRegistry {
         softwareMsg.set("Version", DeviceInformationTools.getOsVersion());
         softwareMsg.set("SDK", DeviceInformationTools.getSDK());
         message.reply(msg);
+      }
+    });
+    // 重启
+    bus.registerHandler(PREFIX + "reboot", new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Toast.makeText(mContext, "重启", Toast.LENGTH_LONG).show();
       }
     });
   }

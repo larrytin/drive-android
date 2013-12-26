@@ -1,7 +1,6 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.drive.android.BusProvider;
-import com.goodow.drive.android.player.PlayerRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -27,7 +26,7 @@ public class BaseActivity extends Activity {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject msg = message.body();
-      if (msg.has("back")) {
+      if (msg.has("return")) {
         finish();
       }
     }
