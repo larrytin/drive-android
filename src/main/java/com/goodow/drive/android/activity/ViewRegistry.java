@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -8,10 +9,15 @@ import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
+import android.util.Log;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class ViewRegistry {
   public static final String PREFIX = BusProvider.SID + "view.";
+  protected static final String TAG = ViewRegistry.class.getSimpleName();
   private final Bus bus = BusProvider.get();
   private final Context ctx;
 
@@ -135,6 +141,39 @@ public class ViewRegistry {
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, StatusBarActivity.class);
         ctx.startActivity(intent);
+      }
+    });
+    // 标注
+    bus.registerHandler(PREFIX + "scrawl", new MessageHandler<JsonObject>() {
+      private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
+          .getSystemService(Context.WINDOW_SERVICE);
+      private LayoutParams mLayoutParams;
+      private DrawView mDrawView;
+
+      @Override
+      public void handle(Message<JsonObject> message) {
+        if (mDrawView == null) {
+          mDrawView =
+              new DrawView(ctx, DeviceInformationTools.getScreenWidth(ctx), DeviceInformationTools
+                  .getScreenHeight(ctx));
+          mLayoutParams = new WindowManager.LayoutParams();
+          mLayoutParams.format = PixelFormat.RGBA_8888;
+          mLayoutParams.flags =
+              LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+          mLayoutParams.type = LayoutParams.TYPE_PHONE;
+          Log.d(TAG, "init mDrawView");
+        }
+        JsonObject draw = message.body();
+        if (draw.has("annotation")) {
+          if (draw.getBoolean("annotation")) {
+            mWindowManager.addView(mDrawView, mLayoutParams);
+          } else {
+            mWindowManager.removeView(mDrawView);
+          }
+        } else if (draw.has("clear")) {
+          mDrawView.clear();
+          mDrawView = null;
+        }
       }
     });
 
