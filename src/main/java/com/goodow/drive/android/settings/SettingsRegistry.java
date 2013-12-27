@@ -9,6 +9,8 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,6 +18,9 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class SettingsRegistry {
@@ -127,6 +132,7 @@ public class SettingsRegistry {
         JsonObject hardwareMsg = Json.createObject();
         JsonObject softwareMsg = Json.createObject();
         // Hardware
+
         msg.set("hardware", hardwareMsg);
         hardwareMsg.set("MAC", DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx));
         hardwareMsg.set("IMEI", DeviceInformationTools.getIMEI(ctx));
@@ -149,5 +155,46 @@ public class SettingsRegistry {
         Toast.makeText(ctx, "重启", Toast.LENGTH_LONG).show();
       }
     });
+    bus.registerHandler(PREFIX + "brightness", new MessageHandler<JsonObject>() {
+      private LayoutParams mLayoutParams;
+      private View mView;
+      private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
+          .getSystemService(Context.WINDOW_SERVICE);
+
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Log.e(TAG, "brightness");
+        JsonObject msg = message.body();
+        if (msg.has("strength")) {
+          if (mView == null) {
+            Log.d(TAG, "addview");
+            mView = new View(ctx);
+            mView.setBackgroundColor(Color.BLACK);
+            mLayoutParams = new LayoutParams();
+            // 位图格式,系统选择一个at least 1 alpha bit
+            mLayoutParams.format = PixelFormat.TRANSPARENT;
+            // 系统顶层窗口,显示在其他一切内容之上
+            mLayoutParams.type = LayoutParams.TYPE_SYSTEM_OVERLAY;
+            // 窗口占满整个屏幕，忽略周围的装饰边框
+            mLayoutParams.flags |= LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+            mWindowManager.addView(mView, mLayoutParams);
+          }
+          float strength = (float) msg.getNumber("strength");
+          // 改变窗体透明度,0完全透明,1完全不透明
+          mLayoutParams.alpha = 1.0f - strength;
+          // strength=0,既alpha=1全黑,strength=1,既alpha=0还原
+          Log.d(TAG, mLayoutParams.alpha + "");
+          if (mLayoutParams.alpha != 0) {
+            Log.d(TAG, "setlayout");
+            mWindowManager.updateViewLayout(mView, mLayoutParams);
+          } else {
+            Log.d(PREFIX, "removeview");
+            mWindowManager.removeView(mView);
+            mView = null;
+          }
+        }
+      }
+    });
+
   }
 }
