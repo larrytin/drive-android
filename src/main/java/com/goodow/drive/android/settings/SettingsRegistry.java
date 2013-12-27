@@ -29,24 +29,58 @@ public class SettingsRegistry {
   }
 
   public void subscribe() {
-    bus.registerHandler(PREFIX + "audio", new MessageHandler<JsonObject>() {
+    bus.registerHandler(BusProvider.SID + "audio", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        JsonObject msg = message.body();
+        JsonObject body = message.body();
+        String action = body.getString("action");
         AudioManager mAudioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
-        if (msg.has("mute")) {
-          mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, AudioManager.FLAG_SHOW_UI);
-        } else if (msg.has("volume")) {
-          double volume = msg.getNumber("volume");
-          mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
-              .getStreamMaxVolume(AudioManager.STREAM_MUSIC) * volume), AudioManager.FLAG_SHOW_UI);
-        } else if (msg.has("range")) {
-          double range = msg.getNumber("range");
-          mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
-              .getStreamVolume(AudioManager.STREAM_MUSIC) + mAudioManager
-              .getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-              * range), AudioManager.FLAG_SHOW_UI);
-          Log.i(TAG, mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + "");
+        if ("get".equalsIgnoreCase(action)) {
+          JsonObject msg = Json.createObject();
+          boolean mute =
+              mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) > 0 ? false : true;
+          double volume =
+              (double) mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                  / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+          if (mute) {
+            mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+            volume =
+                (double) mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+                    / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+          }
+          msg.set("mute", mute).set("volume", volume);
+          message.reply(msg);
+          return;
+        }
+        if ("post".equalsIgnoreCase(action)) {
+          // 静音
+          if (body.has("mute")) {
+            mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, body.getBoolean("mute"));
+            // if (body.getBoolean("mute")) {
+            // mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
+            // } else {
+            // mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+            // }
+            // 设置音量
+          } else if (body.has("volume")) {
+            mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+            double volume = body.getNumber("volume");
+            mAudioManager
+                .setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
+                    .getStreamMaxVolume(AudioManager.STREAM_MUSIC) * volume),
+                    AudioManager.FLAG_SHOW_UI);
+            // 设置增幅
+          } else if (body.has("range")) {
+            mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, false);
+            double range = body.getNumber("range");
+            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, (int) (mAudioManager
+                .getStreamVolume(AudioManager.STREAM_MUSIC) + mAudioManager
+                .getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                * range), AudioManager.FLAG_SHOW_UI);
+            Log.d(TAG, mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + "");
+          }
+          return;
         }
       }
     });
