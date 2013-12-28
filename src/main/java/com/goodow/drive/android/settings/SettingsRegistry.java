@@ -155,7 +155,7 @@ public class SettingsRegistry {
         Toast.makeText(ctx, "重启", Toast.LENGTH_LONG).show();
       }
     });
-    bus.registerHandler(PREFIX + "brightness", new MessageHandler<JsonObject>() {
+    bus.registerHandler(PREFIX + "brightness.view", new MessageHandler<JsonObject>() {
       private LayoutParams mLayoutParams;
       private View mView;
       private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
@@ -165,7 +165,7 @@ public class SettingsRegistry {
       public void handle(Message<JsonObject> message) {
         Log.d(TAG, "brightness");
         JsonObject msg = message.body();
-        if (msg.has("strength")) {
+        if (msg.has("brightness")) {
           if (mView == null) {
             Log.d(TAG, "addview");
             mView = new View(ctx);
@@ -179,7 +179,7 @@ public class SettingsRegistry {
             mLayoutParams.flags |= LayoutParams.FLAG_LAYOUT_IN_SCREEN;
             mWindowManager.addView(mView, mLayoutParams);
           }
-          float strength = (float) msg.getNumber("strength");
+          float strength = (float) msg.getNumber("brightness");
           // 改变窗体透明度,0完全透明,1完全不透明
           mLayoutParams.alpha = 1.0f - strength;
           // strength=0,既alpha=1全黑,strength=1,既alpha=0还原
