@@ -2,6 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -291,7 +292,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
         bus.send(Bus.LOCAL + BaseActivity.CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_harmony_coll:
-        bus.send(Bus.LOCAL + ViewRegistry.ADDR_TOPIC, Json.createObject().set("action", "post")
+        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post")
             .set("query", Json.createObject().set("type", "收藏")), null);
       case R.id.iv_act_harmony_loc:
         bus.send(Bus.LOCAL + BaseActivity.CONTROL, Json.createObject().set("brightness", 0), null);

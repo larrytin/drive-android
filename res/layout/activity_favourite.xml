@@ -1,0 +1,66 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/favour_bg" >
+    
+    <!-- back -->
+    <ImageView
+        android:id="@+id/iv_act_favour_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:focusable="true"
+        android:clickable="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="60dp"
+        android:src="@drawable/common_selector_back" />
+
+    <!-- 内容 -->
+    <RelativeLayout
+        android:layout_width="1050dp"
+        android:layout_height="550dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
+        android:paddingTop="50dp" >
+
+        <!-- 上一页 -->
+        <ImageView
+            android:id="@+id/iv_act_favour_result_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:src="@drawable/common_result_pre" />
+
+        <!-- 内容 -->
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_act_favour_result"
+            android:layout_width="850dp"
+            android:layout_height="400dp"
+            android:layout_centerHorizontal="true" />
+
+        <!-- 下一页 -->
+        <ImageView
+            android:id="@+id/iv_act_favour_result_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:paddingRight="10dp"
+            android:src="@drawable/common_result_next" />
+
+        <!-- 页码栏 -->
+        <LinearLayout
+            android:id="@+id/ll_act_favour_result_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            android:layout_below="@+id/vp_act_favour_result"
+            android:layout_marginTop="20dp" >
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

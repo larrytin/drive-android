@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
       new ViewRegistry(this).subscribe();
       new PlayerRegistry(this).subscribe();
       new SettingsRegistry(this).subscribe();
-      new DataRegistry().subscribe();
+      new DataRegistry(this).subscribe();
     }
   }
 }

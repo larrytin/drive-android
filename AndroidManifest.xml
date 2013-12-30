@@ -70,6 +70,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
+        <!-- 收藏 -->
+        <activity 
+            android:name="com.goodow.drive.android.activity.FavouriteActivity" 
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+        </activity>
 
         <!-- PDF播放器 -->
         <activity 

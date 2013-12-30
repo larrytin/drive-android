@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.json.Json;
@@ -24,16 +25,16 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
   public void onClick(View view) {
     switch (view.getId()) {
       case R.id.bt_setting_wifi:// wifi设置
-        bus.send(Bus.LOCAL + ViewRegistry.ADDR_PREFIX + "wifi", null, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "wifi", null, null);
         break;
       case R.id.bt_setting_resolution:// 分辨率输出
-        bus.send(Bus.LOCAL + ViewRegistry.ADDR_PREFIX + "resolution", null, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "resolution", null, null);
         break;
       case R.id.bt_setting_screen_offset:// 屏幕偏移
-        bus.send(Bus.LOCAL + ViewRegistry.ADDR_PREFIX + "screenOffset", null, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "screenOffset", null, null);
         break;
       case R.id.bt_setting_about:// 关于我们
-        bus.send(Bus.LOCAL + ViewRegistry.ADDR_PREFIX + "aboutUs", null, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "aboutUs", null, null);
         break;
       case R.id.bt_setting_reboot:// 重启
         bus.send(Bus.LOCAL + SettingsRegistry.PREFIX + "reboot", null, null);
