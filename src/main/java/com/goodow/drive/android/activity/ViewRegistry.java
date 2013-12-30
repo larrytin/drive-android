@@ -16,7 +16,8 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class ViewRegistry {
-  public static final String PREFIX = BusProvider.SID + "view.";
+  public static final String ADDR_PREFIX = BusProvider.SID + "view.";
+  public static final String ADDR_TOPIC = BusProvider.SID + "topic";
   protected static final String TAG = ViewRegistry.class.getSimpleName();
   private final Bus bus = BusProvider.get();
   private final Context ctx;
@@ -26,7 +27,7 @@ public class ViewRegistry {
   }
 
   public void subscribe() {
-    bus.registerHandler(PREFIX + "home", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_PREFIX + "home", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, HomeActivity.class);
@@ -34,7 +35,7 @@ public class ViewRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerHandler(PREFIX + "wifi", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_PREFIX + "wifi", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         // Intent intent = new Intent(ctx, HomeActivity.class);
@@ -42,7 +43,7 @@ public class ViewRegistry {
         Toast.makeText(ctx, "设置wifi", Toast.LENGTH_LONG).show();
       }
     });
-    bus.registerHandler(PREFIX + "resolution", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_PREFIX + "resolution", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         // Intent intent = new Intent(ctx, HomeActivity.class);
@@ -50,7 +51,7 @@ public class ViewRegistry {
         Toast.makeText(ctx, "设置分辨率输出", Toast.LENGTH_LONG).show();
       }
     });
-    bus.registerHandler(PREFIX + "screenOffset", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_PREFIX + "screenOffset", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         // Intent intent = new Intent(ctx, HomeActivity.class);
@@ -58,7 +59,7 @@ public class ViewRegistry {
         Toast.makeText(ctx, "设置屏幕偏移", Toast.LENGTH_LONG).show();
       }
     });
-    bus.registerHandler(PREFIX + "aboutUs", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_PREFIX + "aboutUs", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         // Intent intent = new Intent(ctx, HomeActivity.class);
@@ -66,77 +67,53 @@ public class ViewRegistry {
         Toast.makeText(ctx, "关于我们", Toast.LENGTH_LONG).show();
       }
     });
-    // 打开收藏夹
-    bus.registerHandler(PREFIX + "favorite", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "打开收藏夹", Toast.LENGTH_LONG).show();
-      }
-    });
-    // 打开和谐页
-    bus.registerHandler(PREFIX + "harmony", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(ctx, HarmonyActivity.class);
-        ctx.startActivity(intent);
-      }
-    });
     // 打开设置
-    bus.registerHandler(PREFIX + "settings", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_PREFIX + "settings", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, SettingActivity.class);
         ctx.startActivity(intent);
       }
     });
-    // 打开托班
-    bus.registerHandler(PREFIX + "toddler", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_TOPIC, new MessageHandler<JsonObject>() {
+      String type;
+
       @Override
       public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "打开托班", Toast.LENGTH_LONG).show();
+        JsonObject body = message.body();
+        String action = body.getString("action");
+        if (!"post".equalsIgnoreCase(action)) {
+          return;
+        }
+        JsonObject query = body.getObject("query");
+        if (query == null || !query.has("type") || query.getString("type").equals(type)) {
+          return;
+        }
+        type = query.getString("type");
+        Intent intent = null;
+        if ("和谐".equals(type)) {
+          intent = new Intent(ctx, HarmonyActivity.class);
+        } else if ("收藏".equals(type)) {
+          Toast.makeText(ctx, "打开收藏夹", Toast.LENGTH_LONG).show();
+        } else if ("托班".equals(type)) {
+          Toast.makeText(ctx, "打开托班", Toast.LENGTH_LONG).show();
+        } else if ("示范课".equals(type)) {
+          Toast.makeText(ctx, "打开教学示范课", Toast.LENGTH_LONG).show();
+        } else if ("入学准备".equals(type)) {
+          Toast.makeText(ctx, "打开入学准备", Toast.LENGTH_LONG).show();
+        } else if ("智能开发".equals(type)) {
+          Toast.makeText(ctx, "打开智能开发", Toast.LENGTH_LONG).show();
+        } else if ("电子书".equals(type)) {
+          Toast.makeText(ctx, "打开图画书", Toast.LENGTH_LONG).show();
+        } else {
+          Toast.makeText(ctx, "不支持" + type, Toast.LENGTH_LONG).show();
+          return;
+        }
+        intent.putExtra("msg", body);
+        ctx.startActivity(intent);
       }
     });
-    // 打开教学示范课
-    bus.registerHandler(PREFIX + "case", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "打开教学示范课", Toast.LENGTH_LONG).show();
-      }
-    });
-    // 打开入学准备
-    bus.registerHandler(PREFIX + "readiness", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "打开入学准备", Toast.LENGTH_LONG).show();
-      }
-    });
-    // 打开智能开发
-    bus.registerHandler(PREFIX + "intelligence", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "打开智能开发", Toast.LENGTH_LONG).show();
-      }
-    });
-    // 打开图画书
-    bus.registerHandler(PREFIX + "ebook", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "打开图画书", Toast.LENGTH_LONG).show();
-      }
-    });
-    bus.registerHandler(PREFIX + "status", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_PREFIX + "status", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, StatusBarActivity.class);
@@ -144,7 +121,7 @@ public class ViewRegistry {
       }
     });
     // 标注
-    bus.registerHandler(PREFIX + "scrawl", new MessageHandler<JsonObject>() {
+    bus.registerHandler(ADDR_PREFIX + "scrawl", new MessageHandler<JsonObject>() {
       private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
           .getSystemService(Context.WINDOW_SERVICE);
       private LayoutParams mLayoutParams;

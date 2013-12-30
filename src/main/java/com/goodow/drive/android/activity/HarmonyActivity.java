@@ -52,7 +52,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
       return null;
     }
 
-    private String value;
+    private final String value;
 
     Grade(String value) {
       this.value = value;
@@ -77,7 +77,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
       return null;
     }
 
-    private String value;
+    private final String value;
 
     MyClass(String value) {
       this.value = value;
@@ -144,7 +144,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
       return null;
     }
 
-    private String value;
+    private final String value;
 
     Term(String value) {
       this.value = value;
@@ -195,8 +195,8 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private LinearLayout ll_act_harmony_result_bar = null;
 
   // 数据集
-  private ArrayList<String> names = new ArrayList<String>();
-  private ArrayList<View> nameViews = new ArrayList<View>();
+  private final ArrayList<String> names = new ArrayList<String>();
+  private final ArrayList<View> nameViews = new ArrayList<View>();
 
   private final static String SHAREDNAME = "harmonyHistory";// 配置文件的名称
   public final static String SHAREDNAME_GRADE = "grade";// 年级的KEY
@@ -291,8 +291,8 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
         bus.send(Bus.LOCAL + BaseActivity.CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_harmony_coll:
-        bus.send(Bus.LOCAL + ViewRegistry.PREFIX + "favorite", null, null);
-        Toast.makeText(this, "打开收藏夹", Toast.LENGTH_LONG).show();
+        bus.send(Bus.LOCAL + ViewRegistry.ADDR_TOPIC, Json.createObject().set("action", "post")
+            .set("query", Json.createObject().set("type", "收藏")), null);
       case R.id.iv_act_harmony_loc:
         bus.send(Bus.LOCAL + BaseActivity.CONTROL, Json.createObject().set("brightness", 0), null);
         Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
