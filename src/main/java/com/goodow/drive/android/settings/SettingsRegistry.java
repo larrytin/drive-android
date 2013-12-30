@@ -163,7 +163,7 @@ public class SettingsRegistry {
 
       @Override
       public void handle(Message<JsonObject> message) {
-        Log.e(TAG, "brightness");
+        Log.d(TAG, "brightness");
         JsonObject msg = message.body();
         if (msg.has("strength")) {
           if (mView == null) {

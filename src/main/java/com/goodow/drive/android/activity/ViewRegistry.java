@@ -169,10 +169,10 @@ public class ViewRegistry {
             mWindowManager.addView(mDrawView, mLayoutParams);
           } else {
             mWindowManager.removeView(mDrawView);
+            mDrawView = null;
           }
         } else if (draw.has("clear")) {
           mDrawView.clear();
-          mDrawView = null;
         }
       }
     });
