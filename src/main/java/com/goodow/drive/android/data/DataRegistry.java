@@ -36,7 +36,18 @@ public class DataRegistry {
         String type = query.getString(Constant.TYPE);// 解析请求的模块类型
         if ("和谐".equals(type)) {
           // 和谐
-
+          // String grade = query.getString(Constant.GRADE);
+          // String term = query.getString(Constant.TERM);
+          // String topic = query.getString(Constant.TOPIC);
+          JsonObject msg = Json.createObject();
+          JsonArray activities = Json.createArray();
+          for (int i = 0; i < 30; i++) {
+            JsonObject activity = Json.createObject();
+            activity.set("title", "找朋友=" + i);
+            activities.insert(i, activity);
+          }
+          msg.set("activities", activities);
+          message.reply(msg);
         } else if ("托班".equals(type)) {
           // 托班
 

@@ -1,7 +1,6 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -35,55 +34,6 @@ import android.widget.Toast;
 
 public class HarmonyActivity extends BaseActivity implements OnCheckedChangeListener,
     OnFocusChangeListener, OnPageChangeListener, OnClickListener {
-  /**
-   * 定义年纪
-   * 
-   * @author dpw
-   * 
-   */
-  private enum Grade {
-    LITTLE("小班"), MIDDLE("中班"), BIG("大班"), PREPARE("学前");
-    public static Grade checkContain(String value) {
-      Grade[] values = Grade.values();
-      for (Grade v : values) {
-        if (v.value.equals(value)) {
-          return v;
-        }
-      }
-      return null;
-    }
-
-    private final String value;
-
-    Grade(String value) {
-      this.value = value;
-    }
-  }
-  /**
-   * 定义分类
-   * 
-   * @author dpw
-   * 
-   */
-  private enum MyClass {
-    HEALTH("健康"), LANGUAGE("语言"), WORLD("社会"), SCIENCE("科学"), MATH("数学"), MUSIC("艺术（音乐）"), ART(
-        "艺术（美术）");
-    public static MyClass checkContain(String value) {
-      MyClass[] values = MyClass.values();
-      for (MyClass v : values) {
-        if (v.value.equals(value)) {
-          return v;
-        }
-      }
-      return null;
-    }
-
-    private final String value;
-
-    MyClass(String value) {
-      this.value = value;
-    }
-  }
 
   /**
    * 翻页是配器
@@ -127,35 +77,11 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
       return arg0 == arg1;
     }
   }
-  /**
-   * 定义学期
-   * 
-   * @author dpw
-   * 
-   */
-  private enum Term {
-    SEMESTER1("上"), SEMESTER2("下");
-    public static Term checkContain(String value) {
-      Term[] values = Term.values();
-      for (Term v : values) {
-        if (v.value.equals(value)) {
-          return v;
-        }
-      }
-      return null;
-    }
-
-    private final String value;
-
-    Term(String value) {
-      this.value = value;
-    }
-  }
 
   // 当前状态
-  private String currentGrade = Grade.LITTLE.value;
-  private String currentTerm = Term.SEMESTER1.value;
-  private String currentMyClass = MyClass.HEALTH.value;
+  private String currentGrade = Constant.GRADE_LITTLE;
+  private String currentTerm = Constant.TERM_SEMESTER0;
+  private String currenTopic = Constant.DOMIAN_HEALTH;
 
   // 后退收藏锁屏
   private ImageView iv_act_harmony_back = null;
@@ -196,63 +122,82 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private LinearLayout ll_act_harmony_result_bar = null;
 
   // 数据集
-  private final ArrayList<String> names = new ArrayList<String>();
+  private JsonArray activities = null;
   private final ArrayList<View> nameViews = new ArrayList<View>();
 
   private final static String SHAREDNAME = "harmonyHistory";// 配置文件的名称
-  public final static String SHAREDNAME_GRADE = "grade";// 年级的KEY
-  public final static String SHAREDNAME_TERM = "term";// 学期的KEY
-  public final static String SHAREDNAME_CLASS = "domain";// 分类的KEY
   private SharedPreferences sharedPreferences = null;
 
-  private final Bus bus = BusProvider.get();
-  public static final String ADDR = BusProvider.SID + "category";
-  // 测试命令
-  // bus.publish("ding.drive.category",{"action":"post","domain":{"grade":"小班","term":"下","domain":"健康"},"subjects":[{"name":"找朋友"},{"name":"小鸭子"},{"name":"小鸭子0"},{"name":"小鸭子2"}]});
+  private final MessageHandler<JsonObject> eventHandlerControl = new MessageHandler<JsonObject>() {
+    @Override
+    public void handle(Message<JsonObject> message) {
+      JsonObject body = message.body();
+      if (body.has("previous") && body.getBoolean("previous")) {
+        vp_act_harmony_result.arrowScroll(View.FOCUS_LEFT);
+      } else if (body.has("next") && body.getBoolean("next")) {
+        vp_act_harmony_result.arrowScroll(View.FOCUS_RIGHT);
+      }
+    }
+  };
+
   private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject body = message.body();
       String action = body.getString("action");
+      // 仅仅处理action为null或post动作
       if (action != null && !"post".equalsIgnoreCase(action)) {
         return;
       }
-
-      // 解析查询条件，如果是主动发起查询则domain为null
-      JsonObject domain = body.getObject("domain");
-      if (domain != null) {
-        String tempGrade = domain.getString(SHAREDNAME_GRADE);
-        String tempTerm = domain.getString(SHAREDNAME_TERM);
-        String tempClass = domain.getString(SHAREDNAME_CLASS);
-        if (tempGrade != null && Grade.checkContain(tempGrade) != null) {
-          currentGrade = Grade.checkContain(tempGrade).value;
-          saveHistory(SHAREDNAME_GRADE, currentGrade);
-        }
-        if (tempTerm != null && Term.checkContain(tempTerm) != null) {
-          currentTerm = Term.checkContain(tempTerm).value;
-          saveHistory(SHAREDNAME_TERM, currentTerm);
-        }
-        if (tempClass != null && MyClass.checkContain(tempClass) != null) {
-          currentMyClass = MyClass.checkContain(tempClass).value;
-          saveHistory(SHAREDNAME_CLASS, currentMyClass);
-        }
+      JsonObject query = body.getObject("query");
+      if (query != null && query.has("type") && !"和谐".equals(query.getString("type"))) {
+        return;
       }
-
-      JsonArray asArray = body.getArray("subjects");
-      names.clear();
-      if (asArray != null) {
-        int length = asArray.length();
-        for (int i = 0; i < length; i++) {
-          names.add(asArray.getObject(i).getString("name"));
-        }
+      isLocal = action == null;
+      readQuery(query);
+      activities = body.getArray("activities");
+      if (activities != null) {
         bindDataToView();
       }
       bindHistoryDataToView();
     }
   };
 
+  boolean isLocal = true;
+
+  // 判定是否时有效的班级数值
+  public boolean isRightfulGrade(String grade) {
+    if (Constant.GRADE_LITTLE.equals(grade) || Constant.GRADE_MID.equals(grade)
+        || Constant.GRADE_BIG.equals(grade) || Constant.GRADE_PRE.equals(grade)) {
+      return true;
+    }
+    return false;
+  }
+
+  // 判定是否时有效的年级数值
+  public boolean isRightfulTerm(String term) {
+    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
+      return true;
+    }
+    return false;
+  }
+
+  // 判定是否时有效的类别数值
+  public boolean isRightfulTopic(String topic) {
+    if (Constant.DOMIAN_HEALTH.equals(topic) || Constant.DOMIAN_LANGUAGE.equals(topic)
+        || Constant.DOMIAN_WORLD.equals(topic) || Constant.DOMIAN_SCIENCE.equals(topic)
+        || Constant.DOMIAN_MATH.equals(topic) || Constant.DOMIAN_MUSIC.equals(topic)
+        || Constant.DOMIAN_ART.equals(topic)) {
+      return true;
+    }
+    return false;
+  }
+
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    if (!isLocal) {
+      return;
+    }
     if (isChecked) {
       switch (buttonView.getId()) {
       // 年级的选中事件
@@ -292,8 +237,9 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_harmony_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post")
-            .set("query", Json.createObject().set("type", "收藏")), null);
+        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
+            "query", Json.createObject().set("type", "收藏")), null);
+        break;
       case R.id.iv_act_harmony_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
@@ -345,9 +291,40 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
    */
   public void readHistoryData() {
     this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
-    this.currentGrade = this.sharedPreferences.getString(SHAREDNAME_GRADE, Grade.LITTLE.value);
-    this.currentTerm = this.sharedPreferences.getString(SHAREDNAME_TERM, Term.SEMESTER1.value);
-    this.currentMyClass = this.sharedPreferences.getString(SHAREDNAME_CLASS, MyClass.HEALTH.value);
+    this.currentGrade = this.sharedPreferences.getString(Constant.GRADE, this.currentGrade);
+    this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
+    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
+  }
+
+  /**
+   * 解析条件
+   * 
+   * @param query
+   */
+  public void readQuery(JsonObject query) {
+    if (query != null) {
+      String tempGrade = query.getString(Constant.GRADE);
+      String tempTerm = query.getString(Constant.TERM);
+      String tempClass = query.getString(Constant.TOPIC);
+      if (tempGrade != null && isRightfulGrade(tempGrade)) {
+        currentGrade = tempGrade;
+        saveHistory(Constant.GRADE, currentGrade);
+      } else if (query.has(Constant.GRADE) && !isRightfulGrade(tempGrade)) {
+        Toast.makeText(HarmonyActivity.this, "无效的年级数值", Toast.LENGTH_SHORT).show();
+      }
+      if (tempTerm != null && isRightfulTerm(tempTerm)) {
+        currentTerm = tempTerm;
+        saveHistory(Constant.TERM, currentTerm);
+      } else if (query.has(Constant.TERM) && !isRightfulGrade(tempTerm)) {
+        Toast.makeText(HarmonyActivity.this, "无效的学期数值", Toast.LENGTH_SHORT).show();
+      }
+      if (tempClass != null && isRightfulTopic(tempClass)) {
+        currenTopic = tempClass;
+        saveHistory(Constant.TOPIC, currenTopic);
+      } else if (query.has(Constant.TOPIC) && !isRightfulGrade(tempClass)) {
+        Toast.makeText(HarmonyActivity.this, "无效的类别数值", Toast.LENGTH_SHORT).show();
+      }
+    }
   }
 
   @Override
@@ -357,18 +334,30 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
     this.initView();
     this.readHistoryData();
     this.bindHistoryDataToView();
+    Bundle extras = this.getIntent().getExtras();
+    JsonObject body = (JsonObject) extras.get("msg");
+    JsonArray activities = body.getArray("activities");
+    if (activities == null) {
+      this.sendQueryMessage();
+    } else {
+      this.readQuery(body.getObject("query"));
+      this.activities = activities;
+      this.bindDataToView();
+      this.bindHistoryDataToView();
+    }
   }
 
   @Override
   protected void onPause() {
-    bus.unregisterHandler(ADDR, eventHandler);
+    bus.unregisterHandler(Constant.ADDR_TOPIC, eventHandler);
+    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
     super.onPause();
   }
 
   @Override
   protected void onResume() {
-    bus.registerHandler(ADDR, eventHandler);
-    this.sendQueryMessage();
+    bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
+    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
     super.onResume();
   }
 
@@ -376,7 +365,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
    * 把查询完成的结果绑定到结果View
    */
   private void bindDataToView() {
-    if (this.names == null) {
+    if (this.activities == null) {
       return;
     }
     this.ll_act_harmony_result_bar.removeAllViews();
@@ -384,7 +373,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
     this.nameViews.clear();
 
     int index = 0;// 下标计数器
-    int counter = names.size();
+    int counter = activities.length();
     int times =
         (counter % this.numPerPage == 0) ? (counter / numPerPage) : (counter / this.numPerPage + 1);
     // 页码数量
@@ -411,7 +400,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
           textView.setLayoutParams(params);
           textView.setGravity(Gravity.CENTER_HORIZONTAL);
           textView.setPadding(0, 10, 0, 0);
-          textView.setText(this.names.get(index));
+          textView.setText(this.activities.getObject(index).getString(Constant.TITLE));
           textView.setBackgroundResource(R.drawable.harm_result_item_bg);
           textView.setClickable(true);
           textView.setOnClickListener(new OnClickListener() {
@@ -444,36 +433,36 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
    */
   private void bindHistoryDataToView() {
     // 回显年级
-    if (Grade.LITTLE.value.equals(this.currentGrade)) {
+    if (Constant.GRADE_LITTLE.equals(this.currentGrade)) {
       this.rb_act_harmony_little.setChecked(true);
-    } else if (Grade.MIDDLE.value.equals(this.currentGrade)) {
+    } else if (Constant.GRADE_MID.equals(this.currentGrade)) {
       this.rb_act_harmony_middle.setChecked(true);
-    } else if (Grade.BIG.value.equals(this.currentGrade)) {
+    } else if (Constant.GRADE_BIG.equals(this.currentGrade)) {
       this.rb_act_harmony_big.setChecked(true);
-    } else if (Grade.PREPARE.value.equals(this.currentGrade)) {
+    } else if (Constant.GRADE_PRE.equals(this.currentGrade)) {
       this.rb_act_harmony_pre.setChecked(true);
     }
 
     // 回显学期
-    if (Term.SEMESTER1.value.equals(this.currentTerm)) {
+    if (Constant.TERM_SEMESTER0.equals(this.currentTerm)) {
       this.rb_act_harmony_top.setChecked(true);
-    } else if (Term.SEMESTER2.value.equals(this.currentTerm)) {
+    } else if (Constant.TERM_SEMESTER1.equals(this.currentTerm)) {
       this.rb_act_harmony_bottom.setChecked(true);
     }
     // 回显分类
-    if (MyClass.HEALTH.value.equals(this.currentMyClass)) {
+    if (Constant.DOMIAN_HEALTH.equals(this.currenTopic)) {
       this.rb_act_harmony_class_health.setChecked(true);
-    } else if (MyClass.LANGUAGE.value.equals(this.currentMyClass)) {
+    } else if (Constant.DOMIAN_LANGUAGE.equals(this.currenTopic)) {
       this.rb_act_harmony_class_language.setChecked(true);
-    } else if (MyClass.WORLD.value.equals(this.currentMyClass)) {
+    } else if (Constant.DOMIAN_WORLD.equals(this.currenTopic)) {
       this.rb_act_harmony_class_world.setChecked(true);
-    } else if (MyClass.SCIENCE.value.equals(this.currentMyClass)) {
+    } else if (Constant.DOMIAN_SCIENCE.equals(this.currenTopic)) {
       this.rb_act_harmony_class_scinece.setChecked(true);
-    } else if (MyClass.MATH.value.equals(this.currentMyClass)) {
+    } else if (Constant.DOMIAN_MATH.equals(this.currenTopic)) {
       this.rb_act_harmony_class_math.setChecked(true);
-    } else if (MyClass.MUSIC.value.equals(this.currentMyClass)) {
+    } else if (Constant.DOMIAN_MUSIC.equals(this.currenTopic)) {
       this.rb_act_harmony_class_music.setChecked(true);
-    } else if (MyClass.ART.value.equals(this.currentMyClass)) {
+    } else if (Constant.DOMIAN_ART.equals(this.currenTopic)) {
       this.rb_act_harmony_class_art.setChecked(true);
     }
   }
@@ -564,32 +553,23 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private void onGradeViewClick(int id) {
     switch (id) {
       case R.id.rb_act_harmony_little:
-        this.currentGrade = Grade.LITTLE.value;
+        this.currentGrade = Constant.GRADE_LITTLE;
         break;
       case R.id.rb_act_harmony_middle:
-        this.currentGrade = Grade.MIDDLE.value;
+        this.currentGrade = Constant.GRADE_MID;
         break;
       case R.id.rb_act_harmony_big:
-        this.currentGrade = Grade.BIG.value;
+        this.currentGrade = Constant.GRADE_BIG;
         break;
       case R.id.rb_act_harmony_pre:
-        this.currentGrade = Grade.PREPARE.value;
+        this.currentGrade = Constant.GRADE_PRE;
         break;
 
       default:
         break;
     }
-    this.saveHistory(SHAREDNAME_GRADE, this.currentGrade);
+    this.saveHistory(Constant.GRADE, this.currentGrade);
     this.sendQueryMessage();
-  }
-
-  /**
-   * 处理年级的点击事件
-   * 
-   * @param id
-   * @param hasFocus
-   */
-  private void onGradeViewFocus(int id, boolean hasFocus) {
   }
 
   /**
@@ -600,41 +580,31 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private void onMyClassViewClick(int id) {
     switch (id) {
       case R.id.rb_act_harmony_class_health:
-        this.currentMyClass = MyClass.HEALTH.value;
+        this.currenTopic = Constant.DOMIAN_HEALTH;
         break;
       case R.id.rb_act_harmony_class_language:
-        this.currentMyClass = MyClass.LANGUAGE.value;
+        this.currenTopic = Constant.DOMIAN_LANGUAGE;
         break;
       case R.id.rb_act_harmony_class_world:
-        this.currentMyClass = MyClass.WORLD.value;
+        this.currenTopic = Constant.DOMIAN_WORLD;
         break;
       case R.id.rb_act_harmony_class_scinece:
-        this.currentMyClass = MyClass.SCIENCE.value;
+        this.currenTopic = Constant.DOMIAN_SCIENCE;
         break;
       case R.id.rb_act_harmony_class_math:
-        this.currentMyClass = MyClass.MATH.value;
+        this.currenTopic = Constant.DOMIAN_MATH;
         break;
       case R.id.rb_act_harmony_class_music:
-        this.currentMyClass = MyClass.MUSIC.value;
+        this.currenTopic = Constant.DOMIAN_MUSIC;
         break;
       case R.id.rb_act_harmony_class_art:
-        this.currentMyClass = MyClass.ART.value;
+        this.currenTopic = Constant.DOMIAN_ART;
         break;
       default:
         break;
     }
-    this.saveHistory(SHAREDNAME_CLASS, this.currentMyClass);
+    this.saveHistory(Constant.TOPIC, this.currenTopic);
     this.sendQueryMessage();
-  }
-
-  /**
-   * 处理类别的点击事件
-   * 
-   * @param id
-   * @param hasFocus
-   */
-  private void onMyClassViewFocus(int id, boolean hasFocus) {
-
   }
 
   /**
@@ -643,11 +613,13 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
    * @param id
    */
   private void onResultPrePageClick(int id) {
+    JsonObject msg = Json.createObject();
     if (id == R.id.rl_act_harmony_result_pre) {
-      this.vp_act_harmony_result.arrowScroll(View.FOCUS_LEFT);
+      msg.set("previous", true);
     } else if (id == R.id.rl_act_harmony_result_next) {
-      this.vp_act_harmony_result.arrowScroll(View.FOCUS_RIGHT);
+      msg.set("next", true);
     }
+    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, eventHandlerControl);
   }
 
   /**
@@ -658,26 +630,16 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private void onTermViewClick(int id) {
     switch (id) {
       case R.id.rb_act_harmony_top:
-        this.currentTerm = Term.SEMESTER1.value;
+        this.currentTerm = Constant.TERM_SEMESTER0;
         break;
       case R.id.rb_act_harmony_bottom:
-        this.currentTerm = Term.SEMESTER2.value;
+        this.currentTerm = Constant.TERM_SEMESTER1;
         break;
       default:
         break;
     }
-    this.saveHistory(SHAREDNAME_TERM, this.currentTerm);
+    this.saveHistory(Constant.TERM, this.currentTerm);
     this.sendQueryMessage();
-  }
-
-  /**
-   * 处理学期的点击事件
-   * 
-   * @param id
-   * @param hasFocus
-   */
-  private void onTermViewFocus(int id, boolean hasFocus) {
-
   }
 
   /**
@@ -700,12 +662,13 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private void sendQueryMessage() {
     JsonObject msg = Json.createObject();
     msg.set("action", "get");
-    JsonObject category = Json.createObject();
-    category.set(SHAREDNAME_GRADE, this.currentGrade);
-    category.set(SHAREDNAME_TERM, this.currentTerm);
-    category.set(SHAREDNAME_CLASS, this.currentMyClass);
-    msg.set("category", category);
-    bus.send(Bus.LOCAL + ADDR, msg, eventHandler);
+    JsonObject query = Json.createObject();
+    query.set(Constant.TYPE, "和谐");
+    query.set(Constant.GRADE, this.currentGrade);
+    query.set(Constant.TERM, this.currentTerm);
+    query.set(Constant.TOPIC, this.currenTopic);
+    msg.set("query", query);
+    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, eventHandler);
   }
 
 }
