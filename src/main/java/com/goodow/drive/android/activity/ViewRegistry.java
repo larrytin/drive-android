@@ -98,14 +98,19 @@ public class ViewRegistry {
           intent = new Intent(ctx, FavouriteActivity.class);
         } else if ("托班".equals(type)) {
           Toast.makeText(ctx, "打开托班", Toast.LENGTH_LONG).show();
+          return;
         } else if ("示范课".equals(type)) {
           Toast.makeText(ctx, "打开教学示范课", Toast.LENGTH_LONG).show();
+          return;
         } else if ("入学准备".equals(type)) {
           Toast.makeText(ctx, "打开入学准备", Toast.LENGTH_LONG).show();
+          return;
         } else if ("智能开发".equals(type)) {
           Toast.makeText(ctx, "打开智能开发", Toast.LENGTH_LONG).show();
+          return;
         } else if ("电子书".equals(type)) {
           Toast.makeText(ctx, "打开图画书", Toast.LENGTH_LONG).show();
+          return;
         } else {
           Toast.makeText(ctx, "不支持" + type, Toast.LENGTH_LONG).show();
           return;
