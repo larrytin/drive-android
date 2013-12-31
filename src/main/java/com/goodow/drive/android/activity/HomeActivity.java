@@ -20,7 +20,7 @@ public class HomeActivity extends BaseActivity {
       case R.id.iv_act_main_loc:
         JsonObject brightness = Json.createObject();
         brightness.set("brightness", 0);
-        this.bus.send(Bus.LOCAL + CONTROL, brightness, null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, brightness, null);
         break;
       // 设置
       case R.id.iv_act_main_set:
@@ -30,7 +30,7 @@ public class HomeActivity extends BaseActivity {
       case R.id.iv_act_main_clo:
         JsonObject shutdown = Json.createObject();
         shutdown.set("shutdown", true);
-        this.bus.send(Bus.LOCAL + CONTROL, shutdown, null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, shutdown, null);
         break;
       // 和谐
       case R.id.iv_act_main_har:

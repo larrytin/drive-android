@@ -1,6 +1,7 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -8,108 +9,82 @@ import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 public class PlayerRegistry {
-  public static final String PREFIX = BusProvider.SID + "player.";
   private static final String TAG = PlayerRegistry.class.getSimpleName();
   private final Bus bus = BusProvider.get();
-  private final Context mContext;
+  private final Context ctx;
 
-  public PlayerRegistry(Context mContext) {
-    this.mContext = mContext;
+  public PlayerRegistry(Context ctx) {
+    this.ctx = ctx;
   }
 
   public void subscribe() {
-    bus.registerHandler(PREFIX + "pdf", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        bus.send(Bus.LOCAL + PREFIX + "pdf" + ".mu", message.body(), null);
-      }
-    });
-
-    bus.registerHandler(PREFIX + "pdf.jz", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, PdfPlayer.class);
-        intent.putExtra("msg", message.body());
-        mContext.startActivity(intent);
-      }
-    });
-
-    bus.registerHandler(PREFIX + "pdf.mu", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, PdfMuPlayer.class);
-        intent.putExtra("msg", message.body());
-        mContext.startActivity(intent);
-      }
-    });
-
-    bus.registerHandler(PREFIX + "mp4", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, VideoActivity.class);
-        intent.putExtra("msg", message.body());
-        mContext.startActivity(intent);
-      }
-    });
-    bus.registerHandler(PREFIX + "swf", new MessageHandler<JsonObject>() {
+    bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+      String path;
 
       @Override
       public void handle(Message<JsonObject> message) {
-        bus.send(Bus.LOCAL + PREFIX + "swf.webview", message.body(), null);
+        JsonObject body = message.body();
+        if (!body.has("path") || body.getString("path").equals(path)) {
+          return;
+        }
+        path = body.getString("path");
+        Intent intent = null;
+        if (path.endsWith(".pdf")) {
+          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".pdf.mu", message.body(), null);
+          return;
+        } else if (path.endsWith(".mp4")) {
+          intent = new Intent(ctx, VideoActivity.class);
+        } else if (path.endsWith(".mp3")) {
+          intent = new Intent(ctx, AudioPlayActivity.class);
+        } else if (path.endsWith(".jpg")) {
+          intent = new Intent(ctx, PicturePlayAcivity.class);
+        } else if (path.endsWith(".swf")) {
+          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".swf.webview", message.body(), null);
+          return;
+        } else {
+          Toast.makeText(ctx, "不支持" + path, Toast.LENGTH_LONG).show();
+          return;
+        }
+        intent.putExtra("msg", message.body());
+        ctx.startActivity(intent);
       }
+    });
 
-    });
-    bus.registerHandler(PREFIX + "swf.button", new MessageHandler<JsonObject>() {
+    bus.registerHandler(Constant.ADDR_PLAYER + ".pdf.jz", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, FlashPlayerActivity.class);
+        Intent intent = new Intent(ctx, PdfPlayer.class);
         intent.putExtra("msg", message.body());
-        mContext.startActivity(intent);
+        ctx.startActivity(intent);
       }
     });
-    bus.registerHandler(PREFIX + "swf.webview", new MessageHandler<JsonObject>() {
+    bus.registerHandler(Constant.ADDR_PLAYER + ".pdf.mu", new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Intent intent = new Intent(ctx, PdfMuPlayer.class);
+        intent.putExtra("msg", message.body());
+        ctx.startActivity(intent);
+      }
+    });
 
+    bus.registerHandler(Constant.ADDR_PLAYER + ".swf.button", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, WebViewFlashPlayer.class);
+        Intent intent = new Intent(ctx, FlashPlayerActivity.class);
         intent.putExtra("msg", message.body());
-        mContext.startActivity(intent);
+        ctx.startActivity(intent);
       }
-
     });
-    bus.registerHandler(PREFIX + "jpg", new MessageHandler<JsonObject>() {
+    bus.registerHandler(Constant.ADDR_PLAYER + ".swf.webview", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, PicturePlayAcivity.class);
+        Intent intent = new Intent(ctx, WebViewFlashPlayer.class);
         intent.putExtra("msg", message.body());
-        mContext.startActivity(intent);
+        ctx.startActivity(intent);
       }
     });
-    bus.registerHandler(PREFIX + "mp3", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(mContext, AudioPlayActivity.class);
-        intent.putExtra("msg", message.body());
-        mContext.startActivity(intent);
-      }
-    });
-    // bus.registerHandler(PREFIX + "control", new MessageHandler<JsonObject>() {
-    // @Override
-    // public void handle(Message<JsonObject> message) {
-    // if (message.body().has("back")) {
-    // // ActivityManager mActivityManager =
-    // // (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-    // // String activityName =
-    // // mActivityManager.getRunningTasks(1).get(0).topActivity.getClassName();
-    // // 发送广播
-    // Intent mIntent = new Intent();
-    // mIntent.setAction("com.goodow.drive.android.activity.finish");
-    // mContext.sendBroadcast(mIntent);
-    // Log.i(TAG, "control finsh");
-    // }
-    // }
-    // });
   }
 }

@@ -1,7 +1,7 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.GlobalConstant;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -34,23 +34,21 @@ public class AudioPlayActivity extends BaseActivity {
         JsonObject msg = Json.createObject();
         switch (v.getId()) {// 通过传过来的Buttonid可以判断Button的类型
           case R.id.play_Button:// 播放
-            msg.set("play", true);
+            msg.set("play", 1);
             break;
           case R.id.pause_Button:// 暂停&继续
-            msg.set("pause", true);
+            msg.set("play", 2);
             break;
           case R.id.stop_Button:// 重播
-            msg.set("replay", true);
+            msg.set("play", 3);
             break;
         }
-        bus.send(Bus.LOCAL + CONTROL, msg, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
       } catch (Exception e) {// 抛出异常
         e.printStackTrace();
       }
     }
   }
-
-  private static final String CONTROL = PlayerRegistry.PREFIX + "mp3.control";
 
   private static final String TAG = AudioPlayActivity.class.getSimpleName();
   private ButtonClickListener listener;
@@ -104,24 +102,34 @@ public class AudioPlayActivity extends BaseActivity {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject msg = message.body();
-      // if (msg.has("exit")) {
-      // AudioPlayActivity.this.finish();
-      // } else if (msg.has("play")) {
-      // play_Button();
-      // } else if (msg.has("stop")) {
-      // stop_Button();
-      // } else if (msg.has("pause")) {
-      // pause_Button();
-      // }
+      if (msg.has("path")) {
+        return;
+      }
       if (msg.has("play")) {
-        play_button();
-      } else if (msg.has("pause")) {
-        pause_button();
-      } else if (msg.has("replay")) {
-        replay_button();
-      } else if (msg.has("stop")) {
-        stop_Button();
-      } else if (msg.has("progress")) {
+        switch ((int) msg.getNumber("play")) {
+          case 0:
+            // 停止
+            stop_Button();
+            break;
+          case 1:
+            // 播放
+            play_button();
+            break;
+          case 2:
+            // 暂停
+            pause_button();
+            break;
+          case 3:
+            // 重播
+            replay_button();
+            break;
+          default:
+            Toast.makeText(AudioPlayActivity.this, "不支持的播放模式, play=" + msg.getNumber("play"),
+                Toast.LENGTH_LONG).show();
+            break;
+        }
+      }
+      if (msg.has("progress")) {
         double progress = msg.getNumber("progress");
         // progressSeekBar.setProgress((int) progress * progressSeekBar.getMax());
         Log.d(TAG, (int) progress * progressSeekBar.getMax() + "");
@@ -139,7 +147,7 @@ public class AudioPlayActivity extends BaseActivity {
     this.setContentView(R.layout.activity_audio_player);
     audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
-    audioFilePath = GlobalConstant.STORAGEDIR + jsonObject.getString("path");
+    audioFilePath = Constant.STORAGE_DIR + jsonObject.getString("path");
     File mFile = new File(audioFilePath);
     Log.d(TAG, audioFilePath);
     if (mFile.exists()) {
@@ -165,7 +173,7 @@ public class AudioPlayActivity extends BaseActivity {
             Log.d(TAG, "onProgressChanged()+user");
             JsonObject msg = Json.createObject();
             msg.set("progress", (double) progress / progressSeekBar.getMax());
-            bus.send(Bus.LOCAL + CONTROL, msg, null);
+            bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
           }
         }
 
@@ -240,7 +248,7 @@ public class AudioPlayActivity extends BaseActivity {
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
-    audioFilePath = GlobalConstant.STORAGEDIR + jsonObject.getString("path");
+    audioFilePath = Constant.STORAGE_DIR + jsonObject.getString("path");
     File mFile = new File(audioFilePath);
     Log.d(TAG, audioFilePath);
     if (mFile.exists()) {
@@ -271,7 +279,7 @@ public class AudioPlayActivity extends BaseActivity {
     }
 
     // Always unregister when an handler no longer should be on the bus.
-    bus.unregisterHandler(CONTROL, eventHandler);
+    bus.unregisterHandler(Constant.ADDR_PLAYER, eventHandler);
   }
 
   @Override
@@ -280,7 +288,7 @@ public class AudioPlayActivity extends BaseActivity {
     super.onResume();
 
     // Register handlers so that we can receive event messages.
-    bus.registerHandler(CONTROL, eventHandler);
+    bus.registerHandler(Constant.ADDR_PLAYER, eventHandler);
   }
 
   // 正在播放时候，暂停，button变为继续

@@ -1,6 +1,7 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -20,12 +21,10 @@ import android.view.WindowManager;
  * @version V1.0
  */
 public class BaseActivity extends Activity {
-  public static final String CONTROL = BusProvider.SID + "control";
-  public static final String BRIGHTNESS = SettingsRegistry.PREFIX + "brightness.light";
+  private static final String BRIGHTNESS = SettingsRegistry.PREFIX + "brightness.light";
   protected final Bus bus = BusProvider.get();
 
   private final MessageHandler<JsonObject> brightnessHandler = new MessageHandler<JsonObject>() {
-
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject msg = message.body();
@@ -60,7 +59,7 @@ public class BaseActivity extends Activity {
   protected void onPause() {
     super.onPause();
     // Always unregister when an handler no longer should be on the bus.
-    bus.unregisterHandler(CONTROL, controlHandler);
+    bus.unregisterHandler(Constant.ADDR_CONTROL, controlHandler);
     bus.unregisterHandler(BRIGHTNESS, brightnessHandler);
   }
 
@@ -68,7 +67,7 @@ public class BaseActivity extends Activity {
   protected void onResume() {
     super.onResume();
     // Register handlers so that we can receive event messages.
-    bus.registerHandler(CONTROL, controlHandler);
+    bus.registerHandler(Constant.ADDR_CONTROL, controlHandler);
     bus.registerHandler(BRIGHTNESS, brightnessHandler);
   }
 }

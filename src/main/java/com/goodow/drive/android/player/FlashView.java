@@ -2,6 +2,7 @@ package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -34,6 +35,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Toast;
 
 @SuppressLint("JavascriptInterface")
 class FlashView extends RelativeLayout implements OnTouchListener {
@@ -52,7 +54,6 @@ class FlashView extends RelativeLayout implements OnTouchListener {
 
   private final Bus bus = BusProvider.get();
   private final static String TAG = FlashView.class.getSimpleName();
-  private static final String CONTROL = PlayerRegistry.PREFIX + "swf.control";
   private String flashPath;
   private WebView flash_view;
   private ProgressBar play_progress;
@@ -88,12 +89,30 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject msg = message.body();
+      if (msg.has("path")) {
+        return;
+      }
       if (msg.has("play")) {
-        playButton();
-      } else if (msg.has("pause")) {
-        pauseButton();
-      } else if (msg.has("replay")) {
-        replay();
+        switch ((int) msg.getNumber("play")) {
+          case 0:
+            // 停止
+          case 1:
+            // 播放
+            playButton();
+            break;
+          case 2:
+            // 暂停
+            pauseButton();
+            break;
+          case 3:
+            // 重播
+            replay();
+            break;
+          default:
+            Toast.makeText(getContext(), "不支持的播放模式, play=" + msg.getNumber("play"),
+                Toast.LENGTH_LONG).show();
+            break;
+        }
       }
     }
   };
@@ -152,16 +171,9 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     play.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        JsonObject msg = Json.createObject();
-        if (!playing) {
-          msg.set("play", true);
-        } else {
-          msg.set("pause", true);
-        }
-        bus.send(Bus.LOCAL + CONTROL, msg, null);
-
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER,
+            Json.createObject().set("play", playing ? 2 : 1), null);
       }
-
     });
 
     replay = (ImageButton) findViewById(R.id.flash_button_replay);
@@ -169,11 +181,8 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     replay.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        JsonObject msg = Json.createObject();
-        msg.set("replay", true);
-        bus.send(Bus.LOCAL + CONTROL, msg, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
       }
-
     });
     flashViewBroadCastReceiver = new FlashViewBroadCastReceiver();
     // 加载声音进度条
@@ -206,9 +215,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     stop.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        JsonObject msg = Json.createObject();
-        msg.set("back", true);
-        bus.send(Bus.LOCAL + PlayerRegistry.PREFIX + "control", msg, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("play", 0), null);
       }
     });
     // 实时更新进度
@@ -228,7 +235,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     Log.d(TAG, "onPause()");
     pause();
     mContext.unregisterReceiver(flashViewBroadCastReceiver);
-    bus.unregisterHandler(CONTROL, eventHandler);
+    bus.unregisterHandler(Constant.ADDR_PLAYER, eventHandler);
   }
 
   /**
@@ -239,7 +246,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     IntentFilter mIntentFilter = new IntentFilter();
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
     mContext.registerReceiver(flashViewBroadCastReceiver, mIntentFilter);
-    bus.registerHandler(CONTROL, eventHandler);
+    bus.registerHandler(Constant.ADDR_PLAYER, eventHandler);
   }
 
   @Override

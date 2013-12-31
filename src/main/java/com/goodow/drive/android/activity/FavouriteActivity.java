@@ -202,7 +202,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
       case R.id.iv_act_favour_back:
         JsonObject msg = Json.createObject();
         msg.set("return", true);
-        bus.send(Bus.LOCAL + BaseActivity.CONTROL, msg, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
         break;
       // 翻页的点击事件
       case R.id.iv_act_favour_result_pre:

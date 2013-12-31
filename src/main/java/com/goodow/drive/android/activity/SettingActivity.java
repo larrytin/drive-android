@@ -42,7 +42,7 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
       case R.id.iv_common_back://
         JsonObject msg = Json.createObject();
         msg.set("return", true);
-        bus.send(Bus.LOCAL + BaseActivity.CONTROL, msg, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
         break;
 
     }

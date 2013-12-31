@@ -1,7 +1,7 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.GlobalConstant;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.player.VideoView.MySizeChangeLinstener;
 import com.goodow.realtime.json.JsonObject;
@@ -410,7 +410,7 @@ public class VideoActivity extends BaseActivity {
       String vidoePath = jsonObject.getString("path");
       String videoName =
           vidoePath.substring(vidoePath.lastIndexOf("/") + 1, vidoePath.lastIndexOf("."));
-      Uri uri = Uri.parse("file:/" + GlobalConstant.STORAGEDIR + vidoePath);
+      Uri uri = Uri.parse("file:/" + Constant.STORAGE_DIR + vidoePath);
       if (uri != null) {
         this.videoView.stopPlayback();// 停止视频播放
         this.videoView.setVideoURI(uri);// 设置视频文件URI

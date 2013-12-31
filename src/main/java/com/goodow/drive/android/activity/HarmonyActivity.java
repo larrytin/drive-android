@@ -289,13 +289,13 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
     switch (v.getId()) {
     // 后退 收藏 锁屏
       case R.id.iv_act_harmony_back:
-        bus.send(Bus.LOCAL + BaseActivity.CONTROL, Json.createObject().set("return", true), null);
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_harmony_coll:
         bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post")
             .set("query", Json.createObject().set("type", "收藏")), null);
       case R.id.iv_act_harmony_loc:
-        bus.send(Bus.LOCAL + BaseActivity.CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
 

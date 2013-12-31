@@ -1,7 +1,7 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.GlobalConstant;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.json.JsonObject;
 
@@ -29,7 +29,7 @@ public class PicturePlayAcivity extends BaseActivity {
     mImageView = (ImageView) this.findViewById(R.id.actvity_picture);
     mProgressBar = (ProgressBar) findViewById(R.id.activity_pictureProgressBar);
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
-    String path = GlobalConstant.STORAGEDIR + jsonObject.getString("path");
+    String path = Constant.STORAGE_DIR + jsonObject.getString("path");
     String bitmapconfig = jsonObject.getString("bitmapconfig");
     Log.i(TAG, bitmapconfig + "");
     setImage(path, bitmapconfig);
@@ -50,7 +50,7 @@ public class PicturePlayAcivity extends BaseActivity {
     super.onNewIntent(intent);
     Log.i(TAG, "onNewIntent");
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
-    String path = GlobalConstant.STORAGEDIR + jsonObject.getString("path");
+    String path = Constant.STORAGE_DIR + jsonObject.getString("path");
     String bitmapconfig = jsonObject.getString("bitmapconfig");
     Log.i(TAG, "bitmapconfig:" + bitmapconfig + ":onNewIntent");
     setImage(path, bitmapconfig);

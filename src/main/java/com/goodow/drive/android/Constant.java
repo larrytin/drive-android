@@ -2,8 +2,10 @@ package com.goodow.drive.android;
 
 public interface Constant {
 
+  String ADDR_CONTROL = BusProvider.SID + "control";
   String ADDR_PREFIX_VIEW = BusProvider.SID + "view.";
   String ADDR_TOPIC = BusProvider.SID + "topic";
+  String ADDR_PLAYER = BusProvider.SID + "player";
 
   String TYPE = "type"; // 功能模块的KEY
   String GRADE = "grade"; // 年级的KEY
@@ -12,4 +14,5 @@ public interface Constant {
   String TITLE = "title"; // 活动ITEM显示名称的KEY
   String TAGS = "tags"; // 活动TAGS的KEY
 
+  String STORAGE_DIR = "/mnt/sdcard/";
 }

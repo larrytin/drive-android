@@ -2,7 +2,7 @@ package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
-import com.goodow.drive.android.GlobalConstant;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Message;
@@ -38,55 +38,58 @@ import android.widget.Toast;
 public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCompleteListener,
     OnPageChangeListener, OnDrawListener {
   private PDFView pdfView = null;
-  private static final String CONTROL = PlayerRegistry.PREFIX + "pdf.control";
   private float currentScale = 2.4f;
   private int currentPage = 0;
 
   private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
-      currentScale = pdfView.getZoom();
       JsonObject body = message.body();
-      if (body.has("move")) {
-        /*
-         * move 相对于当前页码的偏移量移动
-         */
+      if (body.has("path")) {
+        return;
+      }
+      currentScale = pdfView.getZoom();
+      if (body.has("zoomTo")) {
         if (pdfView != null) {
-          pdfView.jumpTo(pdfView.getCurrentPage() + 1 + (int) body.getNumber("move"));
+          currentScale = (float) body.getNumber("zoomTo");
           pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
               .getScreenWidth(PdfPlayer.this) / 2, 0));
           pdfView.loadPages();
         }
-      } else if (body.has("page")) {
-        /*
-         * page 指定页码的移动
-         */
-        if (pdfView != null) {
-          pdfView.jumpTo((int) body.getNumber("page"));
-          pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
-              .getScreenWidth(PdfPlayer.this) / 2, 0));
-          pdfView.loadPages();
-        }
-      } else if (body.has("scale")) {
-        /*
-         * scale 指定缩放数值,基数是1
-         */
-        if (pdfView != null) {
-          currentScale = (float) body.getNumber("scale");
-          pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
-              .getScreenWidth(PdfPlayer.this) / 2, 0));
-          pdfView.loadPages();
-        }
-      } else if (body.has("zoom")) {
-        /*
-         * zoom 指定缩放系数,基数是当前缩放值
-         */
-        if (pdfView != null && (float) body.getNumber("zoom") * currentScale < 10
-            && (float) body.getNumber("zoom") * currentScale > 0.1) {
+      }
+      if (body.has("zoomBy")) {
+        if (pdfView != null && (float) body.getNumber("zoomBy") * currentScale < 10
+            && (float) body.getNumber("zoomBy") * currentScale > 0.1) {
           currentScale = (float) body.getNumber("zoom") * currentScale;
           pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
               .getScreenWidth(PdfPlayer.this) / 2, 0));
           pdfView.loadPages();
+        }
+      }
+
+      if (body.has("pdf")) {
+        JsonObject pdfControl = body.getObject("pdf");
+        if (pdfControl.has("page")) {
+          /*
+           * page 指定页码的移动
+           */
+          if (pdfView != null) {
+            pdfView.jumpTo((int) pdfControl.getNumber("page"));
+            pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
+                .getScreenWidth(PdfPlayer.this) / 2, 0));
+            pdfView.loadPages();
+          }
+        }
+        if (pdfControl.has("move")) {
+          /*
+           * move 相对于当前页码的偏移量移动
+           */
+          if (pdfView != null) {
+            pdfView.jumpTo(pdfView.getCurrentPage() + 1 + (int) pdfControl.getNumber("move"));
+            pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
+                .getScreenWidth(PdfPlayer.this) / 2, 0));
+            pdfView.loadPages();
+          }
         }
       }
     }
@@ -150,7 +153,7 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
   @Override
   protected void onPause() {
     super.onPause();
-    BusProvider.get().unregisterHandler(CONTROL, eventHandler);
+    BusProvider.get().unregisterHandler(Constant.ADDR_PLAYER, eventHandler);
   }
 
   @Override
@@ -170,7 +173,7 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
   @Override
   protected void onResume() {
     super.onResume();
-    BusProvider.get().registerHandler(CONTROL, eventHandler);
+    BusProvider.get().registerHandler(Constant.ADDR_PLAYER, eventHandler);
   }
 
   @Override
@@ -185,7 +188,7 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
    */
   private void buildPdfView(Intent intent) {
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
-    File newFile = new File(GlobalConstant.STORAGEDIR + jsonObject.getString("path"));
+    File newFile = new File(Constant.STORAGE_DIR + jsonObject.getString("path"));
     if (newFile.exists()) {
       pdfView.fromFile(newFile).defaultPage(1).onLoad(this).onDraw(this).onPageChange(this).onLoad(
           this).load();
