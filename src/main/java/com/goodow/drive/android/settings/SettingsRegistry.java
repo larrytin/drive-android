@@ -58,7 +58,7 @@ public class SettingsRegistry {
           message.reply(msg);
           return;
         }
-        if ("post".equalsIgnoreCase(action)) {
+        if (action == null || "post".equalsIgnoreCase(action)) {
           // 静音
           if (body.has("mute")) {
             mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, body.getBoolean("mute"));

@@ -15,10 +15,8 @@ package com.goodow.drive.android;
 
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.Bus;
-import com.goodow.realtime.channel.Message;
-import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.channel.impl.WebSocketBusClient;
-import com.goodow.realtime.json.JsonObject;
+import com.goodow.realtime.json.Json;
 
 import java.util.logging.Logger;
 
@@ -34,15 +32,7 @@ public final class BusProvider {
     AndroidPlatform.register();
   }
   private static final Bus BUS = new WebSocketBusClient("ws://" + HOST + "/eventbus/websocket",
-      null);
-  static {
-    BUS.registerHandler(Bus.LOCAL_ON_CLOSE, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        log.info("EventBus closed");
-      }
-    });
-  }
+      Json.createObject().set("forkLocal", true));
 
   public static Bus get() {
     return BUS;
