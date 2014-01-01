@@ -31,11 +31,15 @@ public final class BusProvider {
   static {
     AndroidPlatform.register();
   }
-  private static final Bus BUS = new WebSocketBusClient("ws://" + HOST + "/eventbus/websocket",
-      Json.createObject().set("forkLocal", true));
+  private static final WebSocketBusClient BUS = new WebSocketBusClient("ws://" + HOST
+      + "/eventbus/websocket", Json.createObject().set("forkLocal", true));
 
   public static Bus get() {
     return BUS;
+  }
+
+  public static void reconnect() {
+    BUS.reconnect();
   }
 
   private BusProvider() {
