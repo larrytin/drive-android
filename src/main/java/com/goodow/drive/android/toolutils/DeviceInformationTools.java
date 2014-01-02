@@ -5,7 +5,10 @@ import org.apache.http.conn.util.InetAddressUtils;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,6 +24,18 @@ public class DeviceInformationTools {
    */
   public static String getAndroidId(Context mContext) {
     return android.provider.Settings.System.getString(mContext.getContentResolver(), "android_id");
+  }
+
+  /**
+   * 获取当前日期时间
+   * 
+   * @return
+   */
+  public static String getDateTime() {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss", Locale.CHINA);
+    Date date = new Date();
+    String format = simpleDateFormat.format(date);
+    return format;
   }
 
   /*

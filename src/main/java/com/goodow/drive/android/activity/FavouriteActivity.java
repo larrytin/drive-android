@@ -1,8 +1,8 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.data.DBOperator;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -96,8 +96,6 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     }
   }
 
-  public static final String ADDR_CONTROL = BusProvider.SID + "view.control";
-
   private final MessageHandler<JsonObject> eventHandlerControl = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
@@ -163,7 +161,12 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           }
           // 在删除条件匹配的情况下执行
           if (index >= 0) {
-            activities.remove(index);
+            boolean result = DBOperator.deleteFavourite(FavouriteActivity.this, delActivity);
+            if (result) {
+              activities.remove(index);
+            } else {
+              Toast.makeText(FavouriteActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
+            }
           }
         }
         // 在删除条件匹配的情况下执行
@@ -260,14 +263,14 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   @Override
   protected void onPause() {
     bus.unregisterHandler(Constant.ADDR_TOPIC, eventHandler);
-    bus.unregisterHandler(ADDR_CONTROL, eventHandlerControl);
+    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
     super.onPause();
   }
 
   @Override
   protected void onResume() {
     bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
-    bus.registerHandler(ADDR_CONTROL, eventHandlerControl);
+    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
     super.onResume();
   }
 
@@ -444,7 +447,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     } else if (id == R.id.iv_act_favour_result_next) {
       msg.set("next", true);
     }
-    bus.send(Bus.LOCAL + ADDR_CONTROL, msg, eventHandlerControl);
+    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, eventHandlerControl);
   }
 
   /**

@@ -27,12 +27,20 @@ public class DataRegistry {
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
 
+        // 仅处理put动作
+        if ("put".equalsIgnoreCase(body.getString("action"))) {
+          JsonArray activities = body.getArray("activities");
+          DBOperator.createFavourite(context, activities);
+          return;
+        }
+
+        // 解析查询条件
+        JsonObject query = body.getObject("query");
+
         // 仅处理get动作
         if (!"get".equalsIgnoreCase(body.getString("action"))) {
           return;
         }
-        // 解析查询条件
-        JsonObject query = body.getObject("query");
         String type = query.getString(Constant.TYPE);// 解析请求的模块类型
         if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type)) {
           // 和谐
@@ -90,17 +98,7 @@ public class DataRegistry {
         } else if (Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(type)) {
           // 收藏
           JsonObject msg = Json.createObject();
-          JsonArray activitys = Json.createArray();
-          for (int i = 0; i < 30; i++) {
-            JsonObject activity = Json.createObject();
-            JsonObject tag = Json.createObject();
-            tag.set(Constant.GRADE, "大班");
-            tag.set(Constant.TERM, "上");
-            tag.set(Constant.TOPIC, "健康");
-            activity.set(Constant.TAGS, tag);
-            activity.set(Constant.TITLE, "找朋友" + i);
-            activitys.insert(i, activity);
-          }
+          JsonArray activitys = DBOperator.readAllFavourite(context);
           msg.set("activities", activitys);
           message.reply(msg);
         } else {
@@ -109,6 +107,6 @@ public class DataRegistry {
         }
       }
     });
-  }
 
+  }
 }
