@@ -100,8 +100,7 @@ public class ViewRegistry {
           Toast.makeText(ctx, "打开托班", Toast.LENGTH_LONG).show();
           return;
         } else if ("示范课".equals(type)) {
-          Toast.makeText(ctx, "打开教学示范课", Toast.LENGTH_LONG).show();
-          return;
+          intent = new Intent(ctx, CaseActivity.class);
         } else if ("入学准备".equals(type)) {
           Toast.makeText(ctx, "打开入学准备", Toast.LENGTH_LONG).show();
           return;

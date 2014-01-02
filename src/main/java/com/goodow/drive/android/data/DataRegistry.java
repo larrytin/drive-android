@@ -53,7 +53,18 @@ public class DataRegistry {
 
         } else if ("示范课".equals(type)) {
           // 示范课
-
+          // String grade = query.getString(Constant.GRADE);
+          // String term = query.getString(Constant.TERM);
+          // String topic = query.getString(Constant.TOPIC);
+          JsonObject msg = Json.createObject();
+          JsonArray activities = Json.createArray();
+          for (int i = 0; i < 30; i++) {
+            JsonObject activity = Json.createObject();
+            activity.set("title", "找朋友=" + i);
+            activities.insert(i, activity);
+          }
+          msg.set("activities", activities);
+          message.reply(msg);
         } else if ("入学准备".equals(type)) {
           // 入学准备
 
