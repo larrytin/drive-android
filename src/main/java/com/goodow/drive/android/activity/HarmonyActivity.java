@@ -153,9 +153,9 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
       if (query != null && query.has("type") && !"和谐".equals(query.getString("type"))) {
         return;
       }
-      isLocal = action == null;
       readQuery(query);
       activities = body.getArray("activities");
+      isLocal = activities == null;
       if (activities != null) {
         bindDataToView();
       }
