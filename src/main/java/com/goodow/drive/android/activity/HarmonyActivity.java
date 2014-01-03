@@ -397,11 +397,11 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
           // 构建ItemView对象
           TextView textView = new TextView(this);
           LinearLayout.LayoutParams params =
-              new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+              new LinearLayout.LayoutParams(130, LayoutParams.WRAP_CONTENT);
           params.setMargins(7, 12, 7, 12);
           textView.setLayoutParams(params);
           textView.setGravity(Gravity.CENTER_HORIZONTAL);
-          textView.setPadding(0, 10, 0, 0);
+          textView.setPadding(15, 10, 18, 0);
           textView.setText(this.activities.getObject(index).getString(Constant.TITLE));
           textView.setBackgroundResource(R.drawable.harm_result_item_bg);
           textView.setClickable(true);

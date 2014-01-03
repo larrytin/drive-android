@@ -344,12 +344,12 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
     TextView textView = new TextView(this);
     textView.setId(index + 1);
-    textView.setPadding(0, 10, 0, 0);
+    textView.setPadding(13, 10, 13, 0);
     textView.setTextColor(Color.BLACK);
     textView.setText(activity.getString(Constant.TITLE));
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     RelativeLayout.LayoutParams textViewParams =
-        new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        new RelativeLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
     textViewParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
     textView.setLayoutParams(textViewParams);
     textView.setBackgroundResource(R.drawable.favour_selector_item);
