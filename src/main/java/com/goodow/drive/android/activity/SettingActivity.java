@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
@@ -37,7 +36,7 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
         bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "aboutUs", null, null);
         break;
       case R.id.bt_setting_reboot:// 重启
-        bus.send(Bus.LOCAL + SettingsRegistry.PREFIX + "reboot", null, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);
         break;
       case R.id.iv_common_back://
         JsonObject msg = Json.createObject();

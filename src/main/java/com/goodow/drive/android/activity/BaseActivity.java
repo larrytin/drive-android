@@ -10,6 +10,7 @@ import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 /**
  * @title: BaseActivity.java
@@ -51,6 +52,12 @@ public class BaseActivity extends Activity {
         // 屏幕亮度
       } else if (msg.has("brightness")) {
         bus.send(Bus.LOCAL + SettingsRegistry.PREFIX + "brightness.view", msg, null);
+      } else if (msg.has("shutdown")) {
+        if (msg.getNumber("shutdown") == 0) {
+          Toast.makeText(BaseActivity.this, "关机", Toast.LENGTH_LONG).show();
+        } else if (msg.getNumber("shutdown") == 1) {
+          Toast.makeText(BaseActivity.this, "重启", Toast.LENGTH_LONG).show();
+        }
       }
     }
   };

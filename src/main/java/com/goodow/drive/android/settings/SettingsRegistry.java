@@ -8,6 +8,7 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
@@ -193,6 +194,28 @@ public class SettingsRegistry {
             mView = null;
           }
         }
+      }
+    });
+    bus.registerHandler(BusProvider.SID + "input", new MessageHandler<JsonObject>() {
+      private final Instrumentation inst = new Instrumentation();
+
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
+        if (msg.has("key")) {
+          int key = (int) msg.getNumber("key");
+          // left:21 right:22 down:20 up:19 center:23
+          sendInputKeyEvent(key);
+        }
+      }
+
+      private void sendInputKeyEvent(final int number) {
+        new Thread() {
+          @Override
+          public void run() {
+            inst.sendKeyDownUpSync(number);
+          };
+        }.start();
       }
     });
 

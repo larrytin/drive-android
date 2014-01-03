@@ -2,6 +2,9 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.data.DataRegistry;
+import com.goodow.drive.android.player.PlayerRegistry;
+import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
@@ -10,6 +13,8 @@ import android.os.Bundle;
 import android.view.View;
 
 public class HomeActivity extends BaseActivity {
+  private static boolean registried;
+
   public void onClick(View v) {
     switch (v.getId()) {
     // 收藏
@@ -29,7 +34,7 @@ public class HomeActivity extends BaseActivity {
       // 关机
       case R.id.iv_act_main_clo:
         JsonObject shutdown = Json.createObject();
-        shutdown.set("shutdown", true);
+        shutdown.set("shutdown", 0);
         this.bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, shutdown, null);
         break;
       // 和谐
@@ -66,6 +71,7 @@ public class HomeActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_home);
+    subscribe();
   }
 
   /**
@@ -82,4 +88,13 @@ public class HomeActivity extends BaseActivity {
     this.bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
   }
 
+  private void subscribe() {
+    if (!registried) {
+      registried = true;
+      new ViewRegistry(this).subscribe();
+      new PlayerRegistry(this).subscribe();
+      new SettingsRegistry(this).subscribe();
+      new DataRegistry(this).subscribe();
+    }
+  }
 }
