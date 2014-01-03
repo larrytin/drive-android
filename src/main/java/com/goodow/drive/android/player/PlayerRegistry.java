@@ -22,15 +22,13 @@ public class PlayerRegistry {
 
   public void subscribe() {
     bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
-      String path;
-
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
-        if (!body.has("path") || body.getString("path").equals(path)) {
+        if (!body.has("path")) {
           return;
         }
-        path = body.getString("path");
+        String path = body.getString("path");
         Intent intent = null;
         if (path.endsWith(".pdf")) {
           bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".pdf.mu", message.body(), null);
