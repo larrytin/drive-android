@@ -3,6 +3,8 @@ package com.goodow.drive.android.player;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
+import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import java.io.File;
@@ -13,13 +15,17 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class WebViewFlashPlayer extends BaseActivity {
   private WebView flashWebView;
+  private ImageView mImageView;
   private final static String TAG = WebViewFlashPlayer.class.getSimpleName();
 
   @Override
@@ -45,6 +51,13 @@ public class WebViewFlashPlayer extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.actvity_flash_webview);
+    mImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
+    mImageView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+      }
+    });
     flashWebView = (WebView) findViewById(R.id.flash_webView_player);
     WebSettings mWebSettings = flashWebView.getSettings();
     mWebSettings.setPluginState(PluginState.ON);

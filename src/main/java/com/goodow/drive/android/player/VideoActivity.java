@@ -4,6 +4,8 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.player.VideoView.MySizeChangeLinstener;
+import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
@@ -35,6 +37,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -157,6 +160,13 @@ public class VideoActivity extends BaseActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.video_activity_media);
+    ImageView mImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
+    mImageView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+      }
+    });
     this.getScreenSize();// 获得屏幕尺寸大小
     this.controlView = getLayoutInflater().inflate(R.layout.video_media_controler, null);
     this.controlerWindow = new PopupWindow(this.controlView);

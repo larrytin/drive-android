@@ -20,7 +20,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -140,11 +142,19 @@ public class AudioPlayActivity extends BaseActivity {
       }
     }
   };
+  private ImageView mImageView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_audio_player);
+    mImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
+    mImageView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+      }
+    });
     audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
     audioFilePath = Constant.STORAGE_DIR + jsonObject.getString("path");

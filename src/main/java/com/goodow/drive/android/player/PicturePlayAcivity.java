@@ -3,6 +3,8 @@ package com.goodow.drive.android.player;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
+import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import android.content.Intent;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -20,12 +23,20 @@ public class PicturePlayAcivity extends BaseActivity {
   private ImageView mImageView;
   private Bitmap mBitmap;
   private ProgressBar mProgressBar;
+  private ImageView mBackImageView;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     Log.i(TAG, "onCreate");
     this.setContentView(R.layout.activity_picture);
+    mBackImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
+    mBackImageView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+      }
+    });
     mImageView = (ImageView) this.findViewById(R.id.actvity_picture);
     mProgressBar = (ProgressBar) findViewById(R.id.activity_pictureProgressBar);
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");

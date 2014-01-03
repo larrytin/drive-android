@@ -22,6 +22,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -35,6 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -77,6 +79,7 @@ public class MuPDFActivity extends Activity {
 
   private static final String CONTROL = BusProvider.SID + "player." + "pdf.control";
   private MessageHandler<JsonObject> eventHandler = null;
+  private ImageView mImageView;
 
   public void createUI(Bundle savedInstanceState) {
     if (core == null) {
@@ -358,7 +361,17 @@ public class MuPDFActivity extends Activity {
     // layout.addView(mButtonsView);
     layout.setBackgroundResource(R.drawable.pdf_shape_tiled_background);
     // layout.setBackgroundResource(R.color.canvas);
-
+    LayoutInflater mInflater = LayoutInflater.from(this);
+    View mView = mInflater.inflate(R.layout.include_player_back, null);
+    mImageView = (ImageView) mView.findViewById(R.id.iv_act_favour_back);
+    mImageView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        // BusProvider.get().send(Bus.LOCAL + Constant.ADDR_CONTROL,
+        // Json.createObject().set("return", true), null);
+        MuPDFActivity.this.finish();
+      }
+    });
     LinearLayout controler = new LinearLayout(this);
     RelativeLayout.LayoutParams params =
         new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -479,7 +492,7 @@ public class MuPDFActivity extends Activity {
     });
 
     layout.addView(controler);
-
+    layout.addView(mView);
     setContentView(layout);
   }
 
