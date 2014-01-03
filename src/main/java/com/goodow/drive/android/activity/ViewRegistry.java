@@ -76,8 +76,6 @@ public class ViewRegistry {
       }
     });
     bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
-      String type;
-
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -86,11 +84,10 @@ public class ViewRegistry {
           return;
         }
         JsonObject query = body.getObject("query");
-        if (query == null || !query.has(Constant.TYPE)
-            || query.getString(Constant.TYPE).equals(type)) {
+        if (query == null || !query.has(Constant.TYPE)) {
           return;
         }
-        type = query.getString(Constant.TYPE);
+        String type = query.getString(Constant.TYPE);
         Intent intent = null;
         if ("和谐".equals(type)) {
           intent = new Intent(ctx, HarmonyActivity.class);
