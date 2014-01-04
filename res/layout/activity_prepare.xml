@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/prepare_bg" >
+
+    <!--  状态栏  -->
+    <include layout="@layout/include_status" />
+     
+    <!--上下学期 -->
+    <RadioGroup
+        android:id="@+id/rg_act_prepare_term"
+        android:layout_width="210dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="265dp"
+        android:layout_marginTop="26dp"
+        android:orientation="horizontal"
+        >
+        <RadioButton
+            android:id="@+id/rb_act_prepare_top"
+            style="@style/harmony_grade"
+            android:checked="true"
+            android:text="@string/string_text_term_semester0"
+             />
+        <RadioButton
+            android:id="@+id/rb_act_prepare_bottom"
+            style="@style/harmony_grade"
+            android:text="@string/string_text_term_semester1" />
+    </RadioGroup>
+
+    <!-- 活动分类 -->
+    <!-- 语言 -->
+    <RadioButton
+      android:id="@+id/rb_act_prepare_class_language"
+      style="@style/prepare_class"
+      android:text="@string/string_text_language"
+      android:layout_below="@+id/rg_act_prepare_term"
+      android:layout_marginLeft="250dp"
+      android:layout_marginTop="50dp"
+        />
+    <!-- 思维 -->
+    <RadioButton
+      android:id="@+id/rb_act_prepare_class_thinking"
+      style="@style/prepare_class"
+      android:text="@string/string_text_thinking"
+      android:layout_below="@+id/rb_act_prepare_class_language"
+      android:layout_marginLeft="320dp"
+        />
+    <!-- 阅读 -->
+    <RadioButton
+      android:id="@+id/rb_act_prepare_class_read"
+      style="@style/prepare_class"
+      android:text="@string/string_text_read"
+      android:layout_below="@+id/rb_act_prepare_class_thinking"
+      android:layout_marginLeft="170dp"
+        />
+    <!-- 书写 -->
+    <RadioButton
+      android:id="@+id/rb_act_prepare_class_write"
+      style="@style/prepare_class"
+      android:text="@string/string_text_write"
+      android:layout_below="@+id/rb_act_prepare_class_read"
+      android:layout_marginLeft="300dp"
+        />
+    <!-- 学些品质 -->
+    <RadioButton
+      android:id="@+id/rb_act_prepare_class_quality"
+      style="@style/prepare_class"
+      android:text="@string/string_text_quality"
+      android:layout_below="@+id/rb_act_prepare_class_write"
+      android:layout_marginLeft="170dp"
+        />
+
+    <!--  后退  收藏  锁屏  -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:layout_marginLeft="40dp"
+        >
+        <include
+            android:id="@+id/iv_act_prepare_back"
+            layout="@layout/include_back"/>
+        <ImageView
+          android:id="@+id/iv_act_prepare_coll"
+          style="@style/index_sys_fun"
+          android:src="@drawable/common_selector_coll"
+          android:layout_below="@+id/iv_act_prepare_back"
+          android:clickable="true"
+          />
+        <ImageView
+          android:id="@+id/iv_act_prepare_loc"
+          style="@style/index_sys_fun"
+          android:src="@drawable/common_selector_loc"
+          android:layout_below="@+id/iv_act_prepare_coll"
+          android:clickable="true"
+          />
+    </RelativeLayout>
+
+    <!-- 查询结果 -->
+    <RelativeLayout
+        android:id="@+id/rl_act_prepare_result"
+        android:layout_width="740dp"
+        android:layout_height="350dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="30dp"
+        >
+        <!-- 查询结果 上一页-->
+        <ImageView
+            android:id="@+id/rl_act_prepare_result_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/common_result_pre"
+            android:clickable="true"
+            />
+
+        <!-- 查询结果 -->
+        <android.support.v4.view.ViewPager
+          android:id="@+id/vp_act_prepare_result"
+          android:layout_width="610dp"
+          android:layout_height="fill_parent"
+          android:layout_centerHorizontal="true"
+          />
+
+        <!-- 查询结果 下一页-->
+        <ImageView
+            android:id="@+id/rl_act_prepare_result_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/common_result_next"
+            android:clickable="true"
+            />
+        <LinearLayout
+            android:id="@+id/ll_act_prepare_result_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            >
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

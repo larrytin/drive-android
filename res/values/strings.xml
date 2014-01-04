@@ -52,4 +52,7 @@
     <string name="string_text_world">社会</string>
     <string name="string_text_scinece">科学</string>
     <string name="string_text_math">数学</string>
+    <string name="string_text_read">阅读</string>
+    <string name="string_text_write">书写</string>
+    <string name="string_text_quality">学习品质</string>
 </resources>

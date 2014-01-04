@@ -104,8 +104,7 @@ public class ViewRegistry {
           intent = new Intent(ctx, CaseActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_PREPARE.equals(type)) {
           // 入学准备
-          Toast.makeText(ctx, "打开入学准备", Toast.LENGTH_LONG).show();
-          return;
+          intent = new Intent(ctx, PrepareActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_SMART.equals(type)) {
           // 智能开发
           intent = new Intent(ctx, SmartActivity.class);

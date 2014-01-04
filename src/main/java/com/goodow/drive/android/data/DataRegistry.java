@@ -75,7 +75,19 @@ public class DataRegistry {
           message.reply(msg);
         } else if (Constant.DATAREGISTRY_TYPE_PREPARE.equals(type)) {
           // 入学准备
-
+          JsonObject msg = Json.createObject();
+          JsonArray activitys = Json.createArray();
+          for (int i = 0; i < 30; i++) {
+            JsonObject activity = Json.createObject();
+            JsonObject tag = Json.createObject();
+            tag.set(Constant.TERM, "上");
+            tag.set(Constant.TOPIC, "健康");
+            activity.set(Constant.TAGS, tag);
+            activity.set(Constant.TITLE, "找朋友找朋友找朋友" + i);
+            activitys.insert(i, activity);
+          }
+          msg.set("activities", activitys);
+          message.reply(msg);
         } else if (Constant.DATAREGISTRY_TYPE_SMART.equals(type)) {
           // 智能开发
           JsonObject msg = Json.createObject();

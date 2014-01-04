@@ -92,6 +92,15 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
+        <!-- 入学准备 -->
+        <activity
+            android:name="com.goodow.drive.android.activity.PrepareActivity"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+        </activity>
+
         <!-- PDF播放器 -->
         <activity 
             android:name="com.goodow.drive.android.player.PdfPlayer" 

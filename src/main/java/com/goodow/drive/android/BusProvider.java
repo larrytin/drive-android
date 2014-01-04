@@ -18,8 +18,6 @@ import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.impl.WebSocketBusClient;
 import com.goodow.realtime.json.Json;
 
-import java.util.logging.Logger;
-
 /**
  * Maintains a singleton instance for obtaining the bus. Ideally this would be replaced with a more
  * efficient means such as through injection directly into interested classes.
@@ -27,7 +25,6 @@ import java.util.logging.Logger;
 public final class BusProvider {
   public static final String SID = "sid.drive.";
   private static final String HOST = "data.goodow.com:8080";
-  private static final Logger log = Logger.getLogger(BusProvider.class.getName());
   static {
     AndroidPlatform.register();
   }

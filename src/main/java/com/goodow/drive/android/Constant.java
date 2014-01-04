@@ -36,6 +36,9 @@ public interface Constant {
   String DOMIAN_THINKING = "思维";
   String DOMIAN_READABLE = "识字";
   String DOMIAN_BODY = "形体";
+  String DOMIAN_READ = "阅读";
+  String DOMIAN_WRITE = "书写";
+  String DOMIAN_QUALITY = "学习品质";
 
   String DATAREGISTRY_TYPE_HARMONY = "和谐";
   String DATAREGISTRY_TYPE_SHIP = "托班";
