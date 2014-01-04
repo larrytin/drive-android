@@ -48,4 +48,8 @@
     <string name="string_text_readable">识字</string>
     <string name="string_text_body">形体</string>
 
+    <string name="string_text_health">健康</string>
+    <string name="string_text_world">社会</string>
+    <string name="string_text_scinece">科学</string>
+    <string name="string_text_math">数学</string>
 </resources>

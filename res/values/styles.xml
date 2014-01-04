@@ -73,4 +73,16 @@
         <item name="android:background">@drawable/smart_selector_topic</item>
     </style>
 
+    <!-- 图画书类别样式 -->
+    <style name="ebook_class">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:focusable">false</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">30dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/harmony_selector_class</item>
+        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/ebook_selector_topic</item>
+    </style>
 </resources>

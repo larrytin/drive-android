@@ -90,23 +90,30 @@ public class ViewRegistry {
         String type = query.getString(Constant.TYPE);
         Intent intent = null;
         if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type)) {
+          // 和谐
           intent = new Intent(ctx, HarmonyActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(type)) {
+          // 收藏
           intent = new Intent(ctx, FavouriteActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_SHIP.equals(type)) {
+          // 托班
           Toast.makeText(ctx, "打开托班", Toast.LENGTH_LONG).show();
           return;
         } else if (Constant.DATAREGISTRY_TYPE_CASE.equals(type)) {
+          // 示范课
           intent = new Intent(ctx, CaseActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_PREPARE.equals(type)) {
+          // 入学准备
           Toast.makeText(ctx, "打开入学准备", Toast.LENGTH_LONG).show();
           return;
         } else if (Constant.DATAREGISTRY_TYPE_SMART.equals(type)) {
+          // 智能开发
           intent = new Intent(ctx, SmartActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {
-          Toast.makeText(ctx, "打开图画书", Toast.LENGTH_LONG).show();
-          return;
+          // 图画书
+          intent = new Intent(ctx, EbookActivity.class);
         } else {
+          // 其他
           Toast.makeText(ctx, "不支持" + type, Toast.LENGTH_LONG).show();
           return;
         }

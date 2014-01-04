@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ebook_bg" >
+
+    <!--  状态栏  -->
+    <include layout="@layout/include_status" />
+
+    <!-- 活动分类 -->
+    <RadioGroup
+        android:id="@+id/rg_act_ebook_class"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="50dp"
+        >
+        <RadioButton
+          android:id="@+id/rb_act_ebook_class_health"
+          style="@style/ebook_class"
+          android:text="@string/string_text_health"
+            />
+        <RadioButton
+          android:id="@+id/rb_act_ebook_class_scinece"
+          style="@style/ebook_class"
+          android:text="@string/string_text_scinece"
+            />
+        <RadioButton
+          android:id="@+id/rb_act_ebook_class_world"
+          style="@style/ebook_class"
+          android:text="@string/string_text_world"
+            />
+        <RadioButton
+          android:id="@+id/rb_act_ebook_class_language"
+          style="@style/ebook_class"
+          android:text="@string/string_text_language"
+            />
+        <RadioButton
+          android:id="@+id/rb_act_ebook_class_math"
+          style="@style/ebook_class"
+          android:text="@string/string_text_math"
+            />
+    </RadioGroup>
+
+    <!--  后退  收藏  锁屏  -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:layout_marginLeft="40dp"
+        >
+        <include
+            android:id="@+id/iv_act_ebook_back"
+            layout="@layout/include_back"/>
+        <ImageView
+          android:id="@+id/iv_act_ebook_coll"
+          style="@style/index_sys_fun"
+          android:src="@drawable/common_selector_coll"
+          android:layout_below="@+id/iv_act_ebook_back"
+          android:clickable="true"
+          />
+        <ImageView
+          android:id="@+id/iv_act_ebook_loc"
+          style="@style/index_sys_fun"
+          android:src="@drawable/common_selector_loc"
+          android:layout_below="@+id/iv_act_ebook_coll"
+          android:clickable="true"
+          />
+    </RelativeLayout>
+
+    <!-- 查询结果 -->
+    <RelativeLayout
+        android:id="@+id/rl_act_ebook_result"
+        android:layout_width="810dp"
+        android:layout_height="350dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="220dp"
+        android:layout_marginRight="85dp"
+        >
+        <!-- 查询结果 上一页-->
+        <ImageView
+            android:id="@+id/rl_act_ebook_result_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/common_result_pre"
+            android:clickable="true"
+            />
+
+        <!-- 查询结果 -->
+        <android.support.v4.view.ViewPager
+          android:id="@+id/vp_act_ebook_result"
+          android:layout_width="650dp"
+          android:layout_height="fill_parent"
+          android:layout_centerHorizontal="true"
+          />
+
+        <!-- 查询结果 下一页-->
+        <ImageView
+            android:id="@+id/rl_act_ebook_result_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/common_result_next"
+            android:clickable="true"
+            />
+        <!-- 查询结果 页码数量-->
+        <LinearLayout
+            android:id="@+id/ll_act_ebook_result_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            >
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

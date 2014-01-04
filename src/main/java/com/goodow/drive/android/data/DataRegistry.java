@@ -94,7 +94,18 @@ public class DataRegistry {
           message.reply(msg);
         } else if (Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {
           // 图画书
-
+          JsonObject msg = Json.createObject();
+          JsonArray activitys = Json.createArray();
+          for (int i = 0; i < 30; i++) {
+            JsonObject activity = Json.createObject();
+            JsonObject tag = Json.createObject();
+            tag.set(Constant.TOPIC, "健康");
+            activity.set(Constant.TAGS, tag);
+            activity.set(Constant.TITLE, "找朋友找朋友找朋友" + i);
+            activitys.insert(i, activity);
+          }
+          msg.set("activities", activitys);
+          message.reply(msg);
         } else if (Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(type)) {
           // 收藏
           JsonObject msg = Json.createObject();
