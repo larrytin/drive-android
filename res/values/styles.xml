@@ -60,4 +60,17 @@
         <item name="android:background">@drawable/harm_selector_class</item>
     </style>
     
+    <!-- 智能开发页面类别样式 -->
+    <style name="smart_topic">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:focusable">false</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:button">@null</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:background">@drawable/smart_selector_topic</item>
+    </style>
+
 </resources>

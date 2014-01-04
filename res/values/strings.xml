@@ -33,4 +33,19 @@
     <string name="setting_about">关于我们</string>
     <string name="setting_reboot">重启</string>
 
+    <string name="string_text_grade_little">小班</string>
+    <string name="string_text_grade_mid">中班</string>
+    <string name="string_text_grade_big">大班</string>
+    <string name="string_text_grade_pre">学前</string>
+
+    <string name="string_text_term_semester0">上</string>
+    <string name="string_text_term_semester1">下</string>
+
+    <string name="string_text_language">语言</string>
+    <string name="string_text_arithmetic">算术</string>
+    <string name="string_text_jigsaw">拼图</string>
+    <string name="string_text_thinking">思维</string>
+    <string name="string_text_readable">识字</string>
+    <string name="string_text_body">形体</string>
+
 </resources>

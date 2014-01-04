@@ -34,7 +34,7 @@ public class DataRegistry {
         // 解析查询条件
         JsonObject query = body.getObject("query");
         String type = query.getString(Constant.TYPE);// 解析请求的模块类型
-        if ("和谐".equals(type)) {
+        if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type)) {
           // 和谐
           // String grade = query.getString(Constant.GRADE);
           // String term = query.getString(Constant.TERM);
@@ -48,10 +48,10 @@ public class DataRegistry {
           }
           msg.set("activities", activities);
           message.reply(msg);
-        } else if ("托班".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_SHIP.equals(type)) {
           // 托班
 
-        } else if ("示范课".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_CASE.equals(type)) {
           // 示范课
           // String grade = query.getString(Constant.GRADE);
           // String term = query.getString(Constant.TERM);
@@ -65,16 +65,29 @@ public class DataRegistry {
           }
           msg.set("activities", activities);
           message.reply(msg);
-        } else if ("入学准备".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_PREPARE.equals(type)) {
           // 入学准备
 
-        } else if ("智能开发".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_SMART.equals(type)) {
           // 智能开发
-
-        } else if ("电子书".equals(type)) {
+          JsonObject msg = Json.createObject();
+          JsonArray activitys = Json.createArray();
+          for (int i = 0; i < 30; i++) {
+            JsonObject activity = Json.createObject();
+            JsonObject tag = Json.createObject();
+            tag.set(Constant.GRADE, "大班");
+            tag.set(Constant.TERM, "上");
+            tag.set(Constant.TOPIC, "健康");
+            activity.set(Constant.TAGS, tag);
+            activity.set(Constant.TITLE, "找朋友找朋友找朋友" + i);
+            activitys.insert(i, activity);
+          }
+          msg.set("activities", activitys);
+          message.reply(msg);
+        } else if (Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {
           // 图画书
 
-        } else if ("收藏".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(type)) {
           // 收藏
           JsonObject msg = Json.createObject();
           JsonArray activitys = Json.createArray();

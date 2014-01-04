@@ -316,13 +316,13 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
       if (tempTerm != null && isRightfulTerm(tempTerm)) {
         currentTerm = tempTerm;
         saveHistory(Constant.TERM, currentTerm);
-      } else if (query.has(Constant.TERM) && !isRightfulGrade(tempTerm)) {
+      } else if (query.has(Constant.TERM) && !isRightfulTerm(tempTerm)) {
         Toast.makeText(HarmonyActivity.this, "无效的学期数值", Toast.LENGTH_SHORT).show();
       }
       if (tempClass != null && isRightfulTopic(tempClass)) {
         currenTopic = tempClass;
         saveHistory(Constant.TOPIC, currenTopic);
-      } else if (query.has(Constant.TOPIC) && !isRightfulGrade(tempClass)) {
+      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
         Toast.makeText(HarmonyActivity.this, "无效的类别数值", Toast.LENGTH_SHORT).show();
       }
     }

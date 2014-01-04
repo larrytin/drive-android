@@ -89,22 +89,21 @@ public class ViewRegistry {
         }
         String type = query.getString(Constant.TYPE);
         Intent intent = null;
-        if ("和谐".equals(type)) {
+        if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type)) {
           intent = new Intent(ctx, HarmonyActivity.class);
-        } else if ("收藏".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(type)) {
           intent = new Intent(ctx, FavouriteActivity.class);
-        } else if ("托班".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_SHIP.equals(type)) {
           Toast.makeText(ctx, "打开托班", Toast.LENGTH_LONG).show();
           return;
-        } else if ("示范课".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_CASE.equals(type)) {
           intent = new Intent(ctx, CaseActivity.class);
-        } else if ("入学准备".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_PREPARE.equals(type)) {
           Toast.makeText(ctx, "打开入学准备", Toast.LENGTH_LONG).show();
           return;
-        } else if ("智能开发".equals(type)) {
-          Toast.makeText(ctx, "打开智能开发", Toast.LENGTH_LONG).show();
-          return;
-        } else if ("电子书".equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_SMART.equals(type)) {
+          intent = new Intent(ctx, SmartActivity.class);
+        } else if (Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {
           Toast.makeText(ctx, "打开图画书", Toast.LENGTH_LONG).show();
           return;
         } else {

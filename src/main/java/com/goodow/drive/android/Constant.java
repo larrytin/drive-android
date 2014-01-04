@@ -30,4 +30,19 @@ public interface Constant {
   String DOMIAN_MATH = "数学";
   String DOMIAN_MUSIC = "艺术（音乐）";
   String DOMIAN_ART = "艺术（美术）";
+
+  String DOMIAN_ARITHMETIC = "算术";
+  String DOMIAN_JIGSAW = "拼图";
+  String DOMIAN_THINKING = "思维";
+  String DOMIAN_READABLE = "识字";
+  String DOMIAN_BODY = "形体";
+
+  String DATAREGISTRY_TYPE_HARMONY = "和谐";
+  String DATAREGISTRY_TYPE_SHIP = "托班";
+  String DATAREGISTRY_TYPE_CASE = "示范课";
+  String DATAREGISTRY_TYPE_PREPARE = "入学准备";
+  String DATAREGISTRY_TYPE_SMART = "智能开发";
+  String DATAREGISTRY_TYPE_EBOOK = "电子书";
+  String DATAREGISTRY_TYPE_FAVOURITE = "收藏";
+
 }

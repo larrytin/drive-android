@@ -76,6 +76,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
+        <!-- 智能 -->
+        <activity
+            android:name="com.goodow.drive.android.activity.SmartActivity"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+        </activity>
 
         <!-- PDF播放器 -->
         <activity 
