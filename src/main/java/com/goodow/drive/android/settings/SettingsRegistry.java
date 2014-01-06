@@ -1,6 +1,7 @@
 package com.goodow.drive.android.settings;
 
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -20,6 +21,7 @@ import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
@@ -187,6 +189,18 @@ public class SettingsRegistry {
           Log.d(TAG, mLayoutParams.alpha + "");
           if (mLayoutParams.alpha != 0) {
             Log.d(TAG, "setlayout");
+            if (strength == 0) {
+              mWindowManager.removeView(mView);
+              mLayoutParams.type = LayoutParams.TYPE_PRIORITY_PHONE;
+              mWindowManager.addView(mView, mLayoutParams);
+              mView.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                  bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness",
+                      1), null);
+                }
+              });
+            }
             mWindowManager.updateViewLayout(mView, mLayoutParams);
           } else {
             Log.d(PREFIX, "removeview");
