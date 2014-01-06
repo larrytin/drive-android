@@ -2,14 +2,22 @@ package com.goodow.drive.android.cusview;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
-import com.goodow.drive.android.settings.SettingReceiver;
+import com.goodow.drive.android.settings.NetWorkListener;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -35,7 +43,20 @@ public class StatusView extends LinearLayout {
   private TextView netTypeView = null;
   private ImageView netStatusView = null;
   private TextView currentTimeView = null;
-  SettingReceiver settingReceiver;
+  private NetWorkListener settingReceiver;
+  private Context context = null;
+
+  private BroadcastReceiver timeTickreceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      String action = intent.getAction();
+      // 分钟变化
+      if (action.equals(Intent.ACTION_TIME_TICK)) {
+        currentTime = getSystemTime();
+        invalidate();
+      }
+    }
+  };
 
   private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
     @Override
@@ -48,63 +69,39 @@ public class StatusView extends LinearLayout {
 
       float netStrength = R.drawable.status_network_null;
 
-      // 仅仅有wifi
-      if (body.has("wifi") && !body.has("3g")) {
-        netType = "WIFI";
-        netStrength = (float) (body.getObject("wifi")).getNumber("strength");
-        if (netStrength <= 0.0f) {
-          netType = "无网络";
-        }
-      }
-
-      // 仅仅有3g
-      if (body.has("3g") && !body.has("wifi")) {
-        netType = "3G";
-        netStrength = (float) (body.getObject("3g")).getNumber("strength");
-        if (netStrength <= 0.0f) {
-          netType = "无网络";
-        }
-      }
-
-      // 有wifi和3g
-      if (body.has("3g") && body.has("wifi")) {
-        float tempWifiStrength = (float) (body.getObject("wifi")).getNumber("strength");
-        float temp3GStrength = (float) (body.getObject("3g")).getNumber("strength");
-        if (tempWifiStrength > 0.0f) { // 只要wifi强度大于零就显示WIFI忽略3G
+      if (body.has("type")) {
+        netType = body.getString("type");
+        if (NetWorkListener.WIFI.equalsIgnoreCase(netType)) {
           netType = "WIFI";
-          netStrength = tempWifiStrength;
-        } else if (temp3GStrength > 0.0f) {// WIFI强度小于零3G大于零就显示3G
+        } else if (NetWorkListener.TYPE_2G.equals(netType)
+            || NetWorkListener.TYPE_3G.equals(netType) || NetWorkListener.TYPE_4G.equals(netType)) {
           netType = "3G";
-          netStrength = temp3GStrength;
-        } else {// 都小于零
+        }
+        netStrength = (float) body.getNumber("strength");
+        if (netStrength <= 0.0f) {
           netType = "无网络";
-          netStrength = 0.0f;
         }
       }
-
       if (netStrength <= 0.0f) {
         currentImageId = R.drawable.status_network_null;
-      } else if (netStrength > 0.0f && netStrength <= 30.0f) {
+      } else if (netStrength > 0.0f && netStrength <= 0.3f) {
         currentImageId = R.drawable.status_network_mid;
-      } else if (netStrength > 30.0f && netStrength <= 100.0f) {
+      } else if (netStrength > 0.3f && netStrength <= 1.0f) {
         currentImageId = R.drawable.status_network_all;
       }
-      String tempCurrenttime = body.getString("time");
-      if (tempCurrenttime != null) {
-        currentTime = tempCurrenttime;
-      }
-
       invalidate();
     }
   };
 
   public StatusView(Context context) {
     super(context);
+    this.context = context;
   }
 
   public StatusView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    this.settingReceiver = new SettingReceiver(context);
+    this.context = context;
+    this.settingReceiver = new NetWorkListener(context);
     this.setPadding(10, 10, 10, 10);
     this.setOrientation(LinearLayout.HORIZONTAL);
 
@@ -130,6 +127,7 @@ public class StatusView extends LinearLayout {
 
     this.currentTimeView = new TextView(context);
     this.currentTimeView.setTextColor(Color.parseColor("#666666"));
+    this.currentTime = this.getSystemTime();
     this.currentTimeView.setText(this.currentTime);
     this.currentTimeView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
     LinearLayout.LayoutParams timeViewParams =
@@ -148,9 +146,11 @@ public class StatusView extends LinearLayout {
   @Override
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
+    IntentFilter timeTickFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
+    this.context.registerReceiver(timeTickreceiver, timeTickFilter);
     this.settingReceiver.registerReceiver();
-    bus.registerHandler(SettingReceiver.ADDR, eventHandler);
-    bus.send(Bus.LOCAL + SettingReceiver.ADDR, Json.createObject().set("action", "get"),
+    bus.registerHandler(NetWorkListener.ADDR, eventHandler);
+    bus.send(Bus.LOCAL + NetWorkListener.ADDR, Json.createObject().set("action", "get"),
         eventHandler);
   }
 
@@ -158,7 +158,7 @@ public class StatusView extends LinearLayout {
   protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     this.settingReceiver.unRegisterReceiver();
-    this.bus.unregisterHandler(SettingReceiver.ADDR, eventHandler);
+    this.bus.unregisterHandler(NetWorkListener.ADDR, eventHandler);
   }
 
   @Override
@@ -173,5 +173,22 @@ public class StatusView extends LinearLayout {
       this.currentTimeView.setText(this.currentTime);
     }
     super.onDraw(canvas);
+  }
+
+  /**
+   * 获取当前时间
+   * 
+   * @return
+   */
+  private String getSystemTime() {
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat date = new SimpleDateFormat("MM月dd日", Locale.CHINA);
+    SimpleDateFormat time = new SimpleDateFormat("hh:mm", Locale.CHINA);
+    GregorianCalendar cal = new GregorianCalendar();
+    String result =
+        date.format(calendar.getTime()) + " "
+            + (cal.get(GregorianCalendar.AM_PM) == 0 ? "AM" : "PM")
+            + time.format(calendar.getTime());
+    return result;
   }
 }
