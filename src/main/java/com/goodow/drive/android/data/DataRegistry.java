@@ -33,6 +33,16 @@ public class DataRegistry {
           DBOperator.createFavourite(context, activities);
           return;
         }
+        // 仅处理delete动作
+        if ("delete".equalsIgnoreCase(body.getString("action"))) {
+          JsonArray delActivities = body.getArray("activities");
+          boolean result = DBOperator.deleteFavourite(context, delActivities);
+          if (result) {
+            body.set("status", "ok");
+          }
+          bus.send(Bus.LOCAL + "" + Bus.LOCAL + Constant.ADDR_TOPIC, body, null);
+          return;
+        }
 
         // 解析查询条件
         JsonObject query = body.getObject("query");

@@ -66,19 +66,23 @@ public class DBOperator {
    * @param activity
    * @return 是否删除成功
    */
-  public static boolean deleteFavourite(Context context, JsonObject activity) {
+  public static boolean deleteFavourite(Context context, JsonArray activities) {
     boolean result = false;
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    int len = activities.length();
     try {
       db.beginTransaction();
-      JsonObject tags = activity.getObject(Constant.TAGS);
-      db.execSQL(
-          "DELETE FROM T_FAVOURITE WHERE TYPE = ? and GRADE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?",
-          new Object[] {
-              tags.getString(Constant.TYPE), tags.getString(Constant.GRADE),
-              tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
-              activity.getString(Constant.TITLE)});
+      for (int i = 0; i < len; i++) {
+        JsonObject activity = activities.get(i);
+        JsonObject tags = activity.getObject(Constant.TAGS);
+        db.execSQL(
+            "DELETE FROM T_FAVOURITE WHERE TYPE = ? and GRADE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?",
+            new Object[] {
+                tags.getString(Constant.TYPE), tags.getString(Constant.GRADE),
+                tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
+                activity.getString(Constant.TITLE)});
+      }
       db.setTransactionSuccessful();
       result = true;
     } catch (Exception e) {

@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.data.DBOperator;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -40,7 +39,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    * 
    */
   private class MyImageView extends ImageView {
-    private int index; // 要删除的ID
+    private final int index; // 要删除的ID
 
     public MyImageView(Context context, int index) {
       super(context);
@@ -96,7 +95,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     }
   }
 
-  private final MessageHandler<JsonObject> eventHandlerControl = new MessageHandler<JsonObject>() {
+  private final MessageHandler<JsonObject> controlHandler = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject body = message.body();
@@ -108,13 +107,79 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     }
   };
 
-  private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
+  /**
+   * 删除事件
+   */
+  private final MessageHandler<JsonObject> deleteHandler = new MessageHandler<JsonObject>() {
+    @Override
+    public void handle(Message<JsonObject> message) {
+      JsonObject body = message.body();
+      if (activities.length() == 0) {
+        return;
+      }
+      if (!"ok".equals(body.getString("status"))) {
+        // 数据库操作失败
+        Toast.makeText(FavouriteActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
+        return;
+      }
+      // 数据库操作成功
+      int page = -1; // 当前页码
+      JsonArray delActivities = body.getArray("activities");
+      int delLen = delActivities.length();
+      int index = -1;
+      for (int i = 0; i < delLen; i++) {
+        JsonObject delActivity = delActivities.getObject(i);
+        int len = activities.length();
+        // 查找相同的活动
+        for (int j = 0; j < len; j++) {
+          JsonObject activity = activities.get(j);
+
+          JsonObject tag = activity.getObject(Constant.TAGS);
+          String grade = tag.get(Constant.GRADE);
+          String term = tag.get(Constant.TERM);
+          String topic = tag.get(Constant.TOPIC);
+          String title = activity.get(Constant.TITLE);
+
+          JsonObject delTag = delActivity.getObject(Constant.TAGS);
+          String delGrade = delTag.get(Constant.GRADE);
+          String delTerm = delTag.get(Constant.TERM);
+          String delTopic = delTag.get(Constant.TOPIC);
+          String delTitle = delActivity.get(Constant.TITLE);
+
+          if ((grade != null && grade.equalsIgnoreCase(delGrade))
+              && (term != null && term.equalsIgnoreCase(delTerm))
+              && (topic != null && topic.equalsIgnoreCase(delTopic))
+              && (title != null && title.equalsIgnoreCase(delTitle))) {
+            index = j;
+            break;
+          }
+        }
+        // 在删除条件匹配的情况下执行
+        if (index >= 0) {
+          activities.remove(index);
+        }
+      }
+      // 在删除条件匹配的情况下执行
+      if (index >= 0) {
+        page = index / numPerPage;
+      }
+      if (page >= 0) {
+        // 删除条件中有匹配的，滚动到最后一个匹配的条件所在的页面
+        bindDataToView(page);
+      } else {
+        // 删除条件中没有匹配的，停留在当前页面
+        bindDataToView(currentPageNum);
+      }
+    }
+  };
+
+  private final MessageHandler<JsonObject> postHandler = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject body = message.body();
       String action = body.getString("action");
-      // 仅仅处理action为null或post动作或delete动作
-      if (action != null && !"post".equalsIgnoreCase(action) && !"delete".equalsIgnoreCase(action)) {
+      // 仅仅处理action为null或post动作
+      if (action != null && !"post".equalsIgnoreCase(action)) {
         return;
       }
       JsonObject query = body.getObject("query");
@@ -125,54 +190,6 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
       int page = -1; // 当前页码
       if (action == null || "post".equalsIgnoreCase(action)) {
         activities = body.getArray("activities");
-      } else if ("delete".equalsIgnoreCase(action)) {
-        if (activities == null) {
-          return;
-        }
-        JsonArray delActivities = body.getArray("activities");
-        int delLen = delActivities.length();
-        int index = -1;
-        for (int i = 0; i < delLen; i++) {
-          JsonObject delActivity = delActivities.getObject(i);
-          int len = activities.length();
-          // 查找相同的活动
-          for (int j = 0; j < len; j++) {
-            JsonObject activity = activities.get(j);
-
-            JsonObject tag = activity.getObject(Constant.TAGS);
-            String grade = tag.get(Constant.GRADE);
-            String term = tag.get(Constant.TERM);
-            String topic = tag.get(Constant.TOPIC);
-            String title = activity.get(Constant.TITLE);
-
-            JsonObject delTag = delActivity.getObject(Constant.TAGS);
-            String delGrade = delTag.get(Constant.GRADE);
-            String delTerm = delTag.get(Constant.TERM);
-            String delTopic = delTag.get(Constant.TOPIC);
-            String delTitle = delActivity.get(Constant.TITLE);
-
-            if ((grade != null && grade.equalsIgnoreCase(delGrade))
-                && (term != null && term.equalsIgnoreCase(delTerm))
-                && (topic != null && topic.equalsIgnoreCase(delTopic))
-                && (title != null && title.equalsIgnoreCase(delTitle))) {
-              index = j;
-              break;
-            }
-          }
-          // 在删除条件匹配的情况下执行
-          if (index >= 0) {
-            boolean result = DBOperator.deleteFavourite(FavouriteActivity.this, delActivity);
-            if (result) {
-              activities.remove(index);
-            } else {
-              Toast.makeText(FavouriteActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
-            }
-          }
-        }
-        // 在删除条件匹配的情况下执行
-        if (index >= 0) {
-          page = index / numPerPage;
-        }
       }
       if (page >= 0) {
         // 删除条件中有匹配的，滚动到最后一个匹配的条件所在的页面
@@ -192,7 +209,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   private LinearLayout ll_act_favour_result_bar = null;
   private JsonArray activities = null;
 
-  private ArrayList<View> tempView = new ArrayList<View>();
+  private final ArrayList<View> tempView = new ArrayList<View>();
   private final int numPerPage = 15; // 查询结果每页显示15条数据
   private final int numPerLine = 5; // 每条显示五个数据
 
@@ -262,15 +279,17 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
   @Override
   protected void onPause() {
-    bus.unregisterHandler(Constant.ADDR_TOPIC, eventHandler);
-    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
+    bus.unregisterHandler(Constant.ADDR_TOPIC, postHandler);
+    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, controlHandler);
+    bus.unregisterHandler(Bus.LOCAL + Constant.ADDR_TOPIC, deleteHandler);
     super.onPause();
   }
 
   @Override
   protected void onResume() {
-    bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
-    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
+    bus.registerHandler(Constant.ADDR_TOPIC, postHandler);
+    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, controlHandler);
+    bus.registerHandler(Bus.LOCAL + Constant.ADDR_TOPIC, deleteHandler);
     super.onResume();
   }
 
@@ -413,7 +432,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
         JsonArray delActivities = Json.createArray();
         delActivities.insert(0, activities.get(tempView.getIndex()));
         msg.set("activities", delActivities);
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, eventHandler);
+        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
       }
     });
 
@@ -447,7 +466,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     } else if (id == R.id.iv_act_favour_result_next) {
       msg.set("next", true);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, eventHandlerControl);
+    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, controlHandler);
   }
 
   /**
@@ -457,9 +476,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     JsonObject msg = Json.createObject();
     msg.set("action", "get");
     JsonObject type = Json.createObject();
-    type.set("type", "收藏");
+    type.set("type", Constant.DATAREGISTRY_TYPE_FAVOURITE);
     msg.set("query", type);
-    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, eventHandler);
+    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, postHandler);
   }
 
 }
