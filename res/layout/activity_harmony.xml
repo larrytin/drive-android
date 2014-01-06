@@ -116,12 +116,6 @@
         android:layout_marginTop="130dp"
         android:layout_marginLeft="40dp"
         >
-<!--         <ImageView -->
-<!--           android:id="@+id/iv_act_harmony_back" -->
-<!--           style="@style/index_sys_fun" -->
-<!--           android:src="@drawable/common_selector_back" -->
-<!--           android:clickable="true" -->
-<!--           /> -->
         <include 
             android:id="@+id/iv_act_harmony_back"
             layout="@layout/include_back"/>
@@ -145,7 +139,7 @@
     <RelativeLayout 
         android:id="@+id/rl_act_harmony_result"
         android:layout_width="1040dp"
-        android:layout_height="350dp"
+        android:layout_height="360dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="85dp"
@@ -179,25 +173,14 @@
             android:src="@drawable/common_result_next"
             android:clickable="true"
             />
-    </RelativeLayout>
-    
-    <!-- 查询结果 页码数量-->
-    <RelativeLayout 
-        android:id="@+id/rl_act_harmony_result_bar"
-        android:layout_width="1040dp"
-        android:layout_height="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="85dp"
-        android:layout_below="@+id/rl_act_harmony_result"
-        >
-        <LinearLayout 
+        <!-- 查询结果 页码数量-->
+        <LinearLayout
             android:id="@+id/ll_act_harmony_result_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
             >
         </LinearLayout>
     </RelativeLayout>
