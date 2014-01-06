@@ -37,9 +37,7 @@ public class ViewRegistry {
     bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "wifi", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "设置wifi", Toast.LENGTH_LONG).show();
+        ctx.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
       }
     });
     bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "resolution", new MessageHandler<JsonObject>() {
@@ -64,7 +62,7 @@ public class ViewRegistry {
       public void handle(Message<JsonObject> message) {
         // Intent intent = new Intent(ctx, HomeActivity.class);
         // ctx.startActivity(intent);
-        Toast.makeText(ctx, "关于我们", Toast.LENGTH_LONG).show();
+        Toast.makeText(ctx, "sid=" + BusProvider.SID, Toast.LENGTH_LONG).show();
       }
     });
     // 打开设置
