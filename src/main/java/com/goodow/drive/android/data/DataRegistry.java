@@ -40,7 +40,7 @@ public class DataRegistry {
           if (result) {
             body.set("status", "ok");
           }
-          bus.send(Bus.LOCAL + "" + Bus.LOCAL + Constant.ADDR_TOPIC, body, null);
+          bus.send(Bus.LOCAL + Bus.LOCAL + Constant.ADDR_TOPIC, body, null);
           return;
         }
 
