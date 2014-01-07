@@ -164,6 +164,140 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
     }
   };
 
+  // 判定是否时有效的班级数值
+  public boolean isRightfulGrade(String grade) {
+    if (Constant.GRADE_LITTLE.equals(grade) || Constant.GRADE_MID.equals(grade)
+        || Constant.GRADE_BIG.equals(grade) || Constant.GRADE_PRE.equals(grade)) {
+      return true;
+    }
+    return false;
+  }
+
+  // 判定是否时有效的年级数值
+  public boolean isRightfulTerm(String term) {
+    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
+      return true;
+    }
+    return false;
+  }
+
+  // 判定是否时有效的类别数值
+  public boolean isRightfulTopic(String topic) {
+    if (Constant.DOMIAN_LANGUAGE.equals(topic) || Constant.DOMIAN_ARITHMETIC.equals(topic)
+        || Constant.DOMIAN_THINKING.equals(topic) || Constant.DOMIAN_JIGSAW.equals(topic)
+        || Constant.DOMIAN_READABLE.equals(topic) || Constant.DOMIAN_BODY.equals(topic)) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    if (!isLocal) {
+      return;
+    }
+    if (isChecked) {
+      switch (buttonView.getId()) {
+      // 年级的选中事件
+        case R.id.rb_act_smart_little:
+        case R.id.rb_act_smart_middle:
+        case R.id.rb_act_smart_big:
+        case R.id.rb_act_smart_pre:
+          this.onGradeViewClick(buttonView.getId());
+          break;
+        // 学期的选中事件
+        case R.id.rb_act_smart_top:
+        case R.id.rb_act_smart_bottom:
+          this.onTermViewClick(buttonView.getId());
+          break;
+        // 类别的选中事件
+        case R.id.rb_act_smart_class_language:
+        case R.id.rb_act_smart_class_arithmetic:
+        case R.id.rb_act_smart_class_jigsaw:
+        case R.id.rb_act_smart_class_thinking:
+        case R.id.rb_act_smart_class_readable:
+        case R.id.rb_act_smart_class_body:
+          this.topicChooser(buttonView.getId());
+          this.onMyClassViewClick(buttonView.getId());
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  @Override
+  public void onClick(View v) {
+    switch (v.getId()) {
+    // 后退 收藏 锁屏
+      case R.id.iv_act_smart_back:
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        break;
+      case R.id.iv_act_smart_coll:
+        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
+            "query", Json.createObject().set("type", "收藏")), null);
+        break;
+      case R.id.iv_act_smart_loc:
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
+        break;
+
+      // 查询结果翻页
+      case R.id.rl_act_smart_result_pre:
+      case R.id.rl_act_smart_result_next:
+        this.onResultPrePageClick(v.getId());
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  @Override
+  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public void onPageScrollStateChanged(int state) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public void onPageSelected(int position) {
+    if (position == 0) {
+      this.rl_act_smart_result_pre.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_smart_result_pre.setVisibility(View.VISIBLE);
+    }
+    if (position == totalPageNum - 1) {
+      this.rl_act_smart_result_next.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_smart_result_next.setVisibility(View.VISIBLE);
+    }
+
+    for (int i = 0; i < this.ll_act_smart_result_bar.getChildCount(); i++) {
+      if (position == i) {
+        this.ll_act_smart_result_bar.getChildAt(i).setBackgroundResource(
+            R.drawable.common_result_dot_current);
+      } else {
+        this.ll_act_smart_result_bar.getChildAt(i).setBackgroundResource(
+            R.drawable.common_result_dot_other);
+      }
+    }
+  }
+
+  /**
+   * 查询历史数据
+   */
+  public void readHistoryData() {
+    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
+    this.currentGrade = this.sharedPreferences.getString(Constant.GRADE, this.currentGrade);
+    this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
+    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
+  }
+
   /**
    * 解析条件
    * 
@@ -195,33 +329,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
     }
   }
 
-  // 判定是否时有效的班级数值
-  public boolean isRightfulGrade(String grade) {
-    if (Constant.GRADE_LITTLE.equals(grade) || Constant.GRADE_MID.equals(grade)
-        || Constant.GRADE_BIG.equals(grade) || Constant.GRADE_PRE.equals(grade)) {
-      return true;
-    }
-    return false;
-  }
-
-  // 判定是否时有效的年级数值
-  public boolean isRightfulTerm(String term) {
-    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
-      return true;
-    }
-    return false;
-  }
-
-  // 判定是否时有效的类别数值
-  public boolean isRightfulTopic(String topic) {
-    if (Constant.DOMIAN_LANGUAGE.equals(topic) || Constant.DOMIAN_ARITHMETIC.equals(topic)
-        || Constant.DOMIAN_THINKING.equals(topic) || Constant.DOMIAN_JIGSAW.equals(topic)
-        || Constant.DOMIAN_READABLE.equals(topic) || Constant.DOMIAN_BODY.equals(topic)) {
-      return true;
-    }
-    return false;
-  }
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -241,6 +348,20 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
       this.bindHistoryDataToView();
       this.isLocal = true;
     }
+  }
+
+  @Override
+  protected void onPause() {
+    bus.unregisterHandler(Constant.ADDR_TOPIC, eventHandler);
+    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
+    super.onPause();
+  }
+
+  @Override
+  protected void onResume() {
+    bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
+    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
+    super.onResume();
   }
 
   /**
@@ -288,8 +409,16 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
           textView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-              Toast.makeText(SmartActivity.this, "go:" + ((TextView) v).getText().toString(),
-                  Toast.LENGTH_SHORT).show();
+              JsonObject msg = Json.createObject();
+              JsonObject tags = Json.createObject();
+              tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SMART);
+              tags.set(Constant.GRADE, currentGrade);
+              tags.set(Constant.TERM, currentTerm);
+              tags.set(Constant.TOPIC, currenTopic);
+              msg.set(Constant.TAGS, tags);
+              msg.set(Constant.TITLE, ((TextView) v).getText().toString());
+              msg.set("action", "post");
+              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }
           });
           innerContainer.addView(textView);
@@ -315,6 +444,43 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
     } else {
       this.rl_act_smart_result_pre.setVisibility(View.INVISIBLE);
       this.rl_act_smart_result_next.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  /**
+   * 把查询完成的的历史记忆绑定到View
+   */
+  private void bindHistoryDataToView() {
+    // 回显年级
+    if (Constant.GRADE_LITTLE.equals(this.currentGrade)) {
+      this.rb_act_smart_little.setChecked(true);
+    } else if (Constant.GRADE_MID.equals(this.currentGrade)) {
+      this.rb_act_smart_middle.setChecked(true);
+    } else if (Constant.GRADE_BIG.equals(this.currentGrade)) {
+      this.rb_act_smart_big.setChecked(true);
+    } else if (Constant.GRADE_PRE.equals(this.currentGrade)) {
+      this.rb_act_smart_pre.setChecked(true);
+    }
+
+    // 回显学期
+    if (Constant.TERM_SEMESTER0.equals(this.currentTerm)) {
+      this.rb_act_smart_top.setChecked(true);
+    } else if (Constant.TERM_SEMESTER1.equals(this.currentTerm)) {
+      this.rb_act_smart_bottom.setChecked(true);
+    }
+    // 回显分类
+    if (Constant.DOMIAN_LANGUAGE.equals(this.currenTopic)) {
+      this.rb_act_smart_class_language.setChecked(true);
+    } else if (Constant.DOMIAN_ARITHMETIC.equals(this.currenTopic)) {
+      this.rb_act_smart_class_arithmetic.setChecked(true);
+    } else if (Constant.DOMIAN_JIGSAW.equals(this.currenTopic)) {
+      this.rb_act_smart_class_jigsaw.setChecked(true);
+    } else if (Constant.DOMIAN_THINKING.equals(this.currenTopic)) {
+      this.rb_act_smart_class_thinking.setChecked(true);
+    } else if (Constant.DOMIAN_READABLE.equals(this.currenTopic)) {
+      this.rb_act_smart_class_readable.setChecked(true);
+    } else if (Constant.DOMIAN_BODY.equals(this.currenTopic)) {
+      this.rb_act_smart_class_body.setChecked(true);
     }
   }
 
@@ -393,154 +559,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
 
   }
 
-  @Override
-  public void onClick(View v) {
-    switch (v.getId()) {
-    // 后退 收藏 锁屏
-      case R.id.iv_act_smart_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
-        break;
-      case R.id.iv_act_smart_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            "query", Json.createObject().set("type", "收藏")), null);
-        break;
-      case R.id.iv_act_smart_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
-        break;
-
-      // 查询结果翻页
-      case R.id.rl_act_smart_result_pre:
-      case R.id.rl_act_smart_result_next:
-        this.onResultPrePageClick(v.getId());
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  /**
-   * 处理上下翻页的点击事件
-   * 
-   * @param id
-   */
-  private void onResultPrePageClick(int id) {
-    JsonObject msg = Json.createObject();
-    if (id == R.id.rl_act_smart_result_pre) {
-      msg.set("previous", true);
-    } else if (id == R.id.rl_act_smart_result_next) {
-      msg.set("next", true);
-    }
-    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, eventHandlerControl);
-  }
-
-  /**
-   * 查询历史数据
-   */
-  public void readHistoryData() {
-    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
-    this.currentGrade = this.sharedPreferences.getString(Constant.GRADE, this.currentGrade);
-    this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
-    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
-  }
-
-  @Override
-  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-    // TODO Auto-generated method stub
-  }
-
-  @Override
-  public void onPageSelected(int position) {
-    if (position == 0) {
-      this.rl_act_smart_result_pre.setVisibility(View.INVISIBLE);
-    } else {
-      this.rl_act_smart_result_pre.setVisibility(View.VISIBLE);
-    }
-    if (position == totalPageNum - 1) {
-      this.rl_act_smart_result_next.setVisibility(View.INVISIBLE);
-    } else {
-      this.rl_act_smart_result_next.setVisibility(View.VISIBLE);
-    }
-
-    for (int i = 0; i < this.ll_act_smart_result_bar.getChildCount(); i++) {
-      if (position == i) {
-        this.ll_act_smart_result_bar.getChildAt(i).setBackgroundResource(
-            R.drawable.common_result_dot_current);
-      } else {
-        this.ll_act_smart_result_bar.getChildAt(i).setBackgroundResource(
-            R.drawable.common_result_dot_other);
-      }
-    }
-  }
-
-  @Override
-  public void onPageScrollStateChanged(int state) {
-    // TODO Auto-generated method stub
-  }
-
-  @Override
-  protected void onPause() {
-    bus.unregisterHandler(Constant.ADDR_TOPIC, eventHandler);
-    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
-    super.onPause();
-  }
-
-  @Override
-  protected void onResume() {
-    bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
-    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
-    super.onResume();
-  }
-
-  @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    if (!isLocal) {
-      return;
-    }
-    if (isChecked) {
-      switch (buttonView.getId()) {
-      // 年级的选中事件
-        case R.id.rb_act_smart_little:
-        case R.id.rb_act_smart_middle:
-        case R.id.rb_act_smart_big:
-        case R.id.rb_act_smart_pre:
-          this.onGradeViewClick(buttonView.getId());
-          break;
-        // 学期的选中事件
-        case R.id.rb_act_smart_top:
-        case R.id.rb_act_smart_bottom:
-          this.onTermViewClick(buttonView.getId());
-          break;
-        // 类别的选中事件
-        case R.id.rb_act_smart_class_language:
-        case R.id.rb_act_smart_class_arithmetic:
-        case R.id.rb_act_smart_class_jigsaw:
-        case R.id.rb_act_smart_class_thinking:
-        case R.id.rb_act_smart_class_readable:
-        case R.id.rb_act_smart_class_body:
-          this.topicChooser(buttonView.getId());
-          this.onMyClassViewClick(buttonView.getId());
-          break;
-
-        default:
-          break;
-      }
-    }
-  }
-
-  private void topicChooser(int id) {
-    int len = this.topicRadioButtons.length;
-    for (int i = 0; i < len; i++) {
-      RadioButton radioButton = this.topicRadioButtons[i];
-      if (radioButton.getId() == id) {
-        radioButton.setChecked(true);
-      } else {
-        radioButton.setChecked(false);
-      }
-    }
-  }
-
   /**
    * 处理年级的点击事件
    * 
@@ -600,6 +618,21 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
   }
 
   /**
+   * 处理上下翻页的点击事件
+   * 
+   * @param id
+   */
+  private void onResultPrePageClick(int id) {
+    JsonObject msg = Json.createObject();
+    if (id == R.id.rl_act_smart_result_pre) {
+      msg.set("previous", true);
+    } else if (id == R.id.rl_act_smart_result_next) {
+      msg.set("next", true);
+    }
+    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, eventHandlerControl);
+  }
+
+  /**
    * 处理学期的点击事件
    * 
    * @param i
@@ -617,43 +650,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
     }
     this.saveHistory(Constant.TERM, this.currentTerm);
     this.sendQueryMessage();
-  }
-
-  /**
-   * 把查询完成的的历史记忆绑定到View
-   */
-  private void bindHistoryDataToView() {
-    // 回显年级
-    if (Constant.GRADE_LITTLE.equals(this.currentGrade)) {
-      this.rb_act_smart_little.setChecked(true);
-    } else if (Constant.GRADE_MID.equals(this.currentGrade)) {
-      this.rb_act_smart_middle.setChecked(true);
-    } else if (Constant.GRADE_BIG.equals(this.currentGrade)) {
-      this.rb_act_smart_big.setChecked(true);
-    } else if (Constant.GRADE_PRE.equals(this.currentGrade)) {
-      this.rb_act_smart_pre.setChecked(true);
-    }
-
-    // 回显学期
-    if (Constant.TERM_SEMESTER0.equals(this.currentTerm)) {
-      this.rb_act_smart_top.setChecked(true);
-    } else if (Constant.TERM_SEMESTER1.equals(this.currentTerm)) {
-      this.rb_act_smart_bottom.setChecked(true);
-    }
-    // 回显分类
-    if (Constant.DOMIAN_LANGUAGE.equals(this.currenTopic)) {
-      this.rb_act_smart_class_language.setChecked(true);
-    } else if (Constant.DOMIAN_ARITHMETIC.equals(this.currenTopic)) {
-      this.rb_act_smart_class_arithmetic.setChecked(true);
-    } else if (Constant.DOMIAN_JIGSAW.equals(this.currenTopic)) {
-      this.rb_act_smart_class_jigsaw.setChecked(true);
-    } else if (Constant.DOMIAN_THINKING.equals(this.currenTopic)) {
-      this.rb_act_smart_class_thinking.setChecked(true);
-    } else if (Constant.DOMIAN_READABLE.equals(this.currenTopic)) {
-      this.rb_act_smart_class_readable.setChecked(true);
-    } else if (Constant.DOMIAN_BODY.equals(this.currenTopic)) {
-      this.rb_act_smart_class_body.setChecked(true);
-    }
   }
 
   /**
@@ -683,6 +679,18 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
     query.set(Constant.TOPIC, this.currenTopic);
     msg.set("query", query);
     bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, eventHandler);
+  }
+
+  private void topicChooser(int id) {
+    int len = this.topicRadioButtons.length;
+    for (int i = 0; i < len; i++) {
+      RadioButton radioButton = this.topicRadioButtons[i];
+      if (radioButton.getId() == id) {
+        radioButton.setChecked(true);
+      } else {
+        radioButton.setChecked(false);
+      }
+    }
   }
 
 }

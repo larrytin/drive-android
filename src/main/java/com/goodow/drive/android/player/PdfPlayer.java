@@ -188,7 +188,7 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
    */
   private void buildPdfView(Intent intent) {
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
-    File newFile = new File(Constant.STORAGE_DIR + jsonObject.getString("path"));
+    File newFile = new File(jsonObject.getString("path"));
     if (newFile.exists()) {
       pdfView.fromFile(newFile).defaultPage(1).onLoad(this).onDraw(this).onPageChange(this).onLoad(
           this).load();

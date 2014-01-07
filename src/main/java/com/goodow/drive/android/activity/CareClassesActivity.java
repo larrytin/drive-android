@@ -144,17 +144,54 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
         // Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
       case R.id.bt_care_cloud1:
+        onCloudClick(this.iv_care_cloud1.getText().toString());
+        break;
       case R.id.bt_care_cloud2:
+        onCloudClick(this.iv_care_cloud2.getText().toString());
+        break;
       case R.id.bt_care_cloud3:
+        onCloudClick(this.iv_care_cloud3.getText().toString());
+        break;
       case R.id.bt_care_cloud4:
+        onCloudClick(this.iv_care_cloud4.getText().toString());
+        break;
       case R.id.bt_care_cloud5:
+        onCloudClick(this.iv_care_cloud5.getText().toString());
+        break;
       case R.id.bt_care_cloud6:
+        onCloudClick(this.iv_care_cloud6.getText().toString());
+        break;
       case R.id.bt_care_cloud7:
+        onCloudClick(this.iv_care_cloud7.getText().toString());
+        break;
       case R.id.bt_care_cloud8:
+        onCloudClick(this.iv_care_cloud8.getText().toString());
+        break;
       case R.id.bt_care_cloud9:
+        onCloudClick(this.iv_care_cloud9.getText().toString());
+        break;
       case R.id.bt_care_cloud10:
+        onCloudClick(this.iv_care_cloud10.getText().toString());
+        break;
 
     }
+  }
+
+  /**
+   * 打开活动详情
+   * 
+   * @param title
+   */
+  private void onCloudClick(String title) {
+    JsonObject msg = Json.createObject();
+    JsonObject tags = Json.createObject();
+    tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
+    tags.set(Constant.TERM, currentTerm);
+    tags.set(Constant.TOPIC, currenTopic);
+    msg.set(Constant.TAGS, tags);
+    msg.set(Constant.TITLE, title);
+    msg.set("action", "post");
+    bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
   }
 
   @Override

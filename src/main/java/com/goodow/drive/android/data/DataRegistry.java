@@ -22,18 +22,56 @@ public class DataRegistry {
   }
 
   public void subscribe() {
+    // 活动详情
+    bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+
+        // 仅仅处理get动作：数据查询
+        if ("get".equalsIgnoreCase(body.getString("action"))) {
+          JsonObject activity = body.getObject("activity");
+          JsonObject msg = Json.createObject();
+          msg.set("activity", activity);
+          msg.set("files", DataProvider.getInstance().getFiles(activity));
+          msg.set("action", "post");
+          bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
+          return;
+        }
+
+        // 仅处理判断是否已经收藏动作
+        if ("head".equalsIgnoreCase(body.getString("action"))) {
+          JsonObject activity = body.getObject("activity");
+          boolean result = DBOperator.isHave(context, activity);
+          if (result) {
+            body.set("status", "ok");
+          }
+          message.reply(body);
+          return;
+        }
+
+      }
+    });
     bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
 
-        // 仅处理put动作
+        // 仅处理put动作:收藏到数据库
         if ("put".equalsIgnoreCase(body.getString("action"))) {
           JsonArray activities = body.getArray("activities");
-          DBOperator.createFavourite(context, activities);
+          boolean result = DBOperator.createFavourite(context, activities);
+          JsonObject msg = Json.createObject();
+          if (result) {
+            msg.set("status", "ok");
+          } else {
+            msg.set("status", "error");
+          }
+          message.reply(msg);
           return;
         }
-        // 仅处理delete动作
+
+        // 仅处理delete动作:从数据库中删除
         if ("delete".equalsIgnoreCase(body.getString("action"))) {
           JsonArray delActivities = body.getArray("activities");
           boolean result = DBOperator.deleteFavourite(context, delActivities);

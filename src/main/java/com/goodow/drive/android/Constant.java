@@ -18,6 +18,13 @@ public interface Constant {
   String TAGS = "tags"; // 活动TAGS的KEY
 
   String STORAGE_DIR = "/mnt/sdcard/";
+  String FILE_FORMAT_PDF = "pdf";
+  String FILE_FORMAT_SWF = "swf";
+  String FILE_FORMAT_MP3 = "mp3";
+  String FILE_FORMAT_MP4 = "mp4";
+  String FILE_FORMAT_IMAGE = "image";
+  String FILE_NAME = "filename";
+  String FILE_PATH = "path";
 
   String GRADE_LITTLE = "小";
   String GRADE_MID = "中";

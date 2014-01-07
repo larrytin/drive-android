@@ -6,6 +6,7 @@ import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
@@ -73,6 +74,22 @@ public class ViewRegistry {
         ctx.startActivity(intent);
       }
     });
+    // 打开活动详情
+    bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject activity = message.body();
+        if (!"post".equals(activity.getString("action"))) {
+          return;
+        }
+        Intent intent = new Intent(ctx, BehaveActivity.class);
+        JsonObject msg = Json.createObject();
+        msg.set("activity", activity);
+        intent.putExtra("msg", msg);
+        ctx.startActivity(intent);
+      }
+    });
+
     bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

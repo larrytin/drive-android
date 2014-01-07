@@ -396,6 +396,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     textViewParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
     textView.setLayoutParams(textViewParams);
     textView.setBackgroundResource(R.drawable.favour_selector_item);
+    textView.setTag(activity);
     itemContainer.addView(textView);
 
     final MyImageView imageView = new MyImageView(this, index);
@@ -417,7 +418,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           texViewTemp.setSelected(false);
           imageView.setVisibility(View.INVISIBLE);
         } else {
-          Toast.makeText(FavouriteActivity.this, "open", Toast.LENGTH_SHORT).show();
+          JsonObject msg = (JsonObject) ((TextView) v).getTag();
+          msg.set("action", "post");
+          bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
         }
       }
     });

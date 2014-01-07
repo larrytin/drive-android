@@ -157,7 +157,7 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
   // 数据集
   private JsonArray activities = null;
 
-  private ArrayList<View> nameViews = new ArrayList<View>();
+  private final ArrayList<View> nameViews = new ArrayList<View>();
   private final static String SHAREDNAME = "caseHistory";// 配置文件的名称
   public final static String SHAREDNAME_GRADE = "grade";// 年级的KEY
   public final static String SHAREDNAME_TERM = "term";// 学期的KEY
@@ -448,9 +448,17 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
           itemView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-              Toast.makeText(CaseActivity.this,
-                  "go:" + ((TextView) ((LinearLayout) v).getChildAt(1)).getText().toString(),
-                  Toast.LENGTH_SHORT).show();
+              JsonObject msg = Json.createObject();
+              JsonObject tags = Json.createObject();
+              tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_CASE);
+              tags.set(Constant.GRADE, currentGrade);
+              tags.set(Constant.TERM, currentTerm);
+              tags.set(Constant.TOPIC, currenTopic);
+              msg.set(Constant.TAGS, tags);
+              msg.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getText()
+                  .toString());
+              msg.set("action", "post");
+              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }
           });
           innerContainer.addView(itemView);

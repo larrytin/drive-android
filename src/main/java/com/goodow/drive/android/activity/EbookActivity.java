@@ -148,6 +148,144 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
   boolean isLocal = true;
 
+  // 判定是否时有效的班级数值
+  public boolean isRightfulGrade(String grade) {
+    if (Constant.GRADE_LITTLE.equals(grade) || Constant.GRADE_MID.equals(grade)
+        || Constant.GRADE_BIG.equals(grade) || Constant.GRADE_PRE.equals(grade)) {
+      return true;
+    }
+    return false;
+  }
+
+  // 判定是否时有效的年级数值
+  public boolean isRightfulTerm(String term) {
+    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
+      return true;
+    }
+    return false;
+  }
+
+  // 判定是否时有效的类别数值
+  public boolean isRightfulTopic(String topic) {
+    if (Constant.DOMIAN_HEALTH.equals(topic) || Constant.DOMIAN_LANGUAGE.equals(topic)
+        || Constant.DOMIAN_WORLD.equals(topic) || Constant.DOMIAN_SCIENCE.equals(topic)
+        || Constant.DOMIAN_MATH.equals(topic) || Constant.DOMIAN_MUSIC.equals(topic)
+        || Constant.DOMIAN_ART.equals(topic)) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    if (!isLocal) {
+      return;
+    }
+    if (isChecked) {
+      switch (buttonView.getId()) {
+      // 类别的选中事件
+        case R.id.rb_act_ebook_class_health:
+        case R.id.rb_act_ebook_class_language:
+        case R.id.rb_act_ebook_class_world:
+        case R.id.rb_act_ebook_class_scinece:
+        case R.id.rb_act_ebook_class_math:
+          this.onMyClassViewClick(buttonView.getId());
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  @Override
+  public void onClick(View v) {
+    switch (v.getId()) {
+    // 后退 收藏 锁屏
+      case R.id.iv_act_ebook_back:
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        break;
+      case R.id.iv_act_ebook_coll:
+        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
+            "query", Json.createObject().set("type", "收藏")), null);
+        break;
+      case R.id.iv_act_ebook_loc:
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
+        break;
+
+      // 查询结果翻页
+      case R.id.rl_act_ebook_result_pre:
+      case R.id.rl_act_ebook_result_next:
+        this.onResultPrePageClick(v.getId());
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  @Override
+  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void onPageScrollStateChanged(int state) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void onPageSelected(int position) {
+    if (position == 0) {
+      this.rl_act_ebook_result_pre.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_ebook_result_pre.setVisibility(View.VISIBLE);
+    }
+    if (position == totalPageNum - 1) {
+      this.rl_act_ebook_result_next.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_ebook_result_next.setVisibility(View.VISIBLE);
+    }
+
+    for (int i = 0; i < this.ll_act_ebook_result_bar.getChildCount(); i++) {
+      if (position == i) {
+        this.ll_act_ebook_result_bar.getChildAt(i).setBackgroundResource(
+            R.drawable.common_result_dot_current);
+      } else {
+        this.ll_act_ebook_result_bar.getChildAt(i).setBackgroundResource(
+            R.drawable.common_result_dot_other);
+      }
+    }
+  }
+
+  /**
+   * 查询历史数据
+   */
+  public void readHistoryData() {
+    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
+    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
+  }
+
+  /**
+   * 解析条件
+   * 
+   * @param query
+   */
+  public void readQuery(JsonObject query) {
+    if (query != null) {
+      String tempClass = query.getString(Constant.TOPIC);
+      if (tempClass != null && isRightfulTopic(tempClass)) {
+        currenTopic = tempClass;
+        saveHistory(Constant.TOPIC, currenTopic);
+      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
+        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
+      }
+    }
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -181,24 +319,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
     bus.registerHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
     super.onResume();
-  }
-
-  /**
-   * 把查询完成的的历史记忆绑定到View
-   */
-  private void bindHistoryDataToView() {
-    // 回显分类
-    if (Constant.DOMIAN_HEALTH.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_health.setChecked(true);
-    } else if (Constant.DOMIAN_LANGUAGE.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_language.setChecked(true);
-    } else if (Constant.DOMIAN_WORLD.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_world.setChecked(true);
-    } else if (Constant.DOMIAN_SCIENCE.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_scinece.setChecked(true);
-    } else if (Constant.DOMIAN_MATH.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_math.setChecked(true);
-    }
   }
 
   /**
@@ -242,9 +362,15 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
           view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-              Toast.makeText(EbookActivity.this,
-                  "go:" + ((TextView) ((LinearLayout) v).getChildAt(1)).getText().toString(),
-                  Toast.LENGTH_SHORT).show();
+              JsonObject msg = Json.createObject();
+              JsonObject tags = Json.createObject();
+              tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_EBOOK);
+              tags.set(Constant.TOPIC, currenTopic);
+              msg.set(Constant.TAGS, tags);
+              msg.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getText()
+                  .toString());
+              msg.set("action", "post");
+              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }
           });
           innerContainer.addView(view);
@@ -270,6 +396,24 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     } else {
       this.rl_act_ebook_result_pre.setVisibility(View.INVISIBLE);
       this.rl_act_ebook_result_next.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  /**
+   * 把查询完成的的历史记忆绑定到View
+   */
+  private void bindHistoryDataToView() {
+    // 回显分类
+    if (Constant.DOMIAN_HEALTH.equals(this.currenTopic)) {
+      this.rb_act_ebook_class_health.setChecked(true);
+    } else if (Constant.DOMIAN_LANGUAGE.equals(this.currenTopic)) {
+      this.rb_act_ebook_class_language.setChecked(true);
+    } else if (Constant.DOMIAN_WORLD.equals(this.currenTopic)) {
+      this.rb_act_ebook_class_world.setChecked(true);
+    } else if (Constant.DOMIAN_SCIENCE.equals(this.currenTopic)) {
+      this.rb_act_ebook_class_scinece.setChecked(true);
+    } else if (Constant.DOMIAN_MATH.equals(this.currenTopic)) {
+      this.rb_act_ebook_class_math.setChecked(true);
     }
   }
 
@@ -302,51 +446,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     itemLayout.addView(textView);
 
     return itemLayout;
-  }
-
-  /**
-   * 解析条件
-   * 
-   * @param query
-   */
-  public void readQuery(JsonObject query) {
-    if (query != null) {
-      String tempClass = query.getString(Constant.TOPIC);
-      if (tempClass != null && isRightfulTopic(tempClass)) {
-        currenTopic = tempClass;
-        saveHistory(Constant.TOPIC, currenTopic);
-      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
-        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
-      }
-    }
-  }
-
-  // 判定是否时有效的班级数值
-  public boolean isRightfulGrade(String grade) {
-    if (Constant.GRADE_LITTLE.equals(grade) || Constant.GRADE_MID.equals(grade)
-        || Constant.GRADE_BIG.equals(grade) || Constant.GRADE_PRE.equals(grade)) {
-      return true;
-    }
-    return false;
-  }
-
-  // 判定是否时有效的年级数值
-  public boolean isRightfulTerm(String term) {
-    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
-      return true;
-    }
-    return false;
-  }
-
-  // 判定是否时有效的类别数值
-  public boolean isRightfulTopic(String topic) {
-    if (Constant.DOMIAN_HEALTH.equals(topic) || Constant.DOMIAN_LANGUAGE.equals(topic)
-        || Constant.DOMIAN_WORLD.equals(topic) || Constant.DOMIAN_SCIENCE.equals(topic)
-        || Constant.DOMIAN_MATH.equals(topic) || Constant.DOMIAN_MUSIC.equals(topic)
-        || Constant.DOMIAN_ART.equals(topic)) {
-      return true;
-    }
-    return false;
   }
 
   /**
@@ -392,91 +491,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
   }
 
-  @Override
-  public void onClick(View v) {
-    switch (v.getId()) {
-    // 后退 收藏 锁屏
-      case R.id.iv_act_ebook_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
-        break;
-      case R.id.iv_act_ebook_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            "query", Json.createObject().set("type", "收藏")), null);
-        break;
-      case R.id.iv_act_ebook_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
-        break;
-
-      // 查询结果翻页
-      case R.id.rl_act_ebook_result_pre:
-      case R.id.rl_act_ebook_result_next:
-        this.onResultPrePageClick(v.getId());
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  @Override
-  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void onPageSelected(int position) {
-    if (position == 0) {
-      this.rl_act_ebook_result_pre.setVisibility(View.INVISIBLE);
-    } else {
-      this.rl_act_ebook_result_pre.setVisibility(View.VISIBLE);
-    }
-    if (position == totalPageNum - 1) {
-      this.rl_act_ebook_result_next.setVisibility(View.INVISIBLE);
-    } else {
-      this.rl_act_ebook_result_next.setVisibility(View.VISIBLE);
-    }
-
-    for (int i = 0; i < this.ll_act_ebook_result_bar.getChildCount(); i++) {
-      if (position == i) {
-        this.ll_act_ebook_result_bar.getChildAt(i).setBackgroundResource(
-            R.drawable.common_result_dot_current);
-      } else {
-        this.ll_act_ebook_result_bar.getChildAt(i).setBackgroundResource(
-            R.drawable.common_result_dot_other);
-      }
-    }
-  }
-
-  @Override
-  public void onPageScrollStateChanged(int state) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    if (!isLocal) {
-      return;
-    }
-    if (isChecked) {
-      switch (buttonView.getId()) {
-      // 类别的选中事件
-        case R.id.rb_act_ebook_class_health:
-        case R.id.rb_act_ebook_class_language:
-        case R.id.rb_act_ebook_class_world:
-        case R.id.rb_act_ebook_class_scinece:
-        case R.id.rb_act_ebook_class_math:
-          this.onMyClassViewClick(buttonView.getId());
-          break;
-
-        default:
-          break;
-      }
-    }
-  }
-
   /**
    * 处理类别的点击事件
    * 
@@ -519,14 +533,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
       msg.set("next", true);
     }
     bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, eventHandlerControl);
-  }
-
-  /**
-   * 查询历史数据
-   */
-  public void readHistoryData() {
-    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
-    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
   }
 
   /**

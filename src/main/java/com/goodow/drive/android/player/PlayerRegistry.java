@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.widget.Toast;
 
 public class PlayerRegistry {
-  private static final String TAG = PlayerRegistry.class.getSimpleName();
   private final Bus bus = BusProvider.get();
   private final Context ctx;
 

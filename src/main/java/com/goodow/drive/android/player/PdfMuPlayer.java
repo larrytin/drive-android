@@ -1,7 +1,6 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.json.JsonObject;
 
@@ -27,7 +26,7 @@ public class PdfMuPlayer extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
-    File newFile = new File(Constant.STORAGE_DIR + jsonObject.getString("path"));
+    File newFile = new File(jsonObject.getString("path"));
     if (newFile.exists()) {
       Uri uri = Uri.parse(newFile.getPath());
       Intent intent = new Intent(this, MuPDFActivity.class);

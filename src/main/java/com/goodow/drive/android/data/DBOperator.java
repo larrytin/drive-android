@@ -28,8 +28,8 @@ public class DBOperator {
    * @param activities
    * @return 成功执行的数据量
    */
-  public static int createFavourite(Context context, JsonArray activities) {
-    int result = 0;
+  public static boolean createFavourite(Context context, JsonArray activities) {
+    boolean result = false;
     int len = activities.length();
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
@@ -48,10 +48,37 @@ public class DBOperator {
         contentValues.put("CREATETIME", DeviceInformationTools.getDateTime());
         contentValues.put("UPDATETIME", DeviceInformationTools.getDateTime());
         db.insert("T_FAVOURITE", null, contentValues);
-        result++;
       }
       db.setTransactionSuccessful();
+      result = true;
     } catch (Exception e) {
+      result = false;
+    } finally {
+      db.endTransaction();
+      db.close();
+    }
+    return result;
+  }
+
+  /**
+   * 清空数据库
+   * 
+   * @param context
+   * @param favouriteId
+   * @return 执行结果
+   */
+  public static boolean deleteAll(Context context) {
+    boolean result = false;
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    try {
+      db.beginTransaction();
+      db.execSQL("DELETE FROM T_FAVOURITE");
+      db.setTransactionSuccessful();
+      result = true;
+      db.setTransactionSuccessful();
+    } catch (Exception e) {
+      result = false;
     } finally {
       db.endTransaction();
       db.close();
@@ -95,32 +122,6 @@ public class DBOperator {
   }
 
   /**
-   * 清空数据库
-   * 
-   * @param context
-   * @param favouriteId
-   * @return 执行结果
-   */
-  public static boolean deleteAll(Context context) {
-    boolean result = false;
-    DBHelper dbOpenHelper = DBHelper.getInstance(context);
-    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-    try {
-      db.beginTransaction();
-      db.execSQL("DELETE FROM T_FAVOURITE");
-      db.setTransactionSuccessful();
-      result = true;
-      db.setTransactionSuccessful();
-    } catch (Exception e) {
-      result = false;
-    } finally {
-      db.endTransaction();
-      db.close();
-    }
-    return result;
-  }
-
-  /**
    * 是否已经收藏了该活动
    * 
    * @param context
@@ -141,8 +142,10 @@ public class DBOperator {
               tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
               activity.getString(Constant.TITLE)};
       Cursor cursor = db.rawQuery(sql, params);
-      if (cursor.getCount() > 0) {
-        result = true;
+      if (cursor.moveToNext()) {
+        if (cursor.getInt(cursor.getColumnIndex("ISHAVE")) > 0) {
+          result = true;
+        }
       }
       db.setTransactionSuccessful();
     } catch (Exception e) {

@@ -157,7 +157,7 @@ public class AudioPlayActivity extends BaseActivity {
     });
     audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
-    audioFilePath = Constant.STORAGE_DIR + jsonObject.getString("path");
+    audioFilePath = jsonObject.getString("path");
     File mFile = new File(audioFilePath);
     Log.d(TAG, audioFilePath);
     if (mFile.exists()) {
@@ -258,7 +258,7 @@ public class AudioPlayActivity extends BaseActivity {
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
-    audioFilePath = Constant.STORAGE_DIR + jsonObject.getString("path");
+    audioFilePath = jsonObject.getString("path");
     File mFile = new File(audioFilePath);
     Log.d(TAG, audioFilePath);
     if (mFile.exists()) {

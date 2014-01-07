@@ -155,6 +155,148 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
 
   boolean isLocal = true;
 
+  // 判定是否时有效的年级数值
+  public boolean isRightfulTerm(String term) {
+    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
+      return true;
+    }
+    return false;
+  }
+
+  // 判定是否时有效的类别数值
+  public boolean isRightfulTopic(String topic) {
+    if (Constant.DOMIAN_LANGUAGE.equals(topic) || Constant.DOMIAN_THINKING.equals(topic)
+        || Constant.DOMIAN_READ.equals(topic) || Constant.DOMIAN_WRITE.equals(topic)
+        || Constant.DOMIAN_QUALITY.equals(topic)) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
+  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    if (!isLocal) {
+      return;
+    }
+    if (isChecked) {
+      switch (buttonView.getId()) {
+      // 学期的选中事件
+        case R.id.rb_act_prepare_top:
+        case R.id.rb_act_prepare_bottom:
+          this.onTermViewClick(buttonView.getId());
+          break;
+        // 类别的选中事件
+        case R.id.rb_act_prepare_class_language:
+        case R.id.rb_act_prepare_class_thinking:
+        case R.id.rb_act_prepare_class_read:
+        case R.id.rb_act_prepare_class_write:
+        case R.id.rb_act_prepare_class_quality:
+          this.topicChooser(buttonView.getId());
+          this.onMyClassViewClick(buttonView.getId());
+          break;
+
+        default:
+          break;
+      }
+    }
+  }
+
+  @Override
+  public void onClick(View v) {
+    switch (v.getId()) {
+    // 后退 收藏 锁屏
+      case R.id.iv_act_prepare_back:
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        break;
+      case R.id.iv_act_prepare_coll:
+        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
+            "query", Json.createObject().set("type", "收藏")), null);
+        break;
+      case R.id.iv_act_prepare_loc:
+        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
+        break;
+
+      // 查询结果翻页
+      case R.id.rl_act_prepare_result_pre:
+      case R.id.rl_act_prepare_result_next:
+        this.onResultPrePageClick(v.getId());
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  @Override
+  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void onPageScrollStateChanged(int state) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void onPageSelected(int position) {
+    if (position == 0) {
+      this.rl_act_prepare_result_pre.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_prepare_result_pre.setVisibility(View.VISIBLE);
+    }
+    if (position == totalPageNum - 1) {
+      this.rl_act_prepare_result_next.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_prepare_result_next.setVisibility(View.VISIBLE);
+    }
+
+    for (int i = 0; i < this.ll_act_prepare_result_bar.getChildCount(); i++) {
+      if (position == i) {
+        this.ll_act_prepare_result_bar.getChildAt(i).setBackgroundResource(
+            R.drawable.common_result_dot_current);
+      } else {
+        this.ll_act_prepare_result_bar.getChildAt(i).setBackgroundResource(
+            R.drawable.common_result_dot_other);
+      }
+    }
+  }
+
+  /**
+   * 查询历史数据
+   */
+  public void readHistoryData() {
+    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
+    this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
+    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
+  }
+
+  /**
+   * 解析条件
+   * 
+   * @param query
+   */
+  public void readQuery(JsonObject query) {
+    if (query != null) {
+      String tempTerm = query.getString(Constant.TERM);
+      String tempClass = query.getString(Constant.TOPIC);
+      if (tempTerm != null && isRightfulTerm(tempTerm)) {
+        currentTerm = tempTerm;
+        saveHistory(Constant.TERM, currentTerm);
+      } else if (query.has(Constant.TERM) && !isRightfulTerm(tempTerm)) {
+        Toast.makeText(this, "无效的学期数值", Toast.LENGTH_SHORT).show();
+      }
+      if (tempClass != null && isRightfulTopic(tempClass)) {
+        currenTopic = tempClass;
+        saveHistory(Constant.TOPIC, currenTopic);
+      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
+        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
+      }
+    }
+  }
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -188,30 +330,6 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
     bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
     bus.registerHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
     super.onResume();
-  }
-
-  /**
-   * 把查询完成的的历史记忆绑定到View
-   */
-  private void bindHistoryDataToView() {
-    // 回显学期
-    if (Constant.TERM_SEMESTER0.equals(this.currentTerm)) {
-      this.rb_act_prepare_top.setChecked(true);
-    } else if (Constant.TERM_SEMESTER1.equals(this.currentTerm)) {
-      this.rb_act_prepare_bottom.setChecked(true);
-    }
-    // 回显分类
-    if (Constant.DOMIAN_LANGUAGE.equals(this.currenTopic)) {
-      this.rb_act_prepare_class_language.setChecked(true);
-    } else if (Constant.DOMIAN_THINKING.equals(this.currenTopic)) {
-      this.rb_act_prepare_class_thinking.setChecked(true);
-    } else if (Constant.DOMIAN_READ.equals(this.currenTopic)) {
-      this.rb_act_prepare_class_read.setChecked(true);
-    } else if (Constant.DOMIAN_WRITE.equals(this.currenTopic)) {
-      this.rb_act_prepare_class_write.setChecked(true);
-    } else if (Constant.DOMIAN_QUALITY.equals(this.currenTopic)) {
-      this.rb_act_prepare_class_quality.setChecked(true);
-    }
   }
 
   /**
@@ -259,8 +377,15 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
           textView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-              Toast.makeText(PrepareActivity.this, "go:" + ((TextView) v).getText().toString(),
-                  Toast.LENGTH_SHORT).show();
+              JsonObject msg = Json.createObject();
+              JsonObject tags = Json.createObject();
+              tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_PREPARE);
+              tags.set(Constant.TERM, currentTerm);
+              tags.set(Constant.TOPIC, currenTopic);
+              msg.set(Constant.TAGS, tags);
+              msg.set(Constant.TITLE, ((TextView) v).getText().toString());
+              msg.set("action", "post");
+              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }
           });
           innerContainer.addView(textView);
@@ -286,6 +411,30 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
     } else {
       this.rl_act_prepare_result_pre.setVisibility(View.INVISIBLE);
       this.rl_act_prepare_result_next.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  /**
+   * 把查询完成的的历史记忆绑定到View
+   */
+  private void bindHistoryDataToView() {
+    // 回显学期
+    if (Constant.TERM_SEMESTER0.equals(this.currentTerm)) {
+      this.rb_act_prepare_top.setChecked(true);
+    } else if (Constant.TERM_SEMESTER1.equals(this.currentTerm)) {
+      this.rb_act_prepare_bottom.setChecked(true);
+    }
+    // 回显分类
+    if (Constant.DOMIAN_LANGUAGE.equals(this.currenTopic)) {
+      this.rb_act_prepare_class_language.setChecked(true);
+    } else if (Constant.DOMIAN_THINKING.equals(this.currenTopic)) {
+      this.rb_act_prepare_class_thinking.setChecked(true);
+    } else if (Constant.DOMIAN_READ.equals(this.currenTopic)) {
+      this.rb_act_prepare_class_read.setChecked(true);
+    } else if (Constant.DOMIAN_WRITE.equals(this.currenTopic)) {
+      this.rb_act_prepare_class_write.setChecked(true);
+    } else if (Constant.DOMIAN_QUALITY.equals(this.currenTopic)) {
+      this.rb_act_prepare_class_quality.setChecked(true);
     }
   }
 
@@ -350,160 +499,6 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
     this.ll_act_prepare_result_bar =
         (LinearLayout) this.findViewById(R.id.ll_act_prepare_result_bar);
 
-  }
-
-  @Override
-  public void onClick(View v) {
-    switch (v.getId()) {
-    // 后退 收藏 锁屏
-      case R.id.iv_act_prepare_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
-        break;
-      case R.id.iv_act_prepare_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            "query", Json.createObject().set("type", "收藏")), null);
-        break;
-      case R.id.iv_act_prepare_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
-        break;
-
-      // 查询结果翻页
-      case R.id.rl_act_prepare_result_pre:
-      case R.id.rl_act_prepare_result_next:
-        this.onResultPrePageClick(v.getId());
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  @Override
-  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void onPageSelected(int position) {
-    if (position == 0) {
-      this.rl_act_prepare_result_pre.setVisibility(View.INVISIBLE);
-    } else {
-      this.rl_act_prepare_result_pre.setVisibility(View.VISIBLE);
-    }
-    if (position == totalPageNum - 1) {
-      this.rl_act_prepare_result_next.setVisibility(View.INVISIBLE);
-    } else {
-      this.rl_act_prepare_result_next.setVisibility(View.VISIBLE);
-    }
-
-    for (int i = 0; i < this.ll_act_prepare_result_bar.getChildCount(); i++) {
-      if (position == i) {
-        this.ll_act_prepare_result_bar.getChildAt(i).setBackgroundResource(
-            R.drawable.common_result_dot_current);
-      } else {
-        this.ll_act_prepare_result_bar.getChildAt(i).setBackgroundResource(
-            R.drawable.common_result_dot_other);
-      }
-    }
-  }
-
-  @Override
-  public void onPageScrollStateChanged(int state) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    if (!isLocal) {
-      return;
-    }
-    if (isChecked) {
-      switch (buttonView.getId()) {
-      // 学期的选中事件
-        case R.id.rb_act_prepare_top:
-        case R.id.rb_act_prepare_bottom:
-          this.onTermViewClick(buttonView.getId());
-          break;
-        // 类别的选中事件
-        case R.id.rb_act_prepare_class_language:
-        case R.id.rb_act_prepare_class_thinking:
-        case R.id.rb_act_prepare_class_read:
-        case R.id.rb_act_prepare_class_write:
-        case R.id.rb_act_prepare_class_quality:
-          this.topicChooser(buttonView.getId());
-          this.onMyClassViewClick(buttonView.getId());
-          break;
-
-        default:
-          break;
-      }
-    }
-  }
-
-  // 判定是否时有效的年级数值
-  public boolean isRightfulTerm(String term) {
-    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
-      return true;
-    }
-    return false;
-  }
-
-  // 判定是否时有效的类别数值
-  public boolean isRightfulTopic(String topic) {
-    if (Constant.DOMIAN_LANGUAGE.equals(topic) || Constant.DOMIAN_THINKING.equals(topic)
-        || Constant.DOMIAN_READ.equals(topic) || Constant.DOMIAN_WRITE.equals(topic)
-        || Constant.DOMIAN_QUALITY.equals(topic)) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * 查询历史数据
-   */
-  public void readHistoryData() {
-    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
-    this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
-    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
-  }
-
-  /**
-   * 解析条件
-   * 
-   * @param query
-   */
-  public void readQuery(JsonObject query) {
-    if (query != null) {
-      String tempTerm = query.getString(Constant.TERM);
-      String tempClass = query.getString(Constant.TOPIC);
-      if (tempTerm != null && isRightfulTerm(tempTerm)) {
-        currentTerm = tempTerm;
-        saveHistory(Constant.TERM, currentTerm);
-      } else if (query.has(Constant.TERM) && !isRightfulTerm(tempTerm)) {
-        Toast.makeText(this, "无效的学期数值", Toast.LENGTH_SHORT).show();
-      }
-      if (tempClass != null && isRightfulTopic(tempClass)) {
-        currenTopic = tempClass;
-        saveHistory(Constant.TOPIC, currenTopic);
-      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
-        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
-      }
-    }
-  }
-
-  private void topicChooser(int id) {
-    int len = this.topicRadioButtons.length;
-    for (int i = 0; i < len; i++) {
-      RadioButton radioButton = this.topicRadioButtons[i];
-      if (radioButton.getId() == id) {
-        radioButton.setChecked(true);
-      } else {
-        radioButton.setChecked(false);
-      }
-    }
   }
 
   /**
@@ -596,5 +591,17 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
     query.set(Constant.TOPIC, this.currenTopic);
     msg.set("query", query);
     bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, eventHandler);
+  }
+
+  private void topicChooser(int id) {
+    int len = this.topicRadioButtons.length;
+    for (int i = 0; i < len; i++) {
+      RadioButton radioButton = this.topicRadioButtons[i];
+      if (radioButton.getId() == id) {
+        radioButton.setChecked(true);
+      } else {
+        radioButton.setChecked(false);
+      }
+    }
   }
 }

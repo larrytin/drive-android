@@ -127,7 +127,6 @@ public class WebViewFlashPlayer extends BaseActivity {
     // 得到路径
     JsonObject msg = (JsonObject) intent.getExtras().get("msg");
     String path = msg.get("path");
-    path = Constant.STORAGE_DIR + path;
     Log.d(TAG, path);
     File mFile = new File(path);
     if (mFile.exists()) {

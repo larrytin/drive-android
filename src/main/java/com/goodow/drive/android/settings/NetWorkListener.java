@@ -20,6 +20,31 @@ import android.telephony.TelephonyManager;
 
 public class NetWorkListener {
 
+  /**
+   * 监听3G信号强度的变化
+   */
+  private class MyPhoneStateListener extends PhoneStateListener {
+    int strength = 0;
+
+    @Override
+    public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+      super.onSignalStrengthsChanged(signalStrength);
+      if (signalStrength.isGsm()) {
+        if (signalStrength.getGsmSignalStrength() != 99) {
+          strength = signalStrength.getGsmSignalStrength();
+        }
+      } else {
+        signalStrength.getCdmaDbm();
+      }
+      g3Strength = strength / MAX_3G_STRENGTH;
+
+      JsonObject info =
+          Json.createObject().set("action", "post").set("type", getType()).set("strength",
+              getStrength());
+      bus.send(Bus.LOCAL + ADDR, info, null);
+    }
+  }
+
   public static final String WIFI = "wifi";
   // mobile
   public static final String MOBILE = "mobile";
@@ -45,34 +70,10 @@ public class NetWorkListener {
   public static final String TYPE_2G = "cell_2g";
   public static final String TYPE_3G = "cell_3g";
   public static final String TYPE_4G = "cell_4g";
+
   public static final String TYPE_NONE = "none";
 
-  private float MAX_3G_STRENGTH = 31;
-
-  /**
-   * 监听3G信号强度的变化
-   */
-  private class MyPhoneStateListener extends PhoneStateListener {
-    int strength = 0;
-
-    @Override
-    public void onSignalStrengthsChanged(SignalStrength signalStrength) {
-      super.onSignalStrengthsChanged(signalStrength);
-      if (signalStrength.isGsm()) {
-        if (signalStrength.getGsmSignalStrength() != 99) {
-          strength = signalStrength.getGsmSignalStrength();
-        }
-      } else {
-        signalStrength.getCdmaDbm();
-      }
-      g3Strength = strength / MAX_3G_STRENGTH;
-
-      JsonObject info =
-          Json.createObject().set("action", "post").set("type", getType()).set("strength",
-              getStrength());
-      bus.send(Bus.LOCAL + ADDR, info, null);
-    }
-  }
+  private final float MAX_3G_STRENGTH = 31;
 
   private final Bus bus = BusProvider.get();
   // 信息服务地址
@@ -137,6 +138,20 @@ public class NetWorkListener {
   }
 
   /**
+   * 获取信号强度
+   */
+  private float getStrength() {
+    String type = getType();
+    if (WIFI.equalsIgnoreCase(type)) {
+      return getWifiStrength();
+    } else if (TYPE_2G.equals(type) || TYPE_3G.equals(type) || TYPE_4G.equals(type)) {
+      return g3Strength;
+    } else {
+      return 0.0f;
+    }
+  }
+
+  /**
    * 获取信号类型
    * 
    * @param info
@@ -169,20 +184,6 @@ public class NetWorkListener {
       return TYPE_NONE;
     }
     return TYPE_UNKNOWN;
-  }
-
-  /**
-   * 获取信号强度
-   */
-  private float getStrength() {
-    String type = getType();
-    if (WIFI.equalsIgnoreCase(type)) {
-      return getWifiStrength();
-    } else if (TYPE_2G.equals(type) || TYPE_3G.equals(type) || TYPE_4G.equals(type)) {
-      return g3Strength;
-    } else {
-      return 0.0f;
-    }
   }
 
   /**

@@ -170,6 +170,19 @@ public class DataProvider {
   /**
    * 拼接字符串得到路径
    * 
+   * @param tags
+   * @return tags所标记相对路径转换为绝对路径
+   * @author DPW
+   */
+  public String getPath(JsonObject tags) {
+    return Constant.STORAGE_DIR + Constant.DATA_PATH + "/" + tags.getString(Constant.TYPE) + "/"
+        + tags.getString(Constant.GRADE) + "/" + tags.getString(Constant.TERM) + "/"
+        + tags.getString(Constant.TOPIC) + "/";
+  }
+
+  /**
+   * 拼接字符串得到路径
+   * 
    * @param str 要拼接的字符串
    * @return 返回拼接后的字符串
    */

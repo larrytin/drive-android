@@ -100,7 +100,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     // Log.d(TAG, "onCreate");
 
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
-    path = Constant.STORAGE_DIR + jsonObject.getString("path");
+    path = jsonObject.getString("path");
 
     initView();
     if (new File(path).isFile()) {
@@ -135,7 +135,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     // Log.d(TAG, "new");
     setIntent(intent);
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
-    String path = Constant.STORAGE_DIR + jsonObject.getString("path");
+    String path = jsonObject.getString("path");
     if (!path.equals(this.path)) {
       // path相同则不重新加载,只进行设置
       if (new File(path).isFile()) {

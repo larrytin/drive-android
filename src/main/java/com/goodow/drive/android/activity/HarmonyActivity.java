@@ -417,8 +417,16 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
           textView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-              Toast.makeText(HarmonyActivity.this, "go:" + ((TextView) v).getText().toString(),
-                  Toast.LENGTH_SHORT).show();
+              JsonObject msg = Json.createObject();
+              JsonObject tags = Json.createObject();
+              tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_HARMONY);
+              tags.set(Constant.GRADE, currentGrade);
+              tags.set(Constant.TERM, currentTerm);
+              tags.set(Constant.TOPIC, currenTopic);
+              msg.set(Constant.TAGS, tags);
+              msg.set(Constant.TITLE, ((TextView) v).getText().toString());
+              msg.set("action", "post");
+              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }
           });
           innerContainer.addView(textView);
