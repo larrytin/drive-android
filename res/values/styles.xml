@@ -98,4 +98,36 @@
         <item name="android:button">@null</item>
         <item name="android:background">@drawable/prepare_selector_topic</item>
     </style>
+    
+    <!-- 托班页面topic样式 -->
+    <style name="care_classes_item">
+        <item name="android:paddingRight">15px</item>
+        <item name="android:gravity">center</item>
+        <item name="android:button">@null</item>
+        <item name="android:layout_width">258px</item>
+        <item name="android:layout_height">60px</item>
+        <item name="android:background">@drawable/care_classes_bg</item>
+    </style>
+
+    <!-- 托班云朵样式 -->
+    <style name="care_classes_cloud">
+        <item name="android:button">@null</item>
+        <item name="android:textSize">16px</item>
+        <item name="android:textColor">#cc6600</item>
+        <item name="android:layout_width">126px</item>
+        <item name="android:layout_height">83px</item>
+        <item name="android:background">@drawable/cloud_yellow</item>
+    </style>
+
+    <!-- 托班学期样式 -->
+    <style name="care_classes_term">
+        <item name="android:layout_width">74px</item>
+        <item name="android:layout_height">57px</item>
+        <item name="android:gravity">center</item>
+        <item name="android:focusable">false</item>
+        <item name="android:textSize">18px</item>
+        <item name="android:textColor">@color/harmony_selector_grade_term</item>
+        <item name="android:background">@drawable/harm_selector_grade</item>
+        <item name="android:button">@null</item>
+    </style>
 </resources>

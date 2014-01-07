@@ -9,6 +9,8 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
+import java.util.Random;
+
 import android.content.Context;
 import android.widget.Toast;
 
@@ -40,7 +42,7 @@ public class DataRegistry {
           if (result) {
             body.set("status", "ok");
           }
-          bus.send(Bus.LOCAL + Bus.LOCAL + Constant.ADDR_TOPIC, body, null);
+          bus.send(Bus.LOCAL + "" + Bus.LOCAL + Constant.ADDR_TOPIC, body, null);
           return;
         }
 
@@ -68,6 +70,16 @@ public class DataRegistry {
           message.reply(msg);
         } else if (Constant.DATAREGISTRY_TYPE_SHIP.equals(type)) {
           // 托班
+          String[] test = new String[] {"找", "找找", "找找藏藏", "找找藏"};
+          JsonObject msg = Json.createObject();
+          JsonArray activities = Json.createArray();
+          for (int i = 0; i < 10; i++) {
+            JsonObject activity = Json.createObject();
+            activity.set("title", test[new Random().nextInt(4)] + i);
+            activities.insert(i, activity);
+          }
+          msg.set("activities", activities);
+          message.reply(msg);
 
         } else if (Constant.DATAREGISTRY_TYPE_CASE.equals(type)) {
           // 示范课

@@ -172,6 +172,14 @@
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
+        
+        <!-- 托班 -->
+        <activity
+            android:name="com.goodow.drive.android.activity.CareClassesActivity"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
+        </activity>
 
     </application>
 

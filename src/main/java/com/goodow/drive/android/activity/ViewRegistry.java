@@ -95,8 +95,7 @@ public class ViewRegistry {
           intent = new Intent(ctx, FavouriteActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_SHIP.equals(type)) {
           // 托班
-          Toast.makeText(ctx, "打开托班", Toast.LENGTH_LONG).show();
-          return;
+          intent = new Intent(ctx, CareClassesActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_CASE.equals(type)) {
           // 示范课
           intent = new Intent(ctx, CaseActivity.class);
@@ -158,6 +157,5 @@ public class ViewRegistry {
         }
       }
     });
-
   }
 }
