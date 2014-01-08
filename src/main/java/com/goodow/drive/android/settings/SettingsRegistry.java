@@ -100,21 +100,21 @@ public class SettingsRegistry {
             (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = mConnectivityManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
-          msg.set("NetWorkType", networkInfo.getTypeName());
+          msg.set("networkType", "wifi");
         } else if (networkInfo != null && networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
-          msg.set("NetWorkType", networkInfo.getTypeName());
+          msg.set("networkType", "mobile");
           TelephonyManager mTelephonyManager =
               (TelephonyManager) ctx.getSystemService(Context.TELEPHONY_SERVICE);
           // 返回值MCC + MNC
           String operator = mTelephonyManager.getNetworkOperator();
-          msg.set("MCC+MNC", operator);
-          int MCC = Integer.parseInt(operator.substring(0, 3));
-          int MNC = Integer.parseInt(operator.substring(3));
-          if (MNC == 0 || MCC == 1) {
+          msg.set("mobileCountryCode", operator.substring(0, 3));
+          msg.set("mobileNetworkCode", operator.substring(4));
+          int MNC = Integer.parseInt(operator.substring(4));
+          if (MNC == 0 || MNC == 1) {
             // 中国移动和中国联通获取LAC、CID的方式
             GsmCellLocation gsmLocation = (GsmCellLocation) mTelephonyManager.getCellLocation();
-            msg.set("CID", gsmLocation.getCid());
-            msg.set("LAC", gsmLocation.getLac());
+            msg.set("cellId", gsmLocation.getCid());
+            msg.set("locationAreaCode", gsmLocation.getLac());
             msg.set("PSC", gsmLocation.getPsc());
           } else if (MNC == 3) {
             CdmaCellLocation cdmaLocation = (CdmaCellLocation) mTelephonyManager.getCellLocation();
