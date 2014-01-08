@@ -7,6 +7,8 @@ public interface Constant {
   String ADDR_TOPIC = BusProvider.SID + "topic";
   String ADDR_PLAYER = BusProvider.SID + "player";
   String ADDR_VIEW_CONTROL = ADDR_PREFIX_VIEW + "control";
+  String ADDR_ACTIVITY = BusProvider.SID + "activity";
+  String ADDR_FILE = BusProvider.SID + "file";
 
   String TYPE = "type"; // 功能模块的KEY
   String GRADE = "grade"; // 年级的KEY
@@ -28,8 +30,8 @@ public interface Constant {
   String DOMIAN_WORLD = "社会";
   String DOMIAN_SCIENCE = "科学";
   String DOMIAN_MATH = "数学";
-  String DOMIAN_MUSIC = "艺术（音乐）";
-  String DOMIAN_ART = "艺术（美术）";
+  String DOMIAN_MUSIC = "(艺术)音乐";
+  String DOMIAN_ART = "(艺术)美术";
 
   String DOMIAN_ARITHMETIC = "算术";
   String DOMIAN_JIGSAW = "拼图";
@@ -47,5 +49,7 @@ public interface Constant {
   String DATAREGISTRY_TYPE_SMART = "智能开发";
   String DATAREGISTRY_TYPE_EBOOK = "电子书";
   String DATAREGISTRY_TYPE_FAVOURITE = "收藏";
+
+  String DATA_PATH = "goodow/drive";// 数据存放位置
 
 }

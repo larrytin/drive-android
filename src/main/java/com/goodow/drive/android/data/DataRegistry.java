@@ -9,8 +9,6 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
-import java.util.Random;
-
 import android.content.Context;
 import android.widget.Toast;
 
@@ -46,100 +44,26 @@ public class DataRegistry {
           return;
         }
 
-        // 解析查询条件
-        JsonObject query = body.getObject("query");
-
         // 仅处理get动作
         if (!"get".equalsIgnoreCase(body.getString("action"))) {
           return;
         }
+        // 解析查询条件
+        if (!body.has("query")) {
+          return;
+        }
+        JsonObject query = body.getObject("query");
         String type = query.getString(Constant.TYPE);// 解析请求的模块类型
-        if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type)) {
-          // 和谐
-          // String grade = query.getString(Constant.GRADE);
-          // String term = query.getString(Constant.TERM);
-          // String topic = query.getString(Constant.TOPIC);
+        if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type) // 和谐
+            || Constant.DATAREGISTRY_TYPE_SHIP.equals(type)// 托班
+            || Constant.DATAREGISTRY_TYPE_CASE.equals(type)// 示范课
+            || Constant.DATAREGISTRY_TYPE_PREPARE.equals(type)// 入学准备
+            || Constant.DATAREGISTRY_TYPE_SMART.equals(type)// 智能开发
+            || Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {// 电子书
           JsonObject msg = Json.createObject();
-          JsonArray activities = Json.createArray();
-          for (int i = 0; i < 30; i++) {
-            JsonObject activity = Json.createObject();
-            activity.set("title", "找朋友=" + i);
-            activities.insert(i, activity);
-          }
-          msg.set("activities", activities);
+          msg.set("activities", DataProvider.getInstance().getActivities(query));
           message.reply(msg);
-        } else if (Constant.DATAREGISTRY_TYPE_SHIP.equals(type)) {
-          // 托班
-          String[] test = new String[] {"找", "找找", "找找藏藏", "找找藏"};
-          JsonObject msg = Json.createObject();
-          JsonArray activities = Json.createArray();
-          for (int i = 0; i < 10; i++) {
-            JsonObject activity = Json.createObject();
-            activity.set("title", test[new Random().nextInt(4)] + i);
-            activities.insert(i, activity);
-          }
-          msg.set("activities", activities);
-          message.reply(msg);
-
-        } else if (Constant.DATAREGISTRY_TYPE_CASE.equals(type)) {
-          // 示范课
-          // String grade = query.getString(Constant.GRADE);
-          // String term = query.getString(Constant.TERM);
-          // String topic = query.getString(Constant.TOPIC);
-          JsonObject msg = Json.createObject();
-          JsonArray activities = Json.createArray();
-          for (int i = 0; i < 30; i++) {
-            JsonObject activity = Json.createObject();
-            activity.set("title", "找朋友=" + i);
-            activities.insert(i, activity);
-          }
-          msg.set("activities", activities);
-          message.reply(msg);
-        } else if (Constant.DATAREGISTRY_TYPE_PREPARE.equals(type)) {
-          // 入学准备
-          JsonObject msg = Json.createObject();
-          JsonArray activitys = Json.createArray();
-          for (int i = 0; i < 30; i++) {
-            JsonObject activity = Json.createObject();
-            JsonObject tag = Json.createObject();
-            tag.set(Constant.TERM, "上");
-            tag.set(Constant.TOPIC, "健康");
-            activity.set(Constant.TAGS, tag);
-            activity.set(Constant.TITLE, "找朋友找朋友找朋友" + i);
-            activitys.insert(i, activity);
-          }
-          msg.set("activities", activitys);
-          message.reply(msg);
-        } else if (Constant.DATAREGISTRY_TYPE_SMART.equals(type)) {
-          // 智能开发
-          JsonObject msg = Json.createObject();
-          JsonArray activitys = Json.createArray();
-          for (int i = 0; i < 30; i++) {
-            JsonObject activity = Json.createObject();
-            JsonObject tag = Json.createObject();
-            tag.set(Constant.GRADE, "大班");
-            tag.set(Constant.TERM, "上");
-            tag.set(Constant.TOPIC, "健康");
-            activity.set(Constant.TAGS, tag);
-            activity.set(Constant.TITLE, "找朋友找朋友找朋友" + i);
-            activitys.insert(i, activity);
-          }
-          msg.set("activities", activitys);
-          message.reply(msg);
-        } else if (Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {
-          // 图画书
-          JsonObject msg = Json.createObject();
-          JsonArray activitys = Json.createArray();
-          for (int i = 0; i < 30; i++) {
-            JsonObject activity = Json.createObject();
-            JsonObject tag = Json.createObject();
-            tag.set(Constant.TOPIC, "健康");
-            activity.set(Constant.TAGS, tag);
-            activity.set(Constant.TITLE, "找朋友找朋友找朋友" + i);
-            activitys.insert(i, activity);
-          }
-          msg.set("activities", activitys);
-          message.reply(msg);
+          // System.out.println(msg);
         } else if (Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(type)) {
           // 收藏
           JsonObject msg = Json.createObject();
@@ -151,6 +75,45 @@ public class DataRegistry {
           return;
         }
       }
+    });
+
+    bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        if ("post".equalsIgnoreCase(body.getString("action")) && body.has("activity")
+            && body.has("files")) {
+          // post动作,有activity有files
+          // TODO
+          return;
+        }
+        if (!"get".equalsIgnoreCase(body.getString("action")) || !body.has("activity")) {
+          // 不是get动作或不含activity时终止
+          return;
+        }
+        JsonObject activity = body.getObject("activity");
+        JsonObject msg = Json.createObject();
+        msg.set("activity", activity);
+        msg.set("files", DataProvider.getInstance().getFiles(activity));
+        message.reply(msg);
+        // System.out.println(msg);
+      }
+
+    });
+
+    bus.registerHandler(Constant.ADDR_FILE, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        if (body.has("path")) {
+          JsonObject msg = DataProvider.getInstance().getFoldersAndFiles(body.getString("path"));
+          message.reply(msg);
+          // System.out.println(msg);
+        } else {
+          Toast.makeText(context, "需要传入path", Toast.LENGTH_SHORT).show();
+        }
+      }
+
     });
 
   }
