@@ -2,6 +2,7 @@ package com.goodow.drive.android.settings;
 
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.activity.NotificationActivity;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -11,6 +12,7 @@ import com.goodow.realtime.json.JsonObject;
 
 import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
@@ -230,6 +232,18 @@ public class SettingsRegistry {
             inst.sendKeyDownUpSync(number);
           };
         }.start();
+      }
+    });
+    bus.registerHandler(BusProvider.SID + "notification", new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
+        if (msg.has("content")) {
+          Intent intent = new Intent(ctx, NotificationActivity.class);
+          intent.putExtra("msg", msg);
+          ctx.startActivity(intent);
+
+        }
       }
     });
 

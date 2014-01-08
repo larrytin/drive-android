@@ -52,6 +52,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
+         <!-- 通知 -->
+        <activity 
+            android:name="com.goodow.drive.android.activity.NotificationActivity" 
+            android:theme="@android:style/Theme.Dialog"
+            android:launchMode="singleTask"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            >
+        </activity>
         <!-- 和谐 -->
         <activity 
             android:name="com.goodow.drive.android.activity.HarmonyActivity" 
