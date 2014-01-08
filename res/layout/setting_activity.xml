@@ -55,11 +55,6 @@
                 android:text="@string/setting_wifi" />
 
             <Button
-                android:id="@+id/bt_setting_resolution"
-                style="@style/setting_bt"
-                android:text="@string/setting_resolution" />
-
-            <Button
                 android:id="@+id/bt_setting_screen_offset"
                 style="@style/setting_bt"
                 android:text="@string/setting_screen_offset" />
