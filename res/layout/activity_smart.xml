@@ -169,6 +169,7 @@
             android:layout_alignParentLeft="true"
             android:src="@drawable/common_result_pre"
             android:clickable="true"
+            android:visibility="invisible"
             />
         <!-- 查询结果 -->
         <android.support.v4.view.ViewPager
@@ -186,6 +187,7 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/common_result_next"
             android:clickable="true"
+            android:visibility="invisible"
             />
         <!-- 查询结果 页码数量-->
         <LinearLayout

@@ -214,6 +214,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   private final int numPerLine = 5; // 每条显示五个数据
 
   private int currentPageNum = 0;
+  private int totalPageNum = 0;
 
   @Override
   public void onClick(View v) {
@@ -248,6 +249,17 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
   @Override
   public void onPageSelected(int position) {
+    if (position == 0) {
+      this.iv_act_favour_result_pre.setVisibility(View.INVISIBLE);
+    } else {
+      this.iv_act_favour_result_pre.setVisibility(View.VISIBLE);
+    }
+    if (position == totalPageNum - 1) {
+      this.iv_act_favour_result_next.setVisibility(View.INVISIBLE);
+    } else {
+      this.iv_act_favour_result_next.setVisibility(View.VISIBLE);
+    }
+
     this.currentPageNum = position;
     for (int i = 0; i < this.ll_act_favour_result_bar.getChildCount(); i++) {
       if (position == i) {
@@ -308,10 +320,10 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
     int index = 0; // 下标计数器
     int counter = activities.length();
-    int times =
+    this.totalPageNum =
         (counter % this.numPerPage == 0) ? (counter / numPerPage) : (counter / this.numPerPage + 1);
     // 页码数量
-    for (int i = 0; i < times; i++) {
+    for (int i = 0; i < totalPageNum; i++) {
       LinearLayout rootContainer = new LinearLayout(this);
       rootContainer.setOrientation(LinearLayout.VERTICAL);
       // 行数量
@@ -349,6 +361,15 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     }
     this.myPageAdapter = new MyPageAdapter();
     this.vp_act_favour_result.setAdapter(this.myPageAdapter);
+
+    if (this.totalPageNum > 1) {
+      this.iv_act_favour_result_pre.setVisibility(View.INVISIBLE);
+      this.iv_act_favour_result_next.setVisibility(View.VISIBLE);
+    } else {
+      this.iv_act_favour_result_pre.setVisibility(View.INVISIBLE);
+      this.iv_act_favour_result_next.setVisibility(View.INVISIBLE);
+    }
+
     this.vp_act_favour_result.setCurrentItem(pageNum);
   }
 

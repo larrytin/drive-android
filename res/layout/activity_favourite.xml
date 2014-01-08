@@ -32,6 +32,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:clickable="true"
+            android:visibility="invisible"
             android:src="@drawable/common_result_pre" />
 
         <!-- 内容 -->
@@ -49,6 +50,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:clickable="true"
+            android:visibility="invisible"
             android:paddingRight="10dp"
             android:src="@drawable/common_result_next" />
 

@@ -153,6 +153,7 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
 
   // 页码状态
   private LinearLayout ll_act_case_result_bar = null;
+  private int totalPageNum = 0;
   // 数据集
   private JsonArray activities = null;
 
@@ -311,6 +312,17 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
 
   @Override
   public void onPageSelected(int position) {
+    if (position == 0) {
+      this.rl_act_case_result_pre.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_case_result_pre.setVisibility(View.VISIBLE);
+    }
+    if (position == totalPageNum - 1) {
+      this.rl_act_case_result_next.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_case_result_next.setVisibility(View.VISIBLE);
+    }
+
     for (int i = 0; i < this.ll_act_case_result_bar.getChildCount(); i++) {
       if (position == i) {
         this.ll_act_case_result_bar.getChildAt(i).setBackgroundResource(
@@ -411,10 +423,10 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
 
     int index = 0;// 下标计数器
     int counter = activities.length();
-    int times =
+    this.totalPageNum =
         (counter % this.numPerPage == 0) ? (counter / numPerPage) : (counter / this.numPerPage + 1);
     // 页码数量
-    for (int i = 0; i < times; i++) {
+    for (int i = 0; i < totalPageNum; i++) {
       LinearLayout rootContainer = new LinearLayout(this);
       rootContainer.setOrientation(LinearLayout.VERTICAL);
       // 行数量
@@ -459,6 +471,13 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
     }
     this.myPageAdapter = new MyPageAdapter(this.nameViews);
     this.vp_act_case_result.setAdapter(this.myPageAdapter);
+    if (this.totalPageNum > 1) {
+      this.rl_act_case_result_pre.setVisibility(View.INVISIBLE);
+      this.rl_act_case_result_next.setVisibility(View.VISIBLE);
+    } else {
+      this.rl_act_case_result_pre.setVisibility(View.INVISIBLE);
+      this.rl_act_case_result_next.setVisibility(View.INVISIBLE);
+    }
   }
 
   /**

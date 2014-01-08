@@ -118,6 +118,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
   private ImageView rl_act_smart_result_next = null;
   // 页码状态
   private LinearLayout ll_act_smart_result_bar = null;
+  private int totalPageNum = 0;
 
   // 数据集
   private JsonArray activities = null;
@@ -257,10 +258,10 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
 
     int index = 0;// 下标计数器
     int counter = activities.length();
-    int times =
+    this.totalPageNum =
         (counter % this.numPerPage == 0) ? (counter / numPerPage) : (counter / this.numPerPage + 1);
     // 页码数量
-    for (int i = 0; i < times; i++) {
+    for (int i = 0; i < totalPageNum; i++) {
       LinearLayout rootContainer = new LinearLayout(this);
       rootContainer.setOrientation(LinearLayout.VERTICAL);
       // 行数量
@@ -309,6 +310,14 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
     }
     this.myPageAdapter = new MyPageAdapter(this.nameViews);
     this.vp_act_smart_result.setAdapter(this.myPageAdapter);
+
+    if (this.totalPageNum > 1) {
+      this.rl_act_smart_result_pre.setVisibility(View.INVISIBLE);
+      this.rl_act_smart_result_next.setVisibility(View.VISIBLE);
+    } else {
+      this.rl_act_smart_result_pre.setVisibility(View.INVISIBLE);
+      this.rl_act_smart_result_next.setVisibility(View.INVISIBLE);
+    }
   }
 
   /**
@@ -440,6 +449,22 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
 
   @Override
   public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public void onPageSelected(int position) {
+    if (position == 0) {
+      this.rl_act_smart_result_pre.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_smart_result_pre.setVisibility(View.VISIBLE);
+    }
+    if (position == totalPageNum - 1) {
+      this.rl_act_smart_result_next.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_smart_result_next.setVisibility(View.VISIBLE);
+    }
+
     for (int i = 0; i < this.ll_act_smart_result_bar.getChildCount(); i++) {
       if (position == i) {
         this.ll_act_smart_result_bar.getChildAt(i).setBackgroundResource(
@@ -452,15 +477,8 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
   }
 
   @Override
-  public void onPageSelected(int position) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
   public void onPageScrollStateChanged(int state) {
     // TODO Auto-generated method stub
-
   }
 
   @Override

@@ -116,12 +116,6 @@
         android:layout_marginTop="130dp"
         android:layout_marginLeft="40dp"
         >
-<!--         <ImageView -->
-<!--           android:id="@+id/iv_act_case_back" -->
-<!--           style="@style/index_sys_fun" -->
-<!--           android:src="@drawable/common_selector_back" -->
-<!--           android:clickable="true" -->
-<!--           /> -->
         <include 
             android:id="@+id/iv_act_case_back"
             layout="@layout/include_back"/>
@@ -160,6 +154,7 @@
             android:layout_alignParentLeft="true"
             android:src="@drawable/common_result_pre"
             android:clickable="true"
+            android:visibility="invisible"
             />
 
         <!-- 查询结果 -->
@@ -179,26 +174,16 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/common_result_next"
             android:clickable="true"
+            android:visibility="invisible"
             />
-    </RelativeLayout>
-
-    <!-- 查询结果 页码数量-->
-    <RelativeLayout
-        android:id="@+id/rl_act_case_result_bar"
-        android:layout_width="1040dp"
-        android:layout_height="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="85dp"
-        android:layout_below="@+id/rl_act_case_result"
-        >
+        <!-- 查询结果 页码数量-->
         <LinearLayout
             android:id="@+id/ll_act_case_result_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
             >
         </LinearLayout>
     </RelativeLayout>

@@ -115,6 +115,7 @@
             android:layout_alignParentLeft="true"
             android:src="@drawable/common_result_pre"
             android:clickable="true"
+            android:visibility="invisible"
             />
 
         <!-- 查询结果 -->
@@ -134,6 +135,7 @@
             android:layout_alignParentRight="true"
             android:src="@drawable/common_result_next"
             android:clickable="true"
+            android:visibility="invisible"
             />
         <LinearLayout
             android:id="@+id/ll_act_prepare_result_bar"
