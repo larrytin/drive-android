@@ -6,16 +6,44 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 import android.util.Log;
 
 public class DataProvider {
+
+  // 过滤器,jpg,mp3,mp4,pdf,swf
+  public class fileFilter implements FilenameFilter {
+    @Override
+    public boolean accept(File dir, String file) {
+      return file.toLowerCase().endsWith(".jpg") || file.toLowerCase().endsWith(".mp3")
+          || file.toLowerCase().endsWith(".mp4") || file.toLowerCase().endsWith(".pdf")
+          || file.toLowerCase().endsWith(".swf");
+    }
+  }
+
   private static final String TAG = "DataProvider";
+
   private static DataProvider provider = new DataProvider();
 
   public static DataProvider getInstance() {
     return provider;
   }
+
+  /**
+   * 比较器,根据文件类型排序
+   */
+  private final Comparator<File> comparator = new Comparator<File>() {
+
+    @Override
+    public int compare(File lhs, File rhs) {
+      String lhString = lhs.getName().substring(lhs.getName().indexOf(".") + 1);
+      String rhString = rhs.getName().substring(rhs.getName().indexOf(".") + 1);
+      return lhString.compareTo(rhString) != 0 ? lhString.compareTo(rhString) : 1;
+    }
+  };
 
   private DataProvider() {
   }
@@ -81,18 +109,24 @@ public class DataProvider {
     String grade = tags.getString(Constant.GRADE);
     String topic = tags.getString(Constant.TOPIC);
     String path = getPath(type, grade, term, topic, title);
-    File file = new File(path);
-    File[] files = file.listFiles();
+    File mFile = new File(path);
+    File[] files = mFile.listFiles(new fileFilter());
     JsonArray filesJsonArray = Json.createArray();
     if (files == null) {
       Log.d(TAG, "files path error!");
       return null;
     }
+    TreeSet<File> treeSet = new TreeSet<File>(comparator);
     for (int i = 0; i < files.length; i++) {
       if (files[i].isFile()) {
+        treeSet.add(files[i]);
+      }
+    }
+    if (!treeSet.isEmpty()) {
+      for (File file : treeSet) {
         JsonObject fileJsonObject = Json.createObject();
-        fileJsonObject.set("filename", files[i].getName());
-        fileJsonObject.set("path", files[i].getAbsolutePath());
+        fileJsonObject.set("filename", file.getName());
+        fileJsonObject.set("path", file.getAbsolutePath());
         filesJsonArray.push(fileJsonObject);
       }
     }
