@@ -157,9 +157,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
       readQuery(query);
       activities = body.getArray("activities");
       isLocal = activities == null;
-      if (activities != null) {
-        bindDataToView();
-      }
+      bindDataToView();
       bindHistoryDataToView();
       isLocal = true;
     }
@@ -379,13 +377,12 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
    * 把查询完成的结果绑定到结果View
    */
   private void bindDataToView() {
-    if (this.activities == null) {
-      return;
-    }
     this.ll_act_harmony_result_bar.removeAllViews();
     this.vp_act_harmony_result.removeAllViews();
     this.nameViews.clear();
-
+    if (this.activities == null) {
+      return;
+    }
     int index = 0;// 下标计数器
     int counter = activities.length();
     this.totalPageNum =
