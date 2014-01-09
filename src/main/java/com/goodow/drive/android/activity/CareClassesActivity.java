@@ -14,7 +14,6 @@ import java.util.Arrays;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -215,10 +214,10 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     Bundle extras = this.getIntent().getExtras();
     JsonObject body = (JsonObject) extras.get("msg");
     JsonArray activities = body.getArray("activities");
+    readQuery(body.getObject("query"));
     if (activities == null) {
       sendQueryMessage();
     } else {
-      readQuery(body.getObject("query"));
       this.activities = activities;
       bindDataToView();
       isLocal = false;
@@ -259,7 +258,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
    * 历史记录回显
    */
   private void bindHistoryDataToView() {
-    Log.d("System.out", currenTopic + currentTerm);
+    // Log.d("System.out", currenTopic + currentTerm);
     // 回显学期
     if (Constant.TERM_SEMESTER0.equals(this.currentTerm)) {
       this.rb_term_0.setChecked(true);
