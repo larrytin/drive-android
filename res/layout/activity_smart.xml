@@ -16,22 +16,22 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         >
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_smart_little"
             style="@style/harmony_grade"
             android:text="@string/string_text_grade_little"
             android:checked="true"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_smart_middle"
             style="@style/harmony_grade"
             android:text="@string/string_text_grade_mid"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_smart_big"
             style="@style/harmony_grade"
             android:text="@string/string_text_grade_big" />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_smart_pre"
             style="@style/harmony_grade"
             android:text="@string/string_text_grade_pre" />
@@ -47,13 +47,13 @@
         android:orientation="horizontal"
         android:layout_toRightOf="@+id/rg_act_smart_grade"
         >
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_smart_top"
             style="@style/harmony_grade"
             android:checked="true"
             android:text="@string/string_text_term_semester0"
              />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_smart_bottom"
             style="@style/harmony_grade"
             android:text="@string/string_text_term_semester1" />
@@ -68,7 +68,7 @@
         android:layout_marginLeft="130dp"
         >
         <!-- 语言 -->
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_smart_class_language"
           style="@style/smart_topic"
           android:text="@string/string_text_language"
@@ -76,7 +76,7 @@
           android:layout_marginRight="60dp"
             />
         <!-- 算术 -->
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_smart_class_arithmetic"
           style="@style/smart_topic"
           android:text="@string/string_text_arithmetic"
@@ -86,7 +86,7 @@
           android:layout_marginTop="95dp"
             />
         <!-- 拼图 -->
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_smart_class_jigsaw"
           style="@style/smart_topic"
           android:text="@string/string_text_jigsaw"
@@ -96,7 +96,7 @@
           android:layout_marginRight="40dp"
             />
         <!-- 思维 -->
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_smart_class_thinking"
           style="@style/smart_topic"
           android:text="@string/string_text_thinking"
@@ -106,7 +106,7 @@
           android:layout_marginTop="30dp"
             />
         <!-- 识字 -->
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_smart_class_readable"
           style="@style/smart_topic"
           android:text="@string/string_text_readable"
@@ -116,7 +116,7 @@
           android:layout_marginRight="15dp"
             />
         <!-- 形体 -->
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_smart_class_body"
           style="@style/smart_topic"
           android:text="@string/string_text_body"

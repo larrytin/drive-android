@@ -107,6 +107,7 @@
         <item name="android:layout_width">258px</item>
         <item name="android:layout_height">60px</item>
         <item name="android:background">@drawable/care_classes_bg</item>
+        <item name="android:textColor">@color/harmony_selector_class</item>
     </style>
 
     <!-- 托班云朵样式 -->

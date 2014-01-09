@@ -51,5 +51,6 @@ public interface Constant {
   String DATAREGISTRY_TYPE_FAVOURITE = "收藏";
 
   String DATA_PATH = "goodow/drive";// 数据存放位置
+  String FONT_PATH = "fonts/font.ttf";// 字体的路径
 
 }

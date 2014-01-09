@@ -16,22 +16,22 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         >
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_case_little"
             style="@style/harmony_grade"
             android:text="小班"
             android:checked="true"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_case_middle"
             style="@style/harmony_grade"
             android:text="中班"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_case_big"
             style="@style/harmony_grade"
             android:text="大班" />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_case_pre"
             style="@style/harmony_grade"
             android:text="学前" />
@@ -47,13 +47,13 @@
         android:orientation="horizontal"
         android:layout_toRightOf="@+id/rg_act_case_grade"
         >
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_case_top"
             style="@style/harmony_grade"
             android:checked="true"
             android:text="上"
              />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_case_bottom"
             style="@style/harmony_grade"
             android:text="下" />
@@ -69,39 +69,39 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="130dp"
         >
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_case_class_health"
           style="@style/harmony_class"
           android:text="健康"
           android:checked="true"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_case_class_language"
           style="@style/harmony_class"
           android:text="语言"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_case_class_world"
           style="@style/harmony_class"
           android:text="社会"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_case_class_scinece"
           style="@style/harmony_class"
           android:text="科学"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_case_class_math"
           style="@style/harmony_class"
           android:text="数学"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_case_class_music"
           style="@style/harmony_class"
           android:text="艺术（音乐）"
           android:background="@drawable/harm_selector_class_len"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_case_class_art"
           style="@style/harmony_class"
           android:background="@drawable/harm_selector_class_len"

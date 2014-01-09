@@ -14,13 +14,13 @@
         android:layout_y="34px"
         android:orientation="horizontal" >
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_term_0"
             style="@style/care_classes_term"
             android:checked="true"
             android:text="上" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_term_1"
             style="@style/care_classes_term"
             android:text="下" />
@@ -71,47 +71,47 @@
         android:layout_y="90px"
         android:orientation="vertical" >
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="0"
             android:id="@+id/rb_care_button1"
             style="@style/care_classes_item" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="1"
             android:id="@+id/rb_care_button2"
             style="@style/care_classes_item" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="2"
             android:id="@+id/rb_care_button3"
             style="@style/care_classes_item" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="3"
             android:id="@+id/rb_care_button4"
             style="@style/care_classes_item" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="4"
             android:id="@+id/rb_care_button5"
             style="@style/care_classes_item" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="5"
             android:id="@+id/rb_care_button6"
             style="@style/care_classes_item" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="6"
             android:id="@+id/rb_care_button7"
             style="@style/care_classes_item" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="7"
             android:id="@+id/rb_care_button8"
             style="@style/care_classes_item" />
 
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:tag="8"
             android:id="@+id/rb_care_button9"
             style="@style/care_classes_item" />

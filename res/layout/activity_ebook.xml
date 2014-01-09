@@ -17,27 +17,27 @@
         android:layout_marginTop="70dp"
         android:layout_marginRight="50dp"
         >
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_ebook_class_health"
           style="@style/ebook_class"
           android:text="@string/string_text_health"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_ebook_class_scinece"
           style="@style/ebook_class"
           android:text="@string/string_text_scinece"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_ebook_class_world"
           style="@style/ebook_class"
           android:text="@string/string_text_world"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_ebook_class_language"
           style="@style/ebook_class"
           android:text="@string/string_text_language"
             />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_ebook_class_math"
           style="@style/ebook_class"
           android:text="@string/string_text_math"

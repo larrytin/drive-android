@@ -16,13 +16,13 @@
         android:layout_marginTop="26dp"
         android:orientation="horizontal"
         >
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_prepare_top"
             style="@style/harmony_grade"
             android:checked="true"
             android:text="@string/string_text_term_semester0"
              />
-        <RadioButton
+        <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_prepare_bottom"
             style="@style/harmony_grade"
             android:text="@string/string_text_term_semester1" />
@@ -39,7 +39,7 @@
       android:layout_marginTop="50dp"
         />
     <!-- 思维 -->
-    <RadioButton
+    <com.goodow.drive.android.view.FontRadioButton
       android:id="@+id/rb_act_prepare_class_thinking"
       style="@style/prepare_class"
       android:text="@string/string_text_thinking"
@@ -47,7 +47,7 @@
       android:layout_marginLeft="320dp"
         />
     <!-- 阅读 -->
-    <RadioButton
+    <com.goodow.drive.android.view.FontRadioButton
       android:id="@+id/rb_act_prepare_class_read"
       style="@style/prepare_class"
       android:text="@string/string_text_read"
@@ -55,7 +55,7 @@
       android:layout_marginLeft="170dp"
         />
     <!-- 书写 -->
-    <RadioButton
+    <com.goodow.drive.android.view.FontRadioButton
       android:id="@+id/rb_act_prepare_class_write"
       style="@style/prepare_class"
       android:text="@string/string_text_write"
@@ -63,7 +63,7 @@
       android:layout_marginLeft="300dp"
         />
     <!-- 学些品质 -->
-    <RadioButton
+    <com.goodow.drive.android.view.FontRadioButton
       android:id="@+id/rb_act_prepare_class_quality"
       style="@style/prepare_class"
       android:text="@string/string_text_quality"
