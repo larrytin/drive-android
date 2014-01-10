@@ -46,7 +46,7 @@ public class StatusView extends LinearLayout {
   private NetWorkListener settingReceiver;
   private Context context = null;
 
-  private BroadcastReceiver timeTickreceiver = new BroadcastReceiver() {
+  private final BroadcastReceiver timeTickreceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
       String action = intent.getAction();
@@ -158,6 +158,7 @@ public class StatusView extends LinearLayout {
   protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
     this.settingReceiver.unRegisterReceiver();
+    this.context.unregisterReceiver(timeTickreceiver);
     this.bus.unregisterHandler(NetWorkListener.ADDR, eventHandler);
   }
 
