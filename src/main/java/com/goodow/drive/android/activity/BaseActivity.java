@@ -6,9 +6,11 @@ import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.channel.State;
 import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -73,6 +75,10 @@ public class BaseActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
+    if (bus.getReadyState() == State.CLOSED || bus.getReadyState() == State.CLOSING) {
+      Log.w("EventBus Status", bus.getReadyState().name());
+      BusProvider.reconnect();
+    }
     // Register handlers so that we can receive event messages.
     bus.registerHandler(Constant.ADDR_CONTROL, controlHandler);
     bus.registerHandler(BRIGHTNESS, brightnessHandler);
