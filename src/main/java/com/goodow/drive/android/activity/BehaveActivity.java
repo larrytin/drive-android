@@ -2,6 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.adapter.CommonPageAdapter;
 import com.goodow.drive.android.data.DataProvider;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -16,13 +17,11 @@ import java.util.ArrayList;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -38,49 +37,6 @@ import android.widget.Toast;
  */
 public class BehaveActivity extends BaseActivity implements OnPageChangeListener, OnClickListener {
 
-  /**
-   * 翻页是配器
-   * 
-   * @author dpw
-   * 
-   */
-  private class MyPageAdapter extends PagerAdapter {
-    private ArrayList<View> tempView = null;
-
-    public MyPageAdapter(ArrayList<View> tempView) {
-      this.tempView = tempView;
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-      if (position >= this.tempView.size()) {
-        return;
-      }
-      ((ViewPager) container).removeView(this.tempView.get(position));
-    }
-
-    @Override
-    public int getCount() {
-      if (this.tempView == null) {
-        return 0;
-      } else {
-        return this.tempView.size();
-      }
-    }
-
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-      View view = this.tempView.get(position);
-      container.addView(view);
-      return view;
-    }
-
-    @Override
-    public boolean isViewFromObject(View arg0, Object arg1) {
-      return arg0 == arg1;
-    }
-  }
-
   private ImageView iv_act_behave_behaveite = null;
   private ImageView iv_act_behave_back = null;
   private TextView tv_act_behave_title = null;
@@ -89,7 +45,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
   private final int numPerLine = 7;// 每条显示6个数据
 
   private ViewPager vp_act_behave_result = null;
-  private MyPageAdapter myPageAdapter = null;
+  private CommonPageAdapter myPageAdapter = null;
 
   // 翻页按钮
   private ImageView iv_act_behave_result_pre = null;
@@ -311,7 +267,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
       }
       this.ll_act_behave_result_bar.addView(imageView);
     }
-    this.myPageAdapter = new MyPageAdapter(this.nameViews);
+    this.myPageAdapter = new CommonPageAdapter(this.nameViews);
     this.vp_act_behave_result.setAdapter(this.myPageAdapter);
 
     if (this.totalPageNum > 1) {

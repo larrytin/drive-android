@@ -2,6 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.adapter.CommonPageAdapter;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -14,14 +15,12 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -51,47 +50,6 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
     public int getIndex() {
       return index;
-    }
-  }
-  /**
-   * 收藏的条目适配器
-   * 
-   * @author dpw
-   * 
-   */
-  private class MyPageAdapter extends PagerAdapter {
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-      if (position >= tempView.size()) {
-        return;
-      }
-      ((ViewPager) container).removeView(tempView.get(position));
-    }
-
-    @Override
-    public int getCount() {
-      if (tempView == null) {
-        return 0;
-      } else {
-        return tempView.size();
-      }
-    }
-
-    @Override
-    public int getItemPosition(Object object) {
-      return POSITION_NONE;
-    }
-
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-      View view = tempView.get(position);
-      container.addView(view);
-      return view;
-    }
-
-    @Override
-    public boolean isViewFromObject(View arg0, Object arg1) {
-      return arg0 == arg1;
     }
   }
 
@@ -173,31 +131,25 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     }
   };
 
+  /**
+   * post数据处理
+   */
   private final MessageHandler<JsonObject> postHandler = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject body = message.body();
       String action = body.getString("action");
-      // 仅仅处理action为null或post动作
-      if (action != null && !"post".equalsIgnoreCase(action)) {
+      // 仅仅处理action为post动作
+      if (!"post".equalsIgnoreCase(action)) {
         return;
       }
       JsonObject query = body.getObject("query");
-      if (query != null && query.has("type") && !"收藏".equals(query.getString("type"))) {
+      if (query != null && query.has("type")
+          && !Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(query.getString("type"))) {
         return;
       }
-
-      int page = -1; // 当前页码
-      if (action == null || "post".equalsIgnoreCase(action)) {
-        activities = body.getArray("activities");
-      }
-      if (page >= 0) {
-        // 删除条件中有匹配的，滚动到最后一个匹配的条件所在的页面
-        bindDataToView(page);
-      } else {
-        // 删除条件中没有匹配的，停留在当前页面
-        bindDataToView(currentPageNum);
-      }
+      activities = body.getArray("activities");
+      bindDataToView(currentPageNum);
     }
   };
 
@@ -205,7 +157,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   private ImageView iv_act_favour_result_pre = null;
   private ImageView iv_act_favour_result_next = null;
   private ViewPager vp_act_favour_result = null;
-  private MyPageAdapter myPageAdapter = null;
+  private CommonPageAdapter myPageAdapter = null;
   private LinearLayout ll_act_favour_result_bar = null;
   private JsonArray activities = null;
 
@@ -311,12 +263,15 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    * @param indexNum 初始化显示的页码
    */
   private void bindDataToView(int pageNum) {
-    if (this.activities == null) {
-      return;
-    }
+    // 清空原有的结果
     this.ll_act_favour_result_bar.removeAllViews();
     this.vp_act_favour_result.removeAllViews();
     this.tempView.clear();
+
+    // 如果数据是空就返回界面现实空白
+    if (this.activities == null) {
+      return;
+    }
 
     int index = 0; // 下标计数器
     int counter = activities.length();
@@ -359,7 +314,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
       }
       this.ll_act_favour_result_bar.addView(imageView);
     }
-    this.myPageAdapter = new MyPageAdapter();
+    this.myPageAdapter = new CommonPageAdapter(this.tempView);
     this.vp_act_favour_result.setAdapter(this.myPageAdapter);
 
     if (this.totalPageNum > 1) {
@@ -490,11 +445,11 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     } else if (id == R.id.iv_act_favour_result_next) {
       msg.set("next", true);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, controlHandler);
+    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, null);
   }
 
   /**
-   * 构建查询的bus消息
+   * 构建查询的bus消息进行get查询
    */
   private void sendQueryMessage() {
     JsonObject msg = Json.createObject();
@@ -502,7 +457,14 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     JsonObject type = Json.createObject();
     type.set("type", Constant.DATAREGISTRY_TYPE_FAVOURITE);
     msg.set("query", type);
-    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, postHandler);
+    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        activities = body.getArray("activities");
+        bindDataToView(currentPageNum);
+      }
+    });
   }
 
 }

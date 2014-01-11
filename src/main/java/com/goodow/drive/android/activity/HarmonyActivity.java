@@ -2,6 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.adapter.CommonPageAdapter;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -14,14 +15,12 @@ import java.util.ArrayList;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
@@ -34,49 +33,6 @@ import android.widget.Toast;
 
 public class HarmonyActivity extends BaseActivity implements OnCheckedChangeListener,
     OnFocusChangeListener, OnPageChangeListener, OnClickListener {
-
-  /**
-   * 翻页是配器
-   * 
-   * @author dpw
-   * 
-   */
-  private class MyPageAdapter extends PagerAdapter {
-    private ArrayList<View> tempView = null;
-
-    public MyPageAdapter(ArrayList<View> tempView) {
-      this.tempView = tempView;
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-      if (position >= this.tempView.size()) {
-        return;
-      }
-      ((ViewPager) container).removeView(this.tempView.get(position));
-    }
-
-    @Override
-    public int getCount() {
-      if (this.tempView == null) {
-        return 0;
-      } else {
-        return this.tempView.size();
-      }
-    }
-
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-      View view = this.tempView.get(position);
-      container.addView(view);
-      return view;
-    }
-
-    @Override
-    public boolean isViewFromObject(View arg0, Object arg1) {
-      return arg0 == arg1;
-    }
-  }
 
   // 当前状态
   private String currentGrade = Constant.GRADE_LITTLE;
@@ -114,7 +70,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private final int numPerLine = 6;// 每条显示六个数据
 
   private ViewPager vp_act_harmony_result = null;
-  private MyPageAdapter myPageAdapter = null;
+  private CommonPageAdapter myPageAdapter = null;
   // 翻页按钮
   private ImageView rl_act_harmony_result_pre = null;
   private ImageView rl_act_harmony_result_next = null;
@@ -129,7 +85,10 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private final static String SHAREDNAME = "harmonyHistory";// 配置文件的名称
   private SharedPreferences sharedPreferences = null;
 
-  private final MessageHandler<JsonObject> eventHandlerControl = new MessageHandler<JsonObject>() {
+  /**
+   * 翻页控制
+   */
+  private final MessageHandler<JsonObject> controlHandler = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject body = message.body();
@@ -141,29 +100,28 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
     }
   };
 
-  private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
+  /**
+   * post动作处理
+   */
+  private final MessageHandler<JsonObject> postHandler = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject body = message.body();
       String action = body.getString("action");
-      // 仅仅处理action为null或post动作
-      if (action != null && !"post".equalsIgnoreCase(action)) {
+      // 仅仅处理action为post动作
+      if (!"post".equalsIgnoreCase(action)) {
         return;
       }
       JsonObject query = body.getObject("query");
-      if (query != null && query.has("type") && !"和谐".equals(query.getString("type"))) {
+      if (query != null && query.has("type")
+          && !Constant.DATAREGISTRY_TYPE_HARMONY.equals(query.getString("type"))) {
         return;
       }
-      readQuery(query);
-      activities = body.getArray("activities");
-      isLocal = activities == null;
-      bindDataToView();
-      bindHistoryDataToView();
-      isLocal = true;
+      dataHandler(body);
     }
   };
 
-  boolean isLocal = true;
+  private boolean isLocal = true;
 
   // 判定是否时有效的班级数值
   public boolean isRightfulGrade(String grade) {
@@ -238,7 +196,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
         break;
       case R.id.iv_act_harmony_coll:
         bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            "query", Json.createObject().set("type", "收藏")), null);
+            "query", Json.createObject().set("type", Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
         break;
       case R.id.iv_act_harmony_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -361,15 +319,15 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
 
   @Override
   protected void onPause() {
-    bus.unregisterHandler(Constant.ADDR_TOPIC, eventHandler);
-    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
+    bus.unregisterHandler(Constant.ADDR_TOPIC, postHandler);
+    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, controlHandler);
     super.onPause();
   }
 
   @Override
   protected void onResume() {
-    bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
-    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, eventHandlerControl);
+    bus.registerHandler(Constant.ADDR_TOPIC, postHandler);
+    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, controlHandler);
     super.onResume();
   }
 
@@ -443,7 +401,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
       }
       this.ll_act_harmony_result_bar.addView(imageView);
     }
-    this.myPageAdapter = new MyPageAdapter(this.nameViews);
+    this.myPageAdapter = new CommonPageAdapter(this.nameViews);
     this.vp_act_harmony_result.setAdapter(this.myPageAdapter);
 
     if (this.totalPageNum > 1) {
@@ -492,6 +450,21 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
     } else if (Constant.DOMIAN_ART.equals(this.currenTopic)) {
       this.rb_act_harmony_class_art.setChecked(true);
     }
+  }
+
+  /**
+   * 数据解析
+   * 
+   * @param body
+   */
+  private void dataHandler(JsonObject body) {
+    JsonObject query = body.getObject("query");
+    readQuery(query);
+    activities = body.getArray("activities");
+    isLocal = activities == null;
+    bindDataToView();
+    bindHistoryDataToView();
+    isLocal = true;
   }
 
   /**
@@ -645,7 +618,7 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
     } else if (id == R.id.rl_act_harmony_result_next) {
       msg.set("next", true);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, eventHandlerControl);
+    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, null);
   }
 
   /**
@@ -689,12 +662,18 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
     JsonObject msg = Json.createObject();
     msg.set("action", "get");
     JsonObject query = Json.createObject();
-    query.set(Constant.TYPE, "和谐");
+    query.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_HARMONY);
     query.set(Constant.GRADE, this.currentGrade);
     query.set(Constant.TERM, this.currentTerm);
     query.set(Constant.TOPIC, this.currenTopic);
     msg.set("query", query);
-    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, eventHandler);
+    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        dataHandler(body);
+      }
+    });
   }
 
 }
