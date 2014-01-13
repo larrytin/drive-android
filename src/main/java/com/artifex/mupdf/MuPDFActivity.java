@@ -369,6 +369,10 @@ public class MuPDFActivity extends Activity {
       public void onClick(View v) {
         // BusProvider.get().send(Bus.LOCAL + Constant.ADDR_CONTROL,
         // Json.createObject().set("return", true), null);
+        if (core != null) {
+          core.onDestroy();
+        }
+        core = null;
         MuPDFActivity.this.finish();
       }
     });
