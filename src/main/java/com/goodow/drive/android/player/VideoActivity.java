@@ -1,19 +1,24 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.player.VideoView.MySizeChangeLinstener;
 import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -26,13 +31,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.MessageQueue.IdleHandler;
-import android.view.Display;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnHoverListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -53,20 +58,35 @@ import android.widget.Toast;
  * @updateDate 2013 2013-12-4 上午11:32:28
  * @version V1.0
  */
-public class VideoActivity extends BaseActivity {
-  private PopupWindow popupVolumn;
-  private PopupWindow popupBrightness;
+public class VideoActivity extends BaseActivity implements OnTouchListener {
+  private class SoundBroadCastReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      volumeSeekbar.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+      if (mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) <= 0) {
+        btn_media_controler_sound.setBackgroundResource(R.drawable.common_player_mute);
+        btn_media_controler_sound.setClickable(false);
+      } else {
+        btn_media_controler_sound.setBackgroundResource(R.drawable.common_player_sound);
+        btn_media_controler_sound.setClickable(true);
+        // btn_media_controler_sound.setOnClickListener(listener);
+      }
+    }
+  }
 
+  private PopupWindow popupBrightness;
   private boolean isOnline = false;// 是否在线播放
   private boolean isChangedVideo = false;// 是否改变视频
+  private boolean isOnNewIntent;
 
-  private int playedTime;// 已播放时间
+  private int playedTime = -1;// 已播放时间
 
   private VideoView videoView = null;// 视频视图
-  private GestureDetector gestureDetector = null;// 手势识别
+  // private final GestureDetector gestureDetector = null;// 手势识别
 
   private View titleView = null;
   private PopupWindow titleWindow = null;
+  private TextView tv_media_title_name;
 
   private View controlView = null;// 控制器视图
   private PopupWindow controlerWindow = null;// 控制器
@@ -74,34 +94,43 @@ public class VideoActivity extends BaseActivity {
   private TextView tv_media_controler_duration = null;// 视频的总时间
   private TextView tv_media_controler_has_played = null;// 播放时间
 
+  private View toolView;// 右侧的工具栏
+  private PopupWindow toolWindow;
+  private ImageView iv_act_picture_pen;// 画笔
+  private ImageView iv_act_picture_eraser;// 橡皮擦
+  private boolean isDrawing = false;
+  private boolean prePlaying;// 进入画笔状态前是否正在播放
+  private AudioManager mAudioManager;
+  private SoundBroadCastReceiver soundBroadCastReceiver;
   private static int screenWidth = 0;// 屏幕宽度
   private static int screenHeight = 0;// 屏幕高度
   private static int controlHeight = 0;// 控制器高度
 
-  private final static int TIME = 5000;// 控制器显示持续时间(毫秒)
+  private final static int TIME = 15000;// 控制器显示持续时间(毫秒)
 
   private boolean isControllerShow = true;// 是否显示控制器
-  private boolean isPaused = false;// 是否暂停
   private boolean isFullScreen = false;// 是否全屏
+  private final String TAG = VideoActivity.class.getSimpleName();
 
   private ImageButton ibtn_media_controler_play_pause;
   private Button btn_media_controler_sound;
-  private Button btn_media_controler_brightness;
-
-  public AudioManager audiomanage;
-  private int maxVolume, currentVolume;
+  private Button btn_media_controler_replay;
 
   private View popupWindow_view;
   private TextView brightnessPercent;
   private SeekBar brightnessSeekbar;
-  private TextView volumePercent;
   private SeekBar volumeSeekbar;
 
   private final static int PROGRESS_CHANGED = 0;
-
   private final static int HIDE_CONTROLER = 1;
 
-  private Handler subHandler = new Handler() {
+  private final Point point = new Point();
+
+  private final static int SCREEN_FULL = 0;
+
+  private final static int SCREEN_DEFAULT = 1;
+
+  private final Handler subHandler = new Handler() {
     @Override
     public void handleMessage(Message msg) {
       switch (msg.what) {
@@ -131,9 +160,22 @@ public class VideoActivity extends BaseActivity {
       super.handleMessage(msg);
     }
   };
-  private final static int SCREEN_FULL = 0;
 
-  private final static int SCREEN_DEFAULT = 1;
+  private final MessageHandler<JsonObject> controlHandler = new MessageHandler<JsonObject>() {
+
+    @Override
+    public void handle(com.goodow.realtime.channel.Message<JsonObject> message) {
+      JsonObject msg = message.body();
+      if (msg.has("path")) {
+        return;
+      }
+      handleMsg(msg);
+    }
+  };
+
+  private JsonObject jsonObject;
+
+  private Uri uri;
 
   @Override
   public void onBackPressed() {
@@ -155,7 +197,6 @@ public class VideoActivity extends BaseActivity {
     super.onConfigurationChanged(newConfig);
   }
 
-  @SuppressWarnings({"deprecation", "static-access"})
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -168,66 +209,107 @@ public class VideoActivity extends BaseActivity {
       }
     });
     this.getScreenSize();// 获得屏幕尺寸大小
+    mAudioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+    soundBroadCastReceiver = new SoundBroadCastReceiver();
     this.controlView = getLayoutInflater().inflate(R.layout.video_media_controler, null);
     this.controlerWindow = new PopupWindow(this.controlView);
     this.tv_media_controler_duration =
         (TextView) this.controlView.findViewById(R.id.tv_media_controler_duration);
     this.tv_media_controler_has_played =
         (TextView) this.controlView.findViewById(R.id.tv_media_controler_has_played);
-
     this.titleView = getLayoutInflater().inflate(R.layout.video_media_title, null);
-    this.titleWindow = new PopupWindow(this.titleView, this.screenWidth, 60);
-
-    Button bt_media_title_back = (Button) titleView.findViewById(R.id.bt_media_title_back);
-    Button bt_media_title_screen = (Button) titleView.findViewById(R.id.bt_media_title_screen);
-
+    this.tv_media_title_name = (TextView) this.titleView.findViewById(R.id.tv_media_title_name);
+    this.toolView = View.inflate(this, R.layout.video_media_toolbar, null);
+    this.titleWindow = new PopupWindow(this.titleView, screenWidth, 60);
     this.videoView = (VideoView) findViewById(R.id.vv);
-
+    videoView.setOnTouchListener(this);
+    this.toolWindow = new PopupWindow(this.toolView, 70, 170);
+    iv_act_picture_pen = (ImageView) toolView.findViewById(R.id.iv_act_picture_pen);
+    iv_act_picture_eraser = (ImageView) toolView.findViewById(R.id.iv_act_picture_eraser);
     this.ibtn_media_controler_play_pause =
         (ImageButton) this.controlView.findViewById(R.id.ibtn_media_controler_play_pause);
     this.btn_media_controler_sound =
         (Button) this.controlView.findViewById(R.id.btn_media_controler_sound);
-    this.btn_media_controler_sound.setVisibility(View.GONE);
-    this.btn_media_controler_brightness =
-        (Button) this.controlView.findViewById(R.id.btn_media_controler_brightness);
-    this.btn_media_controler_brightness.setVisibility(View.GONE);
-
+    this.btn_media_controler_replay =
+        (Button) this.controlView.findViewById(R.id.btn_media_controler_replay);
+    this.volumeSeekbar = (SeekBar) controlView.findViewById(R.id.sb_media_controler_sound_seekbar);
+    this.volumeSeekbar.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+    this.ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
+    iv_act_picture_pen.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (isDrawing) {// 当前是画笔状态,退出画笔状态
+          isDrawing = false;
+          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
+              "annotation", false), null);
+          if (prePlaying) {
+            videoView.start();
+            ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
+          }
+          hideController();
+        } else {// 当前不是画笔状态,进入画笔状态
+          isDrawing = true;
+          if (videoView.isPlaying()) {
+            prePlaying = true;
+            videoView.pause();
+            ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_play);
+          } else {
+            prePlaying = false;
+          }
+          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
+              "annotation", true), null);
+          hideController();
+        }
+      }
+    });
+    iv_act_picture_eraser.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject()
+            .set("clear", true), null);
+      }
+    });
     Looper.myQueue().addIdleHandler(new IdleHandler() {
       @Override
       public boolean queueIdle() {// 空闲的队列
         if (titleWindow != null && videoView.isShown()) {
-          titleWindow.showAtLocation(videoView, Gravity.TOP, 1280, 0);
+          titleWindow.showAtLocation(videoView, Gravity.TOP, 0, 0);
           // titleWindow.update(0, 0, 0, 0);
         }
         if (controlerWindow != null && videoView.isShown()) {
           controlerWindow.showAtLocation(videoView, Gravity.BOTTOM, 0, 0);
           controlerWindow.update(0, 0, screenWidth, controlHeight);
         }
+        if (toolWindow != null && videoView.isShown()) {
+          toolWindow.showAtLocation(videoView, Gravity.RIGHT, 0, 0);
+        }
         subHandler.sendEmptyMessageDelayed(HIDE_CONTROLER, TIME);
         return false;
       }
     });
 
-    // 返回监听
-    bt_media_title_back.setOnClickListener(new OnClickListener() {
+    // // 全屏监听
+    // bt_media_title_screen.setOnClickListener(new OnClickListener() {
+    // @Override
+    // public void onClick(View arg0) {
+    // if (isFullScreen) {
+    // setVideoScale(SCREEN_DEFAULT);
+    // } else {
+    // setVideoScale(SCREEN_FULL);
+    // }
+    // isFullScreen = !isFullScreen;
+    // if (isControllerShow) {
+    // showController();
+    // }
+    // }
+    // });
+
+    // 重播监听
+    btn_media_controler_replay.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        VideoActivity.this.finish();
-      }
-    });
-    // 全屏监听
-    bt_media_title_screen.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View arg0) {
-        if (isFullScreen) {
-          setVideoScale(SCREEN_DEFAULT);
-        } else {
-          setVideoScale(SCREEN_FULL);
-        }
-        isFullScreen = !isFullScreen;
-        if (isControllerShow) {
-          showController();
-        }
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
+        ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
       }
     });
 
@@ -295,12 +377,13 @@ public class VideoActivity extends BaseActivity {
             minute %= 60;
             tv_media_controler_duration.setText(String.format("%02d:%02d:%02d", hour, minute,
                 second));
-
             videoView.start();
-            ibtn_media_controler_play_pause.setImageResource(R.drawable.video_selector_player_play);
+            ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
             hideControllerDelay();
             subHandler.sendEmptyMessage(PROGRESS_CHANGED);
+            handleMsg(jsonObject);
           }
+
         });
 
     // 注册在媒体文件播放完毕时调用的回调函数
@@ -308,8 +391,10 @@ public class VideoActivity extends BaseActivity {
       @Override
       public void onCompletion(MediaPlayer arg0) {
         isOnline = false;
-        videoView.stopPlayback();
-        VideoActivity.this.finish();
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
+        ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
+        // videoView.stopPlayback();
+        // VideoActivity.this.finish();
       }
     });
 
@@ -317,33 +402,69 @@ public class VideoActivity extends BaseActivity {
       @Override
       public void onClick(View v) {
         cancelDelayHide();// 取消隐藏延迟
-        if (isPaused) {
-          videoView.start();
-          ibtn_media_controler_play_pause.setImageResource(R.drawable.video_selector_player_pause);
+        JsonObject msg = Json.createObject();
+        if (!videoView.isPlaying()) {
+          msg.set("play", 1);
           hideControllerDelay();// 延迟隐藏控制器
         } else {
-          videoView.pause();
-          ibtn_media_controler_play_pause.setImageResource(R.drawable.video_selector_player_play);
+          msg.set("play", 2);
         }
-        isPaused = !isPaused;
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
       }
     });
+    volumeSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() // 调音监听器
+        {
+          @Override
+          public void onProgressChanged(SeekBar arg0, int progress, boolean fromUser) {
+            if (fromUser) {
+              bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action",
+                  "post").set("volume", (float) progress / volumeSeekbar.getMax()), null);
+            }
 
-    this.btn_media_controler_sound.setOnClickListener(new OnClickListener() {
+          }
+
+          @Override
+          public void onStartTrackingTouch(SeekBar seekBar) {
+          }
+
+          @Override
+          public void onStopTrackingTouch(SeekBar seekBar) {
+          }
+        });
+    btn_media_controler_sound.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        getPopupVolumn();
-        popupVolumn.showAtLocation(findViewById(R.id.vv), Gravity.CENTER, 0, 0);
+        volumeSeekbar.setProgress(0);
+        bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "post")
+            .set("volume", 0.0), null);
       }
     });
+    bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "get"),
+        new MessageHandler<JsonObject>() {
+          // 初始化声音
+          @Override
+          public void handle(com.goodow.realtime.channel.Message<JsonObject> message) {
+            JsonObject body = message.body();
+            boolean isMute = body.getBoolean("mute");
+            float volume = (float) body.getNumber("volume");
+            if (isMute) {
+              btn_media_controler_sound.setBackgroundResource(R.drawable.common_player_mute);
+              volumeSeekbar.setProgress(0);
+            } else {
+              btn_media_controler_sound.setBackgroundResource(R.drawable.common_player_sound);
+              volumeSeekbar.setProgress((int) (volume * mAudioManager
+                  .getStreamMaxVolume(AudioManager.STREAM_MUSIC)));
+            }
+          }
+        });
 
-    this.btn_media_controler_brightness.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        getPopupBrightness();
-        popupBrightness.showAtLocation(findViewById(R.id.vv), Gravity.CENTER, 0, 0);
-      }
-    });
+    // this.btn_media_controler_brightness.setOnClickListener(new OnClickListener() {
+    // @Override
+    // public void onClick(View v) {
+    // getPopupBrightness();
+    // popupBrightness.showAtLocation(findViewById(R.id.vv), Gravity.CENTER, 0, 0);
+    // }
+    // });
 
     this.sb_media_controler_seekbar =
         (SeekBar) controlView.findViewById(R.id.sb_media_controler_seekbar);
@@ -351,7 +472,10 @@ public class VideoActivity extends BaseActivity {
       @Override
       public void onProgressChanged(SeekBar seekbar, int progress, boolean fromUser) {
         if (fromUser) {
-          videoView.seekTo(progress);// 设置播放位置
+          // videoView.seekTo(progress);// 设置播放位置
+          JsonObject msg = Json.createObject();
+          msg.set("progress", (double) progress / sb_media_controler_seekbar.getMax());
+          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
           if (!isOnline) {
 
           }
@@ -369,82 +493,140 @@ public class VideoActivity extends BaseActivity {
       }
     });
 
-    this.gestureDetector = new GestureDetector(new SimpleOnGestureListener() {
+    // this.gestureDetector = new GestureDetector(new SimpleOnGestureListener() {
+    // @Override
+    // public boolean onDoubleTap(MotionEvent e) {
+    // if (isFullScreen) {
+    // setVideoScale(SCREEN_DEFAULT);// 设置视频显示尺寸
+    // } else {
+    // setVideoScale(SCREEN_FULL);// 设置视频显示尺寸
+    // }
+    // isFullScreen = !isFullScreen;
+    // if (isControllerShow) {
+    // showController();// 显示控制器
+    // }
+    // return true;
+    // }
+    //
+    // @Override
+    // public void onLongPress(MotionEvent e) {// 长按屏幕
+    // if (isPaused) {
+    // videoView.start();
+    // ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
+    // cancelDelayHide();// 取消隐藏延迟
+    // hideControllerDelay();// 延迟隐藏控制器
+    // } else {
+    // videoView.pause();
+    // ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_play);
+    // cancelDelayHide();// 延迟隐藏控制器
+    // showController();// 延迟隐藏控制器
+    // }
+    // isPaused = !isPaused;
+    // // super.onLongPress(e);
+    // }
+    //
+    // @Override
+    // public boolean onSingleTapConfirmed(MotionEvent e) {// 轻击屏幕
+    // if (!isControllerShow) {// 是否显示控制器
+    // showController();// 显示控制器
+    // hideControllerDelay();// 显示控制器
+    // } else {
+    // cancelDelayHide();// 取消隐藏延迟
+    // hideController();// 取消隐藏延迟
+    // }
+    // // return super.onSingleTapConfirmed(e);
+    // return true;
+    // }
+    // });
+    videoView.setOnHoverListener(new OnHoverListener() {
       @Override
-      public boolean onDoubleTap(MotionEvent e) {
-        if (isFullScreen) {
-          setVideoScale(SCREEN_DEFAULT);// 设置视频显示尺寸
-        } else {
-          setVideoScale(SCREEN_FULL);// 设置视频显示尺寸
+      public boolean onHover(View v, MotionEvent event) {
+        switch (event.getAction()) {
+          case MotionEvent.ACTION_HOVER_MOVE:
+            if (!isControllerShow) {// 是否显示控制器
+              showController();// 显示控制器
+              hideControllerDelay();// 延迟隐藏
+            }
+            break;
         }
-        isFullScreen = !isFullScreen;
-        if (isControllerShow) {
-          showController();// 显示控制器
-        }
-        return true;
-      }
-
-      @Override
-      public void onLongPress(MotionEvent e) {// 长按屏幕
-        if (isPaused) {
-          videoView.start();
-          ibtn_media_controler_play_pause.setImageResource(R.drawable.video_selector_player_pause);
-          cancelDelayHide();// 取消隐藏延迟
-          hideControllerDelay();// 延迟隐藏控制器
-        } else {
-          videoView.pause();
-          ibtn_media_controler_play_pause.setImageResource(R.drawable.video_selector_player_play);
-          cancelDelayHide();// 延迟隐藏控制器
-          showController();// 延迟隐藏控制器
-        }
-        isPaused = !isPaused;
-        // super.onLongPress(e);
-      }
-
-      @Override
-      public boolean onSingleTapConfirmed(MotionEvent e) {// 轻击屏幕
-        if (!isControllerShow) {// 是否显示控制器
-          showController();// 显示控制器
-          hideControllerDelay();// 显示控制器
-        } else {
-          cancelDelayHide();// 取消隐藏延迟
-          hideController();// 取消隐藏延迟
-        }
-        // return super.onSingleTapConfirmed(e);
         return true;
       }
     });
 
     try {
-      JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
+      jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
       String vidoePath = jsonObject.getString("path");
       String videoName =
           vidoePath.substring(vidoePath.lastIndexOf("/") + 1, vidoePath.lastIndexOf("."));
-      Uri uri = Uri.parse("file://" + vidoePath);
+      uri = Uri.parse("file://" + vidoePath);
       if (uri != null) {
-        this.videoView.stopPlayback();// 停止视频播放
         this.videoView.setVideoURI(uri);// 设置视频文件URI
         this.isOnline = true;
-        this.ibtn_media_controler_play_pause
-            .setImageResource(R.drawable.video_selector_player_pause);
-        ((TextView) this.titleView.findViewById(R.id.tv_media_title_name)).setText(videoName);
+        tv_media_title_name.setText(videoName);
       }
-
     } catch (Exception e) {
       Toast.makeText(this, getString(R.string.video_file_no_exist), Toast.LENGTH_SHORT).show();
     }
   }
 
   @Override
-  public boolean onTouchEvent(MotionEvent event) {// 实现该方法来处理触屏事件
-    boolean result = gestureDetector.onTouchEvent(event);
+  public boolean onTouch(View v, MotionEvent event) {
+    int width = videoView.getWidth();
+    int height = videoView.getHeight();
+    switch (event.getAction()) {
+      case MotionEvent.ACTION_DOWN:
+        point.x = (int) event.getRawX();
+        point.y = (int) event.getRawY();
+        break;
+      case MotionEvent.ACTION_MOVE:
+        int currentX = (int) event.getRawX();
+        int currentY = (int) event.getRawY();
+        // 移动的距离
+        int offsetX = currentX - point.x;
+        int offsetY = currentY - point.y;
+        // 移动后的点坐标
+        int endLeft = videoView.getLeft() + offsetX;
+        int endTop = videoView.getTop() + offsetY;
+        int endRight = videoView.getRight() + offsetX;
+        int endButtom = videoView.getBottom() + offsetY;
 
-    if (!result) {
-      if (event.getAction() == MotionEvent.ACTION_UP) {
-      }
-      result = super.onTouchEvent(event);
+        if (endLeft > 0) {
+          endLeft = 0;
+          endRight = width;
+        }
+        if (endTop > 0) {
+          endTop = 0;
+          endButtom = height;
+        }
+        if (endRight < screenWidth) {
+          endRight = screenWidth;
+          endLeft = screenWidth - width;
+        }
+        if (endButtom < screenHeight) {
+          endButtom = screenHeight;
+          endTop = screenHeight - height;
+        }
+        // 视频宽度小于屏幕宽度,无法左右移动
+        if (width < screenWidth) {
+          endLeft = videoView.getLeft();
+          endRight = videoView.getRight();
+        }
+        // 视频高度小于屏幕宽度 无法上下移动
+        if (height < screenHeight) {
+          endTop = videoView.getTop();
+          endButtom = videoView.getBottom();
+        }
+        point.x = currentX;
+        point.y = currentY;
+        videoView.layout(endLeft, endTop, endRight, endButtom);
+        break;
+      case MotionEvent.ACTION_UP:
+        break;
+
+      default:
+        break;
     }
-    return result;
+    return true;
   }
 
   /**
@@ -482,49 +664,6 @@ public class VideoActivity extends BaseActivity {
     });
   }
 
-  /**
-   * 创建PopupVolumn
-   */
-  protected void initPopuptVolumn() {
-    popupWindow_view = getLayoutInflater().inflate( // 获取自定义布局文件ppsplayer_volume_controler.xml的视图
-        R.layout.video_media_volume, null, false);
-    popupVolumn =
-        new PopupWindow(popupWindow_view, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-            true);// 创建PopupWindow实例
-
-    // 注意要加这句代码，点击弹出窗口其它区域才会让窗口消失
-    popupVolumn.setBackgroundDrawable(new ColorDrawable(0x00000000));
-
-    volumePercent = (TextView) popupWindow_view.findViewById(R.id.volume_controler_percent_text);
-    volumeSeekbar = (SeekBar) popupWindow_view.findViewById(R.id.volume_controler_seekbar);
-    audiomanage = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-    maxVolume = audiomanage.getStreamMaxVolume(AudioManager.STREAM_MUSIC); // 获取系统最大音量
-    volumeSeekbar.setMax(maxVolume); // 拖动条最高值与系统最大声匹配
-    currentVolume = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC); // 获取当前值
-    volumeSeekbar.setProgress(currentVolume);
-    volumePercent.setText(currentVolume * 100 / maxVolume + " %");
-
-    volumeSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() // 调音监听器
-        {
-          @Override
-          public void onProgressChanged(SeekBar arg0, int progress, boolean fromUser) {
-            audiomanage.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
-            currentVolume = audiomanage.getStreamVolume(AudioManager.STREAM_MUSIC); // 获取当前值
-            volumeSeekbar.setProgress(currentVolume);
-            volumePercent.setText(currentVolume * 100 / maxVolume + " %");
-          }
-
-          @Override
-          public void onStartTrackingTouch(SeekBar seekBar) {
-          }
-
-          @Override
-          public void onStopTrackingTouch(SeekBar seekBar) {
-          }
-        });
-  }
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
@@ -547,11 +686,24 @@ public class VideoActivity extends BaseActivity {
     super.onActivityResult(requestCode, resultCode, data);
   }
 
+  // @Override
+  // public boolean onTouchEvent(MotionEvent event) {// 实现该方法来处理触屏事件
+  // boolean result = gestureDetector.onTouchEvent(event);
+  //
+  // if (!result) {
+  // if (event.getAction() == MotionEvent.ACTION_UP) {
+  // }
+  // result = super.onTouchEvent(event);
+  // }
+  // return result;
+  // }
+
   @Override
   protected void onDestroy() {
     if (controlerWindow.isShowing()) {
       controlerWindow.dismiss();
       titleWindow.dismiss();
+      toolWindow.dismiss();
     }
     subHandler.removeMessages(PROGRESS_CHANGED);
     subHandler.removeMessages(HIDE_CONTROLER);
@@ -563,63 +715,137 @@ public class VideoActivity extends BaseActivity {
   }
 
   @Override
+  protected void onNewIntent(Intent intent) {
+    isChangedVideo = true;
+    jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
+    setIntent(intent);
+    String vidoePath = jsonObject.getString("path");
+    String videoName =
+        vidoePath.substring(vidoePath.lastIndexOf("/") + 1, vidoePath.lastIndexOf("."));
+    Uri uri = Uri.parse("file://" + vidoePath);
+    if (uri != null) {
+      if (!uri.equals(this.uri)) {
+        this.uri = uri;
+        this.videoView.stopPlayback();// 停止视频播放
+        this.videoView.setVideoURI(uri);// 设置视频文件URI
+        this.isOnline = true;
+        tv_media_title_name.setText(videoName);
+      } else {
+        handleMsg(jsonObject);// uri相同直接控制信息
+      }
+    }
+  }
+
+  @Override
   protected void onPause() {
-    playedTime = videoView.getCurrentPosition();
-    videoView.pause();
     super.onPause();
+    playedTime = videoView.getCurrentPosition();
+    if (videoView.isPlaying()) {
+      videoView.pause();
+    }
+    // Always unregister when an handler no longer should be on the bus.
+    bus.unregisterHandler(Constant.ADDR_PLAYER, controlHandler);
+    this.unregisterReceiver(soundBroadCastReceiver);
   }
 
   @Override
   protected void onResume() {// 恢复挂起的播放器
     if (!isChangedVideo) {
       videoView.seekTo(playedTime);// 设置播放位置 playedTime已播放时间
-      videoView.start();
-    } else {
-      isChangedVideo = false;
+      if (videoView.isPlaying()) {
+        hideControllerDelay();// 延迟隐藏控制器
+      }
     }
+    isChangedVideo = false;
 
-    if (videoView.isPlaying()) {
-      hideControllerDelay();// 延迟隐藏控制器
-    }
     super.onResume();
+    // Register handlers so that we can receive event messages.
+    bus.registerHandler(Constant.ADDR_PLAYER, controlHandler);
+    IntentFilter mIntentFilter = new IntentFilter();
+    mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
+    this.registerReceiver(soundBroadCastReceiver, mIntentFilter);
   }
 
   private void cancelDelayHide() {// 取消隐藏延迟
     subHandler.removeMessages(HIDE_CONTROLER);
   }
 
-  /*
-   * 获取PopupWindow实例
-   */
-  private void getPopupBrightness() {
+  // /*
+  // * 获取PopupWindow实例
+  // */
+  // private void getPopupBrightness() {
+  //
+  // if (null != popupBrightness) {
+  // popupBrightness.dismiss();
+  // return;
+  // } else {
+  // initPopuptBrightness();
+  // }
+  // }
 
-    if (null != popupBrightness) {
-      popupBrightness.dismiss();
-      return;
-    } else {
-      initPopuptBrightness();
-    }
-  }
-
-  /*
-   * 获取PopupWindow实例
-   */
-  private void getPopupVolumn() {
-
-    if (null != popupVolumn) {
-      popupVolumn.dismiss();
-      return;
-    } else {
-      initPopuptVolumn();
-    }
-  }
-
-  @SuppressWarnings("deprecation")
   private void getScreenSize() {// 获得屏幕尺寸大小
-    Display display = getWindowManager().getDefaultDisplay();
-    screenHeight = display.getHeight();
-    screenWidth = display.getWidth();
+    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+    screenWidth = displayMetrics.widthPixels;
+    screenHeight = displayMetrics.heightPixels;
     controlHeight = screenHeight / 8;
+  }
+
+  private void handleMsg(JsonObject msg) {
+    if (msg.has("play")) {
+      switch ((int) msg.getNumber("play")) {
+        case 0:
+          // 停止
+          if (videoView.isPlaying()) {
+            videoView.pause();
+          }
+          videoView.seekTo(0);
+          ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_play);
+          break;
+        case 1:
+          // 播放
+          if (!videoView.isPlaying()) {
+            videoView.start();
+            ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
+          }
+          break;
+        case 2:
+          // 暂停
+          if (videoView.isPlaying()) {
+            videoView.pause();
+            ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_play);
+          }
+          break;
+        case 3:
+          // 重播
+          videoView.seekTo(0);
+          if (!videoView.isPlaying()) {
+            videoView.start();
+            ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
+          }
+          break;
+        default:
+          Toast.makeText(VideoActivity.this, "不支持的播放模式, play=" + msg.getNumber("play"),
+              Toast.LENGTH_LONG).show();
+          break;
+      }
+    }
+    if (msg.has("progress")) {
+      double progress = msg.getNumber("progress");
+      videoView.seekTo((int) (videoView.getDuration() * progress));// 设置播放位置
+      // if (!videoView.isPlaying()) {
+      // videoView.start();
+      // }
+    }
+    if (msg.has("zoomTo")) {
+      int width = videoView.getWidth();
+      int height = videoView.getHeight();
+      double zoomTo = msg.getNumber("zoomTo");
+      videoView.setVideoScale((int) (zoomTo * width), (int) (zoomTo * height));
+      ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
+    }
+    if (msg.has("fit")) {
+      // TODO
+    }
   }
 
   private void hideController() {// 隐藏控制器
@@ -627,6 +853,9 @@ public class VideoActivity extends BaseActivity {
       controlerWindow.update(0, 0, screenWidth, 0);
       // titleWindow.update(0, 0, screenWidth, 0);
       titleWindow.dismiss();
+      if (!isDrawing) {
+        toolWindow.dismiss();
+      }
       isControllerShow = false;
     }
   }
@@ -690,11 +919,17 @@ public class VideoActivity extends BaseActivity {
         titleWindow.showAtLocation(videoView, Gravity.TOP, 0, 0);
         // titleWindow.update(0, 0, 0, 0);
       }
+      if (toolWindow != null) {
+        toolWindow.showAtLocation(videoView, Gravity.RIGHT, 0, 0);
+      }
     } else {
       // titleWindow.update(0, 0, screenWidth, 60);
       if (titleWindow != null) {
         titleWindow.showAtLocation(videoView, Gravity.TOP, 0, 0);
         // titleWindow.update(0, 0, 0, 0);
+      }
+      if (toolWindow != null) {
+        toolWindow.showAtLocation(videoView, Gravity.RIGHT, 0, 0);
       }
     }
     isControllerShow = true;

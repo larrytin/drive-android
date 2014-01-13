@@ -28,7 +28,7 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
     public void doMyThings();// 自定义大小
   }
 
-  private String TAG = "VideoView";
+  private final String TAG = "VideoView";
   private Context mContext;
   private Uri mUri;// URI 视频地址
 
@@ -122,7 +122,7 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
   };
 
   // 注册在媒体文件播放完毕时调用的回调函数
-  private MediaPlayer.OnCompletionListener mCompletionListener =
+  private final MediaPlayer.OnCompletionListener mCompletionListener =
       new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mp) {
@@ -136,7 +136,7 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
       };
 
   // 注册在设置或播放过程中发生错误时调用的回调函数。如果未指定回调函数， 或回调函数返回假，VideoView 会通知用户发生了错误。
-  private MediaPlayer.OnErrorListener mErrorListener = new MediaPlayer.OnErrorListener() {
+  private final MediaPlayer.OnErrorListener mErrorListener = new MediaPlayer.OnErrorListener() {
     @Override
     public boolean onError(MediaPlayer mp, int framework_err, int impl_err) {
       if (mMediaController != null) {
@@ -180,7 +180,7 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
   };
 
   // 缓冲更新 事件监听
-  private MediaPlayer.OnBufferingUpdateListener mBufferingUpdateListener =
+  private final MediaPlayer.OnBufferingUpdateListener mBufferingUpdateListener =
       new MediaPlayer.OnBufferingUpdateListener() {
         @Override
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
@@ -199,7 +199,7 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
           mMediaPlayer.seekTo(mSeekWhenPrepared);
           mSeekWhenPrepared = 0;
         }
-        mMediaPlayer.start();
+        // mMediaPlayer.start();
         if (mMediaController != null) {
           mMediaController.show();
         }

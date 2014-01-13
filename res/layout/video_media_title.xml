@@ -1,48 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" 
-	android:layout_height="43.0dip"
-	android:gravity="center_vertical"
-	android:background="@drawable/video_titlebar_bg"
-	>
-	<!-- back -->
-	<Button 
-		android:id="@+id/bt_media_title_back" 
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true" 
-		android:layout_centerVertical="true" 
-		android:textSize="12.0sp" 
-		android:textColor="@color/video_white"
-		android:background="@drawable/video_selector_button_back_bg"
-		android:text="@string/video_return_btn"
-		android:layout_marginLeft="5.0dip" 
-		/>
+	android:layout_height="40px"
+	android:background="#aa000000" >
 	
 	<!-- name -->
-	<TextView 
+	<com.goodow.drive.android.view.FontTextView 
 		android:id="@+id/tv_media_title_name"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"
-		android:layout_centerInParent="true" 
-		android:layout_centerVertical="true"
-		android:layout_marginLeft="10.0dip"
-		android:layout_marginRight="10.0dip"
-		android:textSize="17.0sp" 
-		android:textColor="@color/video_white"
-		android:ellipsize="end" 
-		android:gravity="center" 
-		android:singleLine="true" 
-		/>
-	<!-- screen -->
-	<Button 
-		android:id="@+id/bt_media_title_screen"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"
-		android:layout_centerVertical="true" 
-		android:layout_alignParentRight="true"
-		android:layout_marginRight="10.0dip"
-		android:background="@drawable/video_selector_btn_player_switch_fullscreen"
-		/>
+		android:layout_centerInParent="true" 
+		android:textSize="30px" 
+		android:textColor="#cccccc"
+		android:ellipsize="end" 
+		android:singleLine="true" />
 
 </RelativeLayout>
