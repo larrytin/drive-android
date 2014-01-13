@@ -21,11 +21,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class WebViewFlashPlayer extends BaseActivity {
   private WebView flashWebView;
   private ImageView mImageView;
+  private LinearLayout mLinearLayout;
   private final static String TAG = WebViewFlashPlayer.class.getSimpleName();
 
   @Override
@@ -55,10 +57,12 @@ public class WebViewFlashPlayer extends BaseActivity {
     mImageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
+        System.gc();
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
       }
     });
     flashWebView = (WebView) findViewById(R.id.flash_webView_player);
+    mLinearLayout = (LinearLayout) this.findViewById(R.id.ll_act_flash_webview);
     WebSettings mWebSettings = flashWebView.getSettings();
     mWebSettings.setPluginState(PluginState.ON);
     // 检测flash插件是否存在
@@ -75,6 +79,8 @@ public class WebViewFlashPlayer extends BaseActivity {
   protected void onDestroy() {
     Log.d(TAG, "onDestroy()");
     super.onDestroy();
+    mLinearLayout.removeView(flashWebView);
+    flashWebView.removeAllViews();
     if (flashWebView != null) {
       flashWebView.destroy();
     }
