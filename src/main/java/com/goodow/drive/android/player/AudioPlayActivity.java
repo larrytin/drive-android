@@ -1,6 +1,7 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Bus;
@@ -18,10 +19,8 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -36,14 +35,22 @@ public class AudioPlayActivity extends BaseActivity {
         JsonObject msg = Json.createObject();
         switch (v.getId()) {// 通过传过来的Buttonid可以判断Button的类型
           case R.id.play_Button:// 播放
-            msg.set("play", 1);
-            break;
-          case R.id.pause_Button:// 暂停&继续
-            msg.set("play", 2);
+            if (mediaPlayer.isPlaying()) {
+              msg.set("play", 2);
+            } else {
+              msg.set("play", 1);
+            }
             break;
           case R.id.stop_Button:// 重播
             msg.set("play", 3);
             break;
+          case R.id.sound_Button:// 声音
+            sound_Button.setClickable(false);
+            sound_Button.setImageResource(R.drawable.common_player_mute);
+            progress_sound_SeekBar.setProgress(0);
+            bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action",
+                "post").set("volume", 0.0), null);
+            return;
         }
         bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
       } catch (Exception e) {// 抛出异常
@@ -52,9 +59,12 @@ public class AudioPlayActivity extends BaseActivity {
     }
   }
 
-  private static final String TAG = AudioPlayActivity.class.getSimpleName();
   private ButtonClickListener listener;
-  private Button stopButton;;
+  private ImageView playButton;
+  private ImageView stopButton;
+  // 声音/静音
+  private ImageView sound_Button;
+  private SeekBar progress_sound_SeekBar;
   private final MediaPlayer mediaPlayer = new MediaPlayer();
   private String audioFilePath;
   // 进度拖条
@@ -64,16 +74,8 @@ public class AudioPlayActivity extends BaseActivity {
 
   // 音频文件的名字
   private TextView audioFileNameTextView;
-  private Button pauseButton;
   private boolean isVisible = false;
   private final Handler handler = new Handler();
-  // private final Runnable start = new Runnable() {
-  // @Override
-  // public void run() {
-  // handler.post(updatesb);
-  // }
-  // };
-
   private boolean tag = true;
   private final Runnable updatesb = new Runnable() {
     @Override
@@ -90,56 +92,27 @@ public class AudioPlayActivity extends BaseActivity {
         if (tag) {
           progressSeekBar.setProgress(position * sMax / mMax);
         }
-        curtimeAndTotalTime.setText("时间：" + position / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
+
+        curtimeAndTotalTime.setText(timerCalculate(position / 1000) + " / "
+            + timerCalculate(mMax / 1000));
       } else if (100 == progress) {
-        curtimeAndTotalTime.setText("时间：" + mMax / 1000 + " 秒" + " / " + mMax / 1000 + " 秒");
+        curtimeAndTotalTime.setText(timerCalculate(mMax / 1000) + " / "
+            + timerCalculate(mMax / 1000));
       }
 
       // 每秒钟更新一次
       handler.postDelayed(updatesb, 1000);
     }
   };
-  private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
 
+  private final MessageHandler<JsonObject> controlHandler = new MessageHandler<JsonObject>() {
     @Override
     public void handle(Message<JsonObject> message) {
       JsonObject msg = message.body();
       if (msg.has("path")) {
         return;
       }
-      if (msg.has("play")) {
-        switch ((int) msg.getNumber("play")) {
-          case 0:
-            // 停止
-            stop_Button();
-            break;
-          case 1:
-            // 播放
-            play_button();
-            break;
-          case 2:
-            // 暂停
-            pause_button();
-            break;
-          case 3:
-            // 重播
-            replay_button();
-            break;
-          default:
-            Toast.makeText(AudioPlayActivity.this, "不支持的播放模式, play=" + msg.getNumber("play"),
-                Toast.LENGTH_LONG).show();
-            break;
-        }
-      }
-      if (msg.has("progress")) {
-        double progress = msg.getNumber("progress");
-        // progressSeekBar.setProgress((int) progress * progressSeekBar.getMax());
-        Log.d(TAG, (int) progress * progressSeekBar.getMax() + "");
-        Log.d(TAG, progress * progressSeekBar.getMax() + ":handler");
-        Log.d(TAG, "test:" + progress * progressSeekBar.getMax() + "");
-        mediaPlayer.seekTo((int) (mediaPlayer.getDuration() * progress));
-        mediaPlayer.start();
-      }
+      handleControl(msg);
     }
   };
   private ImageView mImageView;
@@ -148,6 +121,54 @@ public class AudioPlayActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_audio_player);
+    this.sound_Button = (ImageView) this.findViewById(R.id.sound_Button);
+    this.progress_sound_SeekBar = (SeekBar) this.findViewById(R.id.progress_sound_SeekBar);
+    // 设置声音拖动事件
+    this.progress_sound_SeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "post")
+            .set("volume", (float) progress / 100), null);
+        if (progress <= 0) {
+          sound_Button.setImageResource(R.drawable.common_player_mute);
+          sound_Button.setClickable(false);
+        } else {
+          sound_Button.setImageResource(R.drawable.common_player_sound);
+          sound_Button.setClickable(true);
+          sound_Button.setOnClickListener(listener);
+        }
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+      }
+    });
+
+    // 发送消息获取音量
+    bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "get"),
+        new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            boolean isMute = body.getBoolean("mute");
+            float volume = (float) body.getNumber("volume");
+            if (isMute) {
+              sound_Button.setImageResource(R.drawable.common_player_mute);
+              sound_Button.setClickable(false);
+              progress_sound_SeekBar.setProgress(0);
+            } else {
+              sound_Button.setImageResource(R.drawable.common_player_sound);
+              sound_Button.setClickable(true);
+              progress_sound_SeekBar.setProgress((int) (volume * 100));
+            }
+          }
+        });
+
     mImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
     mImageView.setOnClickListener(new OnClickListener() {
       @Override
@@ -156,20 +177,18 @@ public class AudioPlayActivity extends BaseActivity {
       }
     });
     audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
-    JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
-    audioFilePath = jsonObject.getString("path");
+    JsonObject msg = (JsonObject) getIntent().getExtras().getSerializable("msg");
+    audioFilePath = msg.getString("path");
     File mFile = new File(audioFilePath);
-    Log.d(TAG, audioFilePath);
     if (mFile.exists()) {
       String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
+      audioFileNameTextView.setMaxEms(10);
       audioFileNameTextView.setText(mp3Name);
 
       listener = new ButtonClickListener();
-      final Button playButton = (Button) this.findViewById(R.id.play_Button);
-      pauseButton = (Button) this.findViewById(R.id.pause_Button);
-      stopButton = (Button) this.findViewById(R.id.stop_Button);
+      playButton = (ImageView) this.findViewById(R.id.play_Button);
+      stopButton = (ImageView) this.findViewById(R.id.stop_Button);
       playButton.setOnClickListener(listener);
-      pauseButton.setOnClickListener(listener);
       stopButton.setOnClickListener(listener);
 
       progressSeekBar = (SeekBar) findViewById(R.id.progress_rate_SeekBar);
@@ -177,10 +196,8 @@ public class AudioPlayActivity extends BaseActivity {
       progressSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-          Log.d(TAG, "onProgressChanged()");
           isVisible = true;
           if (fromUser) {
-            Log.d(TAG, "onProgressChanged()+user");
             JsonObject msg = Json.createObject();
             msg.set("progress", (double) progress / progressSeekBar.getMax());
             bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
@@ -189,95 +206,61 @@ public class AudioPlayActivity extends BaseActivity {
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
-          Log.d(TAG, "onStartTrackingTouch()");
           if (mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
           }
           tag = false;
-          // Log.d(TAG, seekBar.getProgress() + "");
-          // System.out.println();
-          // progressSeekBar.setProgress(seekBar.getProgress());
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-          Log.d(TAG, "onstoptrackingtouch");
           tag = true;
-          // int mMax = mediaPlayer.getDuration();
-          // int dest = seekBar.getProgress();
-          // int sMax = progressSeekBar.getMax();
-          // mediaPlayer.seekTo(mMax * dest / sMax);
-          // mediaPlayer.start();
-          // pauseButton.setText("暂停");
-          // pauseButton.setEnabled(true);
-          // stopButton.setEnabled(true);
-
-          // JsonObject msg = Json.createObject();
-          // msg.set("progress", (double) seekBar.getProgress() / progressSeekBar.getMax());
-          // bus.send(Bus.LOCAL + CONTROL, msg, null);
-          // Log.d(TAG, "onstoptrackingtouch:" + seekBar.getProgress() / progressSeekBar.getMax());
         }
       });
 
       mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer arg0) {
-          // mediaPlayer.seekTo(0);
-          //
-          // pauseButton.setText("暂停");
-          // progressSeekBar.setProgress(0);
-          // curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration()
-          // / 1000 + " 秒");
-          //
-          // pauseButton.setEnabled(false);
-          // stopButton.setEnabled(false);
         }
       });
 
-      // pauseButton.setEnabled(false);
-      // stopButton.setEnabled(false);
       try {
-        play();
-      } catch (IOException e) {
-        e.printStackTrace();
+        start();
+        this.pause_button();
+      } catch (Exception e) {
       }
+
+      handleControl(msg);
     } else {
       Toast.makeText(this, R.string.pdf_file_no_exist, Toast.LENGTH_LONG).show();
     }
-
   }
 
   @Override
   protected void onDestroy() {
     mediaPlayer.release();
     super.onDestroy();
-    Log.d(TAG, "onDestroy()");
   }
 
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
-    JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
-    audioFilePath = jsonObject.getString("path");
+    JsonObject msg = (JsonObject) intent.getExtras().getSerializable("msg");
+    audioFilePath = msg.getString("path");
     File mFile = new File(audioFilePath);
-    Log.d(TAG, audioFilePath);
     if (mFile.exists()) {
       String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
-      Log.d(TAG, mp3Name);
       audioFileNameTextView.setText(mp3Name);
-      // Resets the MediaPlayer to its uninitialized state. After calling this method, you will have
-      // to initialize it again by setting the data source and calling prepare().
       mediaPlayer.reset();
       try {
-        play();
-      } catch (IOException e) {
-        e.printStackTrace();
+        start();
+        this.pause_button();
+      } catch (Exception e) {
       }
+      handleControl(msg);
     } else {
       Toast.makeText(this, R.string.pdf_file_no_exist, Toast.LENGTH_LONG).show();
     }
-
-    Log.d(TAG, "onNewIntent()");
   }
 
   @Override
@@ -289,7 +272,7 @@ public class AudioPlayActivity extends BaseActivity {
     }
 
     // Always unregister when an handler no longer should be on the bus.
-    bus.unregisterHandler(Constant.ADDR_PLAYER, eventHandler);
+    bus.unregisterHandler(Constant.ADDR_PLAYER, controlHandler);
   }
 
   @Override
@@ -298,7 +281,39 @@ public class AudioPlayActivity extends BaseActivity {
     super.onResume();
 
     // Register handlers so that we can receive event messages.
-    bus.registerHandler(Constant.ADDR_PLAYER, eventHandler);
+    bus.registerHandler(Constant.ADDR_PLAYER, controlHandler);
+  }
+
+  private void handleControl(JsonObject msg) {
+    if (msg.has("play")) {
+      switch ((int) msg.getNumber("play")) {
+        case 0:
+          // 停止
+          stop_Button();
+          break;
+        case 1:
+          // 播放
+          play_button();
+          break;
+        case 2:
+          // 暂停
+          pause_button();
+          break;
+        case 3:
+          // 重播
+          replay_button();
+          break;
+        default:
+          Toast.makeText(AudioPlayActivity.this, "不支持的播放模式, play=" + msg.getNumber("play"),
+              Toast.LENGTH_LONG).show();
+          break;
+      }
+    }
+    if (msg.has("progress")) {
+      double progress = msg.getNumber("progress");
+      mediaPlayer.seekTo((int) (mediaPlayer.getDuration() * progress));
+      mediaPlayer.start();
+    }
   }
 
   // 正在播放时候，暂停，button变为继续
@@ -306,20 +321,34 @@ public class AudioPlayActivity extends BaseActivity {
     if (mediaPlayer.isPlaying()) {
       // pauseButton.setText("继续");
       mediaPlayer.pause();
+      this.playButton.setImageResource(R.drawable.common_player_play);
     }
   }
 
-  // private void pause_Button() {
-  // if (mediaPlayer.isPlaying()) {
-  // mediaPlayer.pause();
-  // pauseButton.setText("继续");
-  // } else {
-  // mediaPlayer.start();
-  // pauseButton.setText("暂停");
-  // }
-  // }
+  private void play_button() {
+    isVisible = true;
 
-  private void play() throws IOException {
+    if (!mediaPlayer.isPlaying() && mediaPlayer.getCurrentPosition() != mediaPlayer.getDuration()) {
+      mediaPlayer.start();
+      playButton.setImageResource(R.drawable.common_player_pause);
+    }
+    handler.post(updatesb);
+  }
+
+  private void replay_button() {
+    isVisible = true;
+
+    mediaPlayer.seekTo(0);
+    mediaPlayer.start();
+    progressSeekBar.setProgress(0);
+    stopButton.setEnabled(true);
+
+    handler.post(updatesb);
+
+    this.playButton.setImageResource(R.drawable.common_player_pause);
+  }
+
+  private void start() throws IOException {
     progressSeekBar.setProgress(0);
 
     mediaPlayer.setVolume(100, 100);
@@ -332,62 +361,47 @@ public class AudioPlayActivity extends BaseActivity {
     mediaPlayer.start();
   }
 
-  private void play_button() {
-    isVisible = true;
-    if (!mediaPlayer.isPlaying() && mediaPlayer.getCurrentPosition() != mediaPlayer.getDuration()) {
-      mediaPlayer.start();
-      // pauseButton.setText("暂停");
-    }
-    // else if (mediaPlayer.getCurrentPosition() == mediaPlayer.getDuration()) {
-    // Log.d(TAG, "play_button");
-    // mediaPlayer.seekTo(0);
-    // mediaPlayer.start();
-    // pauseButton.setText("暂停");
-    // pauseButton.setEnabled(true);
-    // stopButton.setEnabled(true);
-    // }
-    // handler.post(start);
-    // pauseButton.setEnabled(true);
-    // stopButton.setEnabled(true);
-    handler.post(updatesb);
-  }
-
-  // private void play_Button() {
-  // isVisible = true;
-  //
-  // mediaPlayer.seekTo(0);
-  // mediaPlayer.start();
-  //
-  // pauseButton.setText("暂停");
-  // pauseButton.setEnabled(true);
-  // stopButton.setEnabled(true);
-  //
-  // handler.post(start);
-  // }
-
-  private void replay_button() {
-    isVisible = true;
-
-    mediaPlayer.seekTo(0);
-    mediaPlayer.start();
-    progressSeekBar.setProgress(0);
-    pauseButton.setText("暂停");
-    pauseButton.setEnabled(true);
-    stopButton.setEnabled(true);
-
-    handler.post(updatesb);
-  }
-
   private void stop_Button() {
     mediaPlayer.seekTo(0);
     mediaPlayer.pause();
 
-    // pauseButton.setText("暂停");
     progressSeekBar.setProgress(0);
-    curtimeAndTotalTime.setText("时间：" + 0 / 1000 + " 秒" + " / " + mediaPlayer.getDuration() / 1000
-        + " 秒");
-    //
-    // pauseButton.setEnabled(false);
-    // stopButton.setEnabled(false);
+    curtimeAndTotalTime.setText(timerCalculate(0) + " / "
+        + timerCalculate(mediaPlayer.getDuration() / 1000));
+  }
+
+  private String timerCalculate(int secondTime) {
+    String timeStr = null;
+    int hour = 0;
+    int minute = 0;
+    int second = 0;
+    if (secondTime <= 0) {
+      return "00:00";
+    } else {
+      minute = secondTime / 60;
+      if (minute < 60) {
+        second = secondTime % 60;
+        timeStr = unitFormat(minute) + ":" + unitFormat(second);
+      } else {
+        hour = minute / 60;
+        if (hour > 99) {
+          return "99:59:59";
+        }
+        minute = minute % 60;
+        second = secondTime - hour * 3600 - minute * 60;
+        timeStr = unitFormat(hour) + ":" + unitFormat(minute) + ":" + unitFormat(second);
+      }
+    }
+    return timeStr;
+  }
+
+  private String unitFormat(int i) {
+    String retStr = null;
+    if (i >= 0 && i < 10) {
+      retStr = "0" + Integer.toString(i);
+    } else {
+      retStr = "" + i;
+    }
+    return retStr;
   }
 }
