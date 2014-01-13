@@ -202,7 +202,13 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
    * 把查询完成的结果绑定到结果View
    */
   private void bindDataToView() {
-    this.tv_act_behave_title.setText(activity.getString(Constant.TITLE));
+    String title = activity.getString(Constant.TITLE);
+    if (title.matches("^\\d{4}.*")) {
+      this.tv_act_behave_title.setText(title.substring(4, title.length()));
+    } else {
+      this.tv_act_behave_title.setText(title);
+    }
+
     if (this.files == null) {
       return;
     }
@@ -230,7 +236,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
         if (j == 1) {
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-          params.setMargins(0, 50, 0, 0);
+          params.setMargins(0, 53, 0, 0);
           innerContainer.setLayoutParams(params);
         }
         // 列数量
@@ -308,11 +314,16 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     textView.setTextSize(12);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     textView.setTextColor(Color.WHITE);
+    textView.setSingleLine(true);
+    textView.setMaxEms(10);
     itemLayout.addView(textView);
     itemLayout.setTag(filePath);
     this.setThumbnailsImage(itemImageView, fileName);
-    fileName = fileName.substring(fileName.lastIndexOf("-") + 1, fileName.lastIndexOf("."));
-    textView.setText(fileName);
+    if (fileName.matches("^\\d{4}.*")) {
+      textView.setText(fileName.substring(4, fileName.length()));
+    } else {
+      textView.setText(fileName);
+    }
     return itemLayout;
   }
 

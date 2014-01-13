@@ -292,7 +292,12 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
           textView.setLayoutParams(params);
           textView.setGravity(Gravity.CENTER_HORIZONTAL);
           textView.setPadding(15, 10, 20, 0);
-          textView.setText(this.activities.getObject(index).getString(Constant.TITLE));
+          final String title = this.activities.getObject(index).getString(Constant.TITLE);
+          if (title.matches("^\\d{4}.*")) {
+            textView.setText(title.substring(4, title.length()));
+          } else {
+            textView.setText(title);
+          }
           textView.setBackgroundResource(R.drawable.harm_result_item_bg);
           textView.setClickable(true);
           textView.setOnClickListener(new OnClickListener() {
@@ -305,7 +310,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener,
               tags.set(Constant.TERM, currentTerm);
               tags.set(Constant.TOPIC, currenTopic);
               msg.set(Constant.TAGS, tags);
-              msg.set(Constant.TITLE, ((TextView) v).getText().toString());
+              msg.set(Constant.TITLE, title);
               msg.set("action", "post");
               bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }

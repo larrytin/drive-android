@@ -348,7 +348,12 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     TextView textView = new TextView(this);
     textView.setWidth(150);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
-    textView.setText(activity.getString(Constant.TITLE));
+    String title = activity.getString(Constant.TITLE);
+    if (title.matches("^\\d{4}.*")) {
+      textView.setText(title.substring(4, title.length()));
+    } else {
+      textView.setText(title);
+    }
     itemLayout.addView(textView);
 
     return itemLayout;

@@ -143,55 +143,41 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         // Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
+      /**
+       * MODIFY BY DPW change View.getText() to View.getTag();
+       */
       case R.id.bt_care_cloud1:
-        onCloudClick(this.iv_care_cloud1.getText().toString());
+        onCloudClick(this.iv_care_cloud1.getTag());
         break;
       case R.id.bt_care_cloud2:
-        onCloudClick(this.iv_care_cloud2.getText().toString());
+        onCloudClick(this.iv_care_cloud2.getTag());
         break;
       case R.id.bt_care_cloud3:
-        onCloudClick(this.iv_care_cloud3.getText().toString());
+        onCloudClick(this.iv_care_cloud3.getTag());
         break;
       case R.id.bt_care_cloud4:
-        onCloudClick(this.iv_care_cloud4.getText().toString());
+        onCloudClick(this.iv_care_cloud4.getTag());
         break;
       case R.id.bt_care_cloud5:
-        onCloudClick(this.iv_care_cloud5.getText().toString());
+        onCloudClick(this.iv_care_cloud5.getTag());
         break;
       case R.id.bt_care_cloud6:
-        onCloudClick(this.iv_care_cloud6.getText().toString());
+        onCloudClick(this.iv_care_cloud6.getTag());
         break;
       case R.id.bt_care_cloud7:
-        onCloudClick(this.iv_care_cloud7.getText().toString());
+        onCloudClick(this.iv_care_cloud7.getTag());
         break;
       case R.id.bt_care_cloud8:
-        onCloudClick(this.iv_care_cloud8.getText().toString());
+        onCloudClick(this.iv_care_cloud8.getTag());
         break;
       case R.id.bt_care_cloud9:
-        onCloudClick(this.iv_care_cloud9.getText().toString());
+        onCloudClick(this.iv_care_cloud9.getTag());
         break;
       case R.id.bt_care_cloud10:
-        onCloudClick(this.iv_care_cloud10.getText().toString());
+        onCloudClick(this.iv_care_cloud10.getTag());
         break;
 
     }
-  }
-
-  /**
-   * 打开活动详情
-   * 
-   * @param title
-   */
-  private void onCloudClick(String title) {
-    JsonObject msg = Json.createObject();
-    JsonObject tags = Json.createObject();
-    tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
-    tags.set(Constant.TERM, currentTerm);
-    tags.set(Constant.TOPIC, currenTopic);
-    msg.set(Constant.TAGS, tags);
-    msg.set(Constant.TITLE, title);
-    msg.set("action", "post");
-    bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
   }
 
   @Override
@@ -279,23 +265,35 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     if (null == activities || activities.length() != 10) {
       return;
     }
-    iv_care_cloud1.setText(activities.getObject(0).getString(Constant.TITLE));
-    iv_care_cloud2.setText(activities.getObject(1).getString(Constant.TITLE));
-    iv_care_cloud3.setText(activities.getObject(2).getString(Constant.TITLE));
-    iv_care_cloud4.setText(activities.getObject(3).getString(Constant.TITLE));
-    iv_care_cloud5.setText(activities.getObject(4).getString(Constant.TITLE));
-    iv_care_cloud6.setText(activities.getObject(5).getString(Constant.TITLE));
-    iv_care_cloud7.setText(activities.getObject(6).getString(Constant.TITLE));
-    iv_care_cloud8.setText(activities.getObject(7).getString(Constant.TITLE));
-    iv_care_cloud9.setText(activities.getObject(8).getString(Constant.TITLE));
-    iv_care_cloud10.setText(activities.getObject(9).getString(Constant.TITLE));
+    /**
+     * MODIFY BY DPW bind title which has number to tag
+     */
+    iv_care_cloud1.setText(getSimpleTitle(activities.getObject(0).getString(Constant.TITLE)));
+    iv_care_cloud1.setTag(activities.getObject(0).getString(Constant.TITLE));
+    iv_care_cloud2.setText(getSimpleTitle(activities.getObject(1).getString(Constant.TITLE)));
+    iv_care_cloud2.setTag(activities.getObject(1).getString(Constant.TITLE));
+    iv_care_cloud3.setText(getSimpleTitle(activities.getObject(2).getString(Constant.TITLE)));
+    iv_care_cloud3.setTag(activities.getObject(2).getString(Constant.TITLE));
+    iv_care_cloud4.setText(getSimpleTitle(activities.getObject(3).getString(Constant.TITLE)));
+    iv_care_cloud4.setTag(activities.getObject(3).getString(Constant.TITLE));
+    iv_care_cloud5.setText(getSimpleTitle(activities.getObject(4).getString(Constant.TITLE)));
+    iv_care_cloud5.setTag(activities.getObject(4).getString(Constant.TITLE));
+    iv_care_cloud6.setText(getSimpleTitle(activities.getObject(5).getString(Constant.TITLE)));
+    iv_care_cloud6.setTag(activities.getObject(5).getString(Constant.TITLE));
+    iv_care_cloud7.setText(getSimpleTitle(activities.getObject(6).getString(Constant.TITLE)));
+    iv_care_cloud7.setTag(activities.getObject(6).getString(Constant.TITLE));
+    iv_care_cloud8.setText(getSimpleTitle(activities.getObject(7).getString(Constant.TITLE)));
+    iv_care_cloud8.setTag(activities.getObject(7).getString(Constant.TITLE));
+    iv_care_cloud9.setText(getSimpleTitle(activities.getObject(8).getString(Constant.TITLE)));
+    iv_care_cloud9.setTag(activities.getObject(8).getString(Constant.TITLE));
+    iv_care_cloud10.setText(getSimpleTitle(activities.getObject(9).getString(Constant.TITLE)));
+    iv_care_cloud10.setTag(activities.getObject(9).getString(Constant.TITLE));
   }
 
   /**
    * 历史记录回显
    */
   private void bindHistoryDataToView() {
-    // Log.d("System.out", currenTopic + currentTerm);
     // 回显学期
     if (Constant.TERM_SEMESTER0.equals(this.currentTerm)) {
       this.rb_term_0.setChecked(true);
@@ -306,6 +304,20 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     int topicIndex = Arrays.asList(topic).indexOf(currenTopic);
     ((RadioButton) rg_care_classes_topic.findViewWithTag(String.valueOf(topicIndex)))
         .setChecked(true);
+  }
+
+  /**
+   * 删除Title前的数字编号 DPW
+   * 
+   * @param title
+   * @return
+   */
+  private String getSimpleTitle(String title) {
+    if (title.matches("^\\d{4}.*")) {
+      return title.substring(4, title.length());
+    } else {
+      return title;
+    }
   }
 
   private void initView() {
@@ -353,6 +365,28 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     rb_care_button7.setOnFocusChangeListener(this);
     rb_care_button8.setOnFocusChangeListener(this);
     rb_care_button9.setOnFocusChangeListener(this);
+  }
+
+  /**
+   * 打开活动详情
+   * 
+   * @param title
+   */
+  private void onCloudClick(Object tag) {
+    if (tag == null) {
+      Toast.makeText(this, "数据不完整", Toast.LENGTH_SHORT).show();
+      return;
+    }
+    String title = tag.toString();
+    JsonObject msg = Json.createObject();
+    JsonObject tags = Json.createObject();
+    tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
+    tags.set(Constant.TERM, currentTerm);
+    tags.set(Constant.TOPIC, currenTopic);
+    msg.set(Constant.TAGS, tags);
+    msg.set(Constant.TITLE, title);
+    msg.set("action", "post");
+    bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
   }
 
   /**

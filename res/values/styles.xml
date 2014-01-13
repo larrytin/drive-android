@@ -40,7 +40,7 @@
         <item name="android:layout_height">55dp</item>
         <item name="android:gravity">center</item>
         <item name="android:focusable">false</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/harmony_selector_grade_term</item>
         <item name="android:background">@drawable/harm_selector_grade</item>
         <item name="android:button">@null</item>
@@ -67,6 +67,7 @@
         <item name="android:focusable">false</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/harmony_selector_class</item>
         <item name="android:button">@null</item>
         <item name="android:paddingRight">20dp</item>
         <item name="android:paddingBottom">6dp</item>
