@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -80,6 +81,7 @@ public class MuPDFActivity extends Activity {
   private static final String CONTROL = BusProvider.SID + "player." + "pdf.control";
   private MessageHandler<JsonObject> eventHandler = null;
   private ImageView mImageView;
+  private static final String TAG = MuPDFActivity.class.getSimpleName();
 
   public void createUI(Bundle savedInstanceState) {
     if (core == null) {
@@ -356,7 +358,6 @@ public class MuPDFActivity extends Activity {
 
     // Stick the document view and the buttons overlay into a parent view
     final RelativeLayout layout = new RelativeLayout(this);
-
     layout.addView(mDocView);
     // layout.addView(mButtonsView);
     layout.setBackgroundResource(R.drawable.pdf_shape_tiled_background);
@@ -364,6 +365,12 @@ public class MuPDFActivity extends Activity {
     LayoutInflater mInflater = LayoutInflater.from(this);
     View mView = mInflater.inflate(R.layout.include_player_back, null);
     mImageView = (ImageView) mView.findViewById(R.id.iv_act_favour_back);
+    RelativeLayout.LayoutParams mLayoutParams =
+        new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    mLayoutParams.leftMargin = 50;
+    mLayoutParams.topMargin = 60;
+    mView.setLayoutParams(mLayoutParams);
+
     mImageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -386,15 +393,15 @@ public class MuPDFActivity extends Activity {
     Button next = new Button(this);
     Button zoomIn = new Button(this);
     Button zoomOut = new Button(this);
-    previous.setText("previous");
-    next.setText("next");
-    zoomIn.setText("zoom in");
-    zoomOut.setText("zoom out");
+    previous.setText("上一页");
+    next.setText("下一页");
+    zoomIn.setText("缩小");
+    zoomOut.setText("放大");
 
     controler.addView(previous);
     controler.addView(next);
-    controler.addView(zoomIn);
     controler.addView(zoomOut);
+    controler.addView(zoomIn);
 
     eventHandler = new MessageHandler<JsonObject>() {
       @Override
@@ -557,11 +564,24 @@ public class MuPDFActivity extends Activity {
 
   @Override
   public void onDestroy() {
+    Log.d(TAG, "onDestroy()");
     if (core != null) {
       core.onDestroy();
     }
     core = null;
     super.onDestroy();
+  }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      if (core != null) {
+        core.onDestroy();
+      }
+      core = null;
+      Log.d(TAG, "back");
+    }
+    return super.onKeyDown(keyCode, event);
   }
 
   @Override
@@ -643,6 +663,7 @@ public class MuPDFActivity extends Activity {
       edit.commit();
     }
     BusProvider.get().unregisterHandler(CONTROL, eventHandler);
+    Log.d(TAG, "onPause()");
   }
 
   @Override
