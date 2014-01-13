@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
@@ -147,6 +148,7 @@ public class ViewRegistry {
           .getSystemService(Context.WINDOW_SERVICE);
       private LayoutParams mLayoutParams;
       private DrawView mDrawView;
+      private boolean mSwitch = true;
 
       @Override
       public void handle(Message<JsonObject> message) {
@@ -155,22 +157,35 @@ public class ViewRegistry {
               new DrawView(ctx, DeviceInformationTools.getScreenWidth(ctx), DeviceInformationTools
                   .getScreenHeight(ctx));
           mLayoutParams = new WindowManager.LayoutParams();
+          mLayoutParams.gravity = Gravity.LEFT;
           mLayoutParams.format = PixelFormat.RGBA_8888;
-          mLayoutParams.flags =
-              LayoutParams.FLAG_NOT_TOUCH_MODAL | LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+          mLayoutParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL;
+          // mLayoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
+          mLayoutParams.x = 0;
+          mLayoutParams.y = 0;
+          mLayoutParams.width = DeviceInformationTools.getScreenWidth(ctx) - 80;
+          mLayoutParams.height = WindowManager.LayoutParams.FILL_PARENT;
           mLayoutParams.type = LayoutParams.TYPE_PHONE;
           Log.d(TAG, "init mDrawView");
         }
         JsonObject draw = message.body();
         if (draw.has("annotation")) {
           if (draw.getBoolean("annotation")) {
-            mWindowManager.addView(mDrawView, mLayoutParams);
+            if (mSwitch) {
+              mWindowManager.addView(mDrawView, mLayoutParams);
+              mSwitch = false;
+            }
           } else {
-            mWindowManager.removeView(mDrawView);
-            mDrawView = null;
+            if (!mSwitch) {
+              mWindowManager.removeView(mDrawView);
+              mDrawView = null;
+              mSwitch = true;
+            }
           }
         } else if (draw.has("clear")) {
-          mDrawView.clear();
+          if (!mSwitch) {
+            mDrawView.clear();
+          }
         }
       }
     });

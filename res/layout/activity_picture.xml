@@ -17,4 +17,6 @@
             android:layout_height="@dimen/common_back_height"
             android:src="@drawable/common_selector_back" />
 
+    <!-- 画图工具 -->
+    <include layout="@layout/include_draw_tools_bar" />
 </FrameLayout>

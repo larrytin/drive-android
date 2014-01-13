@@ -1,6 +1,7 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Bus;
@@ -18,13 +19,16 @@ import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnHoverListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class PicturePlayAcivity extends BaseActivity implements OnTouchListener {
@@ -42,7 +46,14 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   float mLastTouchY;
   private String path;
 
-  private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
+  // 工具箱
+  private LinearLayout ll_act_picture_tools = null;
+  private boolean isDrawing = false;
+  private static final int MESSAGE_CODE_DISSMISS_BAR = 0;
+  // 延迟时间
+  private final static int DELAYTIME = 15 * 1000;
+
+  private final MessageHandler<JsonObject> postHandler = new MessageHandler<JsonObject>() {
 
     @Override
     public void handle(Message<JsonObject> message) {
@@ -56,6 +67,63 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   };
 
   private float currentScale;
+
+  private final Handler toolBarHandler = new Handler() {
+    @Override
+    public void handleMessage(android.os.Message msg) {
+      switch (msg.what) {
+        case MESSAGE_CODE_DISSMISS_BAR:
+          if (!isDrawing) {
+            ll_act_picture_tools.setVisibility(View.INVISIBLE);
+          }
+          break;
+
+        default:
+          break;
+      }
+    };
+  };
+
+  // 画笔功能的点击事件
+  public void onClick(View v) {
+    switch (v.getId()) {
+    // 放大
+      case R.id.iv_act_picture_zoom_out:
+        bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomBy", 1.1),
+            null);
+        break;
+      // 缩小
+      case R.id.iv_act_picture_zoom_in:
+        bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomBy", 0.9),
+            null);
+        break;
+      // 1:1
+      case R.id.iv_act_picture_full_screen:
+        bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomTo", 1), null);
+        break;
+      // 画笔的获取与丢弃
+      case R.id.iv_act_picture_pen:
+        if (isDrawing) {
+          isDrawing = false;
+          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
+              "annotation", false), null);
+          delayDissmissToolsbar();
+        } else {
+          isDrawing = true;
+          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
+              "annotation", true), null);
+          delayDissmissToolsbarCancle();
+        }
+        break;
+      // 橡皮擦
+      case R.id.iv_act_picture_eraser:
+        bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject()
+            .set("clear", true), null);
+        break;
+      default:
+        break;
+    }
+  }
 
   @Override
   public boolean onTouch(View v, MotionEvent ev) {
@@ -72,7 +140,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         // 移动距离
         float dx = x - mLastTouchX;
         float dy = y - mLastTouchY;
-        // Log.d(TAG, String.format("onDrag: dx: %.2f. dy: %.2f", dx, dy));
         Matrix currentMatrix = mImageView.getImageMatrix();
         translateMatrix = new Matrix(currentMatrix);
         // 更新起始点坐标
@@ -97,7 +164,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_picture);
-    // Log.d(TAG, "onCreate");
 
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
     path = jsonObject.getString("path");
@@ -127,12 +193,10 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
       mBitmap = null;
     }
     System.gc();
-    // Log.d(TAG, "onDestroy");
   }
 
   @Override
   protected void onNewIntent(Intent intent) {
-    // Log.d(TAG, "new");
     setIntent(intent);
     JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
     String path = jsonObject.getString("path");
@@ -155,14 +219,14 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   protected void onPause() {
     super.onPause();
     // Always unregister when an handler no longer should be on the bus.
-    bus.unregisterHandler(Constant.ADDR_PLAYER, eventHandler);
+    bus.unregisterHandler(Constant.ADDR_PLAYER, postHandler);
   }
 
   @Override
   protected void onResume() {
     super.onResume();
     // Register handlers so that we can receive event messages.
-    bus.registerHandler(Constant.ADDR_PLAYER, eventHandler);
+    bus.registerHandler(Constant.ADDR_PLAYER, postHandler);
   }
 
   /**
@@ -190,8 +254,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
 
     final float height = rect.height(), width = rect.width();
     float deltaX = 0, deltaY = 0;
-    // Log.d(TAG, "t=" + rect.top + "l=" + rect.left + "r=" + rect.right + "b=" + rect.bottom + "h="
-    // + height + "w=" + width);
     // 超出边界后反向移动距离计算
     if (height <= viewHeight) {
       deltaY = (viewHeight - height) / 2 - rect.top;
@@ -208,10 +270,25 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     } else if (rect.right < viewWidth) {
       deltaX = viewWidth - rect.right;
     }
-    // Log.d(TAG, "dx=" + deltaX + "dy=" + deltaY + "w=" + viewWidth);
     // 矩阵平移
     matrix.postTranslate(deltaX, deltaY);
     return true;
+  }
+
+  /**
+   * DPW 延迟取消工具框
+   */
+  private void delayDissmissToolsbar() {
+    android.os.Message msg = new android.os.Message();
+    msg.what = MESSAGE_CODE_DISSMISS_BAR;
+    toolBarHandler.sendMessageDelayed(msg, DELAYTIME);
+  }
+
+  /**
+   * DPW 取消延迟取消工具框
+   */
+  private void delayDissmissToolsbarCancle() {
+    toolBarHandler.removeMessages(MESSAGE_CODE_DISSMISS_BAR);
   }
 
   /**
@@ -242,7 +319,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     if (msg.has("zoomBy")) {
       // 按幅度放大缩小
       float mScale = (float) msg.getNumber("zoomBy");
-      // setZoomBy(mScale, false);
       setZoomTo(currentScale * mScale, false);
       currentScale = currentScale * mScale;
     }
@@ -271,6 +347,22 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
       }
     });
+    this.ll_act_picture_tools = (LinearLayout) this.findViewById(R.id.ll_act_picture_tools);
+    mImageView.setOnHoverListener(new OnHoverListener() {
+      @Override
+      public boolean onHover(View v, MotionEvent event) {
+        switch (event.getAction()) {
+          case MotionEvent.ACTION_HOVER_MOVE:
+            if (!toolBarHandler.hasMessages(0)) {
+              ll_act_picture_tools.setVisibility(View.VISIBLE);
+              delayDissmissToolsbar();
+            }
+            break;
+        }
+        return true;
+      }
+    });
+
   }
 
   /**
@@ -288,8 +380,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     float centerX = viewWidth / 2 - left;
     float centerY = viewHeight / 2 - top;
     setTranslate(centerX - locX, centerY - locY);
-    // Log.d(TAG, "locx=" + locX + ",locY" + locY);
-    // Log.d(TAG, "centerX=" + centerX + ",centerY=" + centerY);
   }
 
   /**
@@ -317,7 +407,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         * scale) / 2F);
     mImageView.setImageMatrix(baseMatrix);
     mImageView.invalidate();
-    // Log.d(TAG, "fit_curr=" + currentScale);
   }
 
   /**
@@ -327,7 +416,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
    * @return 返回生成的bitmap
    */
   private Bitmap setImage(String path) {
-    // Log.d(TAG, "setImage");
     final BitmapFactory.Options options = new BitmapFactory.Options();
     // 只加载边界信息
     options.inJustDecodeBounds = true;
@@ -344,11 +432,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     options.inSampleSize = scale > 2 ? 2 : 1;
     // 真正加载图片
     options.inJustDecodeBounds = false;
-    // try {
-    // iBitmap = BitmapFactory.decodeFile(path, options);
-    // } catch (OutOfMemoryError e) {
-    // e.printStackTrace();
-    // }
     return BitmapFactory.decodeFile(path, options);
   }
 
@@ -358,7 +441,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
    * @param fit true进行适应屏幕初始化,false不适应屏幕
    */
   private void setInit(int fit) {
-    // Log.d(TAG, "setInit");
     mImageView.setScaleType(ScaleType.MATRIX);
     baseMatrix = mImageView.getImageMatrix();
     drawableWidth = mImageView.getDrawable().getIntrinsicWidth();
@@ -367,16 +449,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
       setFit(fit);
     }
   }
-
-  // /**
-  // * 图片缩放,以Imageview中心点为中心进行缩放
-  // *
-  // * @param scale 缩放系数
-  // * @param animate 是否使用缩放动画
-  // */
-  // private void setScale(float scale, boolean animate) {
-  // setScale(scale, mImageView.getWidth() / 2, mImageView.getHeight() / 2, false);
-  // }
 
   /**
    * 图片缩放,以指定的中心点进行缩放
@@ -387,7 +459,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
    * @param animate 是否使用缩放动画
    */
   private void setScale(float scale, float focalX, float focalY, boolean animate) {
-    // Log.d(TAG, "setScale");
     baseMatrix.postScale(scale, scale, focalX, focalY);
     checkMatrixBounds(baseMatrix);
     mImageView.setImageMatrix(baseMatrix);
@@ -407,16 +478,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     mImageView.invalidate();
   }
 
-  // private void setZoomBy(float zoom, boolean animate) {
-  // currentScale = currentScale * zoom;
-  // RectF currentRect = getImageRect();
-  // float scale = drawableWidth / currentRect.width();
-  // setScale(currentScale * scale, animate);
-  // // Log.d(TAG, "zoomby_curr=" + currentScale + "dr=" + drawableWidth + "rew=" +
-  // // currentRect.width());
-  //
-  // }
-
   /**
    * 以图片原始大小为基准缩放
    * 
@@ -424,31 +485,10 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
    * @param animate 是否使用缩放动画
    */
   private void setZoomTo(float zoom, boolean animate) {
-    // Log.d(TAG, "zoomTo");
     RectF currentRect = getImageRect();
     // 计算当前图片和原图的比例,在此基础上乘以zoom系数缩放
     float scale = drawableWidth / currentRect.width();
-    // currentScale = zoom * scale;
-    // setScale(zoom * scale, animate);
     setScale(zoom * scale, mImageView.getWidth() / 2, mImageView.getHeight() / 2, false);
-    // Log.d(TAG, "zoomto_curr=" + currentScale + "scale=" + scale);
   }
-
-  /**
-   * 以原图为基准,以x,y为中心缩放
-   * 
-   * @param zoom 缩放系数
-   * @param focalX x值
-   * @param focalY y值
-   * @param animate 是否使用动画
-   */
-  // private void setZoomTo(float zoom, float focalX, float focalY, boolean animate) {
-  // // Log.d(TAG, "zoomTo");
-  // RectF currentRect = getImageRect();
-  // // 计算当前图片和原图的比例,在此基础上乘以zoom系数缩放
-  // float scale = drawableWidth / currentRect.width();
-  // currentScale = scale * zoom;
-  // setScale(scale * zoom, focalX, focalY, animate);
-  // }
 
 }
