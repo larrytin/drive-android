@@ -112,24 +112,6 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
 
   private boolean isLocal = true;
 
-  // 判定是否时有效的年级数值
-  public boolean isRightfulTerm(String term) {
-    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
-      return true;
-    }
-    return false;
-  }
-
-  // 判定是否时有效的类别数值
-  public boolean isRightfulTopic(String topic) {
-    if (Constant.DOMIAN_LANGUAGE.equals(topic) || Constant.DOMIAN_THINKING.equals(topic)
-        || Constant.DOMIAN_READ.equals(topic) || Constant.DOMIAN_WRITE.equals(topic)
-        || Constant.DOMIAN_QUALITY.equals(topic)) {
-      return true;
-    }
-    return false;
-  }
-
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
     if (!isLocal) {
@@ -217,39 +199,6 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
       } else {
         this.ll_act_prepare_result_bar.getChildAt(i).setBackgroundResource(
             R.drawable.common_result_dot_other);
-      }
-    }
-  }
-
-  /**
-   * 查询历史数据
-   */
-  public void readHistoryData() {
-    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
-    this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
-    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
-  }
-
-  /**
-   * 解析条件
-   * 
-   * @param query
-   */
-  public void readQuery(JsonObject query) {
-    if (query != null) {
-      String tempTerm = query.getString(Constant.TERM);
-      String tempClass = query.getString(Constant.TOPIC);
-      if (tempTerm != null && isRightfulTerm(tempTerm)) {
-        currentTerm = tempTerm;
-        saveHistory(Constant.TERM, currentTerm);
-      } else if (query.has(Constant.TERM) && !isRightfulTerm(tempTerm)) {
-        Toast.makeText(this, "无效的学期数值", Toast.LENGTH_SHORT).show();
-      }
-      if (tempClass != null && isRightfulTopic(tempClass)) {
-        currenTopic = tempClass;
-        saveHistory(Constant.TOPIC, currenTopic);
-      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
-        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
       }
     }
   }
@@ -476,6 +425,24 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
 
   }
 
+  // 判定是否时有效的年级数值
+  private boolean isRightfulTerm(String term) {
+    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
+      return true;
+    }
+    return false;
+  }
+
+  // 判定是否时有效的类别数值
+  private boolean isRightfulTopic(String topic) {
+    if (Constant.DOMIAN_LANGUAGE.equals(topic) || Constant.DOMIAN_THINKING.equals(topic)
+        || Constant.DOMIAN_READ.equals(topic) || Constant.DOMIAN_WRITE.equals(topic)
+        || Constant.DOMIAN_QUALITY.equals(topic)) {
+      return true;
+    }
+    return false;
+  }
+
   /**
    * 处理类别的点击事件
    * 
@@ -538,6 +505,39 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
     }
     this.saveHistory(Constant.TERM, this.currentTerm);
     this.sendQueryMessage();
+  }
+
+  /**
+   * 查询历史数据
+   */
+  private void readHistoryData() {
+    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
+    this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
+    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
+  }
+
+  /**
+   * 解析条件
+   * 
+   * @param query
+   */
+  private void readQuery(JsonObject query) {
+    if (query != null) {
+      String tempTerm = query.getString(Constant.TERM);
+      String tempClass = query.getString(Constant.TOPIC);
+      if (tempTerm != null && isRightfulTerm(tempTerm)) {
+        currentTerm = tempTerm;
+        saveHistory(Constant.TERM, currentTerm);
+      } else if (query.has(Constant.TERM) && !isRightfulTerm(tempTerm)) {
+        Toast.makeText(this, "无效的学期数值", Toast.LENGTH_SHORT).show();
+      }
+      if (tempClass != null && isRightfulTopic(tempClass)) {
+        currenTopic = tempClass;
+        saveHistory(Constant.TOPIC, currenTopic);
+      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
+        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
+      }
+    }
   }
 
   /**

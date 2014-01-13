@@ -107,34 +107,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
   private boolean isLocal = true;
 
-  // 判定是否时有效的班级数值
-  public boolean isRightfulGrade(String grade) {
-    if (Constant.GRADE_LITTLE.equals(grade) || Constant.GRADE_MID.equals(grade)
-        || Constant.GRADE_BIG.equals(grade) || Constant.GRADE_PRE.equals(grade)) {
-      return true;
-    }
-    return false;
-  }
-
-  // 判定是否时有效的年级数值
-  public boolean isRightfulTerm(String term) {
-    if (Constant.TERM_SEMESTER0.equals(term) || Constant.TERM_SEMESTER1.equals(term)) {
-      return true;
-    }
-    return false;
-  }
-
-  // 判定是否时有效的类别数值
-  public boolean isRightfulTopic(String topic) {
-    if (Constant.DOMIAN_HEALTH.equals(topic) || Constant.DOMIAN_LANGUAGE.equals(topic)
-        || Constant.DOMIAN_WORLD.equals(topic) || Constant.DOMIAN_SCIENCE.equals(topic)
-        || Constant.DOMIAN_MATH.equals(topic) || Constant.DOMIAN_MUSIC.equals(topic)
-        || Constant.DOMIAN_ART.equals(topic)) {
-      return true;
-    }
-    return false;
-  }
-
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
     if (!isLocal) {
@@ -216,31 +188,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
       } else {
         this.ll_act_ebook_result_bar.getChildAt(i).setBackgroundResource(
             R.drawable.common_result_dot_other);
-      }
-    }
-  }
-
-  /**
-   * 查询历史数据
-   */
-  public void readHistoryData() {
-    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
-    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
-  }
-
-  /**
-   * 解析条件
-   * 
-   * @param query
-   */
-  public void readQuery(JsonObject query) {
-    if (query != null) {
-      String tempClass = query.getString(Constant.TOPIC);
-      if (tempClass != null && isRightfulTopic(tempClass)) {
-        currenTopic = tempClass;
-        saveHistory(Constant.TOPIC, currenTopic);
-      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
-        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
       }
     }
   }
@@ -463,6 +410,17 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
   }
 
+  // 判定是否时有效的类别数值
+  private boolean isRightfulTopic(String topic) {
+    if (Constant.DOMIAN_HEALTH.equals(topic) || Constant.DOMIAN_LANGUAGE.equals(topic)
+        || Constant.DOMIAN_WORLD.equals(topic) || Constant.DOMIAN_SCIENCE.equals(topic)
+        || Constant.DOMIAN_MATH.equals(topic) || Constant.DOMIAN_MUSIC.equals(topic)
+        || Constant.DOMIAN_ART.equals(topic)) {
+      return true;
+    }
+    return false;
+  }
+
   /**
    * 处理类别的点击事件
    * 
@@ -505,6 +463,31 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
       msg.set("next", true);
     }
     bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, null);
+  }
+
+  /**
+   * 查询历史数据
+   */
+  private void readHistoryData() {
+    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
+    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
+  }
+
+  /**
+   * 解析条件
+   * 
+   * @param query
+   */
+  private void readQuery(JsonObject query) {
+    if (query != null) {
+      String tempClass = query.getString(Constant.TOPIC);
+      if (tempClass != null && isRightfulTopic(tempClass)) {
+        currenTopic = tempClass;
+        saveHistory(Constant.TOPIC, currenTopic);
+      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
+        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
+      }
+    }
   }
 
   /**
