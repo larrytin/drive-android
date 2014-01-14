@@ -35,7 +35,7 @@ public class DataRegistry {
           msg.set("activity", activity);
           msg.set("files", DataProvider.getInstance().getFiles(activity));
           msg.set("action", "post");
-          bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
+          message.reply(msg);
           return;
         }
 

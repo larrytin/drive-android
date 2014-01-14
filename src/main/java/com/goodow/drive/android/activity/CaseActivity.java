@@ -339,16 +339,27 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
             @Override
             public void onClick(View v) {
               JsonObject msg = Json.createObject();
+              JsonObject activity = Json.createObject();
               JsonObject tags = Json.createObject();
               tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_CASE);
               tags.set(Constant.GRADE, currentGrade);
               tags.set(Constant.TERM, currentTerm);
               tags.set(Constant.TOPIC, currenTopic);
-              msg.set(Constant.TAGS, tags);
-              msg.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getText()
+              activity.set(Constant.TAGS, tags);
+              activity.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getText()
                   .toString());
-              msg.set("action", "post");
-              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
+              msg.set("action", "get");
+              msg.set("activity", activity);
+              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, new MessageHandler<JsonObject>() {
+                @Override
+                public void handle(Message<JsonObject> message) {
+                  JsonObject body = message.body();
+                  JsonArray files = body.getArray("files");
+                  String path = files.getObject(0).getString(Constant.FILE_PATH);
+                  bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", path),
+                      null);
+                }
+              });
             }
           });
           innerContainer.addView(itemView);

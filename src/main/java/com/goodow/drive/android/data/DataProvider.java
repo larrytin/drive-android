@@ -118,7 +118,6 @@ public class DataProvider {
     File[] files = mFile.listFiles(new fileFilter());
     JsonArray filesJsonArray = Json.createArray();
     if (files == null) {
-      Log.d(TAG, "files path error!");
       return null;
     }
     TreeSet<File> treeSet = new TreeSet<File>(comparator);
