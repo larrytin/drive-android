@@ -346,7 +346,7 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
               tags.set(Constant.TERM, currentTerm);
               tags.set(Constant.TOPIC, currenTopic);
               activity.set(Constant.TAGS, tags);
-              activity.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getText()
+              activity.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getTag()
                   .toString());
               msg.set("action", "get");
               msg.set("activity", activity);
@@ -465,7 +465,13 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
     TextView textView = new TextView(this);
     textView.setWidth(150);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
-    textView.setText(this.activities.getObject(index).getString(Constant.TITLE));
+    String title = this.activities.getObject(index).getString(Constant.TITLE);
+    textView.setTag(title);
+    if (title.matches("^\\d{4}.*")) {
+      textView.setText(title.substring(4, title.length()));
+    } else {
+      textView.setText(title);
+    }
     itemLayout.addView(textView);
 
     return itemLayout;

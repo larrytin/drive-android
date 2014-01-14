@@ -274,7 +274,7 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
               tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_EBOOK);
               tags.set(Constant.TOPIC, currenTopic);
               activity.set(Constant.TAGS, tags);
-              activity.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getText()
+              activity.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getTag()
                   .toString());
               msg.set("action", "get");
               msg.set("activity", activity);
@@ -360,6 +360,7 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     textView.setWidth(150);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     String title = activity.getString(Constant.TITLE);
+    textView.setTag(title);
     if (title.matches("^\\d{4}.*")) {
       textView.setText(title.substring(4, title.length()));
     } else {
