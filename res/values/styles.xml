@@ -107,7 +107,7 @@
         <item name="android:button">@null</item>
         <item name="android:layout_width">258px</item>
         <item name="android:layout_height">60px</item>
-        <item name="android:background">@drawable/care_classes_bg</item>
+        <item name="android:background">@drawable/care_item_bg</item>
         <item name="android:textColor">@color/harmony_selector_class</item>
     </style>
 
