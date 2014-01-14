@@ -13,7 +13,6 @@ import java.util.TreeSet;
 import android.util.Log;
 
 public class DataProvider {
-
   // 过滤器,jpg,mp3,mp4,pdf,swf
   public class fileFilter implements FilenameFilter {
     @Override
@@ -23,6 +22,8 @@ public class DataProvider {
           || file.toLowerCase().endsWith(".swf");
     }
   }
+
+  private String storage_dir = Constant.STORAGE_DIR;
 
   private static final String TAG = "DataProvider";
 
@@ -46,6 +47,10 @@ public class DataProvider {
   };
 
   private DataProvider() {
+    // 对sd卡的路径进行判断,如果外置sd卡/goodow/drive不存在，那么使用内置的sd卡的/goodow/drive（默认存在)
+    if (new File(Constant.STORAGE_DIR_EXT + Constant.DATA_PATH).exists()) {
+      storage_dir = Constant.STORAGE_DIR_EXT;
+    }
   }
 
   /**
@@ -140,7 +145,7 @@ public class DataProvider {
    * @return
    */
   public JsonObject getFoldersAndFiles(String path) {
-    path = Constant.STORAGE_DIR + path;
+    path = storage_dir + path;
     File file = new File(path);
     File[] files = file.listFiles();
     JsonObject body = Json.createObject();
@@ -175,7 +180,7 @@ public class DataProvider {
    * @author DPW
    */
   public String getPath(JsonObject tags) {
-    return Constant.STORAGE_DIR + Constant.DATA_PATH + "/" + tags.getString(Constant.TYPE) + "/"
+    return storage_dir + Constant.DATA_PATH + "/" + tags.getString(Constant.TYPE) + "/"
         + tags.getString(Constant.GRADE) + "/" + tags.getString(Constant.TERM) + "/"
         + tags.getString(Constant.TOPIC) + "/";
   }
@@ -188,7 +193,7 @@ public class DataProvider {
    */
   private String getPath(String... str) {
     StringBuilder path = new StringBuilder();
-    path.append(Constant.STORAGE_DIR);
+    path.append(storage_dir);
     path.append(Constant.DATA_PATH);
     if (null == str) {
       return null;

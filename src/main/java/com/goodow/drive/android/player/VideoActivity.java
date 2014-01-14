@@ -420,7 +420,7 @@ public class VideoActivity extends BaseActivity {
       String vidoePath = jsonObject.getString("path");
       String videoName =
           vidoePath.substring(vidoePath.lastIndexOf("/") + 1, vidoePath.lastIndexOf("."));
-      Uri uri = Uri.parse("file:/" + vidoePath);
+      Uri uri = Uri.parse("file://" + vidoePath);
       if (uri != null) {
         this.videoView.stopPlayback();// 停止视频播放
         this.videoView.setVideoURI(uri);// 设置视频文件URI

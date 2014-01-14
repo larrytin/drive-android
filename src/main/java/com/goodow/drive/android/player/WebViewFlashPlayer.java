@@ -136,7 +136,7 @@ public class WebViewFlashPlayer extends BaseActivity {
     Log.d(TAG, path);
     File mFile = new File(path);
     if (mFile.exists()) {
-      flashWebView.loadUrl("file:/" + path);
+      flashWebView.loadUrl("file://" + path);
     } else {
       Toast.makeText(this, R.string.pdf_file_no_exist, Toast.LENGTH_LONG).show();
     }
