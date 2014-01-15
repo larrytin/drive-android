@@ -103,12 +103,21 @@ public class DBOperator {
       for (int i = 0; i < len; i++) {
         JsonObject activity = activities.get(i);
         JsonObject tags = activity.getObject(Constant.TAGS);
-        db.execSQL(
-            "DELETE FROM T_FAVOURITE WHERE TYPE = ? and GRADE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?",
-            new Object[] {
-                tags.getString(Constant.TYPE), tags.getString(Constant.GRADE),
-                tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
-                activity.getString(Constant.TITLE)});
+
+        if (tags.getString(Constant.GRADE) == null) {
+          db.execSQL(
+              "DELETE FROM T_FAVOURITE WHERE TYPE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?",
+              new Object[] {
+                  tags.getString(Constant.TYPE), tags.getString(Constant.TERM),
+                  tags.getString(Constant.TOPIC), activity.getString(Constant.TITLE)});
+        } else {
+          db.execSQL(
+              "DELETE FROM T_FAVOURITE WHERE TYPE = ? and GRADE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?",
+              new Object[] {
+                  tags.getString(Constant.TYPE), tags.getString(Constant.GRADE),
+                  tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
+                  activity.getString(Constant.TITLE)});
+        }
       }
       db.setTransactionSuccessful();
       result = true;
@@ -134,13 +143,24 @@ public class DBOperator {
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     try {
       db.beginTransaction();
-      String sql =
-          "SELECT COUNT(FAVOURITEID) AS ISHAVE FROM T_FAVOURITE WHERE TYPE = ? and GRADE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?";
-      String[] params =
-          new String[] {
-              tags.getString(Constant.TYPE), tags.getString(Constant.GRADE),
-              tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
-              activity.getString(Constant.TITLE)};
+      String sql = null;
+      String[] params = null;
+      if (tags.getString(Constant.GRADE) == null) {
+        sql =
+            "SELECT COUNT(FAVOURITEID) AS ISHAVE FROM T_FAVOURITE WHERE TYPE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?";
+        params =
+            new String[] {
+                tags.getString(Constant.TYPE), tags.getString(Constant.TERM),
+                tags.getString(Constant.TOPIC), activity.getString(Constant.TITLE)};
+      } else {
+        sql =
+            "SELECT COUNT(FAVOURITEID) AS ISHAVE FROM T_FAVOURITE WHERE TYPE = ? and GRADE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?";
+        params =
+            new String[] {
+                tags.getString(Constant.TYPE), tags.getString(Constant.GRADE),
+                tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
+                activity.getString(Constant.TITLE)};
+      }
       Cursor cursor = db.rawQuery(sql, params);
       if (cursor.moveToNext()) {
         if (cursor.getInt(cursor.getColumnIndex("ISHAVE")) > 0) {

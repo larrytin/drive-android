@@ -13,7 +13,6 @@ import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -31,28 +30,6 @@ import android.widget.Toast;
 
 public class FavouriteActivity extends BaseActivity implements OnClickListener,
     OnPageChangeListener {
-
-  /**
-   * 自定义条目删除ImageView
-   * 
-   * @author dpw
-   * 
-   */
-  private class MyImageView extends ImageView {
-    private final int index; // 要删除的ID
-
-    public MyImageView(Context context, int index) {
-      super(context);
-      this.index = index;
-      this.setClickable(true);
-      this.setBackgroundResource(R.drawable.favour_del);
-      this.setVisibility(View.INVISIBLE);
-    }
-
-    public int getIndex() {
-      return index;
-    }
-  }
 
   private ImageView iv_act_favour_back = null;
   private ImageView iv_act_favour_result_pre = null;
@@ -215,18 +192,24 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
                 JsonObject activity = activities.get(j);
 
                 JsonObject tag = activity.getObject(Constant.TAGS);
+                String type = tag.get(Constant.TYPE);
                 String grade = tag.get(Constant.GRADE);
                 String term = tag.get(Constant.TERM);
                 String topic = tag.get(Constant.TOPIC);
                 String title = activity.get(Constant.TITLE);
 
                 JsonObject delTag = delActivity.getObject(Constant.TAGS);
+                String delType = delTag.get(Constant.TYPE);
                 String delGrade = delTag.get(Constant.GRADE);
                 String delTerm = delTag.get(Constant.TERM);
                 String delTopic = delTag.get(Constant.TOPIC);
                 String delTitle = delActivity.get(Constant.TITLE);
 
-                if ((grade != null && grade.equalsIgnoreCase(delGrade))
+                boolean isSameGrade =
+                    (grade == null && delGrade == null)
+                        || (grade != null && delGrade != null && grade.equals(delGrade));
+
+                if ((type != null && type.equalsIgnoreCase(delType)) && isSameGrade
                     && (term != null && term.equalsIgnoreCase(delTerm))
                     && (topic != null && topic.equalsIgnoreCase(delTopic))
                     && (title != null && title.equalsIgnoreCase(delTitle))) {
@@ -356,9 +339,13 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     textView.setTag(activity);
     itemContainer.addView(textView);
 
-    final MyImageView imageView = new MyImageView(this, index);
+    final ImageView imageView = new ImageView(this);
     RelativeLayout.LayoutParams imageViewParams =
         new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    imageView.setClickable(true);
+    imageView.setBackgroundResource(R.drawable.favour_del);
+    imageView.setVisibility(View.INVISIBLE);
+    imageView.setTag(activity);
     imageViewParams.addRule(RelativeLayout.RIGHT_OF, index + 1); // 要和TextView的ID保持一直
     imageViewParams.addRule(RelativeLayout.CENTER_IN_PARENT);
     imageView.setLayoutParams(imageViewParams);
@@ -407,11 +394,10 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     imageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        MyImageView tempView = (MyImageView) v;
         JsonObject msg = Json.createObject();
         msg.set("action", "delete");
         JsonArray delActivities = Json.createArray();
-        delActivities.insert(0, activities.get(tempView.getIndex()));
+        delActivities.insert(0, v.getTag());
         msg.set("activities", delActivities);
         bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
       }
