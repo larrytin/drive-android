@@ -13,7 +13,10 @@ import com.goodow.realtime.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -58,6 +61,23 @@ public class AudioPlayActivity extends BaseActivity {
       }
     }
   }
+  private class SoundBroadCastReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      progress_sound_SeekBar.setProgress(mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+      if (mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) <= 0) {
+        sound_Button.setImageResource(R.drawable.common_player_mute);
+        sound_Button.setClickable(false);
+      } else {
+        sound_Button.setImageResource(R.drawable.common_player_sound);
+        sound_Button.setClickable(true);
+        sound_Button.setOnClickListener(listener);
+      }
+    }
+  }
+
+  private AudioManager mAudioManager;
+  private SoundBroadCastReceiver soundBroadCastReceiver;
 
   private ButtonClickListener listener;
   private ImageView playButton;
@@ -122,21 +142,18 @@ public class AudioPlayActivity extends BaseActivity {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_audio_player);
     this.sound_Button = (ImageView) this.findViewById(R.id.sound_Button);
+    mAudioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+    soundBroadCastReceiver = new SoundBroadCastReceiver();
     this.progress_sound_SeekBar = (SeekBar) this.findViewById(R.id.progress_sound_SeekBar);
+    this.progress_sound_SeekBar.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
     // 设置声音拖动事件
     this.progress_sound_SeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "post")
-            .set("volume", (float) progress / 100), null);
-        if (progress <= 0) {
-          sound_Button.setImageResource(R.drawable.common_player_mute);
-          sound_Button.setClickable(false);
-        } else {
-          sound_Button.setImageResource(R.drawable.common_player_sound);
-          sound_Button.setClickable(true);
-          sound_Button.setOnClickListener(listener);
+        if (fromUser) {
+          bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "post")
+              .set("volume", (float) progress / progress_sound_SeekBar.getMax()), null);
         }
       }
 
@@ -164,7 +181,8 @@ public class AudioPlayActivity extends BaseActivity {
             } else {
               sound_Button.setImageResource(R.drawable.common_player_sound);
               sound_Button.setClickable(true);
-              progress_sound_SeekBar.setProgress((int) (volume * 100));
+              progress_sound_SeekBar.setProgress((int) (volume * mAudioManager
+                  .getStreamMaxVolume(AudioManager.STREAM_MUSIC)));
             }
           }
         });
@@ -273,6 +291,7 @@ public class AudioPlayActivity extends BaseActivity {
 
     // Always unregister when an handler no longer should be on the bus.
     bus.unregisterHandler(Constant.ADDR_PLAYER, controlHandler);
+    this.unregisterReceiver(soundBroadCastReceiver);
   }
 
   @Override
@@ -282,6 +301,9 @@ public class AudioPlayActivity extends BaseActivity {
 
     // Register handlers so that we can receive event messages.
     bus.registerHandler(Constant.ADDR_PLAYER, controlHandler);
+    IntentFilter mIntentFilter = new IntentFilter();
+    mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
+    this.registerReceiver(soundBroadCastReceiver, mIntentFilter);
   }
 
   private void handleControl(JsonObject msg) {
