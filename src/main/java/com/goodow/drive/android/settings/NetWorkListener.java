@@ -97,7 +97,7 @@ public class NetWorkListener {
       bus.send(Bus.LOCAL + ADDR, info, null);
     }
   };
-  private HandlerRegistration controlHandler;
+  private HandlerRegistration getHander;
 
   public NetWorkListener(Context context) {
     this.context = context;
@@ -115,7 +115,7 @@ public class NetWorkListener {
     this.tel.listen(myListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
     this.context.registerReceiver(netWorkStatusReceiver, intentFilter);
-    controlHandler = this.bus.registerHandler(ADDR, new MessageHandler<JsonObject>() {
+    getHander = this.bus.registerHandler(ADDR, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         String action = message.body().getString("action");
@@ -135,7 +135,7 @@ public class NetWorkListener {
   // 解除监听器
   public void unRegisterReceiver() {
     this.context.unregisterReceiver(netWorkStatusReceiver);
-    controlHandler.unregisterHandler();
+    getHander.unregisterHandler();
   }
 
   /**
