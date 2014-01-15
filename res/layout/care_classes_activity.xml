@@ -117,76 +117,101 @@
             style="@style/care_classes_item" />
     </RadioGroup>
 
-    <!-- 一堆云朵 -->
-
-    <Button
-        android:id="@+id/bt_care_cloud1"
-        style="@style/care_classes_cloud"
-        android:layout_x="570px"
-        android:layout_y="117px" />
-
-    <Button
-        android:id="@+id/bt_care_cloud2"
-        style="@style/care_classes_cloud"
-        android:layout_x="689px"
-        android:layout_y="222px" />
-
-    <Button
-        android:id="@+id/bt_care_cloud3"
-        style="@style/care_classes_cloud"
-        android:layout_x="530px"
-        android:layout_y="281px"
-        android:background="@drawable/cloud_blue"
-        android:textColor="#333399" />
-
-    <Button
-        android:id="@+id/bt_care_cloud4"
-        style="@style/care_classes_cloud"
-        android:layout_x="730px"
-        android:layout_y="407px" />
-
-    <Button
-        android:id="@+id/bt_care_cloud5"
-        style="@style/care_classes_cloud"
-        android:layout_x="611px"
-        android:layout_y="468px"
-        android:background="@drawable/cloud_blue"
-        android:textColor="#333399" />
-
-    <Button
-        android:id="@+id/bt_care_cloud6"
-        style="@style/care_classes_cloud"
-        android:layout_x="933px"
-        android:layout_y="138px"
-        android:background="@drawable/cloud_blue"
-        android:textColor="#333399" />
-
-    <Button
-        android:id="@+id/bt_care_cloud7"
-        style="@style/care_classes_cloud"
-        android:layout_x="1072px"
-        android:layout_y="167px" />
-
-    <Button
-        android:id="@+id/bt_care_cloud8"
-        style="@style/care_classes_cloud"
-        android:layout_x="943px"
-        android:layout_y="325px"
-        android:background="@drawable/cloud_blue"
-        android:textColor="#333399" />
-
-    <Button
-        android:id="@+id/bt_care_cloud9"
-        style="@style/care_classes_cloud"
-        android:layout_x="1078px"
-        android:layout_y="443px" />
-
-    <Button
-        android:id="@+id/bt_care_cloud10"
-        style="@style/care_classes_cloud"
-        android:layout_x="947px"
-        android:layout_y="499px"
-        android:background="@drawable/cloud_blue"
-        android:textColor="#333399" />
-
+    <!-- 一堆云朵 MODIFY BY DPW order BY FROM LEFT TO RIGHT | FROM TOP TO BOTTOM-->
+    <RelativeLayout
+        android:id="@+id/rl_act_care_result_container"
+        android:layout_width="690dp"
+        android:layout_height="480dp"
+        android:layout_x="520dp"
+        android:layout_y="110dp"
+        >
+        <!-- 左一 -->
+        <Button
+            android:id="@+id/bt_care_cloud1"
+            style="@style/care_classes_cloud"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/cloud_yellow"
+            />
+        <!-- 左二 -->
+        <Button
+            android:id="@+id/bt_care_cloud2"
+            style="@style/care_classes_cloud"
+            android:layout_marginLeft="170dp"
+            android:layout_marginTop="110dp"
+            android:background="@drawable/cloud_yellow"
+            />
+        <!-- 左三 -->
+        <Button
+            android:id="@+id/bt_care_cloud3"
+            style="@style/care_classes_cloud"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="170dp"
+            android:background="@drawable/cloud_blue"
+            />
+        <!-- 左四 -->
+        <Button
+            android:id="@+id/bt_care_cloud4"
+            style="@style/care_classes_cloud"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="210dp"
+            android:layout_marginBottom="100dp"
+            android:background="@drawable/cloud_yellow"
+            />
+        <!-- 左五 -->
+        <Button
+            android:id="@+id/bt_care_cloud5"
+            style="@style/care_classes_cloud"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="90dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/cloud_blue"
+            />
+        <!-- 右一 -->
+        <Button
+            android:id="@+id/bt_care_cloud6"
+            style="@style/care_classes_cloud"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="150dp"
+            android:background="@drawable/cloud_blue"
+            />
+        <!-- 右二 -->
+        <Button
+            android:id="@+id/bt_care_cloud7"
+            style="@style/care_classes_cloud"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="60dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/cloud_yellow"
+            />
+        <!-- 右三 -->
+        <Button
+            android:id="@+id/bt_care_cloud8"
+            style="@style/care_classes_cloud"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="220dp"
+            android:layout_marginRight="140dp"
+            android:background="@drawable/cloud_blue"
+            />
+        <!-- 右四 -->
+        <Button
+            android:id="@+id/bt_care_cloud9"
+            style="@style/care_classes_cloud"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="60dp"
+            android:background="@drawable/cloud_yellow"
+            />
+        <Button
+            android:id="@+id/bt_care_cloud10"
+            style="@style/care_classes_cloud"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="140dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/cloud_blue"
+            />
+    </RelativeLayout>
 </AbsoluteLayout>

@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class CareClassesActivity extends BaseActivity implements OnCheckedChangeListener,
@@ -42,16 +43,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   private RadioButton rb_term_0;
   private RadioButton rb_term_1;
   // 云朵activity
-  private Button iv_care_cloud1;
-  private Button iv_care_cloud2;
-  private Button iv_care_cloud3;
-  private Button iv_care_cloud4;
-  private Button iv_care_cloud5;
-  private Button iv_care_cloud6;
-  private Button iv_care_cloud7;
-  private Button iv_care_cloud8;
-  private Button iv_care_cloud9;
-  private Button iv_care_cloud10;
+  private RelativeLayout rl_act_care_result_container = null;
   // 返回键
   private Button bt_care_back;
   // 收藏键
@@ -80,12 +72,20 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     // if (!isLocal) {
     // return;
     // }
+
     if (group.getId() == R.id.rg_care_classes_topic) {
       int index = Integer.parseInt((String) findViewById(checkedId).getTag());
       setTopicCheckedDrawable(checkedId);
       findViewById(checkedId).requestFocus();
       currenTopic = topic[index];
       if (isLocal) {
+        /**
+         * MODIFY BY DPW
+         */
+        int len = this.rl_act_care_result_container.getChildCount();
+        for (int i = 0; i < len; i++) {
+          this.rl_act_care_result_container.getChildAt(i).setVisibility(View.GONE);
+        }
         sendQueryMessage();
       }
       saveDataToSP(Constant.TOPIC, currenTopic);
@@ -119,40 +119,21 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
         break;
       case R.id.bt_care_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        // Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
       /**
-       * MODIFY BY DPW change View.getText() to View.getTag();
+       * MODIFY BY DPW
        */
       case R.id.bt_care_cloud1:
-        onCloudClick(this.iv_care_cloud1.getTag());
-        break;
       case R.id.bt_care_cloud2:
-        onCloudClick(this.iv_care_cloud2.getTag());
-        break;
       case R.id.bt_care_cloud3:
-        onCloudClick(this.iv_care_cloud3.getTag());
-        break;
       case R.id.bt_care_cloud4:
-        onCloudClick(this.iv_care_cloud4.getTag());
-        break;
       case R.id.bt_care_cloud5:
-        onCloudClick(this.iv_care_cloud5.getTag());
-        break;
       case R.id.bt_care_cloud6:
-        onCloudClick(this.iv_care_cloud6.getTag());
-        break;
       case R.id.bt_care_cloud7:
-        onCloudClick(this.iv_care_cloud7.getTag());
-        break;
       case R.id.bt_care_cloud8:
-        onCloudClick(this.iv_care_cloud8.getTag());
-        break;
       case R.id.bt_care_cloud9:
-        onCloudClick(this.iv_care_cloud9.getTag());
-        break;
       case R.id.bt_care_cloud10:
-        onCloudClick(this.iv_care_cloud10.getTag());
+        onCloudClick(v);
         break;
 
     }
@@ -256,32 +237,17 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   }
 
   private void bindDataToView() {
-    if (null == activities || activities.length() != 10) {
-      return;
-    }
     /**
      * MODIFY BY DPW bind title which has number to tag
      */
-    iv_care_cloud1.setText(getSimpleTitle(activities.getObject(0).getString(Constant.TITLE)));
-    iv_care_cloud1.setTag(activities.getObject(0).getString(Constant.TITLE));
-    iv_care_cloud2.setText(getSimpleTitle(activities.getObject(1).getString(Constant.TITLE)));
-    iv_care_cloud2.setTag(activities.getObject(1).getString(Constant.TITLE));
-    iv_care_cloud3.setText(getSimpleTitle(activities.getObject(2).getString(Constant.TITLE)));
-    iv_care_cloud3.setTag(activities.getObject(2).getString(Constant.TITLE));
-    iv_care_cloud4.setText(getSimpleTitle(activities.getObject(3).getString(Constant.TITLE)));
-    iv_care_cloud4.setTag(activities.getObject(3).getString(Constant.TITLE));
-    iv_care_cloud5.setText(getSimpleTitle(activities.getObject(4).getString(Constant.TITLE)));
-    iv_care_cloud5.setTag(activities.getObject(4).getString(Constant.TITLE));
-    iv_care_cloud6.setText(getSimpleTitle(activities.getObject(5).getString(Constant.TITLE)));
-    iv_care_cloud6.setTag(activities.getObject(5).getString(Constant.TITLE));
-    iv_care_cloud7.setText(getSimpleTitle(activities.getObject(6).getString(Constant.TITLE)));
-    iv_care_cloud7.setTag(activities.getObject(6).getString(Constant.TITLE));
-    iv_care_cloud8.setText(getSimpleTitle(activities.getObject(7).getString(Constant.TITLE)));
-    iv_care_cloud8.setTag(activities.getObject(7).getString(Constant.TITLE));
-    iv_care_cloud9.setText(getSimpleTitle(activities.getObject(8).getString(Constant.TITLE)));
-    iv_care_cloud9.setTag(activities.getObject(8).getString(Constant.TITLE));
-    iv_care_cloud10.setText(getSimpleTitle(activities.getObject(9).getString(Constant.TITLE)));
-    iv_care_cloud10.setTag(activities.getObject(9).getString(Constant.TITLE));
+    int len = this.activities.length();
+    for (int i = 0; i < len && i < 10; i++) {
+      Button itemButton = (Button) this.rl_act_care_result_container.getChildAt(i);
+      itemButton.setOnClickListener(this);
+      itemButton.setVisibility(View.VISIBLE);
+      itemButton.setText(getSimpleTitle(activities.getObject(i).getString(Constant.TITLE)));
+      itemButton.setTag(activities.getObject(i).getString(Constant.TITLE));
+    }
   }
 
   /**
@@ -327,6 +293,12 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   }
 
   private void initView() {
+    /**
+     * MODIFY BY DPW
+     */
+    this.rl_act_care_result_container =
+        (RelativeLayout) this.findViewById(R.id.rl_act_care_result_container);
+
     rb_care_button1 = (RadioButton) findViewById(R.id.rb_care_button1);
     rb_care_button2 = (RadioButton) findViewById(R.id.rb_care_button2);
     rb_care_button3 = (RadioButton) findViewById(R.id.rb_care_button3);
@@ -345,16 +317,6 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     rb_care_button7.setText("7." + topic[6]);
     rb_care_button8.setText("8." + topic[7]);
     rb_care_button9.setText("9." + topic[8]);
-    iv_care_cloud1 = (Button) findViewById(R.id.bt_care_cloud1);
-    iv_care_cloud2 = (Button) findViewById(R.id.bt_care_cloud2);
-    iv_care_cloud3 = (Button) findViewById(R.id.bt_care_cloud3);
-    iv_care_cloud4 = (Button) findViewById(R.id.bt_care_cloud4);
-    iv_care_cloud5 = (Button) findViewById(R.id.bt_care_cloud5);
-    iv_care_cloud6 = (Button) findViewById(R.id.bt_care_cloud6);
-    iv_care_cloud7 = (Button) findViewById(R.id.bt_care_cloud7);
-    iv_care_cloud8 = (Button) findViewById(R.id.bt_care_cloud8);
-    iv_care_cloud9 = (Button) findViewById(R.id.bt_care_cloud9);
-    iv_care_cloud10 = (Button) findViewById(R.id.bt_care_cloud10);
     rg_care_classes_topic = (RadioGroup) findViewById(R.id.rg_care_classes_topic);
     bt_care_back = (Button) findViewById(R.id.bt_care_back);
     bt_care_coll = (Button) findViewById(R.id.bt_care_coll);
@@ -378,7 +340,8 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
    * 
    * @param title
    */
-  private void onCloudClick(Object tag) {
+  private void onCloudClick(View view) {
+    String tag = view.getTag().toString();
     if (tag == null) {
       Toast.makeText(this, "数据不完整", Toast.LENGTH_SHORT).show();
       return;
@@ -432,16 +395,6 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   private void setListener() {
     rg_care_classes_topic.setOnCheckedChangeListener(this);
     rg_care_classes_term.setOnCheckedChangeListener(this);
-    iv_care_cloud1.setOnClickListener(this);
-    iv_care_cloud2.setOnClickListener(this);
-    iv_care_cloud3.setOnClickListener(this);
-    iv_care_cloud4.setOnClickListener(this);
-    iv_care_cloud5.setOnClickListener(this);
-    iv_care_cloud6.setOnClickListener(this);
-    iv_care_cloud7.setOnClickListener(this);
-    iv_care_cloud8.setOnClickListener(this);
-    iv_care_cloud9.setOnClickListener(this);
-    iv_care_cloud10.setOnClickListener(this);
     bt_care_back.setOnClickListener(this);
     bt_care_coll.setOnClickListener(this);
     bt_care_loc.setOnClickListener(this);

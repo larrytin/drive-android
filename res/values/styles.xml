@@ -118,7 +118,7 @@
         <item name="android:textColor">#cc6600</item>
         <item name="android:layout_width">126px</item>
         <item name="android:layout_height">83px</item>
-        <item name="android:background">@drawable/cloud_yellow</item>
+        <item name="android:visibility">gone</item>
     </style>
 
     <!-- 托班学期样式 -->
