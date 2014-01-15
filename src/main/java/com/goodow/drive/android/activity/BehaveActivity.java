@@ -251,12 +251,13 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
           params.setMargins(10, 5, 10, 18);
           view.setLayoutParams(params);
           view.setClickable(true);
+
           view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
               String path = v.getTag().toString();
-              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", path),
-                  null);
+              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", path).set(
+                  "play", 1), null);
             }
           });
           innerContainer.addView(view);
