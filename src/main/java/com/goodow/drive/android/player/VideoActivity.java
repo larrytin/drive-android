@@ -78,7 +78,6 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private PopupWindow popupBrightness;
   private boolean isOnline = false;// 是否在线播放
   private boolean isChangedVideo = false;// 是否改变视频
-  private boolean isOnNewIntent;
 
   private int playedTime = -1;// 已播放时间
 
@@ -111,7 +110,6 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
 
   private boolean isControllerShow = true;// 是否显示控制器
   private boolean isFullScreen = false;// 是否全屏
-  private final String TAG = VideoActivity.class.getSimpleName();
 
   private ImageButton ibtn_media_controler_play_pause;
   private Button btn_media_controler_sound;
@@ -130,6 +128,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private final static int SCREEN_FULL = 0;
 
   private final static int SCREEN_DEFAULT = 1;
+
+  private final static int INIT_PASUE = 1000;
 
   private final Handler subHandler = new Handler() {
     @Override
@@ -156,6 +156,9 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           break;
         case HIDE_CONTROLER:// 隐藏控制器
           hideController();// 隐藏控制器
+          break;
+        case INIT_PASUE:
+          handleMsg(jsonObject);
           break;
       }
       super.handleMessage(msg);
@@ -371,7 +374,9 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
             ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
             hideControllerDelay();
             subHandler.sendEmptyMessage(PROGRESS_CHANGED);
-            handleMsg(jsonObject);
+            Message message = new Message();
+            message.what = INIT_PASUE;
+            subHandler.sendMessageDelayed(message, 300);
           }
 
         });
