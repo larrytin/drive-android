@@ -7,6 +7,7 @@ import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.player.VideoView.MySizeChangeLinstener;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -161,21 +162,10 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     }
   };
 
-  private final MessageHandler<JsonObject> controlHandler = new MessageHandler<JsonObject>() {
-
-    @Override
-    public void handle(com.goodow.realtime.channel.Message<JsonObject> message) {
-      JsonObject msg = message.body();
-      if (msg.has("path")) {
-        return;
-      }
-      handleMsg(msg);
-    }
-  };
-
   private JsonObject jsonObject;
 
   private Uri uri;
+  private HandlerRegistration controlHandlerRegistration;
 
   @Override
   public void onBackPressed() {
@@ -744,12 +734,13 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       videoView.pause();
     }
     // Always unregister when an handler no longer should be on the bus.
-    bus.unregisterHandler(Constant.ADDR_PLAYER, controlHandler);
     this.unregisterReceiver(soundBroadCastReceiver);
+    controlHandlerRegistration.unregisterHandler();
   }
 
   @Override
   protected void onResume() {// 恢复挂起的播放器
+    super.onResume();
     if (!isChangedVideo) {
       videoView.seekTo(playedTime);// 设置播放位置 playedTime已播放时间
       if (videoView.isPlaying()) {
@@ -758,9 +749,18 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     }
     isChangedVideo = false;
 
-    super.onResume();
-    // Register handlers so that we can receive event messages.
-    bus.registerHandler(Constant.ADDR_PLAYER, controlHandler);
+    controlHandlerRegistration =
+        bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+
+          @Override
+          public void handle(com.goodow.realtime.channel.Message<JsonObject> message) {
+            JsonObject msg = message.body();
+            if (msg.has("path")) {
+              return;
+            }
+            handleMsg(msg);
+          }
+        });
     IntentFilter mIntentFilter = new IntentFilter();
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
     this.registerReceiver(soundBroadCastReceiver, mIntentFilter);

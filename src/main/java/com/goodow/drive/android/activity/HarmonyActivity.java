@@ -6,6 +6,7 @@ import com.goodow.drive.android.adapter.CommonPageAdapter;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -85,43 +86,9 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private final static String SHAREDNAME = "harmonyHistory";// 配置文件的名称
   private SharedPreferences sharedPreferences = null;
 
-  /**
-   * 翻页控制
-   */
-  private final MessageHandler<JsonObject> controlHandler = new MessageHandler<JsonObject>() {
-    @Override
-    public void handle(Message<JsonObject> message) {
-      JsonObject body = message.body();
-      if (body.has("previous") && body.getBoolean("previous")) {
-        vp_act_harmony_result.arrowScroll(View.FOCUS_LEFT);
-      } else if (body.has("next") && body.getBoolean("next")) {
-        vp_act_harmony_result.arrowScroll(View.FOCUS_RIGHT);
-      }
-    }
-  };
-
-  /**
-   * post动作处理
-   */
-  private final MessageHandler<JsonObject> postHandler = new MessageHandler<JsonObject>() {
-    @Override
-    public void handle(Message<JsonObject> message) {
-      JsonObject body = message.body();
-      String action = body.getString("action");
-      // 仅仅处理action为post动作
-      if (!"post".equalsIgnoreCase(action)) {
-        return;
-      }
-      JsonObject query = body.getObject("query");
-      if (query != null && query.has("type")
-          && !Constant.DATAREGISTRY_TYPE_HARMONY.equals(query.getString("type"))) {
-        return;
-      }
-      dataHandler(body);
-    }
-  };
-
   private boolean isLocal = true;
+  private HandlerRegistration postHandler;
+  private HandlerRegistration controlHandler;
 
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -250,16 +217,44 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
 
   @Override
   protected void onPause() {
-    bus.unregisterHandler(Constant.ADDR_TOPIC, postHandler);
-    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, controlHandler);
     super.onPause();
+    postHandler.unregisterHandler();
+    controlHandler.unregisterHandler();
   }
 
   @Override
   protected void onResume() {
-    bus.registerHandler(Constant.ADDR_TOPIC, postHandler);
-    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, controlHandler);
     super.onResume();
+    postHandler =
+        bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            String action = body.getString("action");
+            // 仅仅处理action为post动作
+            if (!"post".equalsIgnoreCase(action)) {
+              return;
+            }
+            JsonObject query = body.getObject("query");
+            if (query != null && query.has("type")
+                && !Constant.DATAREGISTRY_TYPE_HARMONY.equals(query.getString("type"))) {
+              return;
+            }
+            dataHandler(body);
+          }
+        });
+    controlHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("previous") && body.getBoolean("previous")) {
+              vp_act_harmony_result.arrowScroll(View.FOCUS_LEFT);
+            } else if (body.has("next") && body.getBoolean("next")) {
+              vp_act_harmony_result.arrowScroll(View.FOCUS_RIGHT);
+            }
+          }
+        });
   }
 
   /**

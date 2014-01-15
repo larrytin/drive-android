@@ -20,10 +20,11 @@ import android.widget.Toast;
 
 public class ViewRegistry {
   protected static final String TAG = ViewRegistry.class.getSimpleName();
-  private final Bus bus = BusProvider.get();
   private final Context ctx;
+  private final Bus bus;
 
-  public ViewRegistry(Context ctx) {
+  public ViewRegistry(Bus bus, Context ctx) {
+    this.bus = bus;
     this.ctx = ctx;
   }
 

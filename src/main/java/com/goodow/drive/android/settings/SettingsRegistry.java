@@ -31,10 +31,11 @@ import android.widget.Toast;
 public class SettingsRegistry {
   private final static String TAG = SettingsRegistry.class.getSimpleName();
   public static final String PREFIX = BusProvider.SID + "settings.";
-  private final Bus bus = BusProvider.get();
   private final Context ctx;
+  private final Bus bus;
 
-  public SettingsRegistry(Context ctx) {
+  public SettingsRegistry(Bus bus, Context ctx) {
+    this.bus = bus;
     this.ctx = ctx;
   }
 

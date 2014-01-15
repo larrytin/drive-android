@@ -7,6 +7,7 @@ import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -125,17 +126,8 @@ public class AudioPlayActivity extends BaseActivity {
     }
   };
 
-  private final MessageHandler<JsonObject> controlHandler = new MessageHandler<JsonObject>() {
-    @Override
-    public void handle(Message<JsonObject> message) {
-      JsonObject msg = message.body();
-      if (msg.has("path")) {
-        return;
-      }
-      handleControl(msg);
-    }
-  };
   private ImageView mImageView;
+  private HandlerRegistration controlHandler;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -290,7 +282,7 @@ public class AudioPlayActivity extends BaseActivity {
     }
 
     // Always unregister when an handler no longer should be on the bus.
-    bus.unregisterHandler(Constant.ADDR_PLAYER, controlHandler);
+    controlHandler.unregisterHandler();
     this.unregisterReceiver(soundBroadCastReceiver);
   }
 
@@ -299,8 +291,17 @@ public class AudioPlayActivity extends BaseActivity {
     this.isVisible = true;
     super.onResume();
 
-    // Register handlers so that we can receive event messages.
-    bus.registerHandler(Constant.ADDR_PLAYER, controlHandler);
+    controlHandler =
+        bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject msg = message.body();
+            if (msg.has("path")) {
+              return;
+            }
+            handleControl(msg);
+          }
+        });
     IntentFilter mIntentFilter = new IntentFilter();
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
     this.registerReceiver(soundBroadCastReceiver, mIntentFilter);

@@ -6,6 +6,7 @@ import com.goodow.drive.android.settings.NetWorkListener;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -92,6 +93,7 @@ public class StatusView extends LinearLayout {
       invalidate();
     }
   };
+  private HandlerRegistration controlhandler;
 
   public StatusView(Context context) {
     super(context);
@@ -149,7 +151,7 @@ public class StatusView extends LinearLayout {
     IntentFilter timeTickFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
     this.context.registerReceiver(timeTickreceiver, timeTickFilter);
     this.settingReceiver.registerReceiver();
-    bus.registerHandler(NetWorkListener.ADDR, eventHandler);
+    controlhandler = bus.registerHandler(NetWorkListener.ADDR, eventHandler);
     bus.send(Bus.LOCAL + NetWorkListener.ADDR, Json.createObject().set("action", "get"),
         eventHandler);
   }
@@ -159,7 +161,7 @@ public class StatusView extends LinearLayout {
     super.onDetachedFromWindow();
     this.settingReceiver.unRegisterReceiver();
     this.context.unregisterReceiver(timeTickreceiver);
-    this.bus.unregisterHandler(NetWorkListener.ADDR, eventHandler);
+    controlhandler.unregisterHandler();
   }
 
   @Override

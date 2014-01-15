@@ -16,6 +16,7 @@ public class HomeActivity extends BaseActivity {
   private static boolean registried;
 
   public void onClick(View v) {
+
     switch (v.getId()) {
     // 收藏
       case R.id.iv_act_main_coll:
@@ -91,10 +92,10 @@ public class HomeActivity extends BaseActivity {
   private void subscribe() {
     if (!registried) {
       registried = true;
-      new ViewRegistry(this).subscribe();
-      new PlayerRegistry(this).subscribe();
-      new SettingsRegistry(this).subscribe();
-      new DataRegistry(this).subscribe();
+      new ViewRegistry(bus, this).subscribe();
+      new PlayerRegistry(bus, this).subscribe();
+      new SettingsRegistry(bus, this).subscribe();
+      new DataRegistry(bus, this).subscribe();
     }
   }
 }

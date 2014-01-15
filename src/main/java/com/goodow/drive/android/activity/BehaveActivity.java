@@ -7,6 +7,7 @@ import com.goodow.drive.android.data.DataProvider;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -60,36 +61,8 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
   private JsonArray files = null;
   private final ArrayList<View> nameViews = new ArrayList<View>();
 
-  /**
-   * 翻页处理
-   */
-  private final MessageHandler<JsonObject> controlHandler = new MessageHandler<JsonObject>() {
-    @Override
-    public void handle(Message<JsonObject> message) {
-      JsonObject body = message.body();
-      if (body.has("previous") && body.getBoolean("previous")) {
-        vp_act_behave_result.arrowScroll(View.FOCUS_LEFT);
-      } else if (body.has("next") && body.getBoolean("next")) {
-        vp_act_behave_result.arrowScroll(View.FOCUS_RIGHT);
-      }
-    }
-  };
-
-  /**
-   * post 数据处理
-   */
-  private final MessageHandler<JsonObject> postHandler = new MessageHandler<JsonObject>() {
-    @Override
-    public void handle(Message<JsonObject> message) {
-      JsonObject body = message.body();
-      String action = body.getString("action");
-      // 仅仅处理action为null或post动作
-      if (!"post".equalsIgnoreCase(action)) {
-        return;
-      }
-      dataHandler(body);
-    }
-  };
+  private HandlerRegistration postHandler;
+  private HandlerRegistration controlHandler;
 
   @Override
   public void onClick(View v) {
@@ -186,16 +159,38 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
 
   @Override
   protected void onPause() {
-    bus.unregisterHandler(Constant.ADDR_ACTIVITY, postHandler);
-    bus.unregisterHandler(Constant.ADDR_VIEW_CONTROL, controlHandler);
     super.onPause();
+    postHandler.unregisterHandler();
+    controlHandler.unregisterHandler();
   }
 
   @Override
   protected void onResume() {
-    bus.registerHandler(Constant.ADDR_ACTIVITY, postHandler);
-    bus.registerHandler(Constant.ADDR_VIEW_CONTROL, controlHandler);
     super.onResume();
+    postHandler = bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        String action = body.getString("action");
+        // 仅仅处理action为null或post动作
+        if (!"post".equalsIgnoreCase(action)) {
+          return;
+        }
+        dataHandler(body);
+      }
+    });
+    controlHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("previous") && body.getBoolean("previous")) {
+              vp_act_behave_result.arrowScroll(View.FOCUS_LEFT);
+            } else if (body.has("next") && body.getBoolean("next")) {
+              vp_act_behave_result.arrowScroll(View.FOCUS_RIGHT);
+            }
+          }
+        });
   }
 
   /**

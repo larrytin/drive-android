@@ -7,6 +7,7 @@ import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -84,38 +85,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
       handler.postDelayed(update_progress, 1000);
     }
   };
-  private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
-
-    @Override
-    public void handle(Message<JsonObject> message) {
-      JsonObject msg = message.body();
-      if (msg.has("path")) {
-        return;
-      }
-      if (msg.has("play")) {
-        switch ((int) msg.getNumber("play")) {
-          case 0:
-            // 停止
-          case 1:
-            // 播放
-            playButton();
-            break;
-          case 2:
-            // 暂停
-            pauseButton();
-            break;
-          case 3:
-            // 重播
-            replay();
-            break;
-          default:
-            Toast.makeText(getContext(), "不支持的播放模式, play=" + msg.getNumber("play"),
-                Toast.LENGTH_LONG).show();
-            break;
-        }
-      }
-    }
-  };
+  private HandlerRegistration controlHandler;
 
   // 构造方法
   public FlashView(Context context) {
@@ -232,21 +202,51 @@ class FlashView extends RelativeLayout implements OnTouchListener {
    * 失去焦点时，调用
    */
   public void onPause() {
-    Log.d(TAG, "onPause()");
     pause();
     mContext.unregisterReceiver(flashViewBroadCastReceiver);
-    bus.unregisterHandler(Constant.ADDR_PLAYER, eventHandler);
+
+    controlHandler.unregisterHandler();
   }
 
   /**
    * 获得焦点时，调用
    */
   public void onResume() {
-    Log.d(TAG, "onResume()");
     IntentFilter mIntentFilter = new IntentFilter();
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
     mContext.registerReceiver(flashViewBroadCastReceiver, mIntentFilter);
-    bus.registerHandler(Constant.ADDR_PLAYER, eventHandler);
+
+    controlHandler = bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
+        if (msg.has("path")) {
+          return;
+        }
+        if (msg.has("play")) {
+          switch ((int) msg.getNumber("play")) {
+            case 0:
+              // 停止
+            case 1:
+              // 播放
+              playButton();
+              break;
+            case 2:
+              // 暂停
+              pauseButton();
+              break;
+            case 3:
+              // 重播
+              replay();
+              break;
+            default:
+              Toast.makeText(getContext(), "不支持的播放模式, play=" + msg.getNumber("play"),
+                  Toast.LENGTH_LONG).show();
+              break;
+          }
+        }
+      }
+    });
   }
 
   @Override

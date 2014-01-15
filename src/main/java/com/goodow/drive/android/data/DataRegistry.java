@@ -1,6 +1,5 @@
 package com.goodow.drive.android.data;
 
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -14,10 +13,11 @@ import android.widget.Toast;
 
 public class DataRegistry {
 
-  private final Bus bus = BusProvider.get();
   private Context context = null;
+  private final Bus bus;
 
-  public DataRegistry(Context context) {
+  public DataRegistry(Bus bus, Context context) {
+    this.bus = bus;
     this.context = context;
   }
 

@@ -1,6 +1,5 @@
 package com.goodow.drive.android.player;
 
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -12,10 +11,11 @@ import android.content.Intent;
 import android.widget.Toast;
 
 public class PlayerRegistry {
-  private final Bus bus = BusProvider.get();
   private final Context ctx;
+  private final Bus bus;
 
-  public PlayerRegistry(Context ctx) {
+  public PlayerRegistry(Bus bus, Context ctx) {
+    this.bus = bus;
     this.ctx = ctx;
   }
 

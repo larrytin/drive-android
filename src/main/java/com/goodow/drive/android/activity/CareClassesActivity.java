@@ -5,6 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -72,30 +73,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   private String currenTopic = topic[0];
 
   private JsonArray activities;
-  private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
-    @Override
-    public void handle(Message<JsonObject> message) {
-      JsonObject body = message.body();
-      String action = body.getString("action");
-      // 仅仅处理action为null或post动作
-      if (action != null && !"post".equalsIgnoreCase(action)) {
-        return;
-      }
-      JsonObject query = body.getObject("query");
-      if (query != null && query.has("type")
-          && !Constant.DATAREGISTRY_TYPE_SHIP.equals(query.getString("type"))) {
-        return;
-      }
-      readQuery(query);
-      activities = body.getArray("activities");
-      isLocal = activities == null;
-      if (activities != null) {
-        bindDataToView();
-      }
-      bindHistoryDataToView();
-      isLocal = true;
-    }
-  };
+  private HandlerRegistration postHandler;
 
   @Override
   public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -251,14 +229,30 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
 
   @Override
   protected void onPause() {
-    bus.unregisterHandler(Constant.ADDR_TOPIC, eventHandler);
     super.onPause();
+    postHandler.unregisterHandler();
   }
 
   @Override
   protected void onResume() {
-    bus.registerHandler(Constant.ADDR_TOPIC, eventHandler);
     super.onResume();
+    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        String action = body.getString("action");
+        // 仅仅处理action为post动作
+        if (!"post".equalsIgnoreCase(action)) {
+          return;
+        }
+        JsonObject query = body.getObject("query");
+        if (query != null && query.has("type")
+            && !Constant.DATAREGISTRY_TYPE_SHIP.equals(query.getString("type"))) {
+          return;
+        }
+        dataHandler(body);
+      }
+    });
   }
 
   private void bindDataToView() {
@@ -304,6 +298,18 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     int topicIndex = Arrays.asList(topic).indexOf(currenTopic);
     ((RadioButton) rg_care_classes_topic.findViewWithTag(String.valueOf(topicIndex)))
         .setChecked(true);
+  }
+
+  private void dataHandler(JsonObject body) {
+    JsonObject query = body.getObject("query");
+    readQuery(query);
+    activities = body.getArray("activities");
+    isLocal = activities == null;
+    if (activities != null) {
+      bindDataToView();
+    }
+    bindHistoryDataToView();
+    isLocal = true;
   }
 
   /**
@@ -414,7 +420,13 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     query.set(Constant.TERM, currentTerm);
     query.set(Constant.TOPIC, currenTopic);
     msg.set("query", query);
-    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, eventHandler);
+    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        dataHandler(body);
+      }
+    });
   }
 
   private void setListener() {

@@ -7,6 +7,7 @@ import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -53,19 +54,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   // 延迟时间
   private final static int DELAYTIME = 15 * 1000;
 
-  private final MessageHandler<JsonObject> postHandler = new MessageHandler<JsonObject>() {
-
-    @Override
-    public void handle(Message<JsonObject> message) {
-      JsonObject msg = message.body();
-      if (msg.has("path")) {
-        // 包含path的时候返回,onNewIntent处理
-        return;
-      }
-      handleMessage(msg);
-    }
-  };
-
   private float currentScale;
 
   private final Handler toolBarHandler = new Handler() {
@@ -83,6 +71,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
       }
     };
   };
+  private HandlerRegistration postHandler;
 
   // 画笔功能的点击事件
   public void onClick(View v) {
@@ -219,14 +208,25 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   protected void onPause() {
     super.onPause();
     // Always unregister when an handler no longer should be on the bus.
-    bus.unregisterHandler(Constant.ADDR_PLAYER, postHandler);
+    postHandler.unregisterHandler();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
-    // Register handlers so that we can receive event messages.
-    bus.registerHandler(Constant.ADDR_PLAYER, postHandler);
+    postHandler =
+        bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject msg = message.body();
+            if (msg.has("path")) {
+              // 包含path的时候返回,onNewIntent处理
+              return;
+            }
+            handleMessage(msg);
+          }
+        });
   }
 
   /**

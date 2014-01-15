@@ -4,6 +4,7 @@ import com.goodow.drive.android.BusProvider;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -78,21 +79,6 @@ public class NetWorkListener {
   private final Bus bus = BusProvider.get();
   // 信息服务地址
   public static final String ADDR = BusProvider.SID + "connectivity";
-  private final MessageHandler<JsonObject> eventHandler = new MessageHandler<JsonObject>() {
-    @Override
-    public void handle(Message<JsonObject> message) {
-      String action = message.body().getString("action");
-      if (!"get".equalsIgnoreCase(action)) {
-        return;
-      }
-
-      // 信息服务反馈
-      JsonObject info =
-          Json.createObject().set("action", "post").set("type", getType()).set("strength",
-              getStrength());
-      message.reply(info);
-    }
-  };
 
   private Context context = null;
   private TelephonyManager tel = null;
@@ -111,6 +97,7 @@ public class NetWorkListener {
       bus.send(Bus.LOCAL + ADDR, info, null);
     }
   };
+  private HandlerRegistration controlHandler;
 
   public NetWorkListener(Context context) {
     this.context = context;
@@ -128,13 +115,27 @@ public class NetWorkListener {
     this.tel.listen(myListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
     this.context.registerReceiver(netWorkStatusReceiver, intentFilter);
-    this.bus.registerHandler(ADDR, eventHandler);
+    controlHandler = this.bus.registerHandler(ADDR, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        String action = message.body().getString("action");
+        if (!"get".equalsIgnoreCase(action)) {
+          return;
+        }
+
+        // 信息服务反馈
+        JsonObject info =
+            Json.createObject().set("action", "post").set("type", getType()).set("strength",
+                getStrength());
+        message.reply(info);
+      }
+    });
   }
 
   // 解除监听器
   public void unRegisterReceiver() {
     this.context.unregisterReceiver(netWorkStatusReceiver);
-    this.bus.unregisterHandler(ADDR, eventHandler);
+    controlHandler.unregisterHandler();
   }
 
   /**

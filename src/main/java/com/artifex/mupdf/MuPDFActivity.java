@@ -4,6 +4,7 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
@@ -82,6 +83,7 @@ public class MuPDFActivity extends Activity {
   private MessageHandler<JsonObject> eventHandler = null;
   private ImageView mImageView;
   private static final String TAG = MuPDFActivity.class.getSimpleName();
+  private HandlerRegistration controlHandler;
 
   public void createUI(Bundle savedInstanceState) {
     if (core == null) {
@@ -662,14 +664,14 @@ public class MuPDFActivity extends Activity {
       edit.putInt("page" + mFileName, mDocView.getDisplayedViewIndex());
       edit.commit();
     }
-    BusProvider.get().unregisterHandler(CONTROL, eventHandler);
+    controlHandler.unregisterHandler();
     Log.d(TAG, "onPause()");
   }
 
   @Override
   protected void onResume() {
     super.onResume();
-    BusProvider.get().registerHandler(CONTROL, eventHandler);
+    controlHandler = BusProvider.get().registerHandler(CONTROL, eventHandler);
   }
 
   @Override
