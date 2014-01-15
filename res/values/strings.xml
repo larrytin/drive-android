@@ -54,4 +54,6 @@
     <string name="string_text_read">阅读</string>
     <string name="string_text_write">书写</string>
     <string name="string_text_quality">学习品质</string>
+    <string name="string_text_art_music">艺术(音乐)</string>
+    <string name="string_text_art_paint">艺术(美术)</string>
 </resources>

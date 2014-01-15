@@ -40,8 +40,8 @@ public interface Constant {
   String DOMIAN_WORLD = "社会";
   String DOMIAN_SCIENCE = "科学";
   String DOMIAN_MATH = "数学";
-  String DOMIAN_MUSIC = "(艺术)音乐";
-  String DOMIAN_ART = "(艺术)美术";
+  String DOMIAN_MUSIC = "艺术(音乐)";
+  String DOMIAN_ART = "艺术(美术)";
 
   String DOMIAN_ARITHMETIC = "算术";
   String DOMIAN_JIGSAW = "拼图";
