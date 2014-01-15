@@ -10,6 +10,55 @@
     <dimen name="index_rl_sys_fun_layout_marginLeft">80dp</dimen>
     <dimen name="index_rl_sys_fun_layout_marginTop">150dp</dimen>
     
+    <!-- 和谐 720p @author DPW ITEM DEFAULT DPW-->
+    <dimen name="act_harmony_fun_bar_marginLeft">40dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_harmony_fun_bar_marginTop">130dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_harmony_grade_radio_group_width">350dp</dimen><!-- 年级RadioGroup的宽度 -->
+    <dimen name="act_harmony_grade_radio_group_marginLeft">260dp</dimen><!-- 年级RadioGroup的左边距 -->
+    <dimen name="act_harmony_grade_radio_group_marginTop">20dp</dimen><!-- 年级RadioGroup的上边距 -->
+    <dimen name="act_harmony_term_radio_group_width">210dp</dimen><!-- 学期RadioGroup的宽度 -->
+    <dimen name="act_harmony_term_radio_group_marginLeft">35dp</dimen><!-- 学期RadioGroup的左边距 -->
+    <dimen name="act_harmony_term_radio_group_marginTop">20dp</dimen><!-- 学期RadioGroup的上边距 -->
+    <dimen name="act_harmony_topic_radio_group_width">1000dp</dimen><!-- 主题RadioGroup的宽度 -->
+    <dimen name="act_harmony_topic_radio_group_marginTop">100dp</dimen><!-- 主题RadioGroup的上边距 -->
+    <dimen name="act_harmony_topic_radio_group_paddingLeft">80dp</dimen><!-- 主题RadioGroup的内左边距 -->
+    <dimen name="act_harmony_result_root_width">1040dp</dimen><!-- 查询结果的跟节点的宽度 -->
+    <dimen name="act_harmony_result_root_height">360dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_harmony_result_root_marginRight">85dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_harmony_result_width">850dp</dimen><!-- 查询结果的宽度 -->
+
+    <!-- 示范课 720p @author DPW ITEM DEFAULT DPW-->
+    <dimen name="act_case_fun_bar_marginLeft">40dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_case_fun_bar_marginTop">130dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_case_grade_radio_group_width">350dp</dimen><!-- 年级RadioGroup的宽度 -->
+    <dimen name="act_case_grade_radio_group_marginLeft">260dp</dimen><!-- 年级RadioGroup的左边距 -->
+    <dimen name="act_case_grade_radio_group_marginTop">20dp</dimen><!-- 年级RadioGroup的上边距 -->
+    <dimen name="act_case_term_radio_group_width">210dp</dimen><!-- 学期RadioGroup的宽度 -->
+    <dimen name="act_case_term_radio_group_marginLeft">35dp</dimen><!-- 学期RadioGroup的左边距 -->
+    <dimen name="act_case_term_radio_group_marginTop">20dp</dimen><!-- 学期RadioGroup的上边距 -->
+    <dimen name="act_case_topic_radio_group_marginTop">120dp</dimen><!-- 主题RadioGroup的上边距 -->
+    <dimen name="act_case_topic_radio_group_marginRight">130dp</dimen><!-- 主题RadioGroup的右边距 -->
+    <dimen name="act_case_result_root_width">1000dp</dimen><!-- 查询结果的跟节点的宽度 -->
+    <dimen name="act_case_result_root_height">400dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_case_result_root_paddingTop">50dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_case_result_root_marginRight">85dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_case_result_width">850dp</dimen><!-- 查询结果的宽度 -->
+
+    <!-- 入学准备 720p @author DPW ITEM DEFAULT DPW-->
+    <dimen name="act_prepare_fun_bar_marginLeft">40dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_prepare_fun_bar_marginTop">130dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_prepare_term_radio_group_width">210dp</dimen><!-- 学期RadioGroup的宽度 -->
+    <dimen name="act_prepare_term_radio_group_marginLeft">265dp</dimen><!-- 学期RadioGroup的左边距 -->
+    <dimen name="act_prepare_term_radio_group_marginTop">26dp</dimen><!-- 学期RadioGroup的上边距 -->
+    <dimen name="act_prepare_topic_root_width">360dp</dimen><!-- 主题父节点的宽度 -->
+    <dimen name="act_prepare_topic_root_height">560dp</dimen><!-- 主题父节点的高度 -->
+    <dimen name="act_prepare_topic_root_marginLeft">170dp</dimen><!-- 主题父节点的左边距 -->
+    <dimen name="act_prepare_topic_root_marginTop">130dp</dimen><!-- 主题父节点的上边距 -->
+    <dimen name="act_prepare_result_root_width">740dp</dimen><!-- 查询结果的跟节点的宽度 -->
+    <dimen name="act_prepare_result_root_height">350dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_prepare_result_root_marginRight">30dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_prepare_result_width">610dp</dimen><!-- 查询结果的宽度 -->
+
     <!-- 和谐  托班 的父布局位置 -->
     <dimen name="index_rl_har_ship_layout_marginLeft">310dp</dimen>
     <dimen name="index_rl_har_ship_layout_marginTop">250dp</dimen>

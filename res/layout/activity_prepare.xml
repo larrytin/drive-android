@@ -10,10 +10,10 @@
     <!--上下学期 -->
     <RadioGroup
         android:id="@+id/rg_act_prepare_term"
-        android:layout_width="210dp"
+        android:layout_width="@dimen/act_prepare_term_radio_group_width"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="265dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginLeft="@dimen/act_prepare_term_radio_group_marginLeft"
+        android:layout_marginTop="@dimen/act_prepare_term_radio_group_marginTop"
         android:orientation="horizontal"
         >
         <com.goodow.drive.android.view.FontRadioButton
@@ -28,55 +28,88 @@
             android:text="@string/string_text_term_semester1" />
     </RadioGroup>
 
-    <!-- 活动分类 -->
-    <!-- 语言 -->
-    <RadioButton
-      android:id="@+id/rb_act_prepare_class_language"
-      style="@style/prepare_class"
-      android:text="@string/string_text_language"
-      android:layout_below="@+id/rg_act_prepare_term"
-      android:layout_marginLeft="250dp"
-      android:layout_marginTop="50dp"
-        />
-    <!-- 思维 -->
-    <com.goodow.drive.android.view.FontRadioButton
-      android:id="@+id/rb_act_prepare_class_thinking"
-      style="@style/prepare_class"
-      android:text="@string/string_text_thinking"
-      android:layout_below="@+id/rb_act_prepare_class_language"
-      android:layout_marginLeft="320dp"
-        />
-    <!-- 阅读 -->
-    <com.goodow.drive.android.view.FontRadioButton
-      android:id="@+id/rb_act_prepare_class_read"
-      style="@style/prepare_class"
-      android:text="@string/string_text_read"
-      android:layout_below="@+id/rb_act_prepare_class_thinking"
-      android:layout_marginLeft="170dp"
-        />
-    <!-- 书写 -->
-    <com.goodow.drive.android.view.FontRadioButton
-      android:id="@+id/rb_act_prepare_class_write"
-      style="@style/prepare_class"
-      android:text="@string/string_text_write"
-      android:layout_below="@+id/rb_act_prepare_class_read"
-      android:layout_marginLeft="300dp"
-        />
-    <!-- 学些品质 -->
-    <com.goodow.drive.android.view.FontRadioButton
-      android:id="@+id/rb_act_prepare_class_quality"
-      style="@style/prepare_class"
-      android:text="@string/string_text_quality"
-      android:layout_below="@+id/rb_act_prepare_class_write"
-      android:layout_marginLeft="170dp"
-        />
+    <!-- 活动分类 @des 更容易适配 对性能有影响 -->
+    <LinearLayout
+        android:layout_width="@dimen/act_prepare_topic_root_width"
+        android:layout_height="@dimen/act_prepare_topic_root_height"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/act_prepare_topic_root_marginLeft"
+        android:layout_marginTop="@dimen/act_prepare_topic_root_marginTop"
+        >
+        <!-- 语言 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <com.goodow.drive.android.view.FontRadioButton
+              android:id="@+id/rb_act_prepare_class_language"
+              style="@style/prepare_class"
+              android:text="@string/string_text_language"
+              android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+        <!-- 思维 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <com.goodow.drive.android.view.FontRadioButton
+              android:id="@+id/rb_act_prepare_class_thinking"
+              style="@style/prepare_class"
+              android:text="@string/string_text_thinking"
+              android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
+        <!-- 阅读 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <com.goodow.drive.android.view.FontRadioButton
+              android:id="@+id/rb_act_prepare_class_read"
+              style="@style/prepare_class"
+              android:text="@string/string_text_read"
+              android:layout_alignParentLeft="true"
+                />
+        </RelativeLayout>
+        <!-- 书写 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <com.goodow.drive.android.view.FontRadioButton
+              android:id="@+id/rb_act_prepare_class_write"
+              style="@style/prepare_class"
+              android:text="@string/string_text_write"
+              android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
+        <!-- 学些品质 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            >
+            <com.goodow.drive.android.view.FontRadioButton
+              android:id="@+id/rb_act_prepare_class_quality"
+              style="@style/prepare_class"
+              android:text="@string/string_text_quality"
+              android:layout_alignParentLeft="true"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+
 
     <!--  后退  收藏  锁屏  -->
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="130dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginTop="@dimen/act_prepare_fun_bar_marginTop"
+        android:layout_marginLeft="@dimen/act_prepare_fun_bar_marginLeft"
         >
         <include
             android:id="@+id/iv_act_prepare_back"
@@ -100,11 +133,11 @@
     <!-- 查询结果 -->
     <RelativeLayout
         android:id="@+id/rl_act_prepare_result"
-        android:layout_width="740dp"
-        android:layout_height="350dp"
+        android:layout_width="@dimen/act_prepare_result_root_width"
+        android:layout_height="@dimen/act_prepare_result_root_height"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="30dp"
+        android:layout_marginRight="@dimen/act_prepare_result_root_marginRight"
         >
         <!-- 查询结果 上一页-->
         <ImageView
@@ -121,7 +154,7 @@
         <!-- 查询结果 -->
         <android.support.v4.view.ViewPager
           android:id="@+id/vp_act_prepare_result"
-          android:layout_width="610dp"
+          android:layout_width="@dimen/act_prepare_result_width"
           android:layout_height="fill_parent"
           android:layout_centerHorizontal="true"
           />

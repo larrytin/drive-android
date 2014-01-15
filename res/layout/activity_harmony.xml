@@ -10,10 +10,10 @@
     <!-- 大小班级 -->
     <RadioGroup
         android:id="@+id/rg_act_harmony_grade"
-        android:layout_width="350dp"
+        android:layout_width="@dimen/act_harmony_grade_radio_group_width"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="260dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginLeft="@dimen/act_harmony_grade_radio_group_marginLeft"
+        android:layout_marginTop="@dimen/act_harmony_grade_radio_group_marginTop"
         android:orientation="horizontal"
         >
         <com.goodow.drive.android.view.FontRadioButton
@@ -40,10 +40,10 @@
     <!--上下学期 -->
     <RadioGroup
         android:id="@+id/rg_act_harmony_term"
-        android:layout_width="210dp"
+        android:layout_width="@dimen/act_harmony_term_radio_group_width"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="35dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginLeft="@dimen/act_harmony_term_radio_group_marginLeft"
+        android:layout_marginTop="@dimen/act_harmony_term_radio_group_marginTop"
         android:orientation="horizontal"
         android:layout_toRightOf="@+id/rg_act_harmony_grade"
         >
@@ -62,12 +62,12 @@
     <!-- 活动分类 -->
     <RadioGroup 
         android:id="@+id/rg_act_harmony_class"
-        android:layout_width="1000dp"
+        android:layout_width="@dimen/act_harmony_topic_radio_group_width"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="@dimen/act_harmony_topic_radio_group_marginTop"
         android:orientation="horizontal"
         android:layout_centerHorizontal="true"
-        android:paddingLeft="80dp"
+        android:paddingLeft="@dimen/act_harmony_topic_radio_group_paddingLeft"
         >
         <com.goodow.drive.android.view.FontRadioButton
           android:id="@+id/rb_act_harmony_class_health"
@@ -113,8 +113,8 @@
     <RelativeLayout 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="130dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginLeft="@dimen/act_harmony_fun_bar_marginLeft"
+        android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop"
         >
         <include 
             android:id="@+id/iv_act_harmony_back"
@@ -138,11 +138,11 @@
     <!-- 查询结果 -->
     <RelativeLayout 
         android:id="@+id/rl_act_harmony_result"
-        android:layout_width="1040dp"
-        android:layout_height="360dp"
+        android:layout_width="@dimen/act_harmony_result_root_width"
+        android:layout_height="@dimen/act_harmony_result_root_height"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="85dp"
+        android:layout_marginRight="@dimen/act_harmony_result_root_marginRight"
         >
         <!-- 查询结果 上一页-->
         <ImageView 
@@ -159,7 +159,7 @@
         <!-- 查询结果 -->
         <android.support.v4.view.ViewPager 
           android:id="@+id/vp_act_harmony_result"
-          android:layout_width="850dp"
+          android:layout_width="@dimen/act_harmony_result_width"
           android:layout_height="fill_parent"
           android:layout_centerHorizontal="true"
           />
