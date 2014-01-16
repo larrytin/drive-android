@@ -19,8 +19,7 @@ public interface Constant {
 
   // sd卡
   String STORAGE_DIR = "/mnt/sdcard/";
-  // 外置另外一张的sd卡
-  String STORAGE_DIR_EXT = "/mnt/external_sd/";
+
   String FILE_FORMAT_PDF = "pdf";
   String FILE_FORMAT_SWF = "swf";
   String FILE_FORMAT_MP3 = "mp3";

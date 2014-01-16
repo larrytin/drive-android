@@ -1,12 +1,14 @@
 package com.goodow.drive.android.data;
 
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.toolutils.AvaliStoragePathTools;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
 
@@ -48,8 +50,12 @@ public class DataProvider {
 
   private DataProvider() {
     // 对sd卡的路径进行判断,如果外置sd卡/goodow/drive不存在，那么使用内置的sd卡的/goodow/drive（默认存在)
-    if (new File(Constant.STORAGE_DIR_EXT + Constant.DATA_PATH).exists()) {
-      storage_dir = Constant.STORAGE_DIR_EXT;
+    ArrayList<String> storageCards = AvaliStoragePathTools.getStorageCard();
+    for (int i = storageCards.size() - 1; i >= 0; i--) {
+      if (new File(storageCards.get(i) + File.separator + Constant.DATA_PATH).exists()) {
+        storage_dir = storageCards.get(i) + File.separator;
+        break;
+      }
     }
   }
 
