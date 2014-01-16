@@ -79,13 +79,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
       findViewById(checkedId).requestFocus();
       currenTopic = topic[index];
       if (isLocal) {
-        /**
-         * MODIFY BY DPW
-         */
-        int len = this.rl_act_care_result_container.getChildCount();
-        for (int i = 0; i < len; i++) {
-          this.rl_act_care_result_container.getChildAt(i).setVisibility(View.GONE);
-        }
+        clearCurrent();
         sendQueryMessage();
       }
       saveDataToSP(Constant.TOPIC, currenTopic);
@@ -100,6 +94,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
           break;
       }
       if (isLocal) {
+        clearCurrent();
         sendQueryMessage();
       }
       saveDataToSP(Constant.TERM, currentTerm);
@@ -264,6 +259,19 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     int topicIndex = Arrays.asList(topic).indexOf(currenTopic);
     ((RadioButton) rg_care_classes_topic.findViewWithTag(String.valueOf(topicIndex)))
         .setChecked(true);
+  }
+
+  /**
+   * DPW 清空当前的数据
+   */
+  private void clearCurrent() {
+    if (this.activities != null) {
+      this.activities.clear();
+    }
+    int len = this.rl_act_care_result_container.getChildCount();
+    for (int i = 0; i < len; i++) {
+      this.rl_act_care_result_container.getChildAt(i).setVisibility(View.GONE);
+    }
   }
 
   private void dataHandler(JsonObject body) {
