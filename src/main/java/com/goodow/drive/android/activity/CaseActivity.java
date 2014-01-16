@@ -116,10 +116,6 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
 
   private final ArrayList<View> nameViews = new ArrayList<View>();
   private final static String SHAREDNAME = "caseHistory";// 配置文件的名称
-  public final static String SHAREDNAME_GRADE = "grade";// 年级的KEY
-  public final static String SHAREDNAME_TERM = "term";// 学期的KEY
-  public final static String SHAREDNAME_CLASS = "domain";// 分类的KEY
-
   private SharedPreferences sharedPreferences = null;
 
   private boolean isLocal = true;
@@ -261,24 +257,23 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler =
-        bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            String action = body.getString("action");
-            // 仅仅处理action为post动作
-            if (!"post".equalsIgnoreCase(action)) {
-              return;
-            }
-            JsonObject query = body.getObject("query");
-            if (query != null && query.has("type")
-                && !Constant.DATAREGISTRY_TYPE_CASE.equals(query.getString("type"))) {
-              return;
-            }
-            dataHandler(body);
-          }
-        });
+    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        String action = body.getString("action");
+        // 仅仅处理action为post动作
+        if (!"post".equalsIgnoreCase(action)) {
+          return;
+        }
+        JsonObject query = body.getObject("query");
+        if (query != null && query.has("type")
+            && !Constant.DATAREGISTRY_TYPE_CASE.equals(query.getString("type"))) {
+          return;
+        }
+        dataHandler(body);
+      }
+    });
     controlHandler =
         bus.registerHandler(Constant.ADDR_VIEW_CONTROL, new MessageHandler<JsonObject>() {
           @Override
@@ -608,7 +603,7 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
       default:
         break;
     }
-    this.saveHistory(SHAREDNAME_GRADE, this.currentGrade);
+    this.saveHistory(Constant.GRADE, this.currentGrade);
     this.sendQueryMessage();
   }
 
@@ -643,7 +638,7 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
       default:
         break;
     }
-    this.saveHistory(SHAREDNAME_CLASS, this.currenTopic);
+    this.saveHistory(Constant.TOPIC, this.currenTopic);
     this.sendQueryMessage();
   }
 
@@ -679,7 +674,7 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
       default:
         break;
     }
-    this.saveHistory(SHAREDNAME_TERM, this.currentTerm);
+    this.saveHistory(Constant.TERM, this.currentTerm);
     this.sendQueryMessage();
   }
 
