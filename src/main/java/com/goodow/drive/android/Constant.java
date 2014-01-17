@@ -41,14 +41,16 @@ public interface Constant {
   String DOMIAN_MATH = "数学";
   String DOMIAN_MUSIC = "艺术(音乐)";
   String DOMIAN_ART = "艺术(美术)";
+  String DOMIAN_FAIRYTALE = "冰波童话";
+  String DOMIAN_HAPPY_BABY = "快乐宝贝";
+  String DOMIAN_OTHER = "其他";
 
   String DOMIAN_ARITHMETIC = "算术";
   String DOMIAN_JIGSAW = "拼图";
   String DOMIAN_THINKING = "思维";
   String DOMIAN_READABLE = "识字";
   String DOMIAN_BODY = "形体";
-  String DOMIAN_READ = "阅读";
-  String DOMIAN_WRITE = "书写";
+  String DOMIAN_READ_WRITE = "阅读与书写";
   String DOMIAN_QUALITY = "学习品质";
 
   String DATAREGISTRY_TYPE_HARMONY = "和谐";

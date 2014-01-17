@@ -48,10 +48,13 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   float mLastTouchY;
   private String path;
 
+  private ImageView iv_common_back = null;
+
   // 工具箱
-  private LinearLayout ll_act_picture_tools = null;
+  private LinearLayout ll_include_picture_tools = null;
   private boolean isDrawing = false;
   private static final int MESSAGE_CODE_DISSMISS_BAR = 0;
+  private ImageView iv_include_picture_pen = null;
   // 延迟时间
   private final static int DELAYTIME = 15 * 1000;
 
@@ -63,7 +66,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
       switch (msg.what) {
         case MESSAGE_CODE_DISSMISS_BAR:
           if (!isDrawing) {
-            ll_act_picture_tools.setVisibility(View.INVISIBLE);
+            ll_include_picture_tools.setVisibility(View.INVISIBLE);
           }
           break;
 
@@ -75,38 +78,42 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   private HandlerRegistration postHandler;
 
   // 画笔功能的点击事件
-  public void onClick(View v) {
+  public void onBarClick(View v) {
     switch (v.getId()) {
     // 放大
-      case R.id.iv_act_picture_zoom_out:
+      case R.id.iv_include_picture_zoom_out:
         bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomBy", 1.1),
             null);
         break;
       // 缩小
-      case R.id.iv_act_picture_zoom_in:
+      case R.id.iv_include_picture_zoom_in:
         bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomBy", 0.9),
             null);
         break;
       // 1:1
-      case R.id.iv_act_picture_full_screen:
+      case R.id.iv_include_picture_full_screen:
         bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomTo", 1), null);
         break;
       // 画笔的获取与丢弃
-      case R.id.iv_act_picture_pen:
+      case R.id.iv_include_picture_pen:
         if (isDrawing) {
           isDrawing = false;
+          iv_common_back.setVisibility(View.VISIBLE);
           bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
               "annotation", false), null);
           delayDissmissToolsbar();
+          iv_include_picture_pen.setSelected(false);
         } else {
           isDrawing = true;
+          iv_common_back.setVisibility(View.INVISIBLE);
           bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
               "annotation", true), null);
           delayDissmissToolsbarCancle();
+          iv_include_picture_pen.setSelected(true);
         }
         break;
       // 橡皮擦
-      case R.id.iv_act_picture_eraser:
+      case R.id.iv_include_picture_eraser:
         bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject()
             .set("clear", true), null);
         break;
@@ -333,7 +340,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
 
   private void initView() {
     mImageView = (ImageView) this.findViewById(R.id.actvity_picture);
-    ImageView iv_common_back = (ImageView) findViewById(R.id.iv_common_back);
+    iv_common_back = (ImageView) findViewById(R.id.iv_common_back);
     mImageView.setOnTouchListener(this);
     // 返回键
     iv_common_back.setOnClickListener(new View.OnClickListener() {
@@ -349,14 +356,16 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
       }
     });
-    this.ll_act_picture_tools = (LinearLayout) this.findViewById(R.id.ll_act_picture_tools);
+    this.ll_include_picture_tools = (LinearLayout) this.findViewById(R.id.ll_include_picture_tools);
+    this.iv_include_picture_pen =
+        (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_pen);
     mImageView.setOnHoverListener(new OnHoverListener() {
       @Override
       public boolean onHover(View v, MotionEvent event) {
         switch (event.getAction()) {
           case MotionEvent.ACTION_HOVER_MOVE:
             if (!toolBarHandler.hasMessages(0)) {
-              ll_act_picture_tools.setVisibility(View.VISIBLE);
+              ll_include_picture_tools.setVisibility(View.VISIBLE);
               delayDissmissToolsbar();
             }
             break;

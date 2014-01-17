@@ -4,6 +4,9 @@
     android:layout_height="match_parent"
     android:background="@drawable/favour_bg" >
     
+    <!--  状态栏  -->
+    <include layout="@layout/include_status" />
+
     <!-- back -->
     <ImageView
         android:id="@+id/iv_act_favour_back"

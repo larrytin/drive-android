@@ -36,7 +36,7 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     OnPageChangeListener, OnClickListener {
 
   // 当前状态
-  private String currenTopic = Constant.DOMIAN_HEALTH;
+  private String currenTopic = Constant.DOMIAN_FAIRYTALE;
 
   // 后退收藏锁屏
   private ImageView iv_act_ebook_back = null;
@@ -45,11 +45,9 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
   // 分类
   private RadioGroup rg_act_ebook_class = null;
-  private RadioButton rb_act_ebook_class_health = null;
-  private RadioButton rb_act_ebook_class_language = null;
-  private RadioButton rb_act_ebook_class_world = null;
-  private RadioButton rb_act_ebook_class_scinece = null;
-  private RadioButton rb_act_ebook_class_math = null;
+  private RadioButton rb_act_ebook_class_fairytale = null;
+  private RadioButton rb_act_ebook_class_happy_baby = null;
+  private RadioButton rb_act_ebook_class_other = null;
 
   private final int numPerPage = 8;// 查询结果每页显示8条数据
   private final int numPerLine = 4;// 每条显示四个数据
@@ -84,11 +82,9 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     if (isChecked) {
       switch (buttonView.getId()) {
       // 类别的选中事件
-        case R.id.rb_act_ebook_class_health:
-        case R.id.rb_act_ebook_class_language:
-        case R.id.rb_act_ebook_class_world:
-        case R.id.rb_act_ebook_class_scinece:
-        case R.id.rb_act_ebook_class_math:
+        case R.id.rb_act_ebook_class_fairytale:
+        case R.id.rb_act_ebook_class_happy_baby:
+        case R.id.rb_act_ebook_class_other:
           this.onMyClassViewClick(buttonView.getId());
           break;
 
@@ -317,16 +313,12 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
    */
   private void bindHistoryDataToView() {
     // 回显分类
-    if (Constant.DOMIAN_HEALTH.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_health.setChecked(true);
-    } else if (Constant.DOMIAN_LANGUAGE.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_language.setChecked(true);
-    } else if (Constant.DOMIAN_WORLD.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_world.setChecked(true);
-    } else if (Constant.DOMIAN_SCIENCE.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_scinece.setChecked(true);
-    } else if (Constant.DOMIAN_MATH.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_math.setChecked(true);
+    if (Constant.DOMIAN_FAIRYTALE.equals(this.currenTopic)) {
+      this.rb_act_ebook_class_fairytale.setChecked(true);
+    } else if (Constant.DOMIAN_HAPPY_BABY.equals(this.currenTopic)) {
+      this.rb_act_ebook_class_happy_baby.setChecked(true);
+    } else if (Constant.DOMIAN_OTHER.equals(this.currenTopic)) {
+      this.rb_act_ebook_class_other.setChecked(true);
     }
   }
 
@@ -354,6 +346,8 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
     TextView textView = new TextView(this);
     textView.setWidth(150);
+    textView.setTextSize(18);
+    textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     String title = activity.getString(Constant.TITLE);
     textView.setTag(title);
@@ -394,14 +388,11 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
     // 初始化分类
     this.rg_act_ebook_class = (RadioGroup) this.findViewById(R.id.rg_act_ebook_class);
-    this.rb_act_ebook_class_health =
-        (RadioButton) this.findViewById(R.id.rb_act_ebook_class_health);
-    this.rb_act_ebook_class_language =
-        (RadioButton) this.findViewById(R.id.rb_act_ebook_class_language);
-    this.rb_act_ebook_class_world = (RadioButton) this.findViewById(R.id.rb_act_ebook_class_world);
-    this.rb_act_ebook_class_scinece =
-        (RadioButton) this.findViewById(R.id.rb_act_ebook_class_scinece);
-    this.rb_act_ebook_class_math = (RadioButton) this.findViewById(R.id.rb_act_ebook_class_math);
+    this.rb_act_ebook_class_fairytale =
+        (RadioButton) this.findViewById(R.id.rb_act_ebook_class_fairytale);
+    this.rb_act_ebook_class_happy_baby =
+        (RadioButton) this.findViewById(R.id.rb_act_ebook_class_happy_baby);
+    this.rb_act_ebook_class_other = (RadioButton) this.findViewById(R.id.rb_act_ebook_class_other);
     int classChildren = this.rg_act_ebook_class.getChildCount();
     for (int i = 0; i < classChildren; i++) {
       RadioButton child = (RadioButton) this.rg_act_ebook_class.getChildAt(i);
@@ -425,10 +416,8 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
   // 判定是否时有效的类别数值
   private boolean isRightfulTopic(String topic) {
-    if (Constant.DOMIAN_HEALTH.equals(topic) || Constant.DOMIAN_LANGUAGE.equals(topic)
-        || Constant.DOMIAN_WORLD.equals(topic) || Constant.DOMIAN_SCIENCE.equals(topic)
-        || Constant.DOMIAN_MATH.equals(topic) || Constant.DOMIAN_MUSIC.equals(topic)
-        || Constant.DOMIAN_ART.equals(topic)) {
+    if (Constant.DOMIAN_FAIRYTALE.equals(topic) || Constant.DOMIAN_HAPPY_BABY.equals(topic)
+        || Constant.DOMIAN_OTHER.equals(topic)) {
       return true;
     }
     return false;
@@ -441,20 +430,14 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
    */
   private void onMyClassViewClick(int id) {
     switch (id) {
-      case R.id.rb_act_ebook_class_health:
-        this.currenTopic = Constant.DOMIAN_HEALTH;
+      case R.id.rb_act_ebook_class_fairytale:
+        this.currenTopic = Constant.DOMIAN_FAIRYTALE;
         break;
-      case R.id.rb_act_ebook_class_language:
-        this.currenTopic = Constant.DOMIAN_LANGUAGE;
+      case R.id.rb_act_ebook_class_happy_baby:
+        this.currenTopic = Constant.DOMIAN_HAPPY_BABY;
         break;
-      case R.id.rb_act_ebook_class_world:
-        this.currenTopic = Constant.DOMIAN_WORLD;
-        break;
-      case R.id.rb_act_ebook_class_scinece:
-        this.currenTopic = Constant.DOMIAN_SCIENCE;
-        break;
-      case R.id.rb_act_ebook_class_math:
-        this.currenTopic = Constant.DOMIAN_MATH;
+      case R.id.rb_act_ebook_class_other:
+        this.currenTopic = Constant.DOMIAN_OTHER;
         break;
       default:
         break;

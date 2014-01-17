@@ -307,7 +307,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
 
     TextView textView = new TextView(this);
     textView.setWidth(220);
-    textView.setTextSize(12);
+    textView.setTextSize(18);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     textView.setTextColor(Color.WHITE);
     textView.setSingleLine(true);

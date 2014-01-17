@@ -454,6 +454,8 @@ public class CaseActivity extends BaseActivity implements OnCheckedChangeListene
 
     TextView textView = new TextView(this);
     textView.setWidth(150);
+    textView.setTextSize(18);
+    textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     String title = this.activities.getObject(index).getString(Constant.TITLE);
     textView.setTag(title);

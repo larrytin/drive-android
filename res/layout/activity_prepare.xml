@@ -62,30 +62,17 @@
               android:layout_alignParentRight="true"
                 />
         </RelativeLayout>
-        <!-- 阅读 -->
+        <!-- 阅读与书写 -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             >
             <com.goodow.drive.android.view.FontRadioButton
-              android:id="@+id/rb_act_prepare_class_read"
+              android:id="@+id/rb_act_prepare_class_read_write"
               style="@style/prepare_class"
-              android:text="@string/string_text_read"
+              android:text="@string/string_text_read_write"
               android:layout_alignParentLeft="true"
-                />
-        </RelativeLayout>
-        <!-- 书写 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-            <com.goodow.drive.android.view.FontRadioButton
-              android:id="@+id/rb_act_prepare_class_write"
-              style="@style/prepare_class"
-              android:text="@string/string_text_write"
-              android:layout_alignParentRight="true"
                 />
         </RelativeLayout>
         <!-- 学些品质 -->
@@ -98,9 +85,10 @@
               android:id="@+id/rb_act_prepare_class_quality"
               style="@style/prepare_class"
               android:text="@string/string_text_quality"
-              android:layout_alignParentLeft="true"
+              android:layout_alignParentRight="true"
                 />
         </RelativeLayout>
+
     </LinearLayout>
 
 

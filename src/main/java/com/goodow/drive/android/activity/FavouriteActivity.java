@@ -324,6 +324,8 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     textView.setId(index + 1);
     textView.setPadding(13, 10, 13, 0);
     textView.setTextColor(Color.BLACK);
+    textView.setTextSize(18);
+    textView.setMaxLines(2);
     String title = activity.getString(Constant.TITLE);
     if (title.matches("^\\d{4}.*")) {
       textView.setText(title.substring(4, title.length()));

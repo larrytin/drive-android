@@ -52,8 +52,7 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
   private RadioButton[] topicRadioButtons = null;
   private RadioButton rb_act_prepare_class_language = null;
   private RadioButton rb_act_prepare_class_thinking = null;
-  private RadioButton rb_act_prepare_class_read = null;
-  private RadioButton rb_act_prepare_class_write = null;
+  private RadioButton rb_act_prepare_class_read_write = null;
   private RadioButton rb_act_prepare_class_quality = null;
 
   private final int numPerPage = 8;// 查询结果每页显示8条数据
@@ -94,8 +93,7 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
         // 类别的选中事件
         case R.id.rb_act_prepare_class_language:
         case R.id.rb_act_prepare_class_thinking:
-        case R.id.rb_act_prepare_class_read:
-        case R.id.rb_act_prepare_class_write:
+        case R.id.rb_act_prepare_class_read_write:
         case R.id.rb_act_prepare_class_quality:
           this.topicChooser(buttonView.getId());
           this.onMyClassViewClick(buttonView.getId());
@@ -201,24 +199,23 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler =
-        bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            String action = body.getString("action");
-            // 仅仅处理action为post动作
-            if (!"post".equalsIgnoreCase(action)) {
-              return;
-            }
-            JsonObject query = body.getObject("query");
-            if (query != null && query.has("type")
-                && !Constant.DATAREGISTRY_TYPE_PREPARE.equals(query.getString("type"))) {
-              return;
-            }
-            dataHandler(body);
-          }
-        });
+    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        String action = body.getString("action");
+        // 仅仅处理action为post动作
+        if (!"post".equalsIgnoreCase(action)) {
+          return;
+        }
+        JsonObject query = body.getObject("query");
+        if (query != null && query.has("type")
+            && !Constant.DATAREGISTRY_TYPE_PREPARE.equals(query.getString("type"))) {
+          return;
+        }
+        dataHandler(body);
+      }
+    });
     controlHandler =
         bus.registerHandler(Constant.ADDR_VIEW_CONTROL, new MessageHandler<JsonObject>() {
           @Override
@@ -272,6 +269,8 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
           textView.setLayoutParams(params);
           textView.setGravity(Gravity.CENTER_HORIZONTAL);
           textView.setPadding(15, 10, 18, 0);
+          textView.setTextSize(18);
+          textView.setMaxLines(2);
           final String title = this.activities.getObject(index).getString(Constant.TITLE);
           if (title.matches("^\\d{4}.*")) {
             textView.setText(title.substring(4, title.length()));
@@ -337,12 +336,9 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
     } else if (Constant.DOMIAN_THINKING.equals(this.currenTopic)) {
       this.rb_act_prepare_class_thinking.setChecked(true);
       this.topicChooser(this.rb_act_prepare_class_thinking.getId());
-    } else if (Constant.DOMIAN_READ.equals(this.currenTopic)) {
-      this.rb_act_prepare_class_read.setChecked(true);
-      this.topicChooser(this.rb_act_prepare_class_read.getId());
-    } else if (Constant.DOMIAN_WRITE.equals(this.currenTopic)) {
-      this.rb_act_prepare_class_write.setChecked(true);
-      this.topicChooser(this.rb_act_prepare_class_write.getId());
+    } else if (Constant.DOMIAN_READ_WRITE.equals(this.currenTopic)) {
+      this.rb_act_prepare_class_read_write.setChecked(true);
+      this.topicChooser(this.rb_act_prepare_class_read_write.getId());
     } else if (Constant.DOMIAN_QUALITY.equals(this.currenTopic)) {
       this.rb_act_prepare_class_quality.setChecked(true);
       this.topicChooser(this.rb_act_prepare_class_quality.getId());
@@ -390,18 +386,15 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
         (RadioButton) this.findViewById(R.id.rb_act_prepare_class_language);
     this.rb_act_prepare_class_thinking =
         (RadioButton) this.findViewById(R.id.rb_act_prepare_class_thinking);
-    this.rb_act_prepare_class_read =
-        (RadioButton) this.findViewById(R.id.rb_act_prepare_class_read);
-    this.rb_act_prepare_class_write =
-        (RadioButton) this.findViewById(R.id.rb_act_prepare_class_write);
+    this.rb_act_prepare_class_read_write =
+        (RadioButton) this.findViewById(R.id.rb_act_prepare_class_read_write);
     this.rb_act_prepare_class_quality =
         (RadioButton) this.findViewById(R.id.rb_act_prepare_class_quality);
 
     this.topicRadioButtons =
         new RadioButton[] {
             this.rb_act_prepare_class_language, this.rb_act_prepare_class_thinking,
-            this.rb_act_prepare_class_read, this.rb_act_prepare_class_write,
-            this.rb_act_prepare_class_quality};
+            this.rb_act_prepare_class_read_write, this.rb_act_prepare_class_quality};
 
     int classChildren = this.topicRadioButtons.length;
     for (int i = 0; i < classChildren; i++) {
@@ -436,8 +429,7 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
   // 判定是否时有效的类别数值
   private boolean isRightfulTopic(String topic) {
     if (Constant.DOMIAN_LANGUAGE.equals(topic) || Constant.DOMIAN_THINKING.equals(topic)
-        || Constant.DOMIAN_READ.equals(topic) || Constant.DOMIAN_WRITE.equals(topic)
-        || Constant.DOMIAN_QUALITY.equals(topic)) {
+        || Constant.DOMIAN_READ_WRITE.equals(topic) || Constant.DOMIAN_QUALITY.equals(topic)) {
       return true;
     }
     return false;
@@ -456,11 +448,8 @@ public class PrepareActivity extends BaseActivity implements OnCheckedChangeList
       case R.id.rb_act_prepare_class_thinking:
         this.currenTopic = Constant.DOMIAN_THINKING;
         break;
-      case R.id.rb_act_prepare_class_read:
-        this.currenTopic = Constant.DOMIAN_READ;
-        break;
-      case R.id.rb_act_prepare_class_write:
-        this.currenTopic = Constant.DOMIAN_WRITE;
+      case R.id.rb_act_prepare_class_read_write:
+        this.currenTopic = Constant.DOMIAN_READ_WRITE;
         break;
       case R.id.rb_act_prepare_class_quality:
         this.currenTopic = Constant.DOMIAN_QUALITY;

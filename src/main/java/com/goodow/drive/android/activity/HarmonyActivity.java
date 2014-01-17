@@ -225,24 +225,23 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler =
-        bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            String action = body.getString("action");
-            // 仅仅处理action为post动作
-            if (!"post".equalsIgnoreCase(action)) {
-              return;
-            }
-            JsonObject query = body.getObject("query");
-            if (query != null && query.has("type")
-                && !Constant.DATAREGISTRY_TYPE_HARMONY.equals(query.getString("type"))) {
-              return;
-            }
-            dataHandler(body);
-          }
-        });
+    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        String action = body.getString("action");
+        // 仅仅处理action为post动作
+        if (!"post".equalsIgnoreCase(action)) {
+          return;
+        }
+        JsonObject query = body.getObject("query");
+        if (query != null && query.has("type")
+            && !Constant.DATAREGISTRY_TYPE_HARMONY.equals(query.getString("type"))) {
+          return;
+        }
+        dataHandler(body);
+      }
+    });
     controlHandler =
         bus.registerHandler(Constant.ADDR_VIEW_CONTROL, new MessageHandler<JsonObject>() {
           @Override
@@ -293,6 +292,8 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
               new LinearLayout.LayoutParams(130, LayoutParams.WRAP_CONTENT);
           params.setMargins(7, 12, 7, 12);
           textView.setLayoutParams(params);
+          textView.setTextSize(18);
+          textView.setMaxLines(2);
           textView.setGravity(Gravity.CENTER_HORIZONTAL);
           textView.setPadding(15, 10, 18, 0);
           final String title = this.activities.getObject(index).getString(Constant.TITLE);

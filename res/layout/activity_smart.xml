@@ -33,7 +33,9 @@
             android:text="@string/string_text_grade_big" />
         <com.goodow.drive.android.view.FontRadioButton
             android:id="@+id/rb_act_smart_pre"
+            android:layout_width="90dp"
             style="@style/harmony_grade"
+            android:background="@drawable/harm_selector_grade_long"
             android:text="@string/string_text_grade_pre" />
     </RadioGroup>
 

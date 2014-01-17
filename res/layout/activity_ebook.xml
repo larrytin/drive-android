@@ -10,37 +10,26 @@
     <!-- 活动分类 -->
     <RadioGroup
         android:id="@+id/rg_act_ebook_class"
-        android:layout_width="wrap_content"
+        android:layout_width="590dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="70dp"
-        android:layout_marginRight="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
         >
         <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_ebook_class_health"
+          android:id="@+id/rb_act_ebook_class_fairytale"
           style="@style/ebook_class"
-          android:text="@string/string_text_health"
+          android:text="@string/string_text_fairytale"
             />
         <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_ebook_class_scinece"
+          android:id="@+id/rb_act_ebook_class_happy_baby"
           style="@style/ebook_class"
-          android:text="@string/string_text_scinece"
+          android:text="@string/string_text_happy_baby"
             />
         <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_ebook_class_world"
+          android:id="@+id/rb_act_ebook_class_other"
           style="@style/ebook_class"
-          android:text="@string/string_text_world"
-            />
-        <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_ebook_class_language"
-          style="@style/ebook_class"
-          android:text="@string/string_text_language"
-            />
-        <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_ebook_class_math"
-          style="@style/ebook_class"
-          android:text="@string/string_text_math"
+          android:text="@string/string_text_other"
             />
     </RadioGroup>
 

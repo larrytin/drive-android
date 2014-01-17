@@ -131,6 +131,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
 
   private final static int INIT_PASUE = 1000;
 
+  private ImageView backImageView = null;
+
   private final Handler subHandler = new Handler() {
     @Override
     public void handleMessage(Message msg) {
@@ -194,8 +196,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.video_activity_media);
-    ImageView mImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
-    mImageView.setOnClickListener(new OnClickListener() {
+    backImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
+    backImageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
@@ -233,6 +235,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       public void onClick(View v) {
         if (isDrawing) {// 当前是画笔状态,退出画笔状态
           isDrawing = false;
+          v.setSelected(false);
+          backImageView.setVisibility(View.VISIBLE);
           bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
               "annotation", false), null);
           if (prePlaying) {
@@ -242,6 +246,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           hideController();
         } else {// 当前不是画笔状态,进入画笔状态
           isDrawing = true;
+          v.setSelected(true);
+          backImageView.setVisibility(View.INVISIBLE);
           if (videoView.isPlaying()) {
             prePlaying = true;
             videoView.pause();

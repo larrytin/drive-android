@@ -35,7 +35,7 @@
     <string name="string_text_grade_little">小班</string>
     <string name="string_text_grade_mid">中班</string>
     <string name="string_text_grade_big">大班</string>
-    <string name="string_text_grade_pre">学前</string>
+    <string name="string_text_grade_pre">学前班</string>
 
     <string name="string_text_term_semester0">上</string>
     <string name="string_text_term_semester1">下</string>
@@ -51,9 +51,13 @@
     <string name="string_text_world">社会</string>
     <string name="string_text_scinece">科学</string>
     <string name="string_text_math">数学</string>
-    <string name="string_text_read">阅读</string>
-    <string name="string_text_write">书写</string>
+    <string name="string_text_read_write">阅读与书写</string>
     <string name="string_text_quality">学习品质</string>
     <string name="string_text_art_music">艺术(音乐)</string>
     <string name="string_text_art_paint">艺术(美术)</string>
+
+    <string name="string_text_fairytale">冰波童话</string>
+    <string name="string_text_happy_baby">快乐宝贝</string>
+    <string name="string_text_other">其他</string>
+
 </resources>
