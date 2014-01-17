@@ -170,6 +170,7 @@
         <activity
             android:name="com.goodow.drive.android.player.PicturePlayAcivity"
             android:launchMode="singleTask"
+            android:process="picture"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>

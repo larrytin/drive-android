@@ -15,6 +15,7 @@ import java.io.File;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -153,10 +154,8 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_picture);
-
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
     path = jsonObject.getString("path");
-
     initView();
     if (new File(path).isFile()) {
       mBitmap = setImage(path);
@@ -214,19 +213,17 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler =
-        bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
-
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject msg = message.body();
-            if (msg.has("path")) {
-              // 包含path的时候返回,onNewIntent处理
-              return;
-            }
-            handleMessage(msg);
-          }
-        });
+    postHandler = bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
+        if (msg.has("path")) {
+          // 包含path的时候返回,onNewIntent处理
+          return;
+        }
+        handleMessage(msg);
+      }
+    });
   }
 
   /**
@@ -342,6 +339,11 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     iv_common_back.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+          mBitmap.recycle();
+          mBitmap = null;
+        }
+        System.gc();
         JsonObject msg = Json.createObject();
         msg.set("return", true);
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
@@ -430,6 +432,10 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     float scaleX = width / viewWidth;
     float scale = Math.max(scaleY, scaleX);
     options.inSampleSize = scale > 2 ? 2 : 1;
+    options.inPreferredConfig = Config.RGB_565;
+    // If this is set to true, then the resulting bitmap will allocate its pixels such that they can
+    // be purged if the system needs to reclaim memory.
+    options.inPurgeable = true;
     // 真正加载图片
     options.inJustDecodeBounds = false;
     return BitmapFactory.decodeFile(path, options);
