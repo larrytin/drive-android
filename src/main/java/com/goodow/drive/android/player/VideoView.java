@@ -15,7 +15,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.MediaController;
 import android.widget.MediaController.MediaPlayerControl;
 
@@ -436,11 +435,22 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
    * @param height
    */
   public void setVideoScale(int width, int height) {
-    LayoutParams lp = getLayoutParams();
-    lp.height = height;
-    lp.width = width;
-    setLayoutParams(lp);
-
+    int videoWidth = this.getWidth();
+    int videoHeight = this.getHeight();
+    int endLeft = this.getLeft() + (videoWidth - width) / 2;
+    int endTop = this.getTop() + (videoHeight - height) / 2;
+    int endRight = this.getRight() - (videoWidth - width) / 2;
+    int endButtom = this.getBottom() - (videoHeight - height) / 2;
+    this.layout(endLeft, endTop, endRight, endButtom);
+    // this.layout(0, 0, width, height);
+    // LayoutParams lp = getLayoutParams();
+    // lp.height = height;
+    // lp.width = width;
+    // setLayoutParams(lp);
+    // this.invalidate();
+    // baseMatrix.postTranslate((viewWidth - drawableWidth * scale) / 2F, (viewHeight -
+    // drawableHeight
+    // * scale) / 2F);
   }
 
   public void setVideoURI(Uri uri) {// 设置视频文件URI

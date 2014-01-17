@@ -80,7 +80,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private boolean isOnline = false;// 是否在线播放
   private boolean isChangedVideo = false;// 是否改变视频
 
-  private int playedTime = -1;// 已播放时间
+  private final int playedTime = -1;// 已播放时间
 
   private VideoView videoView = null;// 视频视图
   // private final GestureDetector gestureDetector = null;// 手势识别
@@ -134,6 +134,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private final static int INIT_PASUE = 1000;
 
   private ImageView backImageView = null;
+  private float currentScale;
 
   private final Handler subHandler = new Handler() {
     @Override
@@ -162,6 +163,10 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           hideController();// 隐藏控制器
           break;
         case INIT_PASUE:
+          int videoWidth = videoView.getVideoWidth();
+          int videoHeight = videoView.getVideoHeight();
+          videoView.layout(0, 0, videoWidth, videoHeight);
+          setFit(0);
           handleMsg(jsonObject);
           break;
       }
@@ -356,14 +361,13 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     this.videoView.setMySizeChangeLinstener(new MySizeChangeLinstener() {
       @Override
       public void doMyThings() {
-        setVideoScale(SCREEN_DEFAULT);// 设置视频显示尺寸
+        // setVideoScale(SCREEN_DEFAULT);// 设置视频显示尺寸
       }
     });
 
     this.videoView.setOnPreparedListener(new OnPreparedListener() {// 注册在媒体文件加载完毕，可以播放时调用的回调函数
           @Override
           public void onPrepared(MediaPlayer arg0) {// 加载
-            setVideoScale(SCREEN_DEFAULT);
             isFullScreen = false;
             if (isControllerShow) {
               showController();
@@ -723,7 +727,6 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
 
   @Override
   protected void onNewIntent(Intent intent) {
-    isChangedVideo = true;
     jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
     setIntent(intent);
     String vidoePath = jsonObject.getString("path");
@@ -732,6 +735,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     Uri uri = Uri.parse("file://" + vidoePath);
     if (uri != null) {
       if (!uri.equals(this.uri)) {
+        isChangedVideo = true;
         this.uri = uri;
         this.videoView.stopPlayback();// 停止视频播放
         this.videoView.setVideoURI(uri);// 设置视频文件URI
@@ -746,10 +750,10 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   @Override
   protected void onPause() {
     super.onPause();
-    playedTime = videoView.getCurrentPosition();
-    if (videoView.isPlaying()) {
-      videoView.pause();
-    }
+    // playedTime = videoView.getCurrentPosition();
+    // if (videoView.isPlaying()) {
+    // videoView.pause();
+    // }
     // Always unregister when an handler no longer should be on the bus.
     this.unregisterReceiver(soundBroadCastReceiver);
     controlHandlerRegistration.unregisterHandler();
@@ -758,13 +762,13 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   @Override
   protected void onResume() {// 恢复挂起的播放器
     super.onResume();
-    if (!isChangedVideo) {
-      videoView.seekTo(playedTime);// 设置播放位置 playedTime已播放时间
-      if (videoView.isPlaying()) {
-        hideControllerDelay();// 延迟隐藏控制器
-      }
-    }
-    isChangedVideo = false;
+    // if (!isChangedVideo) {
+    // videoView.seekTo(playedTime);// 设置播放位置 playedTime已播放时间
+    // if (videoView.isPlaying()) {
+    // hideControllerDelay();// 延迟隐藏控制器
+    // }
+    // }
+    // isChangedVideo = false;
 
     controlHandlerRegistration =
         bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
@@ -800,6 +804,34 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   // }
   // }
 
+  private void checkVideoBounds() {
+    int top = videoView.getTop();
+    int left = videoView.getLeft();
+    int right = videoView.getRight();
+    int bottom = videoView.getBottom();
+    if (videoView.getWidth() < screenWidth) {
+      setCenter(0.5, -1);
+    } else {
+      if (left > 0) {
+        videoView.layout(0, top, right - left, bottom);
+      }
+      if (right < screenWidth) {
+        videoView.layout(left - (screenWidth - right), top, screenWidth, bottom);
+      }
+    }
+    if (videoView.getHeight() < screenHeight) {
+      setCenter(-1, 0.5);
+    } else {
+      if (top > 0) {
+        videoView.layout(videoView.getLeft(), 0, videoView.getRight(), bottom - top);
+      }
+      if (bottom < screenHeight) {
+        videoView.layout(videoView.getLeft(), top - (screenHeight - bottom), videoView.getRight(),
+            0);
+      }
+    }
+  }
+
   private void getScreenSize() {// 获得屏幕尺寸大小
     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
     screenWidth = displayMetrics.widthPixels;
@@ -808,6 +840,38 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   }
 
   private void handleMsg(JsonObject msg) {
+    if (msg.has("fit")) {
+      // 适应屏幕
+      int mFit = (int) msg.getNumber("fit");
+      setFit(mFit);
+    } else if (msg.has("zoomTo")) {
+      // 以原图为基础放大缩小
+      float mZoom = (float) msg.getNumber("zoomTo");
+      setZoomTo(mZoom);
+      currentScale = mZoom;
+    }
+    if (msg.has("zoomBy")) {
+      // 按幅度放大缩小
+      float mScale = (float) msg.getNumber("zoomBy");
+      setZoomTo(currentScale * mScale);
+      currentScale = currentScale * mScale;
+    }
+    if (msg.has("image")) {
+      double x = -1;
+      double y = -1;
+      JsonObject image = msg.getObject("image");
+      x = image.getNumber("x");
+      y = image.getNumber("y");
+      if (x >= 0 || y >= 0) {
+        setCenter(x, y);
+      }
+    }
+    checkVideoBounds();
+    if (msg.has("progress")) {
+      double progress = msg.getNumber("progress");
+      videoView.seekTo((int) (videoView.getDuration() * progress));// 设置播放位置
+    }
+
     if (msg.has("play")) {
       switch ((int) msg.getNumber("play")) {
         case 0:
@@ -846,23 +910,6 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           break;
       }
     }
-    if (msg.has("progress")) {
-      double progress = msg.getNumber("progress");
-      videoView.seekTo((int) (videoView.getDuration() * progress));// 设置播放位置
-      // if (!videoView.isPlaying()) {
-      // videoView.start();
-      // }
-    }
-    if (msg.has("zoomTo")) {
-      int width = videoView.getWidth();
-      int height = videoView.getHeight();
-      double zoomTo = msg.getNumber("zoomTo");
-      videoView.setVideoScale((int) (zoomTo * width), (int) (zoomTo * height));
-      ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
-    }
-    if (msg.has("fit")) {
-      // TODO
-    }
   }
 
   private void hideController() {// 隐藏控制器
@@ -879,6 +926,55 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
 
   private void hideControllerDelay() {// 延迟隐藏控制器
     subHandler.sendEmptyMessageDelayed(HIDE_CONTROLER, TIME);
+  }
+
+  // 指定点移动到屏幕中央
+  private void setCenter(double x, double y) {
+    int top = videoView.getTop();
+    int left = videoView.getLeft();
+    int right = videoView.getRight();
+    int bottom = videoView.getBottom();
+    int locX = (int) (videoView.getWidth() * x);
+    int locY = (int) (videoView.getHeight() * y);
+    int centerX = screenWidth / 2 - left;
+    int centerY = screenHeight / 2 - top;
+    if (x < 0) {
+      videoView.layout(left, top + centerY - locY, right, bottom + centerY - locY);
+    }
+    if (y < 0) {
+      videoView.layout(left + centerX - locX, top, right + centerX - locX, bottom);
+    }
+    if (x >= 0 && y >= 0) {
+      videoView.layout(left + centerX - locX, top + centerY - locY, right + centerX - locX, bottom
+          + centerY - locY);
+    }
+  }
+
+  // 视频适应屏幕
+  private void setFit(int fit) {
+    float videoWidth = videoView.getWidth();
+    float videoHeight = videoView.getHeight();
+    float mWidth = screenWidth;
+    float mHeight = screenHeight;
+    float widthScale = mWidth / videoWidth;
+    float heightScale = mHeight / videoHeight;
+    float scale = 0;
+    switch (fit) {
+      case 0:
+        scale = Math.min(1.0f, Math.min(widthScale, heightScale));
+        break;
+      case 1:
+        scale = widthScale;
+        break;
+      case 2:
+        scale = heightScale;
+        break;
+      default:
+        scale = 1;
+        break;
+    }
+    currentScale = scale;
+    videoView.setVideoScale((int) (videoWidth * scale), (int) (videoHeight * scale));
   }
 
   /**
@@ -899,33 +995,20 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     brightnessPercent.setText(String.valueOf(layoutParams.screenBrightness));
   }
 
-  private void setVideoScale(int flag) {// 设置视频显示尺寸
-    switch (flag) {
-      case SCREEN_FULL:// 全屏
-        videoView.setVideoScale(screenWidth, screenHeight);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        break;
-      case SCREEN_DEFAULT:// 标准
-        int videoWidth = videoView.getVideoWidth();
-        int videoHeight = videoView.getVideoHeight();
-        int mWidth = screenWidth;
-        int mHeight = screenHeight - 25;
-
-        if (videoWidth > 0 && videoHeight > 0) {
-          if (videoWidth * mHeight > mWidth * videoHeight) {
-            mHeight = mWidth * videoHeight / videoWidth;
-          } else if (videoWidth * mHeight < mWidth * videoHeight) {
-            mWidth = mHeight * videoWidth / videoHeight;
-          } else {
-
-          }
-        }
-
-        videoView.setVideoScale(mWidth, mHeight);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        break;
-    }
+  // 视频缩放
+  private void setZoomTo(float zoom) {// 设置视频显示尺寸
+    float videoWidth = videoView.getVideoWidth();
+    float videoHeight = videoView.getVideoHeight();
+    float mWidth = screenWidth;
+    float mHeight = screenHeight;
+    float widthScale = mWidth / videoWidth;
+    float heightScale = mHeight / videoHeight;
+    // 计算屏幕中心点在视频的比值
+    float scaleX = (mWidth / 2 - videoView.getLeft()) / videoView.getWidth();
+    float scaleY = (mHeight / 2 - videoView.getTop()) / videoView.getHeight();
+    videoView.setVideoScale((int) (videoWidth * zoom), (int) (videoHeight * zoom));
+    setCenter(scaleX, scaleY);
+    checkVideoBounds();// 检查边界
   }
 
   private void showController() {// 显示控制器
