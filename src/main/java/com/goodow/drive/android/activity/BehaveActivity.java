@@ -4,6 +4,7 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
 import com.goodow.drive.android.data.DataProvider;
+import com.goodow.drive.android.toolutils.FontUtil;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -231,7 +232,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
         if (j == 1) {
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-          params.setMargins(0, 53, 0, 0);
+          params.setMargins(0, 48, 0, 0);
           innerContainer.setLayoutParams(params);
         }
         // 列数量
@@ -307,7 +308,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
 
     TextView textView = new TextView(this);
     textView.setWidth(220);
-    textView.setTextSize(18);
+    textView.setTextSize(16);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     textView.setTextColor(Color.WHITE);
     textView.setSingleLine(true);
@@ -347,6 +348,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     this.iv_act_behave_back = (ImageView) this.findViewById(R.id.iv_act_behave_back);
     this.iv_act_behave_back.setOnClickListener(this);
     this.tv_act_behave_title = (TextView) this.findViewById(R.id.tv_act_behave_title);
+    this.tv_act_behave_title.setTypeface(FontUtil.getInstance(this).getTypeFace());
 
     this.iv_act_behave_result_pre = (ImageView) this.findViewById(R.id.iv_act_behave_result_pre);
     this.iv_act_behave_result_pre.setOnClickListener(this);

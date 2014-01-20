@@ -43,7 +43,7 @@ public interface Constant {
   String DOMIAN_ART = "艺术(美术)";
   String DOMIAN_FAIRYTALE = "冰波童话";
   String DOMIAN_HAPPY_BABY = "快乐宝贝";
-  String DOMIAN_OTHER = "其他";
+  String DOMIAN_OTHER = "其它";
 
   String DOMIAN_ARITHMETIC = "算术";
   String DOMIAN_JIGSAW = "拼图";
