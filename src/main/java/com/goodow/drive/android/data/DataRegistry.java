@@ -49,7 +49,6 @@ public class DataRegistry {
           message.reply(body);
           return;
         }
-
       }
     });
     bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
@@ -87,11 +86,11 @@ public class DataRegistry {
           return;
         }
         // 解析查询条件
-        if (!body.has("query")) {
+        if (!body.has(Constant.QUERIES)) {
           return;
         }
-        JsonObject query = body.getObject("query");
-        String type = query.getString(Constant.TYPE);// 解析请求的模块类型
+        JsonObject queries = body.getObject(Constant.QUERIES);
+        String type = queries.getString(Constant.TYPE);// 解析请求的模块类型
         if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type) // 和谐
             || Constant.DATAREGISTRY_TYPE_SHIP.equals(type)// 托班
             || Constant.DATAREGISTRY_TYPE_CASE.equals(type)// 示范课
@@ -99,9 +98,8 @@ public class DataRegistry {
             || Constant.DATAREGISTRY_TYPE_SMART.equals(type)// 智能开发
             || Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {// 电子书
           JsonObject msg = Json.createObject();
-          msg.set("activities", DataProvider.getInstance().getActivities(query));
+          msg.set("activities", DataProvider.getInstance().getActivities(queries));
           message.reply(msg);
-          // System.out.println(msg);
         } else if (Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(type)) {
           // 收藏
           JsonObject msg = Json.createObject();

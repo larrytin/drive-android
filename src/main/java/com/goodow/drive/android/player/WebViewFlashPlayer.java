@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebSettings;
@@ -28,12 +27,10 @@ public class WebViewFlashPlayer extends BaseActivity {
   private WebView flashWebView;
   private ImageView mImageView;
   private LinearLayout mLinearLayout;
-  private final static String TAG = WebViewFlashPlayer.class.getSimpleName();
 
   @Override
   public void onPause() {
     super.onPause();
-    Log.d(TAG, "onPause()");
     if (null != flashWebView) {
       flashWebView.onPause();
     }
@@ -42,7 +39,6 @@ public class WebViewFlashPlayer extends BaseActivity {
   @Override
   public void onResume() {
     super.onResume();
-    Log.d(TAG, "onResume()");
     if (null != flashWebView) {
       flashWebView.onResume();
     }
@@ -71,13 +67,11 @@ public class WebViewFlashPlayer extends BaseActivity {
     } else {
       Toast.makeText(this, R.string.prompt_flash_Plugins, Toast.LENGTH_LONG).show();
     }
-    Log.d(TAG, "onCreate()");
   }
 
   // 退出时关闭flash播放
   @Override
   protected void onDestroy() {
-    Log.d(TAG, "onDestroy()");
     super.onDestroy();
     mLinearLayout.removeView(flashWebView);
     flashWebView.removeAllViews();
@@ -89,7 +83,6 @@ public class WebViewFlashPlayer extends BaseActivity {
 
   @Override
   protected void onNewIntent(Intent intent) {
-    Log.d(TAG, "onNewIntent()");
     if (checkinstallornotadobeflashapk()) {
       flashPlay(intent);
     } else {
@@ -101,19 +94,16 @@ public class WebViewFlashPlayer extends BaseActivity {
 
   @Override
   protected void onRestart() {
-    Log.d(TAG, "onRestart()");
     super.onRestart();
   }
 
   @Override
   protected void onStart() {
-    Log.d(TAG, "onStart()");
     super.onStart();
   }
 
   @Override
   protected void onStop() {
-    Log.d(TAG, "onStop()");
     super.onStop();
   }
 
@@ -133,7 +123,6 @@ public class WebViewFlashPlayer extends BaseActivity {
     // 得到路径
     JsonObject msg = (JsonObject) intent.getExtras().get("msg");
     String path = msg.get("path");
-    Log.d(TAG, path);
     File mFile = new File(path);
     if (mFile.exists()) {
       flashWebView.loadUrl("file://" + path);

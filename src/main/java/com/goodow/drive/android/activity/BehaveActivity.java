@@ -147,9 +147,9 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     this.setContentView(R.layout.activity_behave);
     this.initView();
     Bundle extras = this.getIntent().getExtras();
-    JsonObject body = (JsonObject) extras.get("msg");
-    this.activity = body.getObject("activity");
-    this.files = body.getArray("files");
+    JsonObject msg = (JsonObject) extras.get("msg");
+    this.activity = msg.getObject("activity");
+    this.files = msg.getArray("files");
     if (files == null) {
       this.sendQueryMessage();
     } else {
@@ -421,10 +421,10 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
    * @param name
    */
   private void setThumbnailsImage(ImageView view, String name) {
-    JsonObject tags = this.activity.getObject(Constant.TAGS);
+    JsonObject queries = this.activity.getObject(Constant.QUERIES);
     // 构建缩略图路径
     String filePath =
-        DataProvider.getInstance().getPath(tags) + this.activity.getString(Constant.TITLE)
+        DataProvider.getInstance().getPath(queries) + this.activity.getString(Constant.TITLE)
             + "/缩略图/" + name + ".png";
     // 判断指定的缩略图是否存在
     if (new File(filePath).exists()) {

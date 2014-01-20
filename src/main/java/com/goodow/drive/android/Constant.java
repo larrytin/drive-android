@@ -15,7 +15,7 @@ public interface Constant {
   String TERM = "term"; // 学期的KEY
   String TOPIC = "topic"; // 主题的KEY
   String TITLE = "title"; // 活动ITEM显示名称的KEY
-  String TAGS = "tags"; // 活动TAGS的KEY
+  String QUERIES = "queries"; // 活动QUERIES的KEY
 
   // sd卡
   String STORAGE_DIR = "/mnt/sdcard/";

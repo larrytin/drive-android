@@ -6,20 +6,17 @@ import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class ViewRegistry {
-  protected static final String TAG = ViewRegistry.class.getSimpleName();
   private final Context ctx;
   private final Bus bus;
 
@@ -80,13 +77,11 @@ public class ViewRegistry {
     bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        JsonObject activity = message.body();
-        if (!"post".equals(activity.getString("action"))) {
+        JsonObject msg = message.body();
+        if (!"post".equals(msg.getString("action"))) {
           return;
         }
         Intent intent = new Intent(ctx, BehaveActivity.class);
-        JsonObject msg = Json.createObject();
-        msg.set("activity", activity);
         intent.putExtra("msg", msg);
         ctx.startActivity(intent);
       }
@@ -100,11 +95,11 @@ public class ViewRegistry {
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject query = body.getObject("query");
-        if (query == null || !query.has(Constant.TYPE)) {
+        JsonObject queries = body.getObject(Constant.QUERIES);
+        if (queries == null || !queries.has(Constant.TYPE)) {
           return;
         }
-        String type = query.getString(Constant.TYPE);
+        String type = queries.getString(Constant.TYPE);
         Intent intent = null;
         if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type)) {
           // 和谐
@@ -167,7 +162,6 @@ public class ViewRegistry {
           mLayoutParams.width = DeviceInformationTools.getScreenWidth(ctx) - 80;
           mLayoutParams.height = WindowManager.LayoutParams.FILL_PARENT;
           mLayoutParams.type = LayoutParams.TYPE_PHONE;
-          Log.d(TAG, "init mDrawView");
         }
         JsonObject draw = message.body();
         if (draw.has("annotation")) {

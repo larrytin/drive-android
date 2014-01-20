@@ -103,7 +103,8 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
         break;
       case R.id.iv_act_ebook_coll:
         bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            "query", Json.createObject().set("type", Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
+            Constant.QUERIES,
+            Json.createObject().set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
         break;
       case R.id.iv_act_ebook_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -169,7 +170,7 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     if (activities == null) {
       this.sendQueryMessage();
     } else {
-      this.readQuery(body.getObject("query"));
+      this.readQuery(body.getObject(Constant.QUERIES));
       this.activities = activities;
       this.bindDataToView();
       this.isLocal = false;
@@ -197,9 +198,9 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject query = body.getObject("query");
-        if (query != null && query.has("type")
-            && !Constant.DATAREGISTRY_TYPE_EBOOK.equals(query.getString("type"))) {
+        JsonObject queries = body.getObject(Constant.QUERIES);
+        if (queries != null && queries.has(Constant.TYPE)
+            && !Constant.DATAREGISTRY_TYPE_EBOOK.equals(queries.getString(Constant.TYPE))) {
           return;
         }
         dataHandler(body);
@@ -262,10 +263,10 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
             public void onClick(View v) {
               JsonObject msg = Json.createObject();
               JsonObject activity = Json.createObject();
-              JsonObject tags = Json.createObject();
-              tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_EBOOK);
-              tags.set(Constant.TOPIC, currenTopic);
-              activity.set(Constant.TAGS, tags);
+              JsonObject queries = Json.createObject();
+              queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_EBOOK);
+              queries.set(Constant.TOPIC, currenTopic);
+              activity.set(Constant.QUERIES, queries);
               activity.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getTag()
                   .toString());
               msg.set("action", "get");
@@ -365,8 +366,8 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
    * 数据处理
    */
   private void dataHandler(JsonObject body) {
-    JsonObject query = body.getObject("query");
-    readQuery(query);
+    JsonObject queries = body.getObject(Constant.QUERIES);
+    readQuery(queries);
     activities = body.getArray("activities");
     isLocal = activities == null;
     bindDataToView();
@@ -472,15 +473,15 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
   /**
    * 解析条件
    * 
-   * @param query
+   * @param queries
    */
-  private void readQuery(JsonObject query) {
-    if (query != null) {
-      String tempClass = query.getString(Constant.TOPIC);
+  private void readQuery(JsonObject queries) {
+    if (queries != null) {
+      String tempClass = queries.getString(Constant.TOPIC);
       if (tempClass != null && isRightfulTopic(tempClass)) {
         currenTopic = tempClass;
         saveHistory(Constant.TOPIC, currenTopic);
-      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
+      } else if (queries.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
         Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
       }
     }
@@ -506,10 +507,10 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
   private void sendQueryMessage() {
     JsonObject msg = Json.createObject();
     msg.set("action", "get");
-    JsonObject query = Json.createObject();
-    query.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_EBOOK);
-    query.set(Constant.TOPIC, this.currenTopic);
-    msg.set("query", query);
+    JsonObject queries = Json.createObject();
+    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_EBOOK);
+    queries.set(Constant.TOPIC, this.currenTopic);
+    msg.set(Constant.QUERIES, queries);
     bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

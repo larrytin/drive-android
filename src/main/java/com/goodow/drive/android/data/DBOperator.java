@@ -37,13 +37,13 @@ public class DBOperator {
       db.beginTransaction();
       for (int i = 0; i < len; i++) {
         JsonObject activity = activities.getObject(i);
-        JsonObject tags = activity.getObject(Constant.TAGS);
+        JsonObject queries = activity.getObject(Constant.QUERIES);
         ContentValues contentValues = new ContentValues();
         contentValues.put("FAVOURITEID", UUID.randomUUID().toString());
-        contentValues.put("TYPE", tags.getString(Constant.TYPE));
-        contentValues.put("GRADE", tags.getString(Constant.GRADE));
-        contentValues.put("TERM", tags.getString(Constant.TERM));
-        contentValues.put("TOPIC", tags.getString(Constant.TOPIC));
+        contentValues.put("TYPE", queries.getString(Constant.TYPE));
+        contentValues.put("GRADE", queries.getString(Constant.GRADE));
+        contentValues.put("TERM", queries.getString(Constant.TERM));
+        contentValues.put("TOPIC", queries.getString(Constant.TOPIC));
         contentValues.put("TITLE", activity.getString(Constant.TITLE));
         contentValues.put("CREATETIME", DeviceInformationTools.getDateTime());
         contentValues.put("UPDATETIME", DeviceInformationTools.getDateTime());
@@ -102,20 +102,20 @@ public class DBOperator {
       db.beginTransaction();
       for (int i = 0; i < len; i++) {
         JsonObject activity = activities.get(i);
-        JsonObject tags = activity.getObject(Constant.TAGS);
+        JsonObject queries = activity.getObject(Constant.QUERIES);
 
-        if (tags.getString(Constant.GRADE) == null) {
+        if (queries.getString(Constant.GRADE) == null) {
           db.execSQL(
               "DELETE FROM T_FAVOURITE WHERE TYPE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?",
               new Object[] {
-                  tags.getString(Constant.TYPE), tags.getString(Constant.TERM),
-                  tags.getString(Constant.TOPIC), activity.getString(Constant.TITLE)});
+                  queries.getString(Constant.TYPE), queries.getString(Constant.TERM),
+                  queries.getString(Constant.TOPIC), activity.getString(Constant.TITLE)});
         } else {
           db.execSQL(
               "DELETE FROM T_FAVOURITE WHERE TYPE = ? and GRADE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?",
               new Object[] {
-                  tags.getString(Constant.TYPE), tags.getString(Constant.GRADE),
-                  tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
+                  queries.getString(Constant.TYPE), queries.getString(Constant.GRADE),
+                  queries.getString(Constant.TERM), queries.getString(Constant.TOPIC),
                   activity.getString(Constant.TITLE)});
         }
       }
@@ -138,27 +138,27 @@ public class DBOperator {
    */
   public static boolean isHave(Context context, JsonObject activity) {
     boolean result = false;
-    JsonObject tags = activity.getObject(Constant.TAGS);
+    JsonObject queries = activity.getObject(Constant.QUERIES);
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     try {
       db.beginTransaction();
       String sql = null;
       String[] params = null;
-      if (tags.getString(Constant.GRADE) == null) {
+      if (queries.getString(Constant.GRADE) == null) {
         sql =
             "SELECT COUNT(FAVOURITEID) AS ISHAVE FROM T_FAVOURITE WHERE TYPE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?";
         params =
             new String[] {
-                tags.getString(Constant.TYPE), tags.getString(Constant.TERM),
-                tags.getString(Constant.TOPIC), activity.getString(Constant.TITLE)};
+                queries.getString(Constant.TYPE), queries.getString(Constant.TERM),
+                queries.getString(Constant.TOPIC), activity.getString(Constant.TITLE)};
       } else {
         sql =
             "SELECT COUNT(FAVOURITEID) AS ISHAVE FROM T_FAVOURITE WHERE TYPE = ? and GRADE = ? AND TERM = ? AND TOPIC = ? AND TITLE = ?";
         params =
             new String[] {
-                tags.getString(Constant.TYPE), tags.getString(Constant.GRADE),
-                tags.getString(Constant.TERM), tags.getString(Constant.TOPIC),
+                queries.getString(Constant.TYPE), queries.getString(Constant.GRADE),
+                queries.getString(Constant.TERM), queries.getString(Constant.TOPIC),
                 activity.getString(Constant.TITLE)};
       }
       Cursor cursor = db.rawQuery(sql, params);
@@ -193,17 +193,17 @@ public class DBOperator {
       int index = 0;
       while (cursor.moveToNext()) {
         JsonObject activity = Json.createObject();
-        JsonObject tag = Json.createObject();
+        JsonObject queries = Json.createObject();
         String type = cursor.getString(cursor.getColumnIndex("TYPE"));
         String grade = cursor.getString(cursor.getColumnIndex("GRADE"));
         String term = cursor.getString(cursor.getColumnIndex("TERM"));
         String topic = cursor.getString(cursor.getColumnIndex("TOPIC"));
         String title = cursor.getString(cursor.getColumnIndex("TITLE"));
-        tag.set(Constant.TYPE, type);
-        tag.set(Constant.GRADE, grade);
-        tag.set(Constant.TERM, term);
-        tag.set(Constant.TOPIC, topic);
-        activity.set(Constant.TAGS, tag);
+        queries.set(Constant.TYPE, type);
+        queries.set(Constant.GRADE, grade);
+        queries.set(Constant.TERM, term);
+        queries.set(Constant.TOPIC, topic);
+        activity.set(Constant.QUERIES, queries);
         activity.set(Constant.TITLE, title);
         activitys.insert(index, activity);
         index++;

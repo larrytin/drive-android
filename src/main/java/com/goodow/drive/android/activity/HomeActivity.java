@@ -83,9 +83,9 @@ public class HomeActivity extends BaseActivity {
   private void open(String type) {
     JsonObject msg = Json.createObject();
     msg.set("action", "post");
-    JsonObject tags = Json.createObject();
-    tags.set("type", type);
-    msg.set("query", tags);
+    JsonObject queries = Json.createObject();
+    queries.set(Constant.TYPE, type);
+    msg.set(Constant.QUERIES, queries);
     this.bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
   }
 

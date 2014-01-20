@@ -29,7 +29,6 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class SettingsRegistry {
-  private final static String TAG = SettingsRegistry.class.getSimpleName();
   public static final String PREFIX = BusProvider.SID + "settings.";
   private final Context ctx;
   private final Bus bus;
@@ -89,7 +88,6 @@ public class SettingsRegistry {
                 .getStreamVolume(AudioManager.STREAM_MUSIC) + mAudioManager
                 .getStreamMaxVolume(AudioManager.STREAM_MUSIC)
                 * range), AudioManager.FLAG_SHOW_UI);
-            Log.d(TAG, mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC) + "");
           }
           return;
         }
@@ -169,11 +167,9 @@ public class SettingsRegistry {
 
       @Override
       public void handle(Message<JsonObject> message) {
-        Log.d(TAG, "brightness");
         JsonObject msg = message.body();
         if (msg.has("brightness")) {
           if (mView == null) {
-            Log.d(TAG, "addview");
             mView = new View(ctx);
             mView.setBackgroundColor(Color.BLACK);
             mLayoutParams = new LayoutParams();
@@ -189,9 +185,7 @@ public class SettingsRegistry {
           // 改变窗体透明度,0完全透明,1完全不透明
           mLayoutParams.alpha = 1.0f - strength;
           // strength=0,既alpha=1全黑,strength=1,既alpha=0还原
-          Log.d(TAG, mLayoutParams.alpha + "");
           if (mLayoutParams.alpha != 0) {
-            Log.d(TAG, "setlayout");
             if (strength == 0) {
               mWindowManager.removeView(mView);
               mLayoutParams.type = LayoutParams.TYPE_PRIORITY_PHONE;

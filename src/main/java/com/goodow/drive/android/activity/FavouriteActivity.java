@@ -145,9 +145,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
             if (!"post".equalsIgnoreCase(action)) {
               return;
             }
-            JsonObject query = body.getObject("query");
-            if (query != null && query.has("type")
-                && !Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(query.getString("type"))) {
+            JsonObject queries = body.getObject(Constant.QUERIES);
+            if (queries != null && queries.has(Constant.TYPE)
+                && !Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(queries.getString(Constant.TYPE))) {
               return;
             }
             activities = body.getArray("activities");
@@ -191,18 +191,18 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
               for (int j = 0; j < len; j++) {
                 JsonObject activity = activities.get(j);
 
-                JsonObject tag = activity.getObject(Constant.TAGS);
-                String type = tag.get(Constant.TYPE);
-                String grade = tag.get(Constant.GRADE);
-                String term = tag.get(Constant.TERM);
-                String topic = tag.get(Constant.TOPIC);
+                JsonObject queries = activity.getObject(Constant.QUERIES);
+                String type = queries.get(Constant.TYPE);
+                String grade = queries.get(Constant.GRADE);
+                String term = queries.get(Constant.TERM);
+                String topic = queries.get(Constant.TOPIC);
                 String title = activity.get(Constant.TITLE);
 
-                JsonObject delTag = delActivity.getObject(Constant.TAGS);
-                String delType = delTag.get(Constant.TYPE);
-                String delGrade = delTag.get(Constant.GRADE);
-                String delTerm = delTag.get(Constant.TERM);
-                String delTopic = delTag.get(Constant.TOPIC);
+                JsonObject delQueries = delActivity.getObject(Constant.QUERIES);
+                String delType = delQueries.get(Constant.TYPE);
+                String delGrade = delQueries.get(Constant.GRADE);
+                String delTerm = delQueries.get(Constant.TERM);
+                String delTopic = delQueries.get(Constant.TOPIC);
                 String delTitle = delActivity.get(Constant.TITLE);
 
                 boolean isSameGrade =
@@ -364,8 +364,10 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           texViewTemp.setSelected(false);
           imageView.setVisibility(View.INVISIBLE);
         } else {
-          JsonObject msg = (JsonObject) ((TextView) v).getTag();
+          JsonObject msg = Json.createObject();
           msg.set("action", "post");
+          JsonObject activity = (JsonObject) ((TextView) v).getTag();
+          msg.set("activity", activity);
           bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
         }
       }
@@ -444,9 +446,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   private void sendQueryMessage() {
     JsonObject msg = Json.createObject();
     msg.set("action", "get");
-    JsonObject type = Json.createObject();
-    type.set("type", Constant.DATAREGISTRY_TYPE_FAVOURITE);
-    msg.set("query", type);
+    JsonObject queries = Json.createObject();
+    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE);
+    msg.set(Constant.QUERIES, queries);
     bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

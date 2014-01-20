@@ -135,7 +135,8 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
         break;
       case R.id.iv_act_harmony_coll:
         bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            "query", Json.createObject().set("type", Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
+            Constant.QUERIES,
+            Json.createObject().set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
         break;
       case R.id.iv_act_harmony_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -201,12 +202,12 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
     this.initView();
     this.readHistoryData();
     Bundle extras = this.getIntent().getExtras();
-    JsonObject body = (JsonObject) extras.get("msg");
-    JsonArray activities = body.getArray("activities");
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray activities = msg.getArray("activities");
     if (activities == null) {
       this.sendQueryMessage();
     } else {
-      this.readQuery(body.getObject("query"));
+      this.readQuery(msg.getObject(Constant.QUERIES));
       this.activities = activities;
       this.bindDataToView();
       this.isLocal = false;
@@ -234,9 +235,9 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject query = body.getObject("query");
-        if (query != null && query.has("type")
-            && !Constant.DATAREGISTRY_TYPE_HARMONY.equals(query.getString("type"))) {
+        JsonObject queries = body.getObject(Constant.QUERIES);
+        if (queries != null && queries.has(Constant.TYPE)
+            && !Constant.DATAREGISTRY_TYPE_HARMONY.equals(queries.getString(Constant.TYPE))) {
           return;
         }
         dataHandler(body);
@@ -308,14 +309,16 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
             @Override
             public void onClick(View v) {
               JsonObject msg = Json.createObject();
-              JsonObject tags = Json.createObject();
-              tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_HARMONY);
-              tags.set(Constant.GRADE, currentGrade);
-              tags.set(Constant.TERM, currentTerm);
-              tags.set(Constant.TOPIC, currenTopic);
-              msg.set(Constant.TAGS, tags);
-              msg.set(Constant.TITLE, title);
               msg.set("action", "post");
+              JsonObject activity = Json.createObject();
+              JsonObject queries = Json.createObject();
+              queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_HARMONY);
+              queries.set(Constant.GRADE, currentGrade);
+              queries.set(Constant.TERM, currentTerm);
+              queries.set(Constant.TOPIC, currenTopic);
+              activity.set(Constant.QUERIES, queries);
+              activity.set(Constant.TITLE, title);
+              msg.set("activity", activity);
               bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }
           });
@@ -390,8 +393,8 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
    * @param body
    */
   private void dataHandler(JsonObject body) {
-    JsonObject query = body.getObject("query");
-    readQuery(query);
+    JsonObject queries = body.getObject(Constant.QUERIES);
+    readQuery(queries);
     activities = body.getArray("activities");
     isLocal = activities == null;
     bindDataToView();
@@ -614,29 +617,29 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   /**
    * 解析条件
    * 
-   * @param query
+   * @param queries
    */
-  private void readQuery(JsonObject query) {
-    if (query != null) {
-      String tempGrade = query.getString(Constant.GRADE);
-      String tempTerm = query.getString(Constant.TERM);
-      String tempClass = query.getString(Constant.TOPIC);
+  private void readQuery(JsonObject queries) {
+    if (queries != null) {
+      String tempGrade = queries.getString(Constant.GRADE);
+      String tempTerm = queries.getString(Constant.TERM);
+      String tempClass = queries.getString(Constant.TOPIC);
       if (tempGrade != null && isRightfulGrade(tempGrade)) {
         currentGrade = tempGrade;
         saveHistory(Constant.GRADE, currentGrade);
-      } else if (query.has(Constant.GRADE) && !isRightfulGrade(tempGrade)) {
+      } else if (queries.has(Constant.GRADE) && !isRightfulGrade(tempGrade)) {
         Toast.makeText(HarmonyActivity.this, "无效的年级数值", Toast.LENGTH_SHORT).show();
       }
       if (tempTerm != null && isRightfulTerm(tempTerm)) {
         currentTerm = tempTerm;
         saveHistory(Constant.TERM, currentTerm);
-      } else if (query.has(Constant.TERM) && !isRightfulTerm(tempTerm)) {
+      } else if (queries.has(Constant.TERM) && !isRightfulTerm(tempTerm)) {
         Toast.makeText(HarmonyActivity.this, "无效的学期数值", Toast.LENGTH_SHORT).show();
       }
       if (tempClass != null && isRightfulTopic(tempClass)) {
         currenTopic = tempClass;
         saveHistory(Constant.TOPIC, currenTopic);
-      } else if (query.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
+      } else if (queries.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
         Toast.makeText(HarmonyActivity.this, "无效的类别数值", Toast.LENGTH_SHORT).show();
       }
     }
@@ -662,12 +665,12 @@ public class HarmonyActivity extends BaseActivity implements OnCheckedChangeList
   private void sendQueryMessage() {
     JsonObject msg = Json.createObject();
     msg.set("action", "get");
-    JsonObject query = Json.createObject();
-    query.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_HARMONY);
-    query.set(Constant.GRADE, this.currentGrade);
-    query.set(Constant.TERM, this.currentTerm);
-    query.set(Constant.TOPIC, this.currenTopic);
-    msg.set("query", query);
+    JsonObject queries = Json.createObject();
+    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_HARMONY);
+    queries.set(Constant.GRADE, this.currentGrade);
+    queries.set(Constant.TERM, this.currentTerm);
+    queries.set(Constant.TOPIC, this.currenTopic);
+    msg.set(Constant.QUERIES, queries);
     bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

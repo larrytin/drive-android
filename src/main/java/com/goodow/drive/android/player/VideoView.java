@@ -10,7 +10,6 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.net.Uri;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -28,7 +27,6 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
     public void doMyThings();// 自定义大小
   }
 
-  private final String TAG = "VideoView";
   private Context mContext;
   private Uri mUri;// URI 视频地址
 
@@ -537,7 +535,6 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
       mMediaPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
       mIsPrepared = false;
       mDuration = -1;
-      Log.v(TAG, "reset duration to -1 in openVideo");
       mCurrentBufferPercentage = 0;
       mMediaPlayer.setDataSource(mContext, mUri);
       mMediaPlayer.setDisplay(mSurfaceHolder);
@@ -546,10 +543,8 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
       mMediaPlayer.prepareAsync();// 为了不阻塞主线程而异步准备
       attachMediaController();// 附加媒体控制器
     } catch (IOException ex) {
-      Log.w(TAG, "Unable to open content: " + mUri, ex);
       return;
     } catch (IllegalArgumentException ex) {
-      Log.w(TAG, "Unable to open content: " + mUri, ex);
       return;
     }
   }

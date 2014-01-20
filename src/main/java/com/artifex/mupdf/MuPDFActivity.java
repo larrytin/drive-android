@@ -56,7 +56,6 @@ public class MuPDFActivity extends Activity {
 
   private AlertDialog.Builder mAlertBuilder;// private SearchTaskResult mSearchTaskResult;
   private final LinkState mLinkState = LinkState.DEFAULT;
-
   private static float scale = 2.5f;
 
   private RelativeLayout layout = null;

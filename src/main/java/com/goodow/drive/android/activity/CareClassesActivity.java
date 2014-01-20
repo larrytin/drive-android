@@ -110,7 +110,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
         break;
       case R.id.bt_care_coll:
         bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            "query", Json.createObject().set("type", "收藏")), null);
+            Constant.QUERIES, Json.createObject().set(Constant.TYPE, "收藏")), null);
         break;
       case R.id.bt_care_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -158,11 +158,11 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   /**
    * 解析条件
    * 
-   * @param query
+   * @param queries
    */
-  public void readQuery(JsonObject query) {
-    if (query != null) {
-      String tempTerm = query.getString(Constant.TERM);
+  public void readQuery(JsonObject queries) {
+    if (queries != null) {
+      String tempTerm = queries.getString(Constant.TERM);
       if (tempTerm != null) {
         if (!tempTerm.equals(Constant.TERM_SEMESTER0) && !tempTerm.equals(Constant.TERM_SEMESTER1)) {
           Toast.makeText(CareClassesActivity.this, "term错误", Toast.LENGTH_SHORT).show();
@@ -170,7 +170,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
         }
         currentTerm = tempTerm;
       }
-      String tempTopic = query.getString(Constant.TOPIC);
+      String tempTopic = queries.getString(Constant.TOPIC);
       if (tempTopic != null) {
         if (!Arrays.asList(topic).contains(tempTopic)) {
           Toast.makeText(CareClassesActivity.this, "topic错误", Toast.LENGTH_SHORT).show();
@@ -191,7 +191,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     Bundle extras = this.getIntent().getExtras();
     JsonObject body = (JsonObject) extras.get("msg");
     JsonArray activities = body.getArray("activities");
-    readQuery(body.getObject("query"));
+    readQuery(body.getObject(Constant.QUERIES));
     if (activities == null) {
       sendQueryMessage();
     } else {
@@ -221,9 +221,9 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject query = body.getObject("query");
-        if (query != null && query.has("type")
-            && !Constant.DATAREGISTRY_TYPE_SHIP.equals(query.getString("type"))) {
+        JsonObject queries = body.getObject(Constant.QUERIES);
+        if (queries != null && queries.has(Constant.TYPE)
+            && !Constant.DATAREGISTRY_TYPE_SHIP.equals(queries.getString(Constant.TYPE))) {
           return;
         }
         dataHandler(body);
@@ -275,8 +275,8 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   }
 
   private void dataHandler(JsonObject body) {
-    JsonObject query = body.getObject("query");
-    readQuery(query);
+    JsonObject queries = body.getObject(Constant.QUERIES);
+    readQuery(queries);
     activities = body.getArray("activities");
     isLocal = activities == null;
     if (activities != null) {
@@ -356,13 +356,15 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     }
     String title = tag.toString();
     JsonObject msg = Json.createObject();
-    JsonObject tags = Json.createObject();
-    tags.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
-    tags.set(Constant.TERM, currentTerm);
-    tags.set(Constant.TOPIC, currenTopic);
-    msg.set(Constant.TAGS, tags);
-    msg.set(Constant.TITLE, title);
     msg.set("action", "post");
+    JsonObject activity = Json.createObject();
+    JsonObject queries = Json.createObject();
+    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
+    queries.set(Constant.TERM, currentTerm);
+    queries.set(Constant.TOPIC, currenTopic);
+    activity.set(Constant.QUERIES, queries);
+    activity.set(Constant.TITLE, title);
+    msg.set("activity", activity);
     bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
   }
 
@@ -386,11 +388,11 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   private void sendQueryMessage() {
     JsonObject msg = Json.createObject();
     msg.set("action", "get");
-    JsonObject query = Json.createObject();
-    query.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
-    query.set(Constant.TERM, currentTerm);
-    query.set(Constant.TOPIC, currenTopic);
-    msg.set("query", query);
+    JsonObject queries = Json.createObject();
+    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
+    queries.set(Constant.TERM, currentTerm);
+    queries.set(Constant.TOPIC, currenTopic);
+    msg.set(Constant.QUERIES, queries);
     bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

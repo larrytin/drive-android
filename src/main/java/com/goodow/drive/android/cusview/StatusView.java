@@ -2,6 +2,7 @@ package com.goodow.drive.android.cusview;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.settings.NetWorkListener;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -70,8 +71,8 @@ public class StatusView extends LinearLayout {
 
       float netStrength = R.drawable.status_network_null;
 
-      if (body.has("type")) {
-        netType = body.getString("type");
+      if (body.has(Constant.TYPE)) {
+        netType = body.getString(Constant.TYPE);
         if (NetWorkListener.WIFI.equalsIgnoreCase(netType)) {
           netType = "WIFI";
         } else if (NetWorkListener.TYPE_2G.equals(netType)

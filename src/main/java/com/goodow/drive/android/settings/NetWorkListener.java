@@ -1,6 +1,7 @@
 package com.goodow.drive.android.settings;
 
 import com.goodow.drive.android.BusProvider;
+import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -40,7 +41,7 @@ public class NetWorkListener {
       g3Strength = strength / MAX_3G_STRENGTH;
 
       JsonObject info =
-          Json.createObject().set("action", "post").set("type", getType()).set("strength",
+          Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
               getStrength());
       bus.send(Bus.LOCAL + ADDR, info, null);
     }
@@ -92,7 +93,7 @@ public class NetWorkListener {
     @Override
     public void onReceive(Context context, Intent intent) {
       JsonObject info =
-          Json.createObject().set("action", "post").set("type", getType()).set("strength",
+          Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
               getStrength());
       bus.send(Bus.LOCAL + ADDR, info, null);
     }
@@ -125,7 +126,7 @@ public class NetWorkListener {
 
         // 信息服务反馈
         JsonObject info =
-            Json.createObject().set("action", "post").set("type", getType()).set("strength",
+            Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
                 getStrength());
         message.reply(info);
       }

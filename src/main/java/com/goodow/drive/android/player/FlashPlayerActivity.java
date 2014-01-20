@@ -11,11 +11,9 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 public class FlashPlayerActivity extends BaseActivity {
-  private final static String TAG = FlashPlayerActivity.class.getSimpleName();
   private FlashView flash;
 
   @Override
@@ -34,7 +32,6 @@ public class FlashPlayerActivity extends BaseActivity {
 
   @Override
   protected void onDestroy() {
-    Log.d(TAG, "onDestory");
     this.finish();
     flash.onDestory();
     System.gc();
@@ -79,7 +76,6 @@ public class FlashPlayerActivity extends BaseActivity {
     // 得到路径
     JsonObject msg = (JsonObject) intent.getExtras().get("msg");
     String path = msg.get("path");
-    Log.d(TAG, path);
     File mFile = new File(path);
     if (mFile.exists()) {
       flash.load();

@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.TreeSet;
 
-import android.util.Log;
-
 public class DataProvider {
   // 过滤器,jpg,mp3,mp4,pdf,swf
   public class fileFilter implements FilenameFilter {
@@ -26,9 +24,6 @@ public class DataProvider {
   }
 
   private String storage_dir = Constant.STORAGE_DIR;
-
-  private static final String TAG = "DataProvider";
-
   private static DataProvider provider = new DataProvider();
 
   public static DataProvider getInstance() {
@@ -62,41 +57,26 @@ public class DataProvider {
   /**
    * 获取activities列表
    * 
-   * @param query 查询条件
+   * @param queries 查询条件
    * @return activities列表
    */
-  public JsonArray getActivities(JsonObject query) {
-    String type = query.getString(Constant.TYPE);
-    String term = query.getString(Constant.TERM);
-    String grade = query.getString(Constant.GRADE);
-    String topic = query.getString(Constant.TOPIC);
+  public JsonArray getActivities(JsonObject queries) {
+    String type = queries.getString(Constant.TYPE);
+    String term = queries.getString(Constant.TERM);
+    String grade = queries.getString(Constant.GRADE);
+    String topic = queries.getString(Constant.TOPIC);
     String path = getPath(type, grade, term, topic);
     File dir = new File(path);
     File[] files = dir.listFiles();
-
     JsonArray activities = Json.createArray();
     if (files == null) {
-      Log.d(TAG, "activities path error!");
       return null;
-    }
-    JsonObject tags = Json.createObject();
-    if (query.has(Constant.TYPE)) {
-      tags.set(Constant.TYPE, type);
-    }
-    if (query.has(Constant.TERM)) {
-      tags.set(Constant.TERM, term);
-    }
-    if (query.has(Constant.GRADE)) {
-      tags.set(Constant.GRADE, grade);
-    }
-    if (query.has(Constant.TOPIC)) {
-      tags.set(Constant.TOPIC, topic);
     }
     for (int i = 0; i < files.length; i++) {
       if (files[i].isDirectory()) {
         JsonObject activity = Json.createObject();
         activity.set(Constant.TITLE, files[i].getName());
-        activity.set(Constant.TAGS, tags);
+        activity.set(Constant.QUERIES, queries);
         activities.push(activity);
       }
     }
@@ -110,15 +90,15 @@ public class DataProvider {
    * @return 返回activity下文件信息
    */
   public JsonArray getFiles(JsonObject activity) {
-    if (!activity.has(Constant.TAGS)) {
+    if (!activity.has(Constant.QUERIES)) {
       return null;
     }
-    JsonObject tags = activity.getObject(Constant.TAGS);
+    JsonObject queries = activity.getObject(Constant.QUERIES);
     String title = activity.getString(Constant.TITLE);
-    String type = tags.getString(Constant.TYPE);
-    String term = tags.getString(Constant.TERM);
-    String grade = tags.getString(Constant.GRADE);
-    String topic = tags.getString(Constant.TOPIC);
+    String type = queries.getString(Constant.TYPE);
+    String term = queries.getString(Constant.TERM);
+    String grade = queries.getString(Constant.GRADE);
+    String topic = queries.getString(Constant.TOPIC);
     String path = getPath(type, grade, term, topic, title);
     File mFile = new File(path);
     File[] files = mFile.listFiles(new fileFilter());
@@ -155,7 +135,6 @@ public class DataProvider {
     File[] files = file.listFiles();
     JsonObject body = Json.createObject();
     if (files == null) {
-      Log.d(TAG, "path error!");
       return body;
     }
     JsonArray foldersArray = Json.createArray();
@@ -180,14 +159,14 @@ public class DataProvider {
   /**
    * 拼接字符串得到路径
    * 
-   * @param tags
+   * @param queries
    * @return tags所标记相对路径转换为绝对路径
    * @author DPW
    */
-  public String getPath(JsonObject tags) {
-    return storage_dir + Constant.DATA_PATH + "/" + tags.getString(Constant.TYPE) + "/"
-        + tags.getString(Constant.GRADE) + "/" + tags.getString(Constant.TERM) + "/"
-        + tags.getString(Constant.TOPIC) + "/";
+  public String getPath(JsonObject queries) {
+    return storage_dir + Constant.DATA_PATH + "/" + queries.getString(Constant.TYPE) + "/"
+        + queries.getString(Constant.GRADE) + "/" + queries.getString(Constant.TERM) + "/"
+        + queries.getString(Constant.TOPIC) + "/";
   }
 
   /**

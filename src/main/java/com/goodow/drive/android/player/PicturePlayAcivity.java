@@ -24,7 +24,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnHoverListener;
@@ -35,7 +34,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class PicturePlayAcivity extends BaseActivity implements OnTouchListener {
-  private final static String TAG = PicturePlayAcivity.class.getSimpleName();
   private ImageView mImageView;
   private Bitmap mBitmap;
   private Matrix translateMatrix;
@@ -407,7 +405,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
    * @param fit 0:适配屏幕(图片在屏幕上完全显示),1:表示宽度完全显示,2:表示高度完全显示
    */
   private void setFit(int fit) {
-    Log.d(TAG, "fit");
     float widthScale = viewWidth / drawableWidth;
     float heightScale = viewHeight / drawableHeight;
     if (fit == 0) {
