@@ -18,6 +18,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -56,7 +57,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   private static final int MESSAGE_CODE_DISSMISS_BAR = 0;
   private ImageView iv_include_picture_pen = null;
   // 延迟时间
-  private final static int DELAYTIME = 15 * 1000;
+  private final static int DELAYTIME = 7 * 1000;
 
   private float currentScale;
 
@@ -76,6 +77,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     };
   };
   private HandlerRegistration postHandler;
+  private Rect controlRectRight;
 
   // 画笔功能的点击事件
   public void onBarClick(View v) {
@@ -339,6 +341,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   }
 
   private void initView() {
+
     mImageView = (ImageView) this.findViewById(R.id.actvity_picture);
     iv_common_back = (ImageView) findViewById(R.id.iv_common_back);
     mImageView.setOnTouchListener(this);
@@ -359,12 +362,17 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     this.ll_include_picture_tools = (LinearLayout) this.findViewById(R.id.ll_include_picture_tools);
     this.iv_include_picture_pen =
         (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_pen);
+    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+    controlRectRight =
+        new Rect(displayMetrics.widthPixels / 3 * 2, 0, displayMetrics.widthPixels,
+            displayMetrics.heightPixels);
     mImageView.setOnHoverListener(new OnHoverListener() {
       @Override
       public boolean onHover(View v, MotionEvent event) {
         switch (event.getAction()) {
           case MotionEvent.ACTION_HOVER_MOVE:
-            if (!toolBarHandler.hasMessages(0)) {
+            if (!toolBarHandler.hasMessages(0)
+                && controlRectRight.contains((int) event.getX(), (int) event.getY())) {
               ll_include_picture_tools.setVisibility(View.VISIBLE);
               delayDissmissToolsbar();
             }

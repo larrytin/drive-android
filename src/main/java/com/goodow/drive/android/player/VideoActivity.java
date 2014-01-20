@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -106,7 +107,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private static int screenHeight = 0;// 屏幕高度
   private static int controlHeight = 0;// 控制器高度
 
-  private final static int TIME = 15000;// 控制器显示持续时间(毫秒)
+  private final static int TIME = 7000;// 控制器显示持续时间(毫秒)
 
   private boolean isControllerShow = true;// 是否显示控制器
   private boolean isFullScreen = false;// 是否全屏
@@ -114,7 +115,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private ImageButton ibtn_media_controler_play_pause;
   private Button btn_media_controler_sound;
   private Button btn_media_controler_replay;
-
+  private Rect controlRectButtom = null;
+  private Rect controlRectRight = null;
   private View popupWindow_view;
   private TextView brightnessPercent;
   private SeekBar brightnessSeekbar;
@@ -539,12 +541,16 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     // return true;
     // }
     // });
+    controlRectButtom = new Rect(0, screenHeight / 3 * 2, screenWidth, screenHeight);
+    controlRectRight = new Rect(screenWidth / 3 * 2, 0, screenWidth, screenHeight);
     videoView.setOnHoverListener(new OnHoverListener() {
       @Override
       public boolean onHover(View v, MotionEvent event) {
         switch (event.getAction()) {
           case MotionEvent.ACTION_HOVER_MOVE:
-            if (!isControllerShow) {// 是否显示控制器
+            if (!isControllerShow
+                && (controlRectButtom.contains((int) event.getX(), (int) event.getY()) || controlRectRight
+                    .contains((int) event.getX(), (int) event.getY()))) {// 是否显示控制器
               showController();// 显示控制器
               hideControllerDelay();// 延迟隐藏
             }
