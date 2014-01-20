@@ -17,8 +17,6 @@ public class MuPDFCore {
   public static native void drawPage(Bitmap bitmap, int pageW, int pageH, int patchX, int patchY,
       int patchW, int patchH);
 
-  public static native OutlineItem[] getOutlineInternal();
-
   public static native int getPageLink(int page, float x, float y);
 
   public static native LinkInfo[] getPageLinksInternal(int page);
@@ -70,10 +68,6 @@ public class MuPDFCore {
     drawPage(bitmap, pageW, pageH, patchX, patchY, patchW, patchH);
   }
 
-  public synchronized OutlineItem[] getOutline() {
-    return getOutlineInternal();
-  }
-
   public synchronized LinkInfo[] getPageLinks(int page) {
     return getPageLinksInternal(page);
   }
@@ -83,7 +77,6 @@ public class MuPDFCore {
     return new PointF(pageWidth, pageHeight);
   }
 
-  /* Shim function */
   public void gotoPage(int page) {
     if (page > numPages - 1) {
       page = numPages - 1;
