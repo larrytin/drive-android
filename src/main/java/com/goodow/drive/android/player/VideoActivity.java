@@ -549,8 +549,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
         switch (event.getAction()) {
           case MotionEvent.ACTION_HOVER_MOVE:
             if (!isControllerShow
-                && (controlRectButtom.contains((int) event.getX(), (int) event.getY()) || controlRectRight
-                    .contains((int) event.getX(), (int) event.getY()))) {// 是否显示控制器
+                && (controlRectButtom.contains((int) event.getRawX(), (int) event.getRawY()) || controlRectRight
+                    .contains((int) event.getRawX(), (int) event.getRawY()))) {// 是否显示控制器
               showController();// 显示控制器
               hideControllerDelay();// 延迟隐藏
             }

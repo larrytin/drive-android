@@ -370,7 +370,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         switch (event.getAction()) {
           case MotionEvent.ACTION_HOVER_MOVE:
             if (!toolBarHandler.hasMessages(0)
-                && controlRectRight.contains((int) event.getX(), (int) event.getY())) {
+                && controlRectRight.contains((int) event.getRawX(), (int) event.getRawY())) {
               ll_include_picture_tools.setVisibility(View.VISIBLE);
               delayDissmissToolsbar();
             }
