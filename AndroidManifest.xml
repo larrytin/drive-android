@@ -27,6 +27,10 @@
     <!-- 亮度遮罩悬浮窗权限 -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <!-- 百度定位 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
+    
 
     <application
         android:allowBackup="true"
@@ -189,6 +193,9 @@
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
+        <!-- 百度定位 -->
+        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">
+        </service>
 
         <!-- 资源库 -->
         <activity
@@ -197,7 +204,5 @@
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
-
     </application>
-
 </manifest>

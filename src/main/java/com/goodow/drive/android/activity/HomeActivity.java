@@ -5,6 +5,7 @@ import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DataRegistry;
 import com.goodow.drive.android.player.PlayerRegistry;
+import com.goodow.drive.android.settings.BaiduLocation;
 import com.goodow.drive.android.settings.NetWorkListener;
 import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
@@ -19,11 +20,16 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
+import com.baidu.location.LocationClient;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 public class HomeActivity extends BaseActivity {
+
+  public static final String TAG = HomeActivity.class.getSimpleName();
+
   private static boolean registried;
   private HandlerRegistration openHandlerReg;
   private final ReconnectBusClient connectBus = BusProvider.getConnectBus();
@@ -36,6 +42,8 @@ public class HomeActivity extends BaseActivity {
   private boolean registeredOnOpen = false;
   // 记录注册网络监听状态
   private boolean registeredNetWork = false;
+
+  private LocationClient mLocationClient;
 
   public void onClick(View v) {
 
@@ -111,6 +119,9 @@ public class HomeActivity extends BaseActivity {
             sendAnalyticsMessage();
           }
         });
+    BaiduLocation.INSTANCE.setContext(getApplicationContext());
+    mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
+    BaiduLocation.INSTANCE.init();
   }
 
   @Override
@@ -118,6 +129,7 @@ public class HomeActivity extends BaseActivity {
     super.onDestroy();
     netWorkHandlerReg.unregisterHandler();
     Platform.scheduler().cancelTimer(schedulePeriodic);
+    mLocationClient.stop();
   }
 
   @Override
@@ -148,6 +160,7 @@ public class HomeActivity extends BaseActivity {
         }
       }
     });
+    mLocationClient.start();
   }
 
   /**

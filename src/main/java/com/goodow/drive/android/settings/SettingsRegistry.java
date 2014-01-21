@@ -10,6 +10,9 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+
 import java.io.File;
 
 import android.app.Instrumentation;
@@ -97,6 +100,36 @@ public class SettingsRegistry {
         }
       }
     });
+    bus.registerHandler(PREFIX + "location.baidu", new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(final Message<JsonObject> message) {
+        // 请求位置
+        BaiduLocation.INSTANCE.getLocationClient().requestLocation();
+        BaiduLocation.INSTANCE.getLocationClient().registerLocationListener(
+            new BDLocationListener() {
+              @Override
+              public void onReceiveLocation(BDLocation location) {
+                if (location == null) {
+                  return;
+                }
+                JsonObject msg = Json.createObject();
+                msg.set("time", location.getTime());
+                msg.set("errocode", location.getLocType());
+                msg.set("latitude", location.getLatitude());
+                msg.set("longtitude", location.getLongitude());
+                msg.set("radius", location.getRadius());
+                if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+                  msg.set("address", location.getAddrStr());
+                }
+                message.reply(msg);
+              }
+
+              @Override
+              public void onReceivePoi(BDLocation poiLocation) {
+              }
+            });
+      }
+    });
     bus.registerHandler(PREFIX + "location", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
@@ -156,6 +189,7 @@ public class SettingsRegistry {
         message.reply(msg);
       }
     });
+
     // 重启
     bus.registerHandler(PREFIX + "reboot", new MessageHandler<JsonObject>() {
       @Override
@@ -163,6 +197,7 @@ public class SettingsRegistry {
         Toast.makeText(ctx, "重启", Toast.LENGTH_LONG).show();
       }
     });
+
     bus.registerHandler(PREFIX + "brightness.view", new MessageHandler<JsonObject>() {
       private LayoutParams mLayoutParams;
       private View mView;
@@ -211,6 +246,7 @@ public class SettingsRegistry {
         }
       }
     });
+
     bus.registerHandler(BusProvider.SID + "input", new MessageHandler<JsonObject>() {
       private final Instrumentation inst = new Instrumentation();
 
@@ -233,6 +269,7 @@ public class SettingsRegistry {
         }.start();
       }
     });
+
     bus.registerHandler(BusProvider.SID + "notification", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
@@ -245,8 +282,8 @@ public class SettingsRegistry {
         }
       }
     });
-    bus.registerHandler(BusProvider.SID + "print", new MessageHandler<JsonObject>() {
 
+    bus.registerHandler(BusProvider.SID + "print", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
@@ -261,8 +298,6 @@ public class SettingsRegistry {
         intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
         ctx.startActivity(intent);
       }
-
     });
-
   }
 }
