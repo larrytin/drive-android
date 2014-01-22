@@ -6,7 +6,6 @@ public interface Constant {
   String ADDR_PREFIX_VIEW = BusProvider.SID + "view.";
   String ADDR_TOPIC = BusProvider.SID + "topic";
   String ADDR_PLAYER = BusProvider.SID + "player";
-  String ADDR_VIEW_CONTROL = ADDR_PREFIX_VIEW + "control";
   String ADDR_ACTIVITY = BusProvider.SID + "activity";
   String ADDR_FILE = BusProvider.SID + "file";
 

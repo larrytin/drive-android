@@ -180,18 +180,21 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
         dataHandler(body);
       }
     });
-    controlHandler =
-        bus.registerHandler(Constant.ADDR_VIEW_CONTROL, new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            if (body.has("previous") && body.getBoolean("previous")) {
-              vp_act_behave_result.arrowScroll(View.FOCUS_LEFT);
-            } else if (body.has("next") && body.getBoolean("next")) {
-              vp_act_behave_result.arrowScroll(View.FOCUS_RIGHT);
-            }
+    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        if (body.has("page")) {
+          JsonObject page = body.getObject("page");
+          if (page.has("goTo")) {
+            vp_act_behave_result.setCurrentItem((int) page.getNumber("goTo"));
+          } else if (page.has("move")) {
+            int currentItem = vp_act_behave_result.getCurrentItem();
+            vp_act_behave_result.setCurrentItem(currentItem + (int) page.getNumber("move"));
           }
-        });
+        }
+      }
+    });
   }
 
   /**
@@ -368,12 +371,14 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
    */
   private void onResultPrePageClick(int id) {
     JsonObject msg = Json.createObject();
+    JsonObject page = Json.createObject();
+    msg.set("page", page);
     if (id == R.id.iv_act_behave_result_pre) {
-      msg.set("previous", true);
+      page.set("move", -1);
     } else if (id == R.id.iv_act_behave_result_next) {
-      msg.set("next", true);
+      page.set("move", 1);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_VIEW_CONTROL, msg, null);
+    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
   }
 
   /**
