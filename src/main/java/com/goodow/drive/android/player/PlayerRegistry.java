@@ -6,6 +6,8 @@ import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.JsonObject;
 
+import com.artifex.mupdf.MuPDFActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
@@ -61,7 +63,7 @@ public class PlayerRegistry {
     bus.registerHandler(Constant.ADDR_PLAYER + ".pdf.mu", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(ctx, PdfMuPlayer.class);
+        Intent intent = new Intent(ctx, MuPDFActivity.class);
         intent.putExtra("msg", message.body());
         ctx.startActivity(intent);
       }

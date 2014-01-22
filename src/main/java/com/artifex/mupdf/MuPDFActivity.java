@@ -1,23 +1,22 @@
 package com.artifex.mupdf;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.JsonObject;
 
-import android.app.Activity;
+import java.io.File;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.RectF;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.view.KeyEvent;
@@ -36,8 +35,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MuPDFActivity extends Activity {
+public class MuPDFActivity extends BaseActivity {
   private enum LinkState {
     DEFAULT, HIGHLIGHT, INHIBIT
   };
@@ -61,6 +61,7 @@ public class MuPDFActivity extends Activity {
   private RelativeLayout layout = null;
   private ImageView mImageView;
   private HandlerRegistration controlHandler;
+  private String path;
 
   public void createUI(Bundle savedInstanceState) {
     if (core == null) {
@@ -175,6 +176,8 @@ public class MuPDFActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
+    path = jsonObject.getString("path");
     mAlertBuilder = new AlertDialog.Builder(this);
     if (core == null) {
       core = (MuPDFCore) getLastNonConfigurationInstance();
@@ -183,18 +186,14 @@ public class MuPDFActivity extends Activity {
       }
     }
     if (core == null) {
-      Intent intent = getIntent();
-      if (Intent.ACTION_VIEW.equals(intent.getAction())) {
-        Uri uri = intent.getData();
-        if (uri.toString().startsWith("content://media/external/file")) {
-          Cursor cursor = getContentResolver().query(uri, new String[] {"_data"}, null, null, null);
-          if (cursor.moveToFirst()) {
-            uri = Uri.parse(cursor.getString(0));
-          }
-        }
-        core = openFile(Uri.decode(uri.getEncodedPath()));
-        SearchTaskResult.set(null);
+      if (new File(path).isFile()) {
+        core = openFile(path);
+      } else {
+        // TODO:可能有问题
+        Toast.makeText(this, R.string.pdf_file_no_exist, Toast.LENGTH_SHORT).show();
+        return;
       }
+      SearchTaskResult.set(null);
       if (core != null && core.needsPassword()) {
         requestPassword(savedInstanceState);
         return;
@@ -215,6 +214,7 @@ public class MuPDFActivity extends Activity {
     }
 
     createUI(savedInstanceState);
+    handleControlMessage(jsonObject);
   }
 
   @Override
@@ -302,6 +302,26 @@ public class MuPDFActivity extends Activity {
   }
 
   @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    JsonObject jsonObject = (JsonObject) intent.getExtras().getSerializable("msg");
+    String path = jsonObject.getString("path");
+    if (!path.equals(this.path)) {
+      // path相同则不重新加载,只进行设置
+      if (new File(path).isFile()) {
+        this.path = path;
+        core = openFile(path);
+        SearchTaskResult.set(null);
+        createUI(null);
+      } else {
+        Toast.makeText(this, R.string.pdf_file_no_exist, Toast.LENGTH_SHORT).show();
+        return;
+      }
+    }
+    handleControlMessage(jsonObject);
+  }
+
+  @Override
   protected void onPause() {
     super.onPause();
     if (mFileName != null && mDocView != null) {
@@ -316,65 +336,17 @@ public class MuPDFActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
-    controlHandler =
-        BusProvider.get().registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            if (body.has("page")) {
-              JsonObject page = body.getObject("page");
-              if (page.has("goTo")) {
-                /*
-                 * goTo 指定页码的移动
-                 */
-                if (mDocView != null) {
-                  mDocView.setDisplayedViewIndex((int) body.getNumber("goTo"));
-                  setContentView(layout);
-                }
-              } else if (page.has("move")) {
-                /*
-                 * move 相对于当前页码的偏移量移动
-                 */
-                if (mDocView != null) {
-                  int offset = (mDocView.getDisplayedViewIndex() + (int) body.getNumber("move"));
-                  mDocView.setDisplayedViewIndex(offset);
-                  setContentView(layout);
-                }
-              }
-            } else if (body.has("zoomTo")) {
-              /*
-               * zoomTo 指定缩放数值,基数是1
-               */
-              if (mDocView != null) {
-                scale = (float) body.getNumber("zoomTo");
-                if (scale > 2.5f) {
-                  scale = 2.5f;
-                }
-                if (scale < 0.0f) {
-                  scale = 0.5f;
-                }
-                mDocView.scale(scale);
-                mDocView.onSettle(null);
-              }
-            } else if (body.has("zoomBy")) {
-              /*
-               * zoomBy 指定缩放系数,基数是当前缩放值
-               */
-              if (mDocView != null) {
-                float temp = mDocView.getmScale() * (float) body.getNumber("zoomBy");
-                if (temp > 5f) {
-                  temp = 5f;
-                }
-                if (temp < 0.5f) {
-                  temp -= 0.5;
-                }
-                scale = temp;
-                mDocView.scale(scale);
-                mDocView.onSettle(null);
-              }
-            }
-          }
-        });
+    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
+        if (msg.has("path")) {
+          // 包含path的时候返回,onNewIntent处理
+          return;
+        }
+        handleControlMessage(msg);
+      }
+    });
   }
 
   @Override
@@ -424,6 +396,61 @@ public class MuPDFActivity extends Activity {
       return;
     }
     mPageNumberView.setText(String.format("%d/%d", index + 1, core.countPages()));
+  }
+
+  private void handleControlMessage(JsonObject body) {
+    if (body.has("page")) {
+      JsonObject page = body.getObject("page");
+      if (page.has("goTo")) {
+        /*
+         * goTo 指定页码的移动
+         */
+        if (mDocView != null) {
+          mDocView.setDisplayedViewIndex((int) body.getNumber("goTo"));
+          setContentView(layout);
+        }
+      } else if (page.has("move")) {
+        /*
+         * move 相对于当前页码的偏移量移动
+         */
+        if (mDocView != null) {
+          int offset = (mDocView.getDisplayedViewIndex() + (int) body.getNumber("move"));
+          mDocView.setDisplayedViewIndex(offset);
+          setContentView(layout);
+        }
+      }
+    } else if (body.has("zoomTo")) {
+      /*
+       * zoomTo 指定缩放数值,基数是1
+       */
+      if (mDocView != null) {
+        scale = (float) body.getNumber("zoomTo");
+        if (scale > 2.5f) {
+          scale = 2.5f;
+        }
+        if (scale < 0.0f) {
+          scale = 0.5f;
+        }
+        mDocView.scale(scale);
+        mDocView.onSettle(null);
+      }
+    } else if (body.has("zoomBy")) {
+      /*
+       * zoomBy 指定缩放系数,基数是当前缩放值
+       */
+      if (mDocView != null) {
+        float temp = mDocView.getmScale() * (float) body.getNumber("zoomBy");
+        if (temp > 5f) {
+          temp = 5f;
+        }
+        if (temp < 0.5f) {
+          temp -= 0.5;
+        }
+        scale = temp;
+        mDocView.scale(scale);
+        mDocView.onSettle(null);
+      }
+    }
   }
 
   private ReaderView initReaderView() {
