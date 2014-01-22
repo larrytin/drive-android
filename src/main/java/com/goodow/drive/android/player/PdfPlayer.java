@@ -139,21 +139,21 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
         if (body.has("zoomBy")) {
           if (pdfView != null && (float) body.getNumber("zoomBy") * currentScale < 10
               && (float) body.getNumber("zoomBy") * currentScale > 0.1) {
-            currentScale = (float) body.getNumber("zoom") * currentScale;
+            currentScale = (float) body.getNumber("zoomBy") * currentScale;
             pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
                 .getScreenWidth(PdfPlayer.this) / 2, 0));
             pdfView.loadPages();
           }
         }
 
-        if (body.has("pdf")) {
-          JsonObject pdfControl = body.getObject("pdf");
-          if (pdfControl.has("page")) {
+        if (body.has("page")) {
+          JsonObject pdfControl = body.getObject("page");
+          if (pdfControl.has("goTo")) {
             /*
-             * page 指定页码的移动
+             * goTo 指定页码的移动
              */
             if (pdfView != null) {
-              pdfView.jumpTo((int) pdfControl.getNumber("page"));
+              pdfView.jumpTo((int) pdfControl.getNumber("goTo"));
               pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
                   .getScreenWidth(PdfPlayer.this) / 2, 0));
               pdfView.loadPages();

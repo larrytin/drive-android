@@ -321,31 +321,32 @@ public class MuPDFActivity extends Activity {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
-            if (body.has("move")) {
-              /*
-               * move 相对于当前页码的偏移量移动
-               */
-              if (mDocView != null) {
-                int offset = (mDocView.getDisplayedViewIndex() + (int) body.getNumber("move"));
-                mDocView.setDisplayedViewIndex(offset);
-
-                setContentView(layout);
+            if (body.has("page")) {
+              JsonObject page = body.getObject("page");
+              if (page.has("goTo")) {
+                /*
+                 * goTo 指定页码的移动
+                 */
+                if (mDocView != null) {
+                  mDocView.setDisplayedViewIndex((int) body.getNumber("goTo"));
+                  setContentView(layout);
+                }
+              } else if (page.has("move")) {
+                /*
+                 * move 相对于当前页码的偏移量移动
+                 */
+                if (mDocView != null) {
+                  int offset = (mDocView.getDisplayedViewIndex() + (int) body.getNumber("move"));
+                  mDocView.setDisplayedViewIndex(offset);
+                  setContentView(layout);
+                }
               }
-
-            } else if (body.has("page")) {
+            } else if (body.has("zoomTo")) {
               /*
-               * page 指定页码的移动
+               * zoomTo 指定缩放数值,基数是1
                */
               if (mDocView != null) {
-                mDocView.setDisplayedViewIndex((int) body.getNumber("page"));
-                setContentView(layout);
-              }
-            } else if (body.has("scale")) {
-              /*
-               * scale 指定缩放数值,基数是1
-               */
-              if (mDocView != null) {
-                scale = (float) body.getNumber("scale");
+                scale = (float) body.getNumber("zoomTo");
                 if (scale > 2.5f) {
                   scale = 2.5f;
                 }
@@ -355,13 +356,12 @@ public class MuPDFActivity extends Activity {
                 mDocView.scale(scale);
                 mDocView.onSettle(null);
               }
-
-            } else if (body.has("zoom")) {
+            } else if (body.has("zoomBy")) {
               /*
-               * zoom 指定缩放系数,基数是当前缩放值
+               * zoomBy 指定缩放系数,基数是当前缩放值
                */
               if (mDocView != null) {
-                float temp = mDocView.getmScale() * (float) body.getNumber("zoom");
+                float temp = mDocView.getmScale() * (float) body.getNumber("zoomBy");
                 if (temp > 5f) {
                   temp = 5f;
                 }
