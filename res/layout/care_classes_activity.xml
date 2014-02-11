@@ -1,46 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/care_classes_bg" >
 
+    <include layout="@layout/include_status" />
     <!-- 上下学期 -->
-
-    <RadioGroup
-        android:id="@+id/rg_care_classes_term"
+    <LinearLayout
+        android:id="@+id/ll_care_classes_term"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_x="555px"
-        android:layout_y="34px"
+        android:layout_marginLeft="555px"
+        android:layout_marginTop="34px"
         android:orientation="horizontal" >
 
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_term_0"
+        <com.goodow.drive.android.view.FontTextView
+            android:id="@+id/ftv_term_0"
             style="@style/care_classes_term"
             android:checked="true"
             android:text="上" />
 
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_term_1"
+        <com.goodow.drive.android.view.FontTextView
+            android:id="@+id/ftv_term_1"
             style="@style/care_classes_term"
             android:text="下" />
-    </RadioGroup>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="100px" >
-
-        <include layout="@layout/include_status" />
-    </RelativeLayout>
-
+    </LinearLayout>
     <!-- 返回键 -->
 
     <Button
         android:id="@+id/bt_care_back"
         android:layout_width="70px"
         android:layout_height="70px"
-        android:layout_x="48px"
-        android:layout_y="122px"
+        android:layout_marginLeft="48px"
+        android:layout_marginTop="122px"
         android:background="@drawable/common_selector_back" />
     <!-- 收藏键 -->
 
@@ -48,8 +40,8 @@
         android:id="@+id/bt_care_coll"
         android:layout_width="70px"
         android:layout_height="70px"
-        android:layout_x="48px"
-        android:layout_y="222px"
+        android:layout_marginLeft="48px"
+        android:layout_marginTop="222px"
         android:background="@drawable/common_selector_coll" />
     <!-- 不认识 -->
 
@@ -57,73 +49,73 @@
         android:id="@+id/bt_care_loc"
         android:layout_width="70px"
         android:layout_height="70px"
-        android:layout_x="48px"
-        android:layout_y="322px"
+        android:layout_marginLeft="48px"
+        android:layout_marginTop="322px"
         android:background="@drawable/common_selector_loc" />
 
     <!-- 一堆条目按钮 -->
 
-    <RadioGroup
-        android:id="@+id/rg_care_classes_topic"
+    <LinearLayout
+        android:id="@+id/ll_care_classes_topic"
         android:layout_width="258px"
         android:layout_height="wrap_content"
-        android:layout_x="230px"
-        android:layout_y="90px"
+        android:layout_marginLeft="230px"
+        android:layout_marginTop="90px"
         android:orientation="vertical" >
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="0"
-            android:id="@+id/rb_care_button1"
+            android:id="@+id/ftv_care_button1"
             style="@style/care_classes_item" />
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="1"
-            android:id="@+id/rb_care_button2"
+            android:id="@+id/ftv_care_button2"
             style="@style/care_classes_item" />
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="2"
-            android:id="@+id/rb_care_button3"
+            android:id="@+id/ftv_care_button3"
             style="@style/care_classes_item" />
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="3"
-            android:id="@+id/rb_care_button4"
+            android:id="@+id/ftv_care_button4"
             style="@style/care_classes_item" />
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="4"
-            android:id="@+id/rb_care_button5"
+            android:id="@+id/ftv_care_button5"
             style="@style/care_classes_item" />
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="5"
-            android:id="@+id/rb_care_button6"
+            android:id="@+id/ftv_care_button6"
             style="@style/care_classes_item" />
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="6"
-            android:id="@+id/rb_care_button7"
+            android:id="@+id/ftv_care_button7"
             style="@style/care_classes_item" />
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="7"
-            android:id="@+id/rb_care_button8"
+            android:id="@+id/ftv_care_button8"
             style="@style/care_classes_item" />
 
-        <com.goodow.drive.android.view.FontRadioButton
+        <com.goodow.drive.android.view.FontTextView
             android:tag="8"
-            android:id="@+id/rb_care_button9"
+            android:id="@+id/ftv_care_button9"
             style="@style/care_classes_item" />
-    </RadioGroup>
+    </LinearLayout>
 
     <!-- 一堆云朵 MODIFY BY DPW order BY FROM LEFT TO RIGHT | FROM TOP TO BOTTOM-->
     <RelativeLayout
         android:id="@+id/rl_act_care_result_container"
         android:layout_width="690dp"
         android:layout_height="480dp"
-        android:layout_x="520dp"
-        android:layout_y="110dp"
+        android:layout_marginLeft="520dp"
+        android:layout_marginTop="110dp"
         >
         <!-- 左一 -->
         <Button
@@ -219,4 +211,4 @@
             android:textColor="#333399"
             />
     </RelativeLayout>
-</AbsoluteLayout>
+</RelativeLayout>

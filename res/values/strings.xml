@@ -60,4 +60,15 @@
     <string name="string_text_happy_baby">快乐宝贝</string>
     <string name="string_text_other">其它</string>
 
+    <string name="string_source_tip0">暂无搜索条件，请点选分类或输入关键字</string>
+    <string name="string_source_tip1">请点选分类或<Data><![CDATA[<b><font color="#cc6600">重新</font></b>]]></Data>输入关键字</string>
+    <string name="string_source_search_hint">请输入关键字</string>
+    <string name="string_source_category1_math">数学</string>
+    <string name="string_source_category1_health">健康</string>
+    <string name="string_source_category1_other">其他领域</string>
+    <string name="string_source_search_result_tip">没有相匹配的文件</string>
+
+    <string name="string_favour_label_tag">活动</string>
+    <string name="string_favour_label_file">文件</string>
+
 </resources>

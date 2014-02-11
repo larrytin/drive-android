@@ -1,5 +1,6 @@
 package com.goodow.drive.android.data;
 
+import com.goodow.drive.android.Constant;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -62,6 +63,18 @@ public class DBDataProvider {
   }
 
   /**
+   * 插入N个文件信息
+   * 
+   * @param context
+   * @param tag
+   * @return
+   * @status tested
+   */
+  public static boolean insertFile(Context context, JsonArray attachments) {
+    return DBOperator2.createFile(context, attachments);
+  }
+
+  /**
    * 插入一个文件信息
    * 
    * @param context
@@ -83,6 +96,18 @@ public class DBDataProvider {
    */
   public static boolean insertStarRelation(Context context, JsonObject star) {
     return DBOperator2.createStarRelation(context, Json.createArray().push(star));
+  }
+
+  /**
+   * 插入N个关系映射的信息
+   * 
+   * @param context
+   * @param tag
+   * @return
+   * @status tested
+   */
+  public static boolean insertTagRelation(Context context, JsonArray tags) {
+    return DBOperator2.createTagRelation(context, tags);
   }
 
   /**
@@ -149,13 +174,43 @@ public class DBDataProvider {
   }
 
   /**
+   * 查询收藏列表
+   * 
+   * @param context
+   * @param type
+   * @return
+   * @status tested
+   */
+  public static JsonArray readStarByType(Context context, String type) {
+    return DBOperator2.readStarByType(context, type);
+  }
+
+  /**
    * 根据文件的标签属性查询文件
    * 
    * @param key
    * @return
    */
-  public static JsonArray searchFilesByKey(Context context, JsonObject key) {
-    return DBOperator2.readFilesByKey(context, key);
-  }
+  public static JsonObject searchFilesByKey(Context context, JsonObject key) {
+    String sql = null;
+    if ("全部".equals(key.getString(Constant.KEY_CONTENTTYPE))) {
+      // 搜索-->“全部”标签下的文件
+      int from = (int) key.getNumber(Constant.KEY_FROM);
+      int size = (int) key.getNumber(Constant.KEY_SIZE);
+      sql = "SELECT * FROM T_FILE ";
+      if (key.getString(Constant.KEY_QUERY) != null) {
+        sql = sql + "WHERE NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%' ";
+      }
+      sql = sql + "limit " + size + " offset " + from;
+      JsonObject attachment =
+          Json.createObject().set(Constant.KEY_SIZE, DBOperator2.readFilesNum(context));
+      attachment.set(Constant.KEY_ATTACHMENTS, DBOperator2.readFilesByKey(context, sql));
+      return attachment;
+    }
 
+    JsonObject attachment =
+        Json.createObject().set(Constant.KEY_SIZE, DBOperator2.readFilesNum(context));
+    attachment.set(Constant.KEY_ATTACHMENTS, DBOperator2.readFilesByKey(context, key));
+    return attachment;
+  }
 }

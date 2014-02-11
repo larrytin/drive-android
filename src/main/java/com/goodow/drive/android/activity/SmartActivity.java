@@ -310,7 +310,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
               msg.set(Constant.KEY_TITLE, title);
               JsonArray tags =
                   Json.createArray().push(Constant.DATAREGISTRY_TYPE_SMART).push(currentGrade)
-                      .push(currentTerm).push(currenTopic).push(title);
+                      .push(termMap.get(currentTerm)).push(currenTopic).push(title);
               msg.set(Constant.KEY_TAGS, tags);
               bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }

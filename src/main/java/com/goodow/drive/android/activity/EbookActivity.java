@@ -409,8 +409,9 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
-            JsonArray tags = (JsonArray) message.body();
-            bindDataToView(tags);
+            JsonObject body = message.body();
+            JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
+            bindDataToView(attachments);
           }
         });
   }

@@ -86,14 +86,38 @@ public class DataRegistry {
         }
       }
     });
-    // 清空数据库所有的数据
-    bus.registerHandler(Constant.ADDR_DB_CLEAN, new MessageHandler<JsonObject>() {
+    // 查询收藏列表
+    bus.registerHandler(Constant.ADDR_TAG_STAR_SEARCH, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        if (DBDataProvider.deleteAllData(context)) {
-          message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
-        } else {
-          message.reply(Json.createObject());
+        JsonObject body = message.body();
+        message.reply(DBDataProvider.readStarByType(context, body.getString(Constant.KEY_TYPE)));
+      }
+    });
+    // 数据库批量测试数据
+    bus.registerHandler(Constant.ADDR_DB, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        String action = body.getString(Constant.KEY_ACTION);
+        if ("delete".equals(action)) {
+          // 清空数据库数据
+          if (DBDataProvider.deleteAllData(context)) {
+            message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
+          }
+        } else if ("put".equals(action)) {
+          String tableName = body.getString("table");
+          if ("T_FILE".equals(tableName)) {
+            // 向文件表中插入数据
+            if (DBDataProvider.insertFile(context, body.getArray("data"))) {
+              message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
+            }
+          } else if ("T_RELATION".equals(tableName)) {
+            // 向标签映射表中插入数据
+            if (DBDataProvider.insertTagRelation(context, body.getArray("data"))) {
+              message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
+            }
+          }
         }
       }
     });

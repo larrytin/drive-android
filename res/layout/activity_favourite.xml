@@ -18,14 +18,42 @@
         android:layout_marginTop="60dp"
         android:src="@drawable/common_selector_back" />
 
+    <com.goodow.drive.android.view.FontTextView
+        android:id="@+id/ft_act_favour_item_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/favour_selector_item_label"
+        android:text="@string/string_favour_label_tag"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:layout_marginLeft="330dp"
+        android:layout_marginTop="200dp"
+        android:gravity="center"
+        android:clickable="true"
+        />
+    <com.goodow.drive.android.view.FontTextView
+        android:id="@+id/ft_act_favour_item_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/favour_selector_item_label"
+        android:text="@string/string_favour_label_file"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:layout_marginLeft="450dp"
+        android:layout_marginTop="200dp"
+        android:gravity="center"
+        android:clickable="true"
+        />
+
     <!-- 内容 -->
     <RelativeLayout
         android:layout_width="1050dp"
-        android:layout_height="550dp"
+        android:layout_height="350dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_marginBottom="100dp"
         android:layout_marginRight="30dp"
-        android:paddingTop="50dp" >
+        >
 
         <!-- 上一页 -->
         <ImageView
@@ -41,9 +69,10 @@
         <!-- 内容 -->
         <android.support.v4.view.ViewPager
             android:id="@+id/vp_act_favour_result"
-            android:layout_width="850dp"
-            android:layout_height="400dp"
-            android:layout_centerHorizontal="true" />
+            android:layout_width="850dp" 
+            android:layout_height="300dp"
+            android:layout_centerHorizontal="true"
+            />
 
         <!-- 下一页 -->
         <ImageView
@@ -65,7 +94,7 @@
             android:layout_centerInParent="true"
             android:orientation="horizontal"
             android:layout_below="@+id/vp_act_favour_result"
-            android:layout_marginTop="20dp" >
+            android:layout_marginTop="10dp" >
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

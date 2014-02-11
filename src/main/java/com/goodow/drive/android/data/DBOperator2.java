@@ -37,6 +37,7 @@ public class DBOperator2 {
       db.beginTransaction();
       for (int i = 0; i < len; i++) {
         JsonObject attachment = attachments.getObject(i);
+        System.out.println(attachment);
         db.execSQL(sql, new String[] {
             attachment.getString(Constant.KEY_ID), attachment.getString(Constant.KEY_NAME),
             attachment.getString(Constant.KEY_CONTENTTYPE),
@@ -309,9 +310,11 @@ public class DBOperator2 {
    * @return
    */
   public static JsonArray readFilesByKey(Context context, JsonObject key) {
+    String sql = null;
+    String[] params = null;
     StringBuilder sqlBuilder = new StringBuilder();
     JsonArray tags = key.getArray(Constant.KEY_TAGS);// 取tags的并集
-    int len_tags = tags.length();
+    int len_tags = tags == null ? 0 : tags.length();
     for (int i = 0; i < len_tags; i++) {
       sqlBuilder.append(
           "SELECT KEY FROM T_RELATION WHERE TAG = '" + tags.getString(i)
@@ -319,32 +322,35 @@ public class DBOperator2 {
     }
     sqlBuilder.delete(sqlBuilder.lastIndexOf("INTERSECT ") >= 0 ? sqlBuilder
         .lastIndexOf("INTERSECT ") : 0, sqlBuilder.length());
-    String sql = null;
-    String[] params = null;
+
     if (key.getString(Constant.KEY_QUERY) != null
         && key.getString(Constant.KEY_CONTENTTYPE) != null) {
-      sqlBuilder.append(" INTERSECT SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
+      sqlBuilder.append(" SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
           + key.getString(Constant.KEY_QUERY) + "%' AND TYPE = 'attachment' ");
       sql =
-          "SELECT * FROM T_FILE WHERE CONTENTTYPE = ? AND UUID IN (" + sqlBuilder.toString() + ")"
+          "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ") AND CONTENTTYPE = ?"
               + " AND NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
       params = new String[] {key.getString(Constant.KEY_CONTENTTYPE)};
     } else if (key.getString(Constant.KEY_QUERY) == null
         && key.getString(Constant.KEY_CONTENTTYPE) != null) {
       sql =
-          "SELECT * FROM T_FILE WHERE CONTENTTYPE = ? AND UUID IN (" + sqlBuilder.toString() + ")";
+          "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ") AND CONTENTTYPE = ? ";
       params = new String[] {key.getString(Constant.KEY_CONTENTTYPE)};
     } else if (key.getString(Constant.KEY_QUERY) != null
         && key.getString(Constant.KEY_CONTENTTYPE) == null) {
-      sqlBuilder.append(" INTERSECT SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
+      sqlBuilder.append(" SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
           + key.getString(Constant.KEY_QUERY) + "%' AND TYPE = 'attachment' ");
       sql =
           "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ")"
               + " AND NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
-
     } else if (key.getString(Constant.KEY_QUERY) == null
         && key.getString(Constant.KEY_CONTENTTYPE) == null) {
       sql = "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ")";
+    }
+    if (key.has(Constant.KEY_SIZE) && key.has(Constant.KEY_FROM)) {
+      sql =
+          sql + " limit " + (int) key.getNumber(Constant.KEY_SIZE) + " offset "
+              + (int) key.getNumber(Constant.KEY_FROM);
     }
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
@@ -365,7 +371,6 @@ public class DBOperator2 {
       }
       db.setTransactionSuccessful();
     } catch (Exception e) {
-      System.out.println();
     } finally {
       db.endTransaction();
       if (cursor != null) {
@@ -374,6 +379,122 @@ public class DBOperator2 {
       db.close();
     }
     return files;
+  }
+
+  /**
+   * 根据文件的标签属性查询文件
+   * 
+   * @param context
+   * @param key
+   * @return
+   */
+  public static JsonArray readFilesByKey(Context context, String sql) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    JsonArray files = Json.createArray();
+    try {
+      db.beginTransaction();
+      cursor = db.rawQuery(sql, null);
+      while (cursor.moveToNext()) {
+        JsonObject file = Json.createObject();
+        file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
+        file.set(Constant.KEY_NAME, cursor.getString(cursor.getColumnIndex("NAME")));
+        file.set(Constant.KEY_CONTENTTYPE, cursor.getString(cursor.getColumnIndex("CONTENTTYPE")));
+        file.set(Constant.KEY_CONTENTLENGTH, cursor.getInt(cursor.getColumnIndex("SIZE")));
+        file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
+        file.set(Constant.KEY_THUMBNAIL, cursor.getString(cursor.getColumnIndex("THUMBNAILS")));
+        files.push(file);
+      }
+      db.setTransactionSuccessful();
+    } catch (Exception e) {
+    } finally {
+      db.endTransaction();
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return files;
+  }
+
+  /**
+   * 查询文件总数量
+   * 
+   * @param context
+   * @return
+   */
+  public static int readFilesNum(Context context) {
+    int result = 0;
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    try {
+      db.beginTransaction();
+      cursor = db.rawQuery("SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE", null);
+      if (cursor.moveToNext()) {
+        result = cursor.getInt((cursor.getColumnIndex("TOTAL_NUM")));
+      }
+      db.setTransactionSuccessful();
+    } catch (Exception e) {
+    } finally {
+      db.endTransaction();
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return result;
+  }
+
+  /**
+   * 根据提供的类型查询收藏信息的集合
+   * 
+   * @param context
+   * @param type
+   * @return TAGS或ATTACHMENTS
+   * @status tested
+   */
+  public static JsonArray readStarByType(Context context, String type) {
+    String sql = "SELECT * FROM T_STAR WHERE TYPE = ? ";
+    if (type.equals("attachment")) {
+      sql = "SELECT * FROM T_FILE WHERE UUID IN ( SELECT TAG FROM T_STAR WHERE TYPE = ? )";
+    }
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    JsonArray result = Json.createArray();
+    try {
+      db.beginTransaction();
+      cursor = db.rawQuery(sql, new String[] {type});
+      if (type.equals("attachment")) {
+        while (cursor.moveToNext()) {
+          JsonObject file = Json.createObject();
+          file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
+          file.set(Constant.KEY_NAME, cursor.getString(cursor.getColumnIndex("NAME")));
+          file.set(Constant.KEY_CONTENTTYPE, cursor.getString(cursor.getColumnIndex("CONTENTTYPE")));
+          file.set(Constant.KEY_CONTENTLENGTH, cursor.getInt(cursor.getColumnIndex("SIZE")));
+          file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
+          file.set(Constant.KEY_THUMBNAIL, cursor.getString(cursor.getColumnIndex("THUMBNAILS")));
+          result.push(file);
+        }
+      } else {
+        while (cursor.moveToNext()) {
+          result.push(Json.createObject().set(Constant.KEY_TYPE,
+              cursor.getString(cursor.getColumnIndex("TYPE"))).set(Constant.KEY_TAG,
+              cursor.getString(cursor.getColumnIndex("TAG"))));
+        }
+      }
+      db.setTransactionSuccessful();
+    } catch (Exception e) {
+    } finally {
+      db.endTransaction();
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return result;
   }
 
   /**

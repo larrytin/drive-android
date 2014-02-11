@@ -262,8 +262,8 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
               msg.set(Constant.KEY_ACTION, "post");
               msg.set(Constant.KEY_TITLE, title);
               JsonArray tags =
-                  Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(currentTerm)
-                      .push(currenTopic).push(title);
+                  Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(
+                      termMap.get(currentTerm)).push(currenTopic).push(title);
               msg.set(Constant.KEY_TAGS, tags);
               bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }

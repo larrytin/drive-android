@@ -9,10 +9,11 @@ public interface Constant {
   String ADDR_ACTIVITY = BusProvider.SID + "activity";
   String ADDR_FILE = BusProvider.SID + "file";
 
-  String ADDR_DB_CLEAN = BusProvider.SID + "db.clean";
+  String ADDR_DB = BusProvider.SID + "db";
   String ADDR_TAG = BusProvider.SID + "tag";
   String ADDR_TAG_CHILDREN = ADDR_TAG + ".children";
   String ADDR_TAG_STAR = BusProvider.SID + "star";
+  String ADDR_TAG_STAR_SEARCH = ADDR_TAG_STAR + ".search";
   String ADDR_TAG_ATTACHMENT = BusProvider.SID + "attachment";
   String ADDR_TAG_ATTACHMENT_SEARCH = ADDR_TAG_ATTACHMENT + ".search";
 
@@ -22,6 +23,11 @@ public interface Constant {
   String TOPIC = "topic"; // 主题的KEY
   String TITLE = "title"; // 活动ITEM显示名称的KEY
   String QUERIES = "queries"; // 活动QUERIES的KEY
+  String CONTENTTYPE = "contentType"; // 搜索的类型
+  String TAGS = "tags"; // 搜索的标签
+  String QUERY = "query"; // 搜索的标签
+  String FILES = "files"; // 搜索的标签
+  String TYPEID = "typeId"; // 搜索类别的ID
 
   String KEY_ACTION = "action";
   String KEY_TYPE = "type";//
@@ -42,6 +48,9 @@ public interface Constant {
   String KEY_URL = "url";//
   String KEY_THUMBNAIL = "thumbnail";//
   String KEY_ATTACHMENT = "attachment";//
+  String KEY_ATTACHMENTS = "attachments";//
+  String KEY_FROM = "from";//
+  String KEY_SIZE = "size";//
 
   // sd卡
   String STORAGE_DIR = "/mnt/sdcard/";
@@ -92,6 +101,7 @@ public interface Constant {
   String DATAREGISTRY_TYPE_SMART = "智能开发";
   String DATAREGISTRY_TYPE_EBOOK = "电子书";
   String DATAREGISTRY_TYPE_FAVOURITE = "收藏";
+  String DATAREGISTRY_TYPE_SOURCE = "资源库";
 
   String DATA_PATH = "goodow/drive";// 数据存放位置
   String FONT_PATH = "fonts/font.ttf";// 字体的路径

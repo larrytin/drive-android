@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
+import com.goodow.drive.android.view.FontTextView;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -31,7 +33,12 @@ import android.widget.Toast;
 public class FavouriteActivity extends BaseActivity implements OnClickListener,
     OnPageChangeListener {
 
+  private static final String LABEL_TAG = "tag";
+  private static final String LABEL_ATTACHMENT = "attachment";
+  private String currentLabel = LABEL_TAG;
   private ImageView iv_act_favour_back = null;
+  private FontTextView ft_act_favour_item_activity = null;
+  private FontTextView ft_act_favour_item_file = null;
   private ImageView iv_act_favour_result_pre = null;
   private ImageView iv_act_favour_result_next = null;
   private ViewPager vp_act_favour_result = null;
@@ -40,11 +47,12 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   private JsonArray activities = null;
 
   private final ArrayList<View> tempView = new ArrayList<View>();
-  private final int numPerPage = 15; // 查询结果每页显示15条数据
+  private final int numPerPage = 10; // 查询结果每页显示10条数据
   private final int numPerLine = 5; // 每条显示五个数据
 
   private int currentPageNum = 0;
   private int totalPageNum = 0;
+  private LayoutInflater inflater = null;
 
   private HandlerRegistration registerPostHandler;
 
@@ -59,6 +67,11 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
         JsonObject msg = Json.createObject();
         msg.set("return", true);
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+        break;
+      //
+      case R.id.ft_act_favour_item_activity:
+      case R.id.ft_act_favour_item_file:
+        onLabelChange(v.getId());
         break;
       // 翻页的点击事件
       case R.id.iv_act_favour_result_pre:
@@ -112,16 +125,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_favourite);
     this.initView();
-    this.bindDataToView(0);
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject body = (JsonObject) extras.get("msg");
-    JsonArray activities = body.getArray("activities");
-    if (activities == null) {
-      this.sendQueryMessage();
-    } else {
-      this.activities = activities;
-      bindDataToView(0);
-    }
+    this.sendQueryMessage(this.currentLabel);
   }
 
   @Override
@@ -277,10 +281,16 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
             break;
           }
           // 构建ItemView对象
-          View view = this.buildItemView(this.activities.getObject(index), index, i);
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-          params.setMargins(10, 15, 10, 15);
+          View view = null;
+          if (this.currentLabel.equals(LABEL_TAG)) {
+            view = this.buildTagItemView(this.activities.getObject(index), index, i);
+            params.setMargins(10, 15, 10, 15);
+          } else if (this.currentLabel.equals(LABEL_ATTACHMENT)) {
+            view = this.buildAttachmentView(this.activities.getObject(index), index, i);
+            params.setMargins(10, 5, 10, 5);
+          }
           view.setLayoutParams(params);
           innerContainer.addView(view);
           index++;
@@ -319,7 +329,100 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    * @param pageNum 条目所处的页码
    * @return
    */
-  private View buildItemView(JsonObject activity, int index, int pageNum) {
+  private View buildAttachmentView(final JsonObject activity, final int index, int pageNum) {
+    RelativeLayout itemContainer =
+        (RelativeLayout) this.inflater.inflate(R.layout.activity_source_search_result_item, null);
+
+    ImageView imageView =
+        (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_icon);
+    imageView.setBackgroundResource(R.drawable.case_item_bg);
+
+    String title = activity.getString(Constant.KEY_NAME);
+    TextView textView =
+        (TextView) itemContainer.findViewById(R.id.tv_act_source_search_result_item_filename);
+    textView.setWidth(150);
+    textView.setTextSize(16);
+    textView.setMaxLines(2);
+    textView.setGravity(Gravity.CENTER_HORIZONTAL);
+    if (title.matches("^\\d{4}.*")) {
+      textView.setText(title.substring(4, title.length()));
+    } else {
+      textView.setText(title);
+    }
+
+    RelativeLayout.LayoutParams params =
+        new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+    final ImageView imageViewFlag =
+        (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_flag);
+    params.setMargins(100, 20, 0, 0);
+    imageViewFlag.setLayoutParams(params);
+    imageView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (imageViewFlag.getVisibility() == View.VISIBLE) {
+          imageViewFlag.setVisibility(View.INVISIBLE);
+        } else {
+          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+              activity.getString(Constant.KEY_URL)), null);
+        }
+      }
+    });
+
+    imageView.setOnLongClickListener(new OnLongClickListener() {
+
+      @Override
+      public boolean onLongClick(View v) {
+        if (imageViewFlag.getTag() == null
+            || (!imageViewFlag.getTag().toString().equals("0") && !imageViewFlag.getTag()
+                .toString().equals("1"))) {
+          imageViewFlag.setBackgroundResource(R.drawable.favour_file_delete);
+          imageViewFlag.setVisibility(View.VISIBLE);
+          imageViewFlag.setTag("0");
+        } else {
+          imageViewFlag.setVisibility(View.INVISIBLE);
+        }
+        return true;
+      }
+    });
+
+    imageViewFlag.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        JsonObject msg = Json.createObject();
+        msg.set(Constant.KEY_ACTION, "delete");
+        msg.set(Constant.KEY_STARS, Json.createArray().push(
+            Json.createObject().set(Constant.KEY_TYPE, "attachment").set(Constant.KEY_KEY,
+                activity.getString(Constant.KEY_ID))));
+        bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if ("ok".equalsIgnoreCase(body.getString(Constant.KEY_STATUS))) {
+              Toast.makeText(FavouriteActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+              imageViewFlag.setBackgroundResource(R.drawable.source_favourited);
+              imageViewFlag.setTag("1");
+              activities.remove(index);
+              bindDataToView(currentPageNum);
+            } else {
+              Toast.makeText(FavouriteActivity.this, "删除失败，请重试", Toast.LENGTH_SHORT).show();
+            }
+          }
+        });
+      }
+    });
+
+    return itemContainer;
+  }
+
+  /**
+   * 构建条目View对象
+   * 
+   * @param name 条目要显示的名称
+   * @param index 条目的数据在数据集中的下标
+   * @param pageNum 条目所处的页码
+   * @return
+   */
+  private View buildTagItemView(final JsonObject activity, final int index, int pageNum) {
     RelativeLayout itemContainer = new RelativeLayout(this);
     itemContainer.setClickable(true);
 
@@ -329,7 +432,8 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     textView.setTextColor(Color.BLACK);
     textView.setTextSize(18);
     textView.setMaxLines(2);
-    String title = activity.getString(Constant.TITLE);
+    JsonArray tags = Json.parse(activity.getString(Constant.KEY_TAG));
+    String title = tags.getString(tags.length() - 1);
     if (title.matches("^\\d{4}.*")) {
       textView.setText(title.substring(4, title.length()));
     } else {
@@ -402,11 +506,23 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
       @Override
       public void onClick(View v) {
         JsonObject msg = Json.createObject();
-        msg.set("action", "delete");
-        JsonArray delActivities = Json.createArray();
-        delActivities.insert(0, v.getTag());
-        msg.set("activities", delActivities);
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
+        msg.set(Constant.KEY_ACTION, "delete");
+        msg.set(Constant.KEY_STARS, Json.createArray().push(
+            Json.createObject().set(Constant.KEY_TYPE, "tag").set(Constant.KEY_KEY,
+                activity.getString(Constant.KEY_TAG))));
+        bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if ("ok".equalsIgnoreCase(body.getString(Constant.KEY_STATUS))) {
+              Toast.makeText(FavouriteActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+              activities.remove(index);
+              bindDataToView(currentPageNum);
+            } else {
+              Toast.makeText(FavouriteActivity.this, "删除失败，请重试", Toast.LENGTH_SHORT).show();
+            }
+          }
+        });
       }
     });
 
@@ -417,8 +533,15 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    * 初始化View
    */
   private void initView() {
+    this.inflater = LayoutInflater.from(this);
     this.iv_act_favour_back = (ImageView) this.findViewById(R.id.iv_act_favour_back);
     this.iv_act_favour_back.setOnClickListener(this);
+    this.ft_act_favour_item_activity =
+        (FontTextView) this.findViewById(R.id.ft_act_favour_item_activity);
+    this.ft_act_favour_item_activity.setOnClickListener(this);
+    this.ft_act_favour_item_activity.setSelected(true);
+    this.ft_act_favour_item_file = (FontTextView) this.findViewById(R.id.ft_act_favour_item_file);
+    this.ft_act_favour_item_file.setOnClickListener(this);
     this.iv_act_favour_result_pre = (ImageView) this.findViewById(R.id.iv_act_favour_result_pre);
     this.iv_act_favour_result_pre.setOnClickListener(this);
     this.iv_act_favour_result_next = (ImageView) this.findViewById(R.id.iv_act_favour_result_next);
@@ -426,6 +549,28 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     this.vp_act_favour_result = (ViewPager) this.findViewById(R.id.vp_act_favour_result);
     this.vp_act_favour_result.setOnPageChangeListener(this);
     this.ll_act_favour_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_favour_result_bar);
+  }
+
+  /**
+   * 叶签切换的点击事件
+   * 
+   * @param id
+   */
+  private void onLabelChange(int id) {
+    if (id == R.id.ft_act_favour_item_activity) {
+      this.ft_act_favour_item_file.setSelected(false);
+      this.ft_act_favour_item_activity.setSelected(true);
+      this.currentLabel = LABEL_TAG;
+    } else if (id == R.id.ft_act_favour_item_file) {
+      this.ft_act_favour_item_file.setSelected(true);
+      this.ft_act_favour_item_activity.setSelected(false);
+      this.currentLabel = LABEL_ATTACHMENT;
+      this.vp_act_favour_result.removeAllViews();
+      this.ll_act_favour_result_bar.removeAllViews();
+      this.iv_act_favour_result_pre.setVisibility(View.INVISIBLE);
+      this.iv_act_favour_result_next.setVisibility(View.INVISIBLE);
+    }
+    this.sendQueryMessage(this.currentLabel);
   }
 
   /**
@@ -448,17 +593,13 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   /**
    * 构建查询的bus消息进行get查询
    */
-  private void sendQueryMessage() {
+  private void sendQueryMessage(String type) {
     JsonObject msg = Json.createObject();
-    msg.set("action", "get");
-    JsonObject queries = Json.createObject();
-    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE);
-    msg.set(Constant.QUERIES, queries);
-    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
+    msg.set(Constant.KEY_TYPE, type);
+    bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR_SEARCH, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        activities = body.getArray("activities");
+        activities = (JsonArray) message.body();
         bindDataToView(currentPageNum);
       }
     });

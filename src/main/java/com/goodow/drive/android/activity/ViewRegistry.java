@@ -122,6 +122,9 @@ public class ViewRegistry {
         } else if (Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {
           // 图画书
           intent = new Intent(ctx, EbookActivity.class);
+        } else if (Constant.DATAREGISTRY_TYPE_SOURCE.equals(type)) {
+          // 资源库
+          intent = new Intent(ctx, SourceActivity.class);
         } else {
           // 其他
           Toast.makeText(ctx, "不支持" + type, Toast.LENGTH_LONG).show();

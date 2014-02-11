@@ -190,6 +190,14 @@
             >
         </activity>
 
+        <!-- 资源库 -->
+        <activity
+            android:name="com.goodow.drive.android.activity.SourceActivity"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
+        </activity>
+
     </application>
 
 </manifest>
