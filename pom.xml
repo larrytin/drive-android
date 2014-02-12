@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.goodow.realtime</groupId>
     <artifactId>realtime-parent</artifactId>
-    <version>0.5.1-SNAPSHOT</version>
+    <version>0.5.5-SNAPSHOT</version>
   </parent>
   <groupId>com.goodow.drive</groupId>
   <artifactId>drive-android</artifactId>
