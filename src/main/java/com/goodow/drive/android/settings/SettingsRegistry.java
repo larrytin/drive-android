@@ -10,7 +10,10 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import java.io.File;
+
 import android.app.Instrumentation;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -18,6 +21,7 @@ import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
@@ -240,6 +244,24 @@ public class SettingsRegistry {
 
         }
       }
+    });
+    bus.registerHandler(BusProvider.SID + "print", new MessageHandler<JsonObject>() {
+
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
+        if (!msg.has("path")) {
+          return;
+        }
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setComponent(new ComponentName("com.dynamixsoftware.printhand",
+            "com.dynamixsoftware.printhand.ui.ActivityPreviewImages"));
+        intent.setType("image/*");
+        File file = new File(msg.getString("path"));
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+        ctx.startActivity(intent);
+      }
+
     });
 
   }

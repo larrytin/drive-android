@@ -13,6 +13,12 @@ import com.goodow.realtime.json.JsonObject;
 
 import java.io.File;
 
+import android.opengl.Visibility;
+
+import android.content.pm.PackageInfo;
+
+import android.content.pm.PackageManager.NameNotFoundException;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -54,6 +60,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   private boolean isDrawing = false;
   private static final int MESSAGE_CODE_DISSMISS_BAR = 0;
   private ImageView iv_include_picture_pen = null;
+  private ImageView iv_include_picture_print;
   // 延迟时间
   private final static int DELAYTIME = 7 * 1000;
 
@@ -116,6 +123,11 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
       case R.id.iv_include_picture_eraser:
         bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject()
             .set("clear", true), null);
+        break;
+      //打印
+      case R.id.iv_include_picture_print:
+        bus.send(Bus.LOCAL + BusProvider.SID + "print", Json.createObject().set("path", path),
+            null);
         break;
       default:
         break;
@@ -360,6 +372,17 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     this.ll_include_picture_tools = (LinearLayout) this.findViewById(R.id.ll_include_picture_tools);
     this.iv_include_picture_pen =
         (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_pen);
+    iv_include_picture_print= (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_print);
+    PackageInfo packageInfo;
+    try {
+      packageInfo = this.getPackageManager().getPackageInfo("com.dynamixsoftware.printhand", 0);
+    } catch (NameNotFoundException e) {
+      packageInfo = null;
+      e.printStackTrace();
+    }
+    if (packageInfo == null) {
+      iv_include_picture_print.setVisibility(View.GONE);
+    }
     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
     controlRectRight =
         new Rect(displayMetrics.widthPixels / 3 * 2, 0, displayMetrics.widthPixels,

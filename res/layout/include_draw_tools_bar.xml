@@ -54,4 +54,14 @@
         android:onClick="onBarClick"
         android:layout_weight="1"
         />
+    <ImageView
+        android:id="@+id/iv_include_picture_print"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:src="@drawable/image_selector_print"
+        android:clickable="true"
+        android:onClick="onBarClick"
+        android:layout_weight="1"
+        />
+    
 </LinearLayout>
