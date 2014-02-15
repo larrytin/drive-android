@@ -15,7 +15,7 @@ package com.goodow.drive.android;
 
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.Bus;
-import com.goodow.realtime.channel.impl.WebSocketBusClient;
+import com.goodow.realtime.channel.impl.ReconnectBusClient;
 import com.goodow.realtime.json.Json;
 
 /**
@@ -28,7 +28,7 @@ public final class BusProvider {
   static {
     AndroidPlatform.register();
   }
-  private static final WebSocketBusClient BUS = new WebSocketBusClient("ws://" + HOST
+  private static final ReconnectBusClient BUS = new ReconnectBusClient("ws://" + HOST
       + "/eventbus/websocket", Json.createObject().set("forkLocal", true));
 
   public static Bus get() {
