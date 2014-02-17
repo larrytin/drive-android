@@ -9,12 +9,39 @@ public interface Constant {
   String ADDR_ACTIVITY = BusProvider.SID + "activity";
   String ADDR_FILE = BusProvider.SID + "file";
 
+  String ADDR_DB_CLEAN = BusProvider.SID + "db.clean";
+  String ADDR_TAG = BusProvider.SID + "tag";
+  String ADDR_TAG_CHILDREN = ADDR_TAG + ".children";
+  String ADDR_TAG_STAR = BusProvider.SID + "star";
+  String ADDR_TAG_ATTACHMENT = BusProvider.SID + "attachment";
+  String ADDR_TAG_ATTACHMENT_SEARCH = ADDR_TAG_ATTACHMENT + ".search";
+
   String TYPE = "type"; // 功能模块的KEY
   String GRADE = "grade"; // 年级的KEY
   String TERM = "term"; // 学期的KEY
   String TOPIC = "topic"; // 主题的KEY
   String TITLE = "title"; // 活动ITEM显示名称的KEY
   String QUERIES = "queries"; // 活动QUERIES的KEY
+
+  String KEY_ACTION = "action";
+  String KEY_TYPE = "type";//
+  String KEY_QUERY = "query";//
+  String KEY_KEY = "key";//
+  String KEY_STAR = "star";//
+  String KEY_STARS = "stars";//
+  String KEY_TAG = "tag";//
+  String KEY_TAGS = "tags";//
+  String KEY_LABEL = "label";//
+  String KEY_STATUS = "status";//
+  String KEY_ID = "id";//
+  String KEY_IDS = "ids";//
+  String KEY_TITLE = "title";//
+  String KEY_NAME = "name";//
+  String KEY_CONTENTTYPE = "contentType";//
+  String KEY_CONTENTLENGTH = "contentLength";//
+  String KEY_URL = "url";//
+  String KEY_THUMBNAIL = "thumbnail";//
+  String KEY_ATTACHMENT = "attachment";//
 
   // sd卡
   String STORAGE_DIR = "/mnt/sdcard/";

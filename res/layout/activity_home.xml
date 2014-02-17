@@ -21,6 +21,7 @@
           android:id="@+id/iv_act_main_coll"
           style="@style/index_sys_fun"
           android:src="@drawable/common_selector_coll"
+          android:tag="收藏"
           />
       <ImageView
           android:id="@+id/iv_act_main_loc"
@@ -56,12 +57,14 @@
           android:id="@+id/iv_act_main_har"
           style="@style/index_sys_fun"
           android:src="@drawable/index_selector_har"
+          android:tag="和谐"
           />
       <ImageView
           android:id="@+id/iv_act_main_ship"
           style="@style/index_sys_fun"
           android:src="@drawable/index_selector_ship"
           android:layout_below="@+id/iv_act_main_har"
+          android:tag="托班"
           />
     </RelativeLayout>
     
@@ -73,6 +76,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="@dimen/index_rl_tech_layout_marginLeft"
         android:layout_marginTop="@dimen/index_rl_tech_layout_marginTop"
+        android:tag="示范课"
         />
     
     
@@ -88,18 +92,21 @@
           android:id="@+id/iv_act_main_pre"
           style="@style/index_sys_fun"
           android:src="@drawable/index_selector_pre"
+          android:tag="入学准备"
           />
       <ImageView
           android:id="@+id/iv_act_main_smart"
           style="@style/index_sys_fun"
           android:src="@drawable/index_selector_smart"
           android:layout_below="@+id/iv_act_main_pre"
+          android:tag="智能开发"
           />
       <ImageView
           android:id="@+id/iv_act_main_ebk"
           style="@style/index_sys_fun"
           android:src="@drawable/index_selector_ebk"
           android:layout_below="@+id/iv_act_main_smart"
+          android:tag="电子书"
           />
     </RelativeLayout>
 

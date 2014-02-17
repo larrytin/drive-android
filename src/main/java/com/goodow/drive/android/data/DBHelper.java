@@ -34,10 +34,37 @@ public class DBHelper extends SQLiteOpenHelper {
   @Override
   public void onCreate(SQLiteDatabase db) {
 
+    /*
+     * 创建收藏表
+     */
     db.execSQL("CREATE TABLE T_FAVOURITE(" + "id integer primary key autoincrement,"
         + "FAVOURITEID varchar(80)," + "TYPE varchar(100)," + "GRADE varchar(100),"
         + "TERM varchar(100)," + "TOPIC varchar(100)," + "TITLE varchar(100),"
         + "CREATETIME varchar(20)," + "UPDATETIME varchar(20))");
+
+    /*
+     * 创建文件表
+     */
+    db.execSQL("CREATE TABLE T_FILE(UUID varchar(80) primary key NOT NULL ,"
+        + "FULLNAME varchar(200) NOT NULL ,SHORTNAME varchar(50) NOT NULL ,"
+        + "CONTENTTYPE varchar(300) DEFAULT NULL ,SIZE int(11) NOT NULL ,"
+        + "FILEPATH varchar(500) NOT NULL ,THUMBNAILS varchar(500) DEFAULT NULL ,"
+        + "CREATETIME varchar(45) DEFAULT NULL ,UPDATETIME varchar(45) DEFAULT NULL )");
+
+    /*
+     * 创建标签映射表
+     */
+    db.execSQL("CREATE TABLE T_RELATION(TYPE varchar(80) NOT NULL ,"
+        + "KEY varchar(80) NOT NULL ,TAG varchar(80) NOT NULL ,"
+        + "CREATETIME varchar(45) DEFAULT NULL ,UPDATETIME varchar(45) DEFAULT NULL, PRIMARY KEY (TYPE,KEY,TAG))");
+
+    /*
+     * 创建收藏映射表
+     */
+    db.execSQL("CREATE TABLE T_STAR(TYPE varchar(80) NOT NULL, "
+        + "TAG varchar(500) NOT NULL ,USER_ID varchar(80) DEFAULT NULL ,"
+        + "CREATETIME varchar(45) DEFAULT NULL ,UPDATETIME varchar(45) DEFAULT NULL, PRIMARY KEY (TYPE,TAG))");
+
   }
 
   @Override

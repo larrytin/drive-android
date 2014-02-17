@@ -22,6 +22,119 @@ public class DataRegistry {
   }
 
   public void subscribe() {
+    // 标签映射的增删改查
+    bus.registerHandler(Constant.ADDR_TAG, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        if ("get".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 查询标签明细 (未使用)
+          // JsonObject tag = body.getObject(Constant.KEY_TAG);
+          // message.reply(DBDataProvider.queryTagInfo(context, tag));
+        } else if ("post".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 添加戓修改
+          JsonObject tag = body.getObject(Constant.KEY_TAG);
+          JsonObject msg = Json.createObject();
+          if (DBDataProvider.insertTagRelation(context, tag)) {
+            msg.set(Constant.KEY_STATUS, "ok");
+          }
+          message.reply(msg);
+        } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 删除
+          JsonArray tags = body.getArray(Constant.KEY_TAGS);
+          JsonObject msg = Json.createObject();
+          if (DBDataProvider.deleteTagRelation(context, tags)) {
+            msg.set(Constant.KEY_STATUS, "ok");
+          }
+          message.reply(msg);
+        }
+      }
+    });
+    // 查询同时属于N标签的子标签
+    bus.registerHandler(Constant.ADDR_TAG_CHILDREN, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonArray tags = message.body().getArray(Constant.KEY_TAGS);
+        message.reply(DBDataProvider.querySubTagsInfo(context, tags));
+      }
+    });
+    // 收藏的增删改查
+    bus.registerHandler(Constant.ADDR_TAG_STAR, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        if ("get".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 查询收藏明细
+          JsonObject star = body.getObject(Constant.KEY_STAR);
+          message.reply(DBDataProvider.queryStarInfo(context, star));
+        } else if ("post".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 添加戓修改
+          JsonObject star = body.getObject(Constant.KEY_STAR);
+          JsonObject msg = Json.createObject();
+          if (DBDataProvider.insertStarRelation(context, star)) {
+            msg.set(Constant.KEY_STATUS, "ok");
+          }
+          message.reply(msg);
+        } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 删除收藏
+          JsonArray stars = body.getArray(Constant.KEY_STARS);
+          JsonObject msg = Json.createObject();
+          if (DBDataProvider.deleteStarRelation(context, stars)) {
+            msg.set(Constant.KEY_STATUS, "ok");
+          }
+          message.reply(msg);
+        }
+      }
+    });
+    // 清空数据库所有的数据
+    bus.registerHandler(Constant.ADDR_DB_CLEAN, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        if (DBDataProvider.deleteAllData(context)) {
+          message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
+        } else {
+          message.reply(Json.createObject());
+        }
+      }
+    });
+    // 文件的增删改查询
+    bus.registerHandler(Constant.ADDR_TAG_ATTACHMENT, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        if ("get".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 查询收藏明细
+          String id = body.getString(Constant.KEY_ID);
+          message.reply(DBDataProvider.queryFileById(context, id));
+        } else if ("post".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 添加戓修改
+          JsonObject attachment = body.getObject(Constant.KEY_ATTACHMENT);
+          JsonObject msg = Json.createObject();
+          if (DBDataProvider.insertFile(context, attachment)) {
+            msg.set(Constant.KEY_STATUS, "ok");
+          }
+          message.reply(msg);
+        } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
+          // 删除文件
+          JsonArray ids = body.getArray(Constant.KEY_IDS);
+          JsonObject msg = Json.createObject();
+          if (DBDataProvider.deleteFiles(context, ids)) {
+            msg.set(Constant.KEY_STATUS, "ok");
+          }
+          message.reply(msg);
+        }
+      }
+    });
+
+    // 文件的搜索
+    bus.registerHandler(Constant.ADDR_TAG_ATTACHMENT_SEARCH, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject key = message.body();
+        message.reply(DBDataProvider.searchFilesByKey(context, key));
+      }
+    });
+
     // 活动详情
     bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
       @Override
@@ -134,7 +247,6 @@ public class DataRegistry {
         message.reply(msg);
         // System.out.println(msg);
       }
-
     });
 
     bus.registerHandler(Constant.ADDR_FILE, new MessageHandler<JsonObject>() {
@@ -149,8 +261,6 @@ public class DataRegistry {
           Toast.makeText(context, "需要传入path", Toast.LENGTH_SHORT).show();
         }
       }
-
     });
-
   }
 }

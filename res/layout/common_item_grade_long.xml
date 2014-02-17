@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.goodow.drive.android.view.FontTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/style_common_grade"
+    android:layout_width="90dp"
+    android:background="@drawable/common_selector_grade_long"
+/>

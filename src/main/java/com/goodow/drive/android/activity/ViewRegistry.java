@@ -82,7 +82,7 @@ public class ViewRegistry {
           return;
         }
         Intent intent = new Intent(ctx, BehaveActivity.class);
-        intent.putExtra("msg", msg);
+        intent.putExtra("msg", msg);// 原先版本的KEY
         ctx.startActivity(intent);
       }
     });

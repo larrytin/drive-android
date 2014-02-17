@@ -22,6 +22,42 @@ import android.database.sqlite.SQLiteDatabase;
 public class DBOperator {
 
   /**
+   * 创建类别
+   * 
+   * @param context
+   * @param catagories
+   * @return 执行结果
+   */
+  public static boolean createCatagories(Context context, JsonArray catagories) {
+    boolean result = false;
+    int len = catagories.length();
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    try {
+      db.beginTransaction();
+      for (int i = 0; i < len; i++) {
+        JsonObject catagory = catagories.getObject(i);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("UUID", catagory.getString("id"));
+        contentValues.put("PUUID", catagory.getString("parent"));
+        contentValues.put("NAME", catagory.getString("name"));
+        contentValues.put("DESCRIPTION", "description");
+        contentValues.put("CREATETIME", DeviceInformationTools.getDateTime());
+        contentValues.put("UPDATETIME", DeviceInformationTools.getDateTime());
+        db.insert("T_CATAGORY", null, contentValues);
+      }
+      db.setTransactionSuccessful();
+      result = true;
+    } catch (Exception e) {
+      result = false;
+    } finally {
+      db.endTransaction();
+      db.close();
+    }
+    return result;
+  }
+
+  /**
    * 创建收藏
    * 
    * @param context
@@ -190,7 +226,6 @@ public class DBOperator {
     try {
       db.beginTransaction();
       cursor = db.rawQuery("SELECT * FROM T_FAVOURITE", null);
-      int index = 0;
       while (cursor.moveToNext()) {
         JsonObject activity = Json.createObject();
         JsonObject queries = Json.createObject();
@@ -205,8 +240,7 @@ public class DBOperator {
         queries.set(Constant.TOPIC, topic);
         activity.set(Constant.QUERIES, queries);
         activity.set(Constant.TITLE, title);
-        activitys.insert(index, activity);
-        index++;
+        activitys.push(activity);
       }
       db.setTransactionSuccessful();
     } catch (Exception e) {
@@ -218,5 +252,98 @@ public class DBOperator {
       db.close();
     }
     return activitys;
+  }
+
+  /**
+   * 根据父ID查询其下的所有文件
+   * 
+   * @param context
+   * @param catagory
+   * @return
+   */
+  public static JsonArray readAllFileByParent(Context context, String parentId) {
+    JsonArray files = Json.createArray();
+    String sql =
+        "SELECT UUID,FULLNAME,SHORTNAME,CONTENTTYPE,SIZE,FILEPATH,THUMBNAILS FROM T_FILE WHERE UUID IN (SELECT FILE_ID FROM T_CATAGORY_FILE WHERE CATAGORY_ID = '"
+            + parentId + "')";
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    try {
+      db.beginTransaction();
+      cursor = db.rawQuery(sql, null);
+      while (cursor.moveToNext()) {
+        JsonObject file = Json.createObject();
+        file.set("id", cursor.getString(cursor.getColumnIndex("UUID")));
+        file.set("name", cursor.getString(cursor.getColumnIndex("FULLNAME")));
+        file.set("title", cursor.getString(cursor.getColumnIndex("SHORTNAME")));
+        file.set("contentType", cursor.getString(cursor.getColumnIndex("CONTENTTYPE")));
+        file.set("contentLenght", cursor.getString(cursor.getColumnIndex("SIZE")));
+        file.set("url", cursor.getString(cursor.getColumnIndex("FILEPATH")));
+        file.set("thumbnail", cursor.getString(cursor.getColumnIndex("THUMBNAILS")));
+        files.push(file);
+      }
+      db.setTransactionSuccessful();
+    } catch (Exception e) {
+    } finally {
+      db.endTransaction();
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return files;
+  }
+
+  /**
+   * 根据若干类别的名称查询其下的所有子类别的ID
+   * 
+   * @param context
+   * @param catagory
+   * @return
+   */
+  public static JsonArray readAllLastIdCatagroyByParent(Context context, JsonArray catagories) {
+    if (catagories == null) {
+      return null;
+    }
+    int len_files = catagories.length();
+    if (len_files == 0) {
+      return null;
+    }
+    String sql =
+        "SELECT UUID FROM T_CATAGORY WHERE NAME = '" + catagories.getObject(0).getString("name")
+            + "'";
+    if (len_files > 1) {
+      for (int i = 1; i < len_files; i++) {
+        sql =
+            "SELECT UUID FROM T_CATAGORY WHERE NAME = '"
+                + catagories.getObject(i).getString("name") + "' AND PUUID IN (" + sql + ")";
+      }
+    }
+    sql = "SELECT UUID,PUUID,NAME FROM T_CATAGORY WHERE PUUID IN (" + sql + ")";
+    catagories.clear();
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    try {
+      db.beginTransaction();
+      cursor = db.rawQuery(sql, null);
+      while (cursor.moveToNext()) {
+        JsonObject catagory = Json.createObject();
+        catagory.set("id", cursor.getString(cursor.getColumnIndex("UUID")));
+        catagory.set("parent", cursor.getString(cursor.getColumnIndex("PUUID")));
+        catagory.set("name", cursor.getString(cursor.getColumnIndex("NAME")));
+        catagories.push(catagory);
+      }
+      db.setTransactionSuccessful();
+    } catch (Exception e) {
+    } finally {
+      db.endTransaction();
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return catagories;
   }
 }
