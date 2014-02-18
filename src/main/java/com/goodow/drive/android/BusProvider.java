@@ -16,6 +16,8 @@ package com.goodow.drive.android;
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.impl.ReconnectBusClient;
+import com.goodow.realtime.channel.impl.SimpleBus;
+import com.goodow.realtime.channel.impl.WebSocketBusClient;
 import com.goodow.realtime.json.Json;
 
 /**
@@ -28,11 +30,22 @@ public final class BusProvider {
   static {
     AndroidPlatform.register();
   }
+  private static final ReconnectBusClient ConnectBUS = new ReconnectBusClient("ws://" + HOST
+      + "/eventbus/websocket", Json.createObject().set(ReconnectBusClient.AUTO_RECONNECT, false)
+      .set(SimpleBus.MODE_MIX, true).set(WebSocketBusClient.PING_INTERVAL, Integer.MAX_VALUE));
   private static final ReconnectBusClient BUS = new ReconnectBusClient("ws://" + HOST
-      + "/eventbus/websocket", Json.createObject().set("forkLocal", true));
+      + "/eventbus/websocket", Json.createObject().set(SimpleBus.MODE_MIX, true));
+
+  // // 发布时使用
+  // private static final Bus BUS = new SimpleBus(Json.createObject().set(SimpleBus.MODE_MIX,
+  // true));
 
   public static Bus get() {
     return BUS;
+  }
+
+  public static ReconnectBusClient getConnectBus() {
+    return ConnectBUS;
   }
 
   public static void reconnect() {

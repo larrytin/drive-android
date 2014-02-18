@@ -14,7 +14,12 @@ import com.goodow.realtime.json.JsonObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -63,6 +68,8 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
 
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
+  public static final String USAGE_STATISTIC = "USAGE_STATISTIC";
+  private SharedPreferences usagePreferences;
 
   @Override
   public void onClick(View v) {
@@ -153,6 +160,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     } else {
       Toast.makeText(this, "数据不完整，请重试", Toast.LENGTH_SHORT).show();
     }
+    usagePreferences = getSharedPreferences(USAGE_STATISTIC, Context.MODE_PRIVATE);
   }
 
   @Override
@@ -251,6 +259,18 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
               String path = v.getTag().toString();
               bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", path).set(
                   "play", 1), null);
+              // acctachment
+              String attachment = path;
+              // 此处记录打开的时间
+              Set<String> fileOpenInfo =
+                  usagePreferences.getStringSet(attachment, new TreeSet<String>());
+              fileOpenInfo.add(System.currentTimeMillis() + "");
+              Editor editor = usagePreferences.edit();
+              // 如果存在，移除key
+              if (usagePreferences.contains(attachment)) {
+                editor.remove(attachment).commit();
+              }
+              editor.putStringSet(attachment, fileOpenInfo).commit();
             }
           });
           innerContainer.addView(view);

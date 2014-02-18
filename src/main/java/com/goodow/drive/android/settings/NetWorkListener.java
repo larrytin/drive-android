@@ -43,7 +43,8 @@ public class NetWorkListener {
       JsonObject info =
           Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
               getStrength());
-      bus.send(Bus.LOCAL + ADDR, info, null);
+      // bus.send(Bus.LOCAL + ADDR, info, null);
+      bus.publish(Bus.LOCAL + ADDR, info);
     }
   }
 
@@ -95,7 +96,8 @@ public class NetWorkListener {
       JsonObject info =
           Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
               getStrength());
-      bus.send(Bus.LOCAL + ADDR, info, null);
+      // bus.send(Bus.LOCAL + ADDR, info, null);
+      bus.publish(Bus.LOCAL + ADDR, info);
     }
   };
   private HandlerRegistration getHander;
