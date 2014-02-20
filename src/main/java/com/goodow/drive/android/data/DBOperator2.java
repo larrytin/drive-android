@@ -28,7 +28,7 @@ public class DBOperator2 {
    */
   public static boolean createFile(Context context, JsonArray attachments) {
     String sql =
-        "REPLACE INTO T_FILE(UUID,FULLNAME,SHORTNAME,CONTENTTYPE,SIZE,FILEPATH,THUMBNAILS)VALUES(?,?,?,?,?,?,?)";
+        "REPLACE INTO T_FILE(UUID,NAME,CONTENTTYPE,SIZE,FILEPATH,THUMBNAILS)VALUES(?,?,?,?,?,?)";
     boolean result = false;
     int len = attachments.length();
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
@@ -39,9 +39,8 @@ public class DBOperator2 {
         JsonObject attachment = attachments.getObject(i);
         db.execSQL(sql, new String[] {
             attachment.getString(Constant.KEY_ID), attachment.getString(Constant.KEY_NAME),
-            attachment.getString(Constant.KEY_TITLE),
             attachment.getString(Constant.KEY_CONTENTTYPE),
-            attachment.getString(Constant.KEY_CONTENTLENGTH),
+            attachment.getNumber(Constant.KEY_CONTENTLENGTH) + "",
             attachment.getString(Constant.KEY_URL), attachment.getString(Constant.KEY_THUMBNAIL)});
       }
       db.setTransactionSuccessful();
@@ -283,8 +282,7 @@ public class DBOperator2 {
       while (cursor.moveToNext()) {
         JsonObject file = Json.createObject();
         file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
-        file.set(Constant.KEY_TITLE, cursor.getString(cursor.getColumnIndex("SHORTNAME")));
-        file.set(Constant.KEY_NAME, cursor.getString(cursor.getColumnIndex("FULLNAME")));
+        file.set(Constant.KEY_NAME, cursor.getString(cursor.getColumnIndex("NAME")));
         file.set(Constant.KEY_CONTENTTYPE, cursor.getString(cursor.getColumnIndex("CONTENTTYPE")));
         file.set(Constant.KEY_CONTENTLENGTH, cursor.getInt(cursor.getColumnIndex("SIZE")));
         file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
@@ -329,7 +327,7 @@ public class DBOperator2 {
           + key.getString(Constant.KEY_QUERY) + "%' AND TYPE = 'attachment' ");
       sql =
           "SELECT * FROM T_FILE WHERE CONTENTTYPE = ? AND UUID IN (" + sqlBuilder.toString() + ")"
-              + " AND FULLNAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
+              + " AND NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
       params = new String[] {key.getString(Constant.KEY_CONTENTTYPE)};
     } else if (key.getString(Constant.KEY_QUERY) == null
         && key.getString(Constant.KEY_CONTENTTYPE) != null) {
@@ -342,7 +340,7 @@ public class DBOperator2 {
           + key.getString(Constant.KEY_QUERY) + "%' AND TYPE = 'attachment' ");
       sql =
           "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ")"
-              + " AND FULLNAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
+              + " AND NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
 
     } else if (key.getString(Constant.KEY_QUERY) == null
         && key.getString(Constant.KEY_CONTENTTYPE) == null) {
@@ -358,8 +356,7 @@ public class DBOperator2 {
       while (cursor.moveToNext()) {
         JsonObject file = Json.createObject();
         file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
-        file.set(Constant.KEY_TITLE, cursor.getString(cursor.getColumnIndex("SHORTNAME")));
-        file.set(Constant.KEY_NAME, cursor.getString(cursor.getColumnIndex("FULLNAME")));
+        file.set(Constant.KEY_NAME, cursor.getString(cursor.getColumnIndex("NAME")));
         file.set(Constant.KEY_CONTENTTYPE, cursor.getString(cursor.getColumnIndex("CONTENTTYPE")));
         file.set(Constant.KEY_CONTENTLENGTH, cursor.getInt(cursor.getColumnIndex("SIZE")));
         file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
@@ -368,6 +365,7 @@ public class DBOperator2 {
       }
       db.setTransactionSuccessful();
     } catch (Exception e) {
+      System.out.println();
     } finally {
       db.endTransaction();
       if (cursor != null) {

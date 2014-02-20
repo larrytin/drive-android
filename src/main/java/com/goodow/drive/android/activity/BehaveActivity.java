@@ -287,7 +287,6 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
    */
   private View buildItemView(int index, JsonObject attachment) {
     String fileName = attachment.getString(Constant.KEY_NAME);
-    String fileTitle = attachment.getString(Constant.KEY_TITLE);
     String filePath = attachment.getString(Constant.KEY_URL);
     String thumbnail = attachment.getString(Constant.KEY_ATTACHMENT);
     LinearLayout.LayoutParams params =
@@ -314,7 +313,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     itemLayout.addView(textView);
     itemLayout.setTag(filePath);
     this.setThumbnailsImage(itemImageView, fileName, thumbnail);
-    textView.setText(fileTitle);
+    textView.setText(fileName);
     return itemLayout;
   }
 

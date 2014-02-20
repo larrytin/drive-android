@@ -46,7 +46,7 @@ public class DBHelper extends SQLiteOpenHelper {
      * 创建文件表
      */
     db.execSQL("CREATE TABLE T_FILE(UUID varchar(80) primary key NOT NULL ,"
-        + "FULLNAME varchar(200) NOT NULL ,SHORTNAME varchar(50) NOT NULL ,"
+        + "NAME varchar(200) NOT NULL ,"
         + "CONTENTTYPE varchar(300) DEFAULT NULL ,SIZE int(11) NOT NULL ,"
         + "FILEPATH varchar(500) NOT NULL ,THUMBNAILS varchar(500) DEFAULT NULL ,"
         + "CREATETIME varchar(45) DEFAULT NULL ,UPDATETIME varchar(45) DEFAULT NULL )");
