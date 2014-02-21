@@ -322,15 +322,31 @@ public class DBOperator2 {
     sqlBuilder.delete(sqlBuilder.lastIndexOf("INTERSECT ") >= 0 ? sqlBuilder
         .lastIndexOf("INTERSECT ") : 0, sqlBuilder.length());
     String sql = null;
-    if (key.getString(Constant.KEY_QUERY) != null) {
+    String[] params = null;
+    if (key.getString(Constant.KEY_QUERY) != null
+        && key.getString(Constant.KEY_CONTENTTYPE) != null) {
       sqlBuilder.append(" INTERSECT SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
           + key.getString(Constant.KEY_QUERY) + "%' AND TYPE = 'attachment' ");
       sql =
           "SELECT * FROM T_FILE WHERE CONTENTTYPE = ? AND UUID IN (" + sqlBuilder.toString() + ")"
               + " AND FULLNAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
-    } else {
+      params = new String[] {key.getString(Constant.KEY_CONTENTTYPE)};
+    } else if (key.getString(Constant.KEY_QUERY) == null
+        && key.getString(Constant.KEY_CONTENTTYPE) != null) {
       sql =
           "SELECT * FROM T_FILE WHERE CONTENTTYPE = ? AND UUID IN (" + sqlBuilder.toString() + ")";
+      params = new String[] {key.getString(Constant.KEY_CONTENTTYPE)};
+    } else if (key.getString(Constant.KEY_QUERY) != null
+        && key.getString(Constant.KEY_CONTENTTYPE) == null) {
+      sqlBuilder.append(" INTERSECT SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
+          + key.getString(Constant.KEY_QUERY) + "%' AND TYPE = 'attachment' ");
+      sql =
+          "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ")"
+              + " AND FULLNAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
+
+    } else if (key.getString(Constant.KEY_QUERY) == null
+        && key.getString(Constant.KEY_CONTENTTYPE) == null) {
+      sql = "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ")";
     }
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
@@ -338,7 +354,7 @@ public class DBOperator2 {
     JsonArray files = Json.createArray();
     try {
       db.beginTransaction();
-      cursor = db.rawQuery(sql, new String[] {key.getString(Constant.KEY_CONTENTTYPE)});
+      cursor = db.rawQuery(sql, params);
       while (cursor.moveToNext()) {
         JsonObject file = Json.createObject();
         file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
@@ -420,7 +436,8 @@ public class DBOperator2 {
     String[] params = new String[len_tags];
     for (int i = 0; i < len_tags; i++) {
       String tag = tags.getString(i);
-      sqlBuilder.append("SELECT KEY FROM T_RELATION WHERE TAG = ? ").append("INTERSECT ");
+      sqlBuilder.append("SELECT KEY FROM T_RELATION WHERE TAG = ? AND TYPE = 'tag'").append(
+          "INTERSECT ");
       params[i] = tag;
     }
     sqlBuilder.delete(sqlBuilder.lastIndexOf("INTERSECT ") >= 0 ? sqlBuilder

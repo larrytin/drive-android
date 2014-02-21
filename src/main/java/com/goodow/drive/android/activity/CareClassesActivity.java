@@ -356,15 +356,12 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     }
     String title = tag.toString();
     JsonObject msg = Json.createObject();
-    msg.set("action", "post");
-    JsonObject activity = Json.createObject();
-    JsonObject queries = Json.createObject();
-    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
-    queries.set(Constant.TERM, currentTerm);
-    queries.set(Constant.TOPIC, currenTopic);
-    activity.set(Constant.QUERIES, queries);
-    activity.set(Constant.TITLE, title);
-    msg.set("activity", activity);
+    msg.set(Constant.KEY_ACTION, "post");
+    msg.set(Constant.KEY_TITLE, title);
+    JsonArray tags =
+        Json.createArray().push(Constant.DATAREGISTRY_TYPE_SHIP).push(currentTerm)
+            .push(currenTopic).push(title);
+    msg.set(Constant.KEY_TAGS, tags);
     bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
   }
 

@@ -288,6 +288,7 @@ public class InitData {
     tagsList.add(tags0054);
     tagsList.add(tags0055);
 
+    // 和谐
     for (int i = 0; i < tagsList.size() / 2; i++) {
       String[] strings = tagsList.get(i);
       for (int j = 0; j < strings.length; j++) {
@@ -298,20 +299,89 @@ public class InitData {
                   strings[0] + strings[1] + strings[2] + strings[3] + k).set(Constant.KEY_LABEL,
                   strings[j]);
           RELATION_THEME.push(relation);
+
+          // 每个活动下创建五个文件
+          for (int l = 0; l < 5; l++) {
+            String uuid = UUID.randomUUID().toString();
+            JsonObject file = Json.createObject();
+            file.set(Constant.KEY_ID, uuid);
+            file.set(Constant.KEY_TITLE, strings[0] + strings[1] + strings[2] + strings[3] + k
+                + "文件" + l);
+            file.set(Constant.KEY_NAME, strings[0] + strings[1] + strings[2] + strings[3] + k
+                + "文件" + l + ".mp3");
+            file.set(Constant.KEY_CONTENTTYPE, "audio/mp3");
+            file.set(Constant.KEY_CONTENTLENGTH, "123");
+            file.set(Constant.KEY_URL, "/mnt/sdcard/abc.mp3");
+            file.set(Constant.KEY_THUMBNAIL, "123456789");
+            FILE_SEARCH.push(file);
+
+            JsonObject fileRelationActivity =
+                Json.createObject().set(Constant.KEY_TYPE, "attachment")
+                    .set(Constant.KEY_KEY, uuid).set(Constant.KEY_LABEL,
+                        strings[0] + strings[1] + strings[2] + strings[3] + k);
+            RELATION_THEME.push(fileRelationActivity);
+
+            JsonObject fileRelationTopic =
+                Json.createObject().set(Constant.KEY_TYPE, "attachment")
+                    .set(Constant.KEY_KEY, uuid).set(Constant.KEY_LABEL, strings[3]);
+            RELATION_THEME.push(fileRelationTopic);
+
+            JsonObject fileRelationTerm =
+                Json.createObject().set(Constant.KEY_TYPE, "attachment")
+                    .set(Constant.KEY_KEY, uuid).set(Constant.KEY_LABEL, strings[2]);
+            RELATION_THEME.push(fileRelationTerm);
+
+            JsonObject fileRelationGrade =
+                Json.createObject().set(Constant.KEY_TYPE, "attachment")
+                    .set(Constant.KEY_KEY, uuid).set(Constant.KEY_LABEL, strings[1]);
+            RELATION_THEME.push(fileRelationGrade);
+
+            JsonObject fileRelationTheme =
+                Json.createObject().set(Constant.KEY_TYPE, "attachment")
+                    .set(Constant.KEY_KEY, uuid).set(Constant.KEY_LABEL, strings[0]);
+            RELATION_THEME.push(fileRelationTheme);
+          }
         }
       }
     }
 
+    // 示范课
     for (int i = tagsList.size() / 2; i < tagsList.size(); i++) {
       String[] strings = tagsList.get(i);
       for (int j = 0; j < strings.length; j++) {
-        for (int k = 0; k < 5; k++) {
-          // 每个topic下创建五个活动
-          JsonObject relation =
-              Json.createObject().set(Constant.KEY_TYPE, "tag").set(Constant.KEY_KEY,
-                  strings[0] + strings[1] + strings[2] + strings[3] + k).set(Constant.KEY_LABEL,
-                  strings[j]);
-          RELATION_THEME.push(relation);
+        // 每个topic下创建五个文件
+        for (int l = 0; l < 5; l++) {
+          String uuid = UUID.randomUUID().toString();
+          JsonObject file = Json.createObject();
+          file.set(Constant.KEY_ID, uuid);
+          file.set(Constant.KEY_TITLE, strings[0] + strings[1] + strings[2] + strings[3] + "文件" + l);
+          file.set(Constant.KEY_NAME, strings[0] + strings[1] + strings[2] + strings[3] + "文件" + l
+              + ".mp3");
+          file.set(Constant.KEY_CONTENTTYPE, "video/mp4");
+          file.set(Constant.KEY_CONTENTLENGTH, "123");
+          file.set(Constant.KEY_URL, "/mnt/sdcard/abc.mp4");
+          file.set(Constant.KEY_THUMBNAIL, "123456789");
+          FILE_SEARCH.push(file);
+
+          JsonObject fileRelationTopic =
+              Json.createObject().set(Constant.KEY_TYPE, "attachment").set(Constant.KEY_KEY, uuid)
+                  .set(Constant.KEY_LABEL, strings[3]);
+          RELATION_THEME.push(fileRelationTopic);
+
+          JsonObject fileRelationTerm =
+              Json.createObject().set(Constant.KEY_TYPE, "attachment").set(Constant.KEY_KEY, uuid)
+                  .set(Constant.KEY_LABEL, strings[2]);
+          RELATION_THEME.push(fileRelationTerm);
+
+          JsonObject fileRelationGrade =
+              Json.createObject().set(Constant.KEY_TYPE, "attachment").set(Constant.KEY_KEY, uuid)
+                  .set(Constant.KEY_LABEL, strings[1]);
+          RELATION_THEME.push(fileRelationGrade);
+
+          JsonObject fileRelationTheme =
+              Json.createObject().set(Constant.KEY_TYPE, "attachment").set(Constant.KEY_KEY, uuid)
+                  .set(Constant.KEY_LABEL, strings[0]);
+          RELATION_THEME.push(fileRelationTheme);
         }
       }
     }
@@ -329,7 +399,7 @@ public class InitData {
         JsonObject file = Json.createObject();
         file.set(Constant.KEY_ID, uuid);
         file.set(Constant.KEY_TITLE, "搜索-" + SEARCH_ALL[i] + "-文件" + j);
-        file.set(Constant.KEY_NAME, "搜索-" + SEARCH_ALL[i] + "-文件" + j);
+        file.set(Constant.KEY_NAME, "搜索-" + SEARCH_ALL[i] + "-文件" + j + ".mp3");
         file.set(Constant.KEY_CONTENTTYPE, "audio/mp3");
         file.set(Constant.KEY_CONTENTLENGTH, "123");
         file.set(Constant.KEY_URL, "/mnt/sdcard/abc.mp3");

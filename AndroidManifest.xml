@@ -116,7 +116,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             >
         </activity>
-
         <!-- PDF播放器 -->
         <activity 
             android:name="com.goodow.drive.android.player.PdfPlayer" 

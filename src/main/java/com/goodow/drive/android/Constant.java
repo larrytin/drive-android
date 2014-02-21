@@ -58,8 +58,14 @@ public interface Constant {
   String GRADE_MID = "中";
   String GRADE_BIG = "大";
   String GRADE_PRE = "学前";
+  String LABEL_GRADE_LITTLE = "小班";
+  String LABEL_GRADE_MID = "中班";
+  String LABEL_GRADE_BIG = "大班";
+  String LABEL_GRADE_PRE = "学前班";
   String TERM_SEMESTER0 = "上";
   String TERM_SEMESTER1 = "下";
+  String LABEL_TERM_SEMESTER0 = "上学期";
+  String LABEL_TERM_SEMESTER1 = "下学期";
   String DOMIAN_HEALTH = "健康";
   String DOMIAN_LANGUAGE = "语言";
   String DOMIAN_WORLD = "社会";
