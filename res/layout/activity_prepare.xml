@@ -8,25 +8,25 @@
     <include layout="@layout/include_status" />
      
     <!--上下学期 -->
-    <RadioGroup
-        android:id="@+id/rg_act_prepare_term"
+    <LinearLayout
+        android:id="@+id/ll_act_prepare_term"
         android:layout_width="@dimen/act_prepare_term_radio_group_width"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_prepare_term_radio_group_marginLeft"
         android:layout_marginTop="@dimen/act_prepare_term_radio_group_marginTop"
         android:orientation="horizontal"
         >
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_act_prepare_top"
-            style="@style/harmony_grade"
+        <com.goodow.drive.android.view.FontTextView
+            android:id="@+id/ftv_act_prepare_top"
+            style="@style/style_common_grade"
             android:checked="true"
             android:text="@string/string_text_term_semester0"
              />
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_act_prepare_bottom"
-            style="@style/harmony_grade"
+        <com.goodow.drive.android.view.FontTextView
+            android:id="@+id/ftv_act_prepare_bottom"
+            style="@style/style_common_grade"
             android:text="@string/string_text_term_semester1" />
-    </RadioGroup>
+    </LinearLayout>
 
     <!-- 活动分类 @des 更容易适配 对性能有影响 -->
     <LinearLayout
@@ -42,8 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             >
-            <com.goodow.drive.android.view.FontRadioButton
-              android:id="@+id/rb_act_prepare_class_language"
+            <com.goodow.drive.android.view.FontTextView
+              android:id="@+id/ftv_act_prepare_class_language"
               style="@style/prepare_class"
               android:text="@string/string_text_language"
               android:layout_centerInParent="true"
@@ -55,8 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             >
-            <com.goodow.drive.android.view.FontRadioButton
-              android:id="@+id/rb_act_prepare_class_thinking"
+            <com.goodow.drive.android.view.FontTextView
+              android:id="@+id/ftv_act_prepare_class_thinking"
               style="@style/prepare_class"
               android:text="@string/string_text_thinking"
               android:layout_alignParentRight="true"
@@ -68,8 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             >
-            <com.goodow.drive.android.view.FontRadioButton
-              android:id="@+id/rb_act_prepare_class_read_write"
+            <com.goodow.drive.android.view.FontTextView
+              android:id="@+id/ftv_act_prepare_class_read_write"
               style="@style/prepare_class"
               android:text="@string/string_text_read_write"
               android:layout_alignParentLeft="true"
@@ -81,8 +81,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             >
-            <com.goodow.drive.android.view.FontRadioButton
-              android:id="@+id/rb_act_prepare_class_quality"
+            <com.goodow.drive.android.view.FontTextView
+              android:id="@+id/ftv_act_prepare_class_quality"
               style="@style/prepare_class"
               android:text="@string/string_text_quality"
               android:layout_alignParentRight="true"

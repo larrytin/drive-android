@@ -21,20 +21,16 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EbookActivity extends BaseActivity implements OnCheckedChangeListener,
-    OnPageChangeListener, OnClickListener {
-
+public class EbookActivity extends BaseActivity implements OnPageChangeListener, OnClickListener {
+  private final String[] topicNames = {
+      Constant.DOMIAN_FAIRYTALE, Constant.DOMIAN_HAPPY_BABY, Constant.DOMIAN_OTHER};
   // 当前状态
   private String currenTopic = Constant.DOMIAN_FAIRYTALE;
 
@@ -44,10 +40,7 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
   private ImageView iv_act_ebook_loc = null;
 
   // 分类
-  private RadioGroup rg_act_ebook_class = null;
-  private RadioButton rb_act_ebook_class_fairytale = null;
-  private RadioButton rb_act_ebook_class_happy_baby = null;
-  private RadioButton rb_act_ebook_class_other = null;
+  private LinearLayout ll_act_ebook_class = null;
 
   private final int numPerPage = 8;// 查询结果每页显示8条数据
   private final int numPerLine = 4;// 每条显示四个数据
@@ -61,38 +54,13 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
   private LinearLayout ll_act_ebook_result_bar = null;
   private int totalPageNum = 0;
 
-  // 数据集
-  private JsonArray activities = null;
   private final ArrayList<View> nameViews = new ArrayList<View>();
 
   private final static String SHAREDNAME = "ebookHistory";// 配置文件的名称
   private SharedPreferences sharedPreferences = null;
 
-  private boolean isLocal = true;
-
   private HandlerRegistration postHandler;
-
   private HandlerRegistration controlHandler;
-
-  @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    if (!isLocal) {
-      return;
-    }
-    if (isChecked) {
-      switch (buttonView.getId()) {
-      // 类别的选中事件
-        case R.id.rb_act_ebook_class_fairytale:
-        case R.id.rb_act_ebook_class_happy_baby:
-        case R.id.rb_act_ebook_class_other:
-          this.onMyClassViewClick(buttonView.getId());
-          break;
-
-        default:
-          break;
-      }
-    }
-  }
 
   @Override
   public void onClick(View v) {
@@ -110,8 +78,12 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
-
-      // 查询结果翻页
+      // 类别的选中事件
+      case R.id.ftv_act_ebook_class_fairytale:
+      case R.id.ftv_act_ebook_class_happy_baby:
+      case R.id.ftv_act_ebook_class_other:
+        this.onMyClassViewClick(v.getId());
+        // 查询结果翻页
       case R.id.rl_act_ebook_result_pre:
       case R.id.rl_act_ebook_result_next:
         this.onResultPrePageClick(v.getId());
@@ -162,21 +134,9 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_ebook);
-    this.initView();
     this.readHistoryData();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject body = (JsonObject) extras.get("msg");
-    JsonArray activities = body.getArray("activities");
-    if (activities == null) {
-      this.sendQueryMessage();
-    } else {
-      this.readQuery(body.getObject(Constant.QUERIES));
-      this.activities = activities;
-      this.bindDataToView();
-      this.isLocal = false;
-      this.bindHistoryDataToView();
-      this.isLocal = true;
-    }
+    this.initView();
+    this.sendQueryMessage();
   }
 
   @Override
@@ -203,7 +163,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
             && !Constant.DATAREGISTRY_TYPE_EBOOK.equals(queries.getString(Constant.TYPE))) {
           return;
         }
-        dataHandler(body);
       }
     });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
@@ -226,16 +185,16 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
   /**
    * 把查询完成的结果绑定到结果View
    */
-  private void bindDataToView() {
+  private void bindDataToView(JsonArray attachments) {
     this.ll_act_ebook_result_bar.removeAllViews();
     this.vp_act_ebook_result.removeAllViews();
     this.nameViews.clear();
-    if (this.activities == null) {
+    if (attachments == null) {
       return;
     }
 
     int index = 0;// 下标计数器
-    int counter = activities.length();
+    int counter = attachments.length();
     this.totalPageNum =
         (counter % this.numPerPage == 0) ? (counter / numPerPage) : (counter / this.numPerPage + 1);
     // 页码数量
@@ -255,7 +214,7 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
             break;
           }
           // 构建ItemView对象
-          View view = buildItemView(index);
+          final View view = buildItemView(index, attachments.getObject(index));
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
           params.setMargins(22, 5, 22, 18);
@@ -264,26 +223,8 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
           view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-              JsonObject msg = Json.createObject();
-              JsonObject activity = Json.createObject();
-              JsonObject queries = Json.createObject();
-              queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_EBOOK);
-              queries.set(Constant.TOPIC, currenTopic);
-              activity.set(Constant.QUERIES, queries);
-              activity.set(Constant.TITLE, ((TextView) ((LinearLayout) v).getChildAt(1)).getTag()
-                  .toString());
-              msg.set("action", "get");
-              msg.set("activity", activity);
-              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, new MessageHandler<JsonObject>() {
-                @Override
-                public void handle(Message<JsonObject> message) {
-                  JsonObject body = message.body();
-                  JsonArray files = body.getArray("files");
-                  String path = files.getObject(0).getString(Constant.FILE_PATH);
-                  bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", path),
-                      null);
-                }
-              });
+              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+                  view.getTag().toString()), null);
             }
           });
           innerContainer.addView(view);
@@ -313,27 +254,12 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
   }
 
   /**
-   * 把查询完成的的历史记忆绑定到View
-   */
-  private void bindHistoryDataToView() {
-    // 回显分类
-    if (Constant.DOMIAN_FAIRYTALE.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_fairytale.setChecked(true);
-    } else if (Constant.DOMIAN_HAPPY_BABY.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_happy_baby.setChecked(true);
-    } else if (Constant.DOMIAN_OTHER.equals(this.currenTopic)) {
-      this.rb_act_ebook_class_other.setChecked(true);
-    }
-  }
-
-  /**
    * 构建子View
    * 
    * @param index
    * @return
    */
-  private View buildItemView(int index) {
-    JsonObject activity = this.activities.getObject(index);
+  private View buildItemView(int index, JsonObject attachment) {
     LinearLayout.LayoutParams params =
         new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     LinearLayout itemLayout = new LinearLayout(this);
@@ -353,8 +279,8 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     textView.setTextSize(18);
     textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
-    String title = activity.getString(Constant.TITLE);
-    textView.setTag(title);
+    String title = attachment.getString(Constant.KEY_NAME);
+    itemLayout.setTag(attachment.getString(Constant.KEY_URL));
     if (title.matches("^\\d{4}.*")) {
       textView.setText(title.substring(4, title.length()));
     } else {
@@ -363,19 +289,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     itemLayout.addView(textView);
 
     return itemLayout;
-  }
-
-  /**
-   * 数据处理
-   */
-  private void dataHandler(JsonObject body) {
-    JsonObject queries = body.getObject(Constant.QUERIES);
-    readQuery(queries);
-    activities = body.getArray("activities");
-    isLocal = activities == null;
-    bindDataToView();
-    bindHistoryDataToView();
-    isLocal = true;
   }
 
   /**
@@ -391,16 +304,14 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
     this.iv_act_ebook_loc.setOnClickListener(this);
 
     // 初始化分类
-    this.rg_act_ebook_class = (RadioGroup) this.findViewById(R.id.rg_act_ebook_class);
-    this.rb_act_ebook_class_fairytale =
-        (RadioButton) this.findViewById(R.id.rb_act_ebook_class_fairytale);
-    this.rb_act_ebook_class_happy_baby =
-        (RadioButton) this.findViewById(R.id.rb_act_ebook_class_happy_baby);
-    this.rb_act_ebook_class_other = (RadioButton) this.findViewById(R.id.rb_act_ebook_class_other);
-    int classChildren = this.rg_act_ebook_class.getChildCount();
+    this.ll_act_ebook_class = (LinearLayout) this.findViewById(R.id.ll_act_ebook_class);
+    int classChildren = this.ll_act_ebook_class.getChildCount();
     for (int i = 0; i < classChildren; i++) {
-      RadioButton child = (RadioButton) this.rg_act_ebook_class.getChildAt(i);
-      child.setOnCheckedChangeListener(this);
+      TextView child = (TextView) this.ll_act_ebook_class.getChildAt(i);
+      child.setOnClickListener(this);
+      if (this.currenTopic.equals(this.topicNames[i])) {
+        child.setSelected(true);
+      }
     }
 
     // 初始化查询结果视图
@@ -418,15 +329,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
 
   }
 
-  // 判定是否时有效的类别数值
-  private boolean isRightfulTopic(String topic) {
-    if (Constant.DOMIAN_FAIRYTALE.equals(topic) || Constant.DOMIAN_HAPPY_BABY.equals(topic)
-        || Constant.DOMIAN_OTHER.equals(topic)) {
-      return true;
-    }
-    return false;
-  }
-
   /**
    * 处理类别的点击事件
    * 
@@ -434,17 +336,24 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
    */
   private void onMyClassViewClick(int id) {
     switch (id) {
-      case R.id.rb_act_ebook_class_fairytale:
+      case R.id.ftv_act_ebook_class_fairytale:
         this.currenTopic = Constant.DOMIAN_FAIRYTALE;
         break;
-      case R.id.rb_act_ebook_class_happy_baby:
+      case R.id.ftv_act_ebook_class_happy_baby:
         this.currenTopic = Constant.DOMIAN_HAPPY_BABY;
         break;
-      case R.id.rb_act_ebook_class_other:
+      case R.id.ftv_act_ebook_class_other:
         this.currenTopic = Constant.DOMIAN_OTHER;
         break;
       default:
         break;
+    }
+    for (int i = 0; i < this.ll_act_ebook_class.getChildCount(); i++) {
+      if (id == this.ll_act_ebook_class.getChildAt(i).getId()) {
+        this.ll_act_ebook_class.getChildAt(i).setSelected(true);
+      } else {
+        this.ll_act_ebook_class.getChildAt(i).setSelected(false);
+      }
     }
     this.saveHistory(Constant.TOPIC, this.currenTopic);
     this.sendQueryMessage();
@@ -476,23 +385,6 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
   }
 
   /**
-   * 解析条件
-   * 
-   * @param queries
-   */
-  private void readQuery(JsonObject queries) {
-    if (queries != null) {
-      String tempClass = queries.getString(Constant.TOPIC);
-      if (tempClass != null && isRightfulTopic(tempClass)) {
-        currenTopic = tempClass;
-        saveHistory(Constant.TOPIC, currenTopic);
-      } else if (queries.has(Constant.TOPIC) && !isRightfulTopic(tempClass)) {
-        Toast.makeText(this, "无效的类别数值", Toast.LENGTH_SHORT).show();
-      }
-    }
-  }
-
-  /**
    * 保存到历史数据
    * 
    * @param key
@@ -510,19 +402,17 @@ public class EbookActivity extends BaseActivity implements OnCheckedChangeListen
    * 构建查询的bus消息
    */
   private void sendQueryMessage() {
-    JsonObject msg = Json.createObject();
-    msg.set("action", "get");
-    JsonObject queries = Json.createObject();
-    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_EBOOK);
-    queries.set(Constant.TOPIC, this.currenTopic);
-    msg.set(Constant.QUERIES, queries);
-    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        dataHandler(body);
-      }
-    });
+    JsonObject msg =
+        Json.createObject().set(Constant.KEY_TAGS,
+            Json.createArray().push(Constant.DATAREGISTRY_TYPE_EBOOK).push(this.currenTopic));
+    bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
+        new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonArray tags = (JsonArray) message.body();
+            bindDataToView(tags);
+          }
+        });
   }
 
 }

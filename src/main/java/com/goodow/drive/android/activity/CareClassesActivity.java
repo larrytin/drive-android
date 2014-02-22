@@ -54,34 +54,23 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
   private SharedPreferences sharedPreferences = null;
   private final static String SHAREDNAME = "careClassesHistory";
 
-  private boolean isLocal = true;
-
   // 活动topic
   private final String[] topic = new String[] {
       "我有一个幼儿园", "找找,藏藏", "飘飘,跳跳,滚滚", "我会……", "小小手", "好吃哎", "汽车嘀嘀嘀", "快乐红色", "暖暖的……"};
   // 当前选中状态
-  private String currentTerm = Constant.TERM_SEMESTER0;
-
+  private String currentTerm = Constant.LABEL_TERM_SEMESTER0;
   private String currenTopic = topic[0];
-
-  private JsonArray activities;
   private HandlerRegistration postHandler;
 
   @Override
   public void onCheckedChanged(RadioGroup group, int checkedId) {
-    // if (!isLocal) {
-    // return;
-    // }
-
     if (group.getId() == R.id.rg_care_classes_topic) {
       int index = Integer.parseInt((String) findViewById(checkedId).getTag());
       setTopicCheckedDrawable(checkedId);
       findViewById(checkedId).requestFocus();
       currenTopic = topic[index];
-      if (isLocal) {
-        clearCurrent();
-        sendQueryMessage();
-      }
+      clearCurrent();
+      sendQueryMessage();
       saveDataToSP(Constant.TOPIC, currenTopic);
     }
     if (group.getId() == R.id.rg_care_classes_term) {
@@ -93,10 +82,8 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
           currentTerm = Constant.TERM_SEMESTER1;
           break;
       }
-      if (isLocal) {
-        clearCurrent();
-        sendQueryMessage();
-      }
+      clearCurrent();
+      sendQueryMessage();
       saveDataToSP(Constant.TERM, currentTerm);
     }
   }
@@ -188,19 +175,7 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
     initView();
     setListener();
     readDataFromSP();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject body = (JsonObject) extras.get("msg");
-    JsonArray activities = body.getArray("activities");
-    readQuery(body.getObject(Constant.QUERIES));
-    if (activities == null) {
-      sendQueryMessage();
-    } else {
-      this.activities = activities;
-      bindDataToView();
-      isLocal = false;
-      bindHistoryDataToView();
-      isLocal = true;
-    }
+    this.sendQueryMessage();
   }
 
   @Override
@@ -226,22 +201,21 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
             && !Constant.DATAREGISTRY_TYPE_SHIP.equals(queries.getString(Constant.TYPE))) {
           return;
         }
-        dataHandler(body);
       }
     });
   }
 
-  private void bindDataToView() {
+  private void bindDataToView(JsonArray tags) {
     /**
      * MODIFY BY DPW bind title which has number to tag
      */
-    int len = this.activities.length();
+    int len = tags.length();
     for (int i = 0; i < len && i < 10; i++) {
       Button itemButton = (Button) this.rl_act_care_result_container.getChildAt(i);
       itemButton.setOnClickListener(this);
       itemButton.setVisibility(View.VISIBLE);
-      itemButton.setText(getSimpleTitle(activities.getObject(i).getString(Constant.TITLE)));
-      itemButton.setTag(activities.getObject(i).getString(Constant.TITLE));
+      itemButton.setText(getSimpleTitle(tags.getString(i)));
+      itemButton.setTag(tags.getString(i));
     }
   }
 
@@ -265,25 +239,10 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
    * DPW 清空当前的数据
    */
   private void clearCurrent() {
-    if (this.activities != null) {
-      this.activities.clear();
-    }
     int len = this.rl_act_care_result_container.getChildCount();
     for (int i = 0; i < len; i++) {
       this.rl_act_care_result_container.getChildAt(i).setVisibility(View.GONE);
     }
-  }
-
-  private void dataHandler(JsonObject body) {
-    JsonObject queries = body.getObject(Constant.QUERIES);
-    readQuery(queries);
-    activities = body.getArray("activities");
-    isLocal = activities == null;
-    if (activities != null) {
-      bindDataToView();
-    }
-    bindHistoryDataToView();
-    isLocal = true;
   }
 
   /**
@@ -349,12 +308,11 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
    * @param title
    */
   private void onCloudClick(View view) {
-    String tag = view.getTag().toString();
-    if (tag == null) {
+    String title = view.getTag().toString();
+    if (title == null) {
       Toast.makeText(this, "数据不完整", Toast.LENGTH_SHORT).show();
       return;
     }
-    String title = tag.toString();
     JsonObject msg = Json.createObject();
     msg.set(Constant.KEY_ACTION, "post");
     msg.set(Constant.KEY_TITLE, title);
@@ -383,18 +341,17 @@ public class CareClassesActivity extends BaseActivity implements OnCheckedChange
    * 构建查询的bus消息
    */
   private void sendQueryMessage() {
-    JsonObject msg = Json.createObject();
-    msg.set("action", "get");
-    JsonObject queries = Json.createObject();
-    queries.set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_SHIP);
-    queries.set(Constant.TERM, currentTerm);
-    queries.set(Constant.TOPIC, currenTopic);
-    msg.set(Constant.QUERIES, queries);
-    bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, new MessageHandler<JsonObject>() {
+    JsonObject msg =
+        Json.createObject().set(
+            Constant.KEY_TAGS,
+            Json.createArray().push(Constant.DATAREGISTRY_TYPE_SHIP).push(this.currentTerm).push(
+                this.currenTopic));
+    bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        dataHandler(body);
+        JsonArray tags = (JsonArray) message.body();
+        bindDataToView(tags);
+        bindHistoryDataToView();
       }
     });
   }

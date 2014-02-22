@@ -8,58 +8,27 @@
     <include layout="@layout/include_status" />
 
     <!-- 大小班级 -->
-    <RadioGroup
-        android:id="@+id/rg_act_smart_grade"
+    <LinearLayout
+        android:id="@+id/ll_act_smart_grade"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="260dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         >
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_act_smart_little"
-            style="@style/harmony_grade"
-            android:text="@string/string_text_grade_little"
-            android:checked="true"
-            />
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_act_smart_middle"
-            style="@style/harmony_grade"
-            android:text="@string/string_text_grade_mid"
-            />
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_act_smart_big"
-            style="@style/harmony_grade"
-            android:text="@string/string_text_grade_big" />
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_act_smart_pre"
-            android:layout_width="90dp"
-            style="@style/harmony_grade"
-            android:background="@drawable/harm_selector_grade_long"
-            android:text="@string/string_text_grade_pre" />
-    </RadioGroup>
+    </LinearLayout>
 
     <!--上下学期 -->
-    <RadioGroup
-        android:id="@+id/rg_act_smart_term"
+    <LinearLayout
+        android:id="@+id/ll_act_smart_term"
         android:layout_width="210dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="35dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
-        android:layout_toRightOf="@+id/rg_act_smart_grade"
+        android:layout_toRightOf="@+id/ll_act_smart_grade"
         >
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_act_smart_top"
-            style="@style/harmony_grade"
-            android:checked="true"
-            android:text="@string/string_text_term_semester0"
-             />
-        <com.goodow.drive.android.view.FontRadioButton
-            android:id="@+id/rb_act_smart_bottom"
-            style="@style/harmony_grade"
-            android:text="@string/string_text_term_semester1" />
-    </RadioGroup>
+    </LinearLayout>
 
     <!-- 活动分类 -->
     <RelativeLayout
@@ -70,8 +39,8 @@
         android:layout_marginLeft="130dp"
         >
         <!-- 语言 -->
-        <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_smart_class_language"
+        <com.goodow.drive.android.view.FontTextView
+          android:id="@+id/ftv_act_smart_class_language"
           style="@style/smart_topic"
           android:text="@string/string_text_language"
           android:layout_alignParentRight="true"
@@ -79,50 +48,50 @@
             />
         <!-- 算术 -->
         <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_smart_class_arithmetic"
+          android:id="@+id/ftv_act_smart_class_arithmetic"
           style="@style/smart_topic"
           android:text="@string/string_text_arithmetic"
           android:layout_alignParentLeft="true"
-          android:layout_below="@+id/rb_act_smart_class_language"
+          android:layout_below="@+id/ftv_act_smart_class_language"
           android:layout_marginLeft="20dp"
           android:layout_marginTop="95dp"
             />
         <!-- 拼图 -->
         <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_smart_class_jigsaw"
+          android:id="@+id/ftv_act_smart_class_jigsaw"
           style="@style/smart_topic"
           android:text="@string/string_text_jigsaw"
           android:layout_alignParentRight="true"
-          android:layout_below="@+id/rb_act_smart_class_language"
+          android:layout_below="@+id/ftv_act_smart_class_language"
           android:layout_marginTop="85dp"
           android:layout_marginRight="40dp"
             />
         <!-- 思维 -->
         <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_smart_class_thinking"
+          android:id="@+id/ftv_act_smart_class_thinking"
           style="@style/smart_topic"
           android:text="@string/string_text_thinking"
           android:layout_alignParentLeft="true"
-          android:layout_below="@+id/rb_act_smart_class_arithmetic"
+          android:layout_below="@+id/ftv_act_smart_class_arithmetic"
           android:layout_marginLeft="140dp"
           android:layout_marginTop="30dp"
             />
         <!-- 识字 -->
         <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_smart_class_readable"
+          android:id="@+id/ftv_act_smart_class_readable"
           style="@style/smart_topic"
           android:text="@string/string_text_readable"
           android:layout_alignParentRight="true"
-          android:layout_below="@+id/rb_act_smart_class_jigsaw"
+          android:layout_below="@+id/ftv_act_smart_class_jigsaw"
           android:layout_marginTop="75dp"
           android:layout_marginRight="15dp"
             />
         <!-- 形体 -->
         <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/rb_act_smart_class_body"
+          android:id="@+id/ftv_act_smart_class_body"
           style="@style/smart_topic"
           android:text="@string/string_text_body"
-          android:layout_below="@+id/rb_act_smart_class_thinking"
+          android:layout_below="@+id/ftv_act_smart_class_thinking"
           android:layout_marginLeft="70dp"
           android:layout_marginTop="90dp"
             />

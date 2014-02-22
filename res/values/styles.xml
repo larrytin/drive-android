@@ -42,7 +42,7 @@
         <item name="android:focusable">false</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/harmony_selector_grade_term</item>
-        <item name="android:background">@drawable/harm_selector_grade</item>
+        <item name="android:background">@drawable/common_selector_grade</item>
         <item name="android:button">@null</item>
     </style>
     <!-- 班级样式(new) -->
@@ -54,7 +54,7 @@
         <item name="android:clickable">true</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/color_selector_common_grade_term</item>
-        <item name="android:background">@drawable/harm_selector_grade</item>
+        <item name="android:background">@drawable/common_selector_grade</item>
     </style>
 
     <!-- 和谐页面类别样式 -->
@@ -162,7 +162,7 @@
         <item name="android:focusable">false</item>
         <item name="android:textSize">18px</item>
         <item name="android:textColor">@color/harmony_selector_grade_term</item>
-        <item name="android:background">@drawable/harm_selector_grade</item>
+        <item name="android:background">@drawable/common_selector_grade</item>
         <item name="android:button">@null</item>
     </style>
 </resources>
