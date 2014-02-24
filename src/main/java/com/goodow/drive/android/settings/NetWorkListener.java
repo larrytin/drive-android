@@ -38,13 +38,16 @@ public class NetWorkListener {
       } else {
         signalStrength.getCdmaDbm();
       }
-      g3Strength = strength / MAX_3G_STRENGTH;
-
-      JsonObject info =
-          Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
-              getStrength());
-      // bus.send(Bus.LOCAL + ADDR, info, null);
-      bus.publish(Bus.LOCAL + ADDR, info);
+      // 当前的3G信号强度
+      float currentG3Strength = strength / MAX_3G_STRENGTH;
+      // 强度变化大于0.2
+      if (Math.abs(currentG3Strength - g3Strength) > 0.2) {
+        g3Strength = currentG3Strength;
+        JsonObject info =
+            Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
+                g3Strength);
+        bus.publish(Bus.LOCAL + ADDR, info);
+      }
     }
   }
 
@@ -86,6 +89,7 @@ public class NetWorkListener {
   private TelephonyManager tel = null;
   private MyPhoneStateListener myListener = null;
   private float g3Strength = 0;
+  private float wifiStrength = 0;
 
   /**
    * 监听服务
@@ -93,11 +97,14 @@ public class NetWorkListener {
   private final BroadcastReceiver netWorkStatusReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
-      JsonObject info =
-          Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
-              getStrength());
-      // bus.send(Bus.LOCAL + ADDR, info, null);
-      bus.publish(Bus.LOCAL + ADDR, info);
+      float currentWifiStrength = getWifiStrength();
+      if (Math.abs(currentWifiStrength - wifiStrength) > 0.2) {
+        wifiStrength = currentWifiStrength;
+        JsonObject info =
+            Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
+                wifiStrength);
+        bus.publish(Bus.LOCAL + ADDR, info);
+      }
     }
   };
   private HandlerRegistration getHander;
@@ -125,7 +132,6 @@ public class NetWorkListener {
         if (!"get".equalsIgnoreCase(action)) {
           return;
         }
-
         // 信息服务反馈
         JsonObject info =
             Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
@@ -147,7 +153,7 @@ public class NetWorkListener {
   private float getStrength() {
     String type = getType();
     if (WIFI.equalsIgnoreCase(type)) {
-      return getWifiStrength();
+      return wifiStrength;
     } else if (TYPE_2G.equals(type) || TYPE_3G.equals(type) || TYPE_4G.equals(type)) {
       return g3Strength;
     } else {
