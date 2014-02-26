@@ -13,7 +13,9 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.content.SharedPreferences;
@@ -35,6 +37,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     OnPageChangeListener, OnClickListener {
@@ -76,14 +79,8 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     public void onClick(View v) {
       currentGrade = ((TextView) v).getText().toString();
       saveHistory(Constant.GRADE, currentGrade);
-      sendQueryMessage();
-      for (int i = 0; i < gradeNames.length; i++) {
-        TextView child = (TextView) ll_act_case_grade.getChildAt(i);
-        child.setSelected(false);
-        if (currentGrade.equals(gradeNames[i])) {
-          child.setSelected(true);
-        }
-      }
+      sendQueryMessage(null);
+      echoGrade();
     }
   }
 
@@ -96,16 +93,10 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
   private class OnTermClickListener implements OnClickListener {
     @Override
     public void onClick(View v) {
-      currentTerm = ((TextView) v).getText().toString();
+      currentTerm = termMap.get(((TextView) v).getText().toString());
       saveHistory(Constant.TERM, currentTerm);
-      sendQueryMessage();
-      for (int i = 0; i < termNames.length; i++) {
-        TextView child = (TextView) ll_act_case_term.getChildAt(i);
-        child.setSelected(false);
-        if (currentTerm.equals(termNames[i])) {
-          child.setSelected(true);
-        }
-      }
+      sendQueryMessage(null);
+      echoTerm();
     }
   }
 
@@ -120,14 +111,8 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     public void onClick(View v) {
       currenTopic = ((TextView) v).getText().toString();
       saveHistory(Constant.TOPIC, currenTopic);
-      sendQueryMessage();
-      for (int i = 0; i < topicNames.length; i++) {
-        TextView child = (TextView) ll_act_case_class.getChildAt(i);
-        child.setSelected(false);
-        if (currenTopic.equals(topicNames[i])) {
-          child.setSelected(true);
-        }
-      }
+      sendQueryMessage(null);
+      echoTopic();
     }
   }
 
@@ -254,7 +239,16 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     this.setContentView(R.layout.activity_case);
     this.readHistoryData();
     this.initView();
-    this.sendQueryMessage();
+    Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.sendQueryMessage(this.buildTags(tags));
+    this.echoGrade();
+    this.echoTerm();
+    this.echoTopic();
+    this.saveHistory(Constant.TOPIC, currenTopic);
+    this.saveHistory(Constant.TERM, currentTerm);
+    this.saveHistory(Constant.GRADE, currentGrade);
   }
 
   @Override
@@ -276,11 +270,26 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject queries = body.getObject(Constant.QUERIES);
-        if (queries != null && queries.has(Constant.TYPE)
-            && !Constant.DATAREGISTRY_TYPE_CASE.equals(queries.getString(Constant.TYPE))) {
+        JsonArray tags = body.getArray(Constant.KEY_TAGS);
+        if (tags == null) {
+          Toast.makeText(CaseActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
           return;
         }
+        for (int i = 0; i < tags.length(); i++) {
+          if (Constant.LABEL_THEMES.contains(tags.getString(i))) {
+            return;
+          }
+        }
+        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_CASE) == -1) {
+          tags.push(Constant.DATAREGISTRY_TYPE_CASE);
+        }
+        sendQueryMessage(buildTags(tags));
+        echoGrade();
+        echoTerm();
+        echoTopic();
+        saveHistory(Constant.TOPIC, currenTopic);
+        saveHistory(Constant.TERM, currentTerm);
+        saveHistory(Constant.GRADE, currentGrade);
       }
     });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
@@ -420,6 +429,100 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
   }
 
   /**
+   * 构建查询TAGS
+   * 
+   * @param tags
+   * @return
+   */
+  private JsonArray buildTags(JsonArray tags) {
+    List<String> topics = Arrays.asList(this.topicNames);
+    List<String> grades = Arrays.asList(this.gradeNames);
+    // 删除垃圾数据
+    for (int i = 0; i < tags.length(); i++) {
+      String tag = tags.getString(i);
+      boolean isLegalTheme = Constant.LABEL_THEMES.contains(tag);
+      boolean isLegalGrade = grades.contains(tag);
+      boolean isLegalTerm = termMap.containsValue(tag);
+      boolean isLegalTopic = topics.contains(tag);
+      if (!isLegalTheme && !isLegalGrade && !isLegalTerm && !isLegalTopic) {
+        tags.remove(i--);
+      }
+    }
+
+    // 如果默认的班级、学期、主题不在tags中就加入 如果存在就设置为当前
+    for (int i = 0; i < tags.length(); i++) {
+      if (grades.contains(tags.getString(i))) {
+        this.currentGrade = tags.getString(i);
+        break;
+      }
+    }
+    if (tags.indexOf(this.currentGrade) == -1) {
+      tags.push(this.currentGrade);
+    }
+
+    for (int i = 0; i < tags.length(); i++) {
+      if (termMap.containsValue(tags.getString(i))) {
+        this.currentTerm = tags.getString(i);
+        break;
+      }
+    }
+
+    if (tags.indexOf(this.currentTerm) == -1) {
+      tags.push(this.currentTerm);
+    }
+
+    for (int i = 0; i < tags.length(); i++) {
+      if (topics.contains(tags.getString(i))) {
+        this.currenTopic = tags.getString(i);
+        break;
+      }
+    }
+    if (tags.indexOf(this.currenTopic) == -1) {
+      tags.push(this.currenTopic);
+    }
+    return tags;
+  }
+
+  /**
+   * 回显班级
+   */
+  private void echoGrade() {
+    for (int i = 0; i < gradeNames.length; i++) {
+      TextView child = (TextView) ll_act_case_grade.getChildAt(i);
+      child.setSelected(false);
+      if (currentGrade.equals(gradeNames[i])) {
+        child.setSelected(true);
+      }
+    }
+  }
+
+  /**
+   * 回显学期
+   */
+  private void echoTerm() {
+    for (int i = 0; i < termNames.length; i++) {
+      TextView child = (TextView) ll_act_case_term.getChildAt(i);
+      child.setSelected(false);
+      if (currentTerm.equals(termMap.get(termNames[i]))) {
+        child.setSelected(true);
+      }
+    }
+  }
+
+  /**
+   * 回显主题
+   */
+  private void echoTopic() {
+    for (int i = 0; i < topicNames.length; i++) {
+      TextView child = (TextView) ll_act_case_class.getChildAt(i);
+      child.setSelected(false);
+      if (currenTopic.equals(topicNames[i])) {
+        child.setSelected(true);
+      }
+    }
+  }
+
+  /**
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
@@ -544,12 +647,14 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
   /**
    * 构建查询的bus消息
    */
-  private void sendQueryMessage() {
-    JsonObject msg =
-        Json.createObject().set(
-            Constant.KEY_TAGS,
-            Json.createArray().push(Constant.DATAREGISTRY_TYPE_CASE).push(this.currentGrade).push(
-                termMap.get(this.currentTerm)).push(this.currenTopic));
+  private void sendQueryMessage(JsonArray tags) {
+    JsonObject msg = Json.createObject();
+    if (tags != null) {
+      msg.set(Constant.KEY_TAGS, tags);
+    } else {
+      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_CASE).push(
+          this.currentGrade).push(this.currentTerm).push(this.currenTopic));
+    }
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
         new MessageHandler<JsonObject>() {
           @Override
@@ -560,5 +665,4 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
           }
         });
   }
-
 }

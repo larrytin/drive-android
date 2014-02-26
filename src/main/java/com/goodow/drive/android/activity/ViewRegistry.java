@@ -6,6 +6,7 @@ import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
@@ -91,15 +92,23 @@ public class ViewRegistry {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
-        String action = body.getString("action");
+        String action = body.getString(Constant.KEY_ACTION);
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject queries = body.getObject(Constant.QUERIES);
-        if (queries == null || !queries.has(Constant.TYPE)) {
+        JsonArray tags = body.getArray(Constant.KEY_TAGS);
+        if (tags == null) {
+          Toast.makeText(ctx, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
           return;
         }
-        String type = queries.getString(Constant.TYPE);
+        int len_tags = tags.length();
+        String type = null;
+        for (int i = 0; i < len_tags; i++) {
+          if (Constant.LABEL_THEMES.contains(tags.getString(i))) {
+            type = tags.getString(i);
+            break;
+          }
+        }
         Intent intent = null;
         if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type)) {
           // 和谐
@@ -126,8 +135,6 @@ public class ViewRegistry {
           // 资源库
           intent = new Intent(ctx, SourceActivity.class);
         } else {
-          // 其他
-          Toast.makeText(ctx, "不支持" + type, Toast.LENGTH_LONG).show();
           return;
         }
         intent.putExtra("msg", body);
@@ -163,7 +170,7 @@ public class ViewRegistry {
           mLayoutParams.x = 0;
           mLayoutParams.y = 0;
           mLayoutParams.width = DeviceInformationTools.getScreenWidth(ctx) - 80;
-          mLayoutParams.height = WindowManager.LayoutParams.FILL_PARENT;
+          mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
           mLayoutParams.type = LayoutParams.TYPE_PHONE;
         }
         JsonObject draw = message.body();

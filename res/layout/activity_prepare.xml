@@ -86,6 +86,8 @@
               style="@style/prepare_class"
               android:text="@string/string_text_quality"
               android:layout_alignParentRight="true"
+              android:layout_width="300dp"
+              android:background="@drawable/prepare_selector_topic_long"
                 />
         </RelativeLayout>
 

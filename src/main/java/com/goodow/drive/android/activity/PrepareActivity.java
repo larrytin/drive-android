@@ -12,7 +12,9 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.content.SharedPreferences;
@@ -32,6 +34,9 @@ import android.widget.Toast;
 public class PrepareActivity extends BaseActivity implements OnPageChangeListener, OnClickListener {
 
   private final String[] termNames = {Constant.TERM_SEMESTER0, Constant.TERM_SEMESTER1};
+  private final String[] topicNames = {
+      Constant.DOMIAN_LANGUAGE, Constant.DOMIAN_THINKING, Constant.DOMIAN_READ_WRITE,
+      Constant.DOMIAN_QUALITY};
   private static final Map<String, String> termMap = new HashMap<String, String>();
   static {
     termMap.put(Constant.TERM_SEMESTER0, Constant.LABEL_TERM_SEMESTER0);
@@ -160,7 +165,14 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
     this.setContentView(R.layout.activity_prepare);
     this.readHistoryData();
     this.initView();
-    this.sendQueryMessage();
+    Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.sendQueryMessage(this.buildTags(tags));
+    this.echoTerm();
+    this.echoTopic();
+    this.saveHistory(Constant.TOPIC, currenTopic);
+    this.saveHistory(Constant.TERM, currentTerm);
   }
 
   @Override
@@ -182,11 +194,24 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject queries = body.getObject(Constant.QUERIES);
-        if (queries != null && queries.has(Constant.TYPE)
-            && !Constant.DATAREGISTRY_TYPE_PREPARE.equals(queries.getString(Constant.TYPE))) {
+        JsonArray tags = body.getArray(Constant.KEY_TAGS);
+        if (tags == null) {
+          Toast.makeText(PrepareActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
           return;
         }
+        for (int i = 0; i < tags.length(); i++) {
+          if (Constant.LABEL_THEMES.contains(tags.getString(i))) {
+            return;
+          }
+        }
+        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_PREPARE) == -1) {
+          tags.push(Constant.DATAREGISTRY_TYPE_PREPARE);
+        }
+        sendQueryMessage(buildTags(tags));
+        echoTerm();
+        echoTopic();
+        saveHistory(Constant.TOPIC, currenTopic);
+        saveHistory(Constant.TERM, currentTerm);
       }
     });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
@@ -262,8 +287,8 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
               msg.set(Constant.KEY_ACTION, "post");
               msg.set(Constant.KEY_TITLE, title);
               JsonArray tags =
-                  Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(
-                      termMap.get(currentTerm)).push(currenTopic).push(title);
+                  Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(currentTerm)
+                      .push(currenTopic).push(title);
               msg.set(Constant.KEY_TAGS, tags);
               bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }
@@ -295,6 +320,75 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
   }
 
   /**
+   * 构建查询TAGS
+   * 
+   * @param tags
+   * @return
+   */
+  private JsonArray buildTags(JsonArray tags) {
+    List<String> topics = Arrays.asList(this.topicNames);
+    // 删除垃圾数据
+    for (int i = 0; i < tags.length(); i++) {
+      String tag = tags.getString(i);
+      boolean isLegalTheme = Constant.LABEL_THEMES.contains(tag);
+      boolean isLegalTerm = termMap.containsValue(tag);
+      boolean isLegalTopic = topics.contains(tag);
+      if (!isLegalTheme && !isLegalTerm && !isLegalTopic) {
+        tags.remove(i--);
+      }
+    }
+
+    // 如果默认的班级、学期、主题不在tags中就加入 如果存在就设置为当前
+    for (int i = 0; i < tags.length(); i++) {
+      if (termMap.containsValue(tags.getString(i))) {
+        this.currentTerm = tags.getString(i);
+        break;
+      }
+    }
+
+    if (tags.indexOf(this.currentTerm) == -1) {
+      tags.push(this.currentTerm);
+    }
+
+    for (int i = 0; i < tags.length(); i++) {
+      if (topics.contains(tags.getString(i))) {
+        this.currenTopic = tags.getString(i);
+        break;
+      }
+    }
+    if (tags.indexOf(this.currenTopic) == -1) {
+      tags.push(this.currenTopic);
+    }
+    return tags;
+  }
+
+  /**
+   * 回显学期
+   */
+  private void echoTerm() {
+    for (int i = 0; i < termNames.length; i++) {
+      TextView child = (TextView) ll_act_prepare_term.getChildAt(i);
+      child.setSelected(false);
+      if (currentTerm.equals(termMap.get(termNames[i]))) {
+        child.setSelected(true);
+      }
+    }
+  }
+
+  /**
+   * 回显主题
+   */
+  private void echoTopic() {
+    for (int i = 0; i < topicNames.length; i++) {
+      TextView child = this.topicRadioButtons[i];
+      child.setSelected(false);
+      if (currenTopic.equals(topicNames[i])) {
+        child.setSelected(true);
+      }
+    }
+  }
+
+  /**
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
@@ -315,7 +409,7 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
     for (int i = 0; i < termChildren; i++) {
       TextView child = (TextView) this.ll_act_prepare_term.getChildAt(i);
       child.setSelected(false);
-      if (this.currentTerm.equals(this.termNames[i])) {
+      if (this.currentTerm.equals(termMap.get(this.termNames[i]))) {
         child.setSelected(true);
       }
       child.setOnClickListener(this);
@@ -383,7 +477,7 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
         break;
     }
     this.saveHistory(Constant.TOPIC, this.currenTopic);
-    this.sendQueryMessage();
+    this.sendQueryMessage(null);
   }
 
   /**
@@ -411,12 +505,12 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
   private void onTermViewClick(int id) {
     switch (id) {
       case R.id.ftv_act_prepare_top:
-        this.currentTerm = Constant.TERM_SEMESTER0;
+        this.currentTerm = Constant.LABEL_TERM_SEMESTER0;
         this.ftv_act_prepare_top.setSelected(true);
         this.ftv_act_prepare_bottom.setSelected(false);
         break;
       case R.id.ftv_act_prepare_bottom:
-        this.currentTerm = Constant.TERM_SEMESTER1;
+        this.currentTerm = Constant.LABEL_TERM_SEMESTER1;
         break;
       default:
         break;
@@ -430,7 +524,7 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
       }
     }
     this.saveHistory(Constant.TERM, this.currentTerm);
-    this.sendQueryMessage();
+    this.sendQueryMessage(null);
   }
 
   /**
@@ -459,12 +553,14 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
   /**
    * 构建查询的bus消息,get动作处理
    */
-  private void sendQueryMessage() {
-    JsonObject msg =
-        Json.createObject().set(
-            Constant.KEY_TAGS,
-            Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(this.currentTerm)
-                .push(termMap.get(this.currenTopic)));
+  private void sendQueryMessage(JsonArray tags) {
+    JsonObject msg = Json.createObject();
+    if (tags != null) {
+      msg.set(Constant.KEY_TAGS, tags);
+    } else {
+      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(
+          this.currentTerm).push(this.currenTopic));
+    }
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

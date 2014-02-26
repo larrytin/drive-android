@@ -215,7 +215,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
             break;
           }
           // 构建ItemView对象
-          final View view = buildItemView(index, attachments.getObject(index));
+          View view = buildItemView(index, attachments.getObject(index));
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
           params.setMargins(22, 5, 22, 18);
@@ -225,7 +225,8 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
             @Override
             public void onClick(View v) {
               bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-                  DataProvider.storage_dir + view.getTag().toString()), null);
+                  DataProvider.storage_dir + v.getTag().toString()), null);
+              System.out.println(DataProvider.storage_dir + v.getTag().toString());
             }
           });
           innerContainer.addView(view);

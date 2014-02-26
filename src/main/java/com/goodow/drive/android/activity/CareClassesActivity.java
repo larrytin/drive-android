@@ -11,6 +11,7 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.Arrays;
+import java.util.List;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -151,7 +152,14 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     this.setContentView(R.layout.care_classes_activity);
     this.readHistoryData();
     this.initView();
-    this.sendQueryMessage();
+    Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.sendQueryMessage(this.buildTags(tags));
+    this.echoTerm();
+    this.echoTopic();
+    this.saveHistory(Constant.TOPIC, currenTopic);
+    this.saveHistory(Constant.TERM, currentTerm);
   }
 
   @Override
@@ -172,11 +180,24 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject queries = body.getObject(Constant.QUERIES);
-        if (queries != null && queries.has(Constant.TYPE)
-            && !Constant.DATAREGISTRY_TYPE_SHIP.equals(queries.getString(Constant.TYPE))) {
+        JsonArray tags = body.getArray(Constant.KEY_TAGS);
+        if (tags == null) {
+          Toast.makeText(CareClassesActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
           return;
         }
+        for (int i = 0; i < tags.length(); i++) {
+          if (Constant.LABEL_THEMES.contains(tags.getString(i))) {
+            return;
+          }
+        }
+        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_SHIP) == -1) {
+          tags.push(Constant.DATAREGISTRY_TYPE_SHIP);
+        }
+        sendQueryMessage(buildTags(tags));
+        echoTerm();
+        echoTopic();
+        saveHistory(Constant.TOPIC, currenTopic);
+        saveHistory(Constant.TERM, currentTerm);
       }
     });
   }
@@ -193,6 +214,80 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       itemButton.setVisibility(View.VISIBLE);
       itemButton.setText(getSimpleTitle(tags.getString(i)));
       itemButton.setTag(tags.getString(i));
+    }
+  }
+
+  /**
+   * 构建查询TAGS
+   * 
+   * @param tags
+   * @return
+   */
+  private JsonArray buildTags(JsonArray tags) {
+    List<String> topics = Arrays.asList(this.topic);
+    List<String> terms = Arrays.asList(this.termNames);
+    // 删除垃圾数据
+    for (int i = 0; i < tags.length(); i++) {
+      String tag = tags.getString(i);
+      boolean isLegalTheme = Constant.LABEL_THEMES.contains(tag);
+      boolean isLegalTerm = terms.contains(tag);
+      boolean isLegalTopic = topics.contains(tag);
+      if (!isLegalTheme && !isLegalTerm && !isLegalTopic) {
+        tags.remove(i--);
+      }
+    }
+
+    // 如果默认的学期、主题不在tags中就加入 如果存在就设置为当前
+    for (int i = 0; i < tags.length(); i++) {
+      if (terms.contains(tags.getString(i))) {
+        this.currentTerm = tags.getString(i);
+        break;
+      }
+    }
+
+    if (tags.indexOf(this.currentTerm) == -1) {
+      tags.push(this.currentTerm);
+    }
+
+    for (int i = 0; i < tags.length(); i++) {
+      if (topics.contains(tags.getString(i))) {
+        this.currenTopic = tags.getString(i);
+        break;
+      }
+    }
+    if (tags.indexOf(this.currenTopic) == -1) {
+      tags.push(this.currenTopic);
+    }
+    return tags;
+  }
+
+  /**
+   * 回显学期
+   */
+  private void echoTerm() {
+    int len = this.ll_care_classes_term.getChildCount();
+    for (int i = 0; i < len; i++) {
+      TextView child = (TextView) this.ll_care_classes_term.getChildAt(i);
+      child.setSelected(false);
+      if (termNames[i].equals(this.currentTerm)) {
+        child.setSelected(true);
+        this.saveHistory(Constant.TERM, this.currentTerm);
+      }
+    }
+  }
+
+  /**
+   * 回显主题
+   */
+  private void echoTopic() {
+    int len = this.ll_care_classes_topic.getChildCount();
+    for (int i = 0; i < len; i++) {
+      TextView child = (TextView) this.ll_care_classes_topic.getChildAt(i);
+      child.setSelected(false);
+      if (this.currenTopic.equals(child.getText().toString())) {
+        child.setSelected(true);
+        this.saveHistory(Constant.TOPIC, this.currenTopic);
+      }
     }
   }
 
@@ -283,10 +378,10 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       if (id == child.getId()) {
         child.setSelected(true);
         this.currentTerm = termNames[i];
-        this.saveDataToSP(Constant.TERM, this.currentTerm);
+        this.saveHistory(Constant.TERM, this.currentTerm);
       }
     }
-    this.sendQueryMessage();
+    this.sendQueryMessage(null);
   }
 
   /**
@@ -302,10 +397,10 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       if (id == child.getId()) {
         child.setSelected(true);
         this.currenTopic = child.getText().toString();
-        this.saveDataToSP(Constant.TOPIC, this.currenTopic);
+        this.saveHistory(Constant.TOPIC, this.currenTopic);
       }
     }
-    this.sendQueryMessage();
+    this.sendQueryMessage(null);
   }
 
   /**
@@ -314,7 +409,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
    * @param key 名称
    * @param value 值
    */
-  private void saveDataToSP(String key, String value) {
+  private void saveHistory(String key, String value) {
     if (sharedPreferences != null) {
       Editor edit = sharedPreferences.edit();
       edit.putString(key, value);
@@ -325,12 +420,14 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   /**
    * 构建查询的bus消息
    */
-  private void sendQueryMessage() {
-    JsonObject msg =
-        Json.createObject().set(
-            Constant.KEY_TAGS,
-            Json.createArray().push(Constant.DATAREGISTRY_TYPE_SHIP).push(this.currentTerm).push(
-                this.currenTopic));
+  private void sendQueryMessage(JsonArray tags) {
+    JsonObject msg = Json.createObject();
+    if (tags != null) {
+      msg.set(Constant.KEY_TAGS, tags);
+    } else {
+      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_SHIP).push(
+          this.currentTerm).push(this.currenTopic));
+    }
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

@@ -79,6 +79,8 @@ public class NetWorkListener {
 
   public static final String TYPE_NONE = "none";
 
+  public static String wifiName = null;
+
   private final float MAX_3G_STRENGTH = 31;
 
   private final Bus bus = BusProvider.get();
@@ -98,7 +100,7 @@ public class NetWorkListener {
     @Override
     public void onReceive(Context context, Intent intent) {
       float currentWifiStrength = getWifiStrength();
-      if (Math.abs(currentWifiStrength - wifiStrength) > 0.2) {
+      if (Math.abs(currentWifiStrength - wifiStrength) > 0.2 || TYPE_NONE.equals(wifiName)) {
         wifiStrength = currentWifiStrength;
         JsonObject info =
             Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
@@ -191,6 +193,7 @@ public class NetWorkListener {
         }
       }
     } else {
+      this.wifiName = TYPE_NONE;
       return TYPE_NONE;
     }
     return TYPE_UNKNOWN;

@@ -1,5 +1,8 @@
 package com.goodow.drive.android;
 
+import java.util.Arrays;
+import java.util.List;
+
 public interface Constant {
 
   String ADDR_CONTROL = BusProvider.SID + "control";
@@ -63,10 +66,6 @@ public interface Constant {
   String FILE_NAME = "filename";
   String FILE_PATH = "path";
 
-  String GRADE_LITTLE = "小";
-  String GRADE_MID = "中";
-  String GRADE_BIG = "大";
-  String GRADE_PRE = "学前";
   String LABEL_GRADE_LITTLE = "小班";
   String LABEL_GRADE_MID = "中班";
   String LABEL_GRADE_BIG = "大班";
@@ -92,7 +91,7 @@ public interface Constant {
   String DOMIAN_READABLE = "识字";
   String DOMIAN_BODY = "形体";
   String DOMIAN_READ_WRITE = "阅读与书写";
-  String DOMIAN_QUALITY = "学习品质";
+  String DOMIAN_QUALITY = "习惯与学习品质";
 
   String DATAREGISTRY_TYPE_HARMONY = "和谐";
   String DATAREGISTRY_TYPE_SHIP = "托班";
@@ -102,6 +101,12 @@ public interface Constant {
   String DATAREGISTRY_TYPE_EBOOK = "电子书";
   String DATAREGISTRY_TYPE_FAVOURITE = "收藏";
   String DATAREGISTRY_TYPE_SOURCE = "资源库";
+
+  // 主题名称集合
+  List<String> LABEL_THEMES = Arrays.asList(new String[] {
+      DATAREGISTRY_TYPE_HARMONY, DATAREGISTRY_TYPE_SHIP, DATAREGISTRY_TYPE_CASE,
+      DATAREGISTRY_TYPE_PREPARE, DATAREGISTRY_TYPE_SMART, DATAREGISTRY_TYPE_EBOOK,
+      DATAREGISTRY_TYPE_FAVOURITE, DATAREGISTRY_TYPE_SOURCE});
 
   String DATA_PATH = "goodow/drive";// 数据存放位置
   String FONT_PATH = "fonts/font.ttf";// 字体的路径

@@ -35,14 +35,6 @@ public class DBHelper extends SQLiteOpenHelper {
   public void onCreate(SQLiteDatabase db) {
 
     /*
-     * 创建收藏表
-     */
-    db.execSQL("CREATE TABLE T_FAVOURITE(" + "id integer primary key autoincrement,"
-        + "FAVOURITEID varchar(80)," + "TYPE varchar(100)," + "GRADE varchar(100),"
-        + "TERM varchar(100)," + "TOPIC varchar(100)," + "TITLE varchar(100),"
-        + "CREATETIME varchar(20)," + "UPDATETIME varchar(20))");
-
-    /*
      * 创建文件表
      */
     db.execSQL("CREATE TABLE T_FILE(UUID varchar(80) primary key NOT NULL ,"

@@ -12,7 +12,9 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.content.SharedPreferences;
@@ -43,14 +45,8 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     public void onClick(View v) {
       currentGrade = ((TextView) v).getText().toString();
       saveHistory(Constant.GRADE, currentGrade);
-      sendQueryMessage();
-      for (int i = 0; i < gradeNames.length; i++) {
-        TextView child = (TextView) ll_act_smart_grade.getChildAt(i);
-        child.setSelected(false);
-        if (currentGrade.equals(gradeNames[i])) {
-          child.setSelected(true);
-        }
-      }
+      sendQueryMessage(null);
+      echoGrade();
     }
   }
 
@@ -63,22 +59,15 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   private class OnTermClickListener implements OnClickListener {
     @Override
     public void onClick(View v) {
-      currentTerm = ((TextView) v).getText().toString();
+      currentTerm = termMap.get(((TextView) v).getText().toString());
       saveHistory(Constant.TERM, currentTerm);
-      sendQueryMessage();
-      for (int i = 0; i < termNames.length; i++) {
-        TextView child = (TextView) ll_act_smart_term.getChildAt(i);
-        child.setSelected(false);
-        if (currentTerm.equals(termNames[i])) {
-          child.setSelected(true);
-        }
-      }
+      sendQueryMessage(null);
+      echoTerm();
     }
   }
 
   private final String[] gradeNames = {
-      Constant.LABEL_GRADE_LITTLE, Constant.LABEL_GRADE_MID, Constant.LABEL_GRADE_BIG,
-      Constant.LABEL_GRADE_PRE};
+      Constant.LABEL_GRADE_LITTLE, Constant.LABEL_GRADE_MID, Constant.LABEL_GRADE_BIG,};
   private final String[] termNames = {Constant.TERM_SEMESTER0, Constant.TERM_SEMESTER1};
   private static final Map<String, String> termMap = new HashMap<String, String>();
   static {
@@ -88,7 +77,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   // 当前状态
   private String currentGrade = Constant.LABEL_GRADE_LITTLE;
   private String currentTerm = Constant.LABEL_TERM_SEMESTER0;
-  private String currenTopic = Constant.DOMIAN_LANGUAGE;
 
   // 后退收藏锁屏
   private ImageView iv_act_smart_back = null;
@@ -99,17 +87,9 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   private LinearLayout ll_act_smart_grade = null;
   // 学期
   private LinearLayout ll_act_smart_term = null;
-  // 分类
-  private TextView[] topicRadioButtons = null;
-  private TextView ftv_act_smart_class_language = null;
-  private TextView ftv_act_smart_class_arithmetic = null;
-  private TextView ftv_act_smart_class_jigsaw = null;
-  private TextView ftv_act_smart_class_thinking = null;
-  private TextView ftv_act_smart_class_readable = null;
-  private TextView ftv_act_smart_class_body = null;
 
-  private final int numPerPage = 8;// 查询结果每页显示8条数据
-  private final int numPerLine = 4;// 每条显示四个数据
+  private final int numPerPage = 10;// 查询结果每页显示10条数据
+  private final int numPerLine = 5;// 每条显示5个数据
 
   private ViewPager vp_act_smart_result = null;
   private CommonPageAdapter myPageAdapter = null;
@@ -144,17 +124,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
       case R.id.iv_act_smart_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
-        break;
-
-      // 类别的选中事件
-      case R.id.ftv_act_smart_class_language:
-      case R.id.ftv_act_smart_class_arithmetic:
-      case R.id.ftv_act_smart_class_jigsaw:
-      case R.id.ftv_act_smart_class_thinking:
-      case R.id.ftv_act_smart_class_readable:
-      case R.id.ftv_act_smart_class_body:
-        this.topicChooser(v.getId());
-        this.onMyClassViewClick(v.getId());
         break;
       // 查询结果翻页
       case R.id.rl_act_smart_result_pre:
@@ -207,7 +176,14 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     this.setContentView(R.layout.activity_smart);
     this.readHistoryData();
     this.initView();
-    this.sendQueryMessage();
+    Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.sendQueryMessage(this.buildTags(tags));
+    this.echoGrade();
+    this.echoTerm();
+    this.saveHistory(Constant.TERM, currentTerm);
+    this.saveHistory(Constant.GRADE, currentGrade);
   }
 
   @Override
@@ -229,11 +205,24 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject queries = body.getObject(Constant.QUERIES);
-        if (queries != null && queries.has(Constant.TYPE)
-            && !Constant.DATAREGISTRY_TYPE_SMART.equals(queries.getString(Constant.TYPE))) {
+        JsonArray tags = body.getArray(Constant.KEY_TAGS);
+        if (tags == null) {
+          Toast.makeText(SmartActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
           return;
         }
+        for (int i = 0; i < tags.length(); i++) {
+          if (Constant.LABEL_THEMES.contains(tags.getString(i))) {
+            return;
+          }
+        }
+        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_SMART) == -1) {
+          tags.push(Constant.DATAREGISTRY_TYPE_SMART);
+        }
+        sendQueryMessage(buildTags(tags));
+        echoGrade();
+        echoTerm();
+        saveHistory(Constant.TERM, currentTerm);
+        saveHistory(Constant.GRADE, currentGrade);
       }
     });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
@@ -310,7 +299,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
               msg.set(Constant.KEY_TITLE, title);
               JsonArray tags =
                   Json.createArray().push(Constant.DATAREGISTRY_TYPE_SMART).push(currentGrade)
-                      .push(termMap.get(currentTerm)).push(currenTopic).push(title);
+                      .push(currentTerm).push(title);
               msg.set(Constant.KEY_TAGS, tags);
               bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
             }
@@ -342,6 +331,76 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   }
 
   /**
+   * 构建查询TAGS
+   * 
+   * @param tags
+   * @return
+   */
+  private JsonArray buildTags(JsonArray tags) {
+    List<String> grades = Arrays.asList(this.gradeNames);
+    // 删除垃圾数据
+    for (int i = 0; i < tags.length(); i++) {
+      String tag = tags.getString(i);
+      boolean isLegalTheme = Constant.LABEL_THEMES.contains(tag);
+      boolean isLegalGrade = grades.contains(tag);
+      boolean isLegalTerm = termMap.containsValue(tag);
+      if (!isLegalTheme && !isLegalGrade && !isLegalTerm) {
+        tags.remove(i--);
+      }
+    }
+
+    // 如果默认的班级、学期、主题不在tags中就加入 如果存在就设置为当前
+    for (int i = 0; i < tags.length(); i++) {
+      if (grades.contains(tags.getString(i))) {
+        this.currentGrade = tags.getString(i);
+        break;
+      }
+    }
+    if (tags.indexOf(this.currentGrade) == -1) {
+      tags.push(this.currentGrade);
+    }
+
+    for (int i = 0; i < tags.length(); i++) {
+      if (termMap.containsValue(tags.getString(i))) {
+        this.currentTerm = tags.getString(i);
+        break;
+      }
+    }
+
+    if (tags.indexOf(this.currentTerm) == -1) {
+      tags.push(this.currentTerm);
+    }
+
+    return tags;
+  }
+
+  /**
+   * 回显班级
+   */
+  private void echoGrade() {
+    for (int i = 0; i < gradeNames.length; i++) {
+      TextView child = (TextView) ll_act_smart_grade.getChildAt(i);
+      child.setSelected(false);
+      if (currentGrade.equals(gradeNames[i])) {
+        child.setSelected(true);
+      }
+    }
+  }
+
+  /**
+   * 回显学期
+   */
+  private void echoTerm() {
+    for (int i = 0; i < termNames.length; i++) {
+      TextView child = (TextView) ll_act_smart_term.getChildAt(i);
+      child.setSelected(false);
+      if (currentTerm.equals(termMap.get(termNames[i]))) {
+        child.setSelected(true);
+      }
+    }
+  }
+
+  /**
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
@@ -358,11 +417,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     this.ll_act_smart_grade = (LinearLayout) this.findViewById(R.id.ll_act_smart_grade);
     int gradeChildren = this.gradeNames.length;
     for (int i = 0; i < gradeChildren; i++) {
-      int layoutId = R.layout.common_item_grade_short;
-      if (this.gradeNames[3].equals(this.gradeNames[i])) {
-        layoutId = R.layout.common_item_grade_long;
-      }
-      TextView child = (TextView) this.inflater.inflate(layoutId, null);
+      TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
       child.setSelected(false);
       if (this.currentGrade.equals(this.gradeNames[i])) {
         child.setSelected(true);
@@ -377,40 +432,13 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     for (int i = 0; i < termChildren; i++) {
       TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
       child.setSelected(false);
-      if (this.currentTerm.equals(this.termNames[i])) {
+      if (this.currentTerm.equals(termMap.get(this.termNames[i]))) {
         child.setSelected(true);
       }
       child.setOnClickListener(new OnTermClickListener());
       child.setText(this.termNames[i]);
       this.ll_act_smart_term.addView(child);
     }
-
-    // 初始化分类
-    this.ftv_act_smart_class_language =
-        (TextView) this.findViewById(R.id.ftv_act_smart_class_language);
-    this.ftv_act_smart_class_arithmetic =
-        (TextView) this.findViewById(R.id.ftv_act_smart_class_arithmetic);
-    this.ftv_act_smart_class_jigsaw = (TextView) this.findViewById(R.id.ftv_act_smart_class_jigsaw);
-    this.ftv_act_smart_class_thinking =
-        (TextView) this.findViewById(R.id.ftv_act_smart_class_thinking);
-    this.ftv_act_smart_class_readable =
-        (TextView) this.findViewById(R.id.ftv_act_smart_class_readable);
-    this.ftv_act_smart_class_body = (TextView) this.findViewById(R.id.ftv_act_smart_class_body);
-
-    this.topicRadioButtons =
-        new TextView[] {
-            this.ftv_act_smart_class_language, this.ftv_act_smart_class_arithmetic,
-            this.ftv_act_smart_class_jigsaw, this.ftv_act_smart_class_thinking,
-            this.ftv_act_smart_class_thinking, this.ftv_act_smart_class_readable,
-            this.ftv_act_smart_class_body};
-    int classChildren = this.topicRadioButtons.length;
-    for (int i = 0; i < classChildren; i++) {
-      this.topicRadioButtons[i].setOnClickListener(this);
-      if (this.currenTopic.equals(this.topicRadioButtons[i].getText().toString())) {
-        this.topicRadioButtons[i].setSelected(true);
-      }
-    }
-
     // 初始化查询结果视图
     this.vp_act_smart_result = (ViewPager) this.findViewById(R.id.vp_act_smart_result);
     this.vp_act_smart_result.setOnPageChangeListener(this);
@@ -424,38 +452,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     // 初始化结果数量视图
     this.ll_act_smart_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_smart_result_bar);
 
-  }
-
-  /**
-   * 处理类别的点击事件
-   * 
-   * @param i
-   */
-  private void onMyClassViewClick(int id) {
-    switch (id) {
-      case R.id.ftv_act_smart_class_language:
-        this.currenTopic = Constant.DOMIAN_LANGUAGE;
-        break;
-      case R.id.ftv_act_smart_class_arithmetic:
-        this.currenTopic = Constant.DOMIAN_ARITHMETIC;
-        break;
-      case R.id.ftv_act_smart_class_jigsaw:
-        this.currenTopic = Constant.DOMIAN_JIGSAW;
-        break;
-      case R.id.ftv_act_smart_class_thinking:
-        this.currenTopic = Constant.DOMIAN_THINKING;
-        break;
-      case R.id.ftv_act_smart_class_readable:
-        this.currenTopic = Constant.DOMIAN_READABLE;
-        break;
-      case R.id.ftv_act_smart_class_body:
-        this.currenTopic = Constant.DOMIAN_BODY;
-        break;
-      default:
-        break;
-    }
-    this.saveHistory(Constant.TOPIC, this.currenTopic);
-    this.sendQueryMessage();
   }
 
   /**
@@ -482,7 +478,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
     this.currentGrade = this.sharedPreferences.getString(Constant.GRADE, this.currentGrade);
     this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
-    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
   }
 
   /**
@@ -502,12 +497,14 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   /**
    * 构建查询的bus消息
    */
-  private void sendQueryMessage() {
-    JsonObject msg =
-        Json.createObject().set(
-            Constant.KEY_TAGS,
-            Json.createArray().push(Constant.DATAREGISTRY_TYPE_SMART).push(this.currentGrade).push(
-                termMap.get(this.currentTerm)).push(this.currenTopic));
+  private void sendQueryMessage(JsonArray tags) {
+    JsonObject msg = Json.createObject();
+    if (tags != null) {
+      msg.set(Constant.KEY_TAGS, tags);
+    } else {
+      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_SMART).push(
+          this.currentGrade).push(this.currentTerm));
+    }
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
@@ -516,17 +513,4 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
       }
     });
   }
-
-  private void topicChooser(int id) {
-    int len = this.topicRadioButtons.length;
-    for (int i = 0; i < len; i++) {
-      TextView child = this.topicRadioButtons[i];
-      if (child.getId() == id) {
-        child.setSelected(true);
-      } else {
-        child.setSelected(false);
-      }
-    }
-  }
-
 }

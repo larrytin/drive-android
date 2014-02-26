@@ -12,7 +12,7 @@
         android:id="@+id/ll_act_smart_grade"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="260dp"
+        android:layout_marginLeft="270dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         >
@@ -23,79 +23,12 @@
         android:id="@+id/ll_act_smart_term"
         android:layout_width="210dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="35dp"
+        android:layout_marginLeft="25dp"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         android:layout_toRightOf="@+id/ll_act_smart_grade"
         >
     </LinearLayout>
-
-    <!-- 活动分类 -->
-    <RelativeLayout
-        android:id="@+id/rg_act_smart_class"
-        android:layout_width="450dp"
-        android:layout_height="510dp"
-        android:layout_marginTop="190dp"
-        android:layout_marginLeft="130dp"
-        >
-        <!-- 语言 -->
-        <com.goodow.drive.android.view.FontTextView
-          android:id="@+id/ftv_act_smart_class_language"
-          style="@style/smart_topic"
-          android:text="@string/string_text_language"
-          android:layout_alignParentRight="true"
-          android:layout_marginRight="60dp"
-            />
-        <!-- 算术 -->
-        <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/ftv_act_smart_class_arithmetic"
-          style="@style/smart_topic"
-          android:text="@string/string_text_arithmetic"
-          android:layout_alignParentLeft="true"
-          android:layout_below="@+id/ftv_act_smart_class_language"
-          android:layout_marginLeft="20dp"
-          android:layout_marginTop="95dp"
-            />
-        <!-- 拼图 -->
-        <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/ftv_act_smart_class_jigsaw"
-          style="@style/smart_topic"
-          android:text="@string/string_text_jigsaw"
-          android:layout_alignParentRight="true"
-          android:layout_below="@+id/ftv_act_smart_class_language"
-          android:layout_marginTop="85dp"
-          android:layout_marginRight="40dp"
-            />
-        <!-- 思维 -->
-        <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/ftv_act_smart_class_thinking"
-          style="@style/smart_topic"
-          android:text="@string/string_text_thinking"
-          android:layout_alignParentLeft="true"
-          android:layout_below="@+id/ftv_act_smart_class_arithmetic"
-          android:layout_marginLeft="140dp"
-          android:layout_marginTop="30dp"
-            />
-        <!-- 识字 -->
-        <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/ftv_act_smart_class_readable"
-          style="@style/smart_topic"
-          android:text="@string/string_text_readable"
-          android:layout_alignParentRight="true"
-          android:layout_below="@+id/ftv_act_smart_class_jigsaw"
-          android:layout_marginTop="75dp"
-          android:layout_marginRight="15dp"
-            />
-        <!-- 形体 -->
-        <com.goodow.drive.android.view.FontRadioButton
-          android:id="@+id/ftv_act_smart_class_body"
-          style="@style/smart_topic"
-          android:text="@string/string_text_body"
-          android:layout_below="@+id/ftv_act_smart_class_thinking"
-          android:layout_marginLeft="70dp"
-          android:layout_marginTop="90dp"
-            />
-    </RelativeLayout>
 
     <!--  后退  收藏  锁屏  -->
     <RelativeLayout
@@ -126,10 +59,10 @@
     <!-- 查询结果 -->
     <RelativeLayout
         android:id="@+id/rl_act_smart_result"
-        android:layout_width="720dp"
+        android:layout_width="930dp"
         android:layout_height="350dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="200dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="150dp"
         >
         <!-- 查询结果 上一页-->
         <ImageView
@@ -145,7 +78,7 @@
         <!-- 查询结果 -->
         <android.support.v4.view.ViewPager
           android:id="@+id/vp_act_smart_result"
-          android:layout_width="590dp"
+          android:layout_width="730dp"
           android:layout_height="fill_parent"
           android:layout_centerHorizontal="true"
           />

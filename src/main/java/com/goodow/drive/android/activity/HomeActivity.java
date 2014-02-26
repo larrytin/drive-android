@@ -16,6 +16,7 @@ import com.goodow.realtime.core.Handler;
 import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.core.Platform;
 import com.goodow.realtime.json.Json;
+import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import android.os.Bundle;
@@ -150,9 +151,8 @@ public class HomeActivity extends BaseActivity {
   private void open(String type) {
     JsonObject msg = Json.createObject();
     msg.set("action", "post");
-    JsonObject queries = Json.createObject();
-    queries.set(Constant.TYPE, type);
-    msg.set(Constant.QUERIES, queries);
+    JsonArray tags = Json.createArray().push(type);
+    msg.set(Constant.KEY_TAGS, tags);
     this.bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
   }
 
