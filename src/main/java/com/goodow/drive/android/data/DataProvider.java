@@ -23,7 +23,7 @@ public class DataProvider {
     }
   }
 
-  private String storage_dir = Constant.STORAGE_DIR;
+  public static String storage_dir = Constant.STORAGE_DIR;
   private static DataProvider provider = new DataProvider();
 
   public static DataProvider getInstance() {

@@ -2,6 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.data.DataProvider;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -321,7 +322,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       public void onClick(View v) {
         // 打开文件
         bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-            attachment.getString(Constant.KEY_URL)).set("play", 1), null);
+            DataProvider.storage_dir + attachment.getString(Constant.KEY_URL)).set("play", 1), null);
       }
     });
 

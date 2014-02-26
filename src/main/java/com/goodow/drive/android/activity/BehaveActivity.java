@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
+import com.goodow.drive.android.data.DataProvider;
 import com.goodow.drive.android.toolutils.FontUtil;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -257,8 +258,8 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
             @Override
             public void onClick(View v) {
               String path = v.getTag().toString();
-              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", path).set(
-                  "play", 1), null);
+              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+                  DataProvider.storage_dir + path).set("play", 1), null);
               // acctachment
               String attachment = path;
               // 此处记录打开的时间

@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
+import com.goodow.drive.android.data.DataProvider;
 import com.goodow.drive.android.view.FontTextView;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -363,7 +364,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           imageViewFlag.setVisibility(View.INVISIBLE);
         } else {
           bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-              activity.getString(Constant.KEY_URL)), null);
+              DataProvider.storage_dir + activity.getString(Constant.KEY_URL)), null);
         }
       }
     });
@@ -432,8 +433,8 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     textView.setTextColor(Color.BLACK);
     textView.setTextSize(18);
     textView.setMaxLines(2);
-    JsonArray tags = Json.parse(activity.getString(Constant.KEY_TAG));
-    String title = tags.getString(tags.length() - 1);
+    final JsonArray tags = Json.parse(activity.getString(Constant.KEY_TAG));
+    final String title = tags.getString(tags.length() - 1);
     if (title.matches("^\\d{4}.*")) {
       textView.setText(title.substring(4, title.length()));
     } else {
@@ -472,9 +473,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           imageView.setVisibility(View.INVISIBLE);
         } else {
           JsonObject msg = Json.createObject();
-          msg.set("action", "post");
-          JsonObject activity = (JsonObject) ((TextView) v).getTag();
-          msg.set("activity", activity);
+          msg.set(Constant.KEY_ACTION, "post");
+          msg.set(Constant.KEY_TITLE, title);
+          msg.set(Constant.KEY_TAGS, tags);
           bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
         }
       }

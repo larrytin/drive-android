@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
+import com.goodow.drive.android.data.DataProvider;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -340,7 +341,7 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
             @Override
             public void onClick(View v) {
               bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-                  itemView.getTag().toString()), null);
+                  DataProvider.storage_dir + itemView.getTag().toString()), null);
             }
           });
           innerContainer.addView(itemView);
