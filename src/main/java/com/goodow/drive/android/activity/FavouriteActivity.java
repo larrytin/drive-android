@@ -14,6 +14,8 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -36,7 +38,8 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
   private static final String LABEL_TAG = "tag";
   private static final String LABEL_ATTACHMENT = "attachment";
-  private String currentLabel = LABEL_TAG;
+  private static final String[] topicNames = {LABEL_TAG, LABEL_ATTACHMENT};
+  private String currentTopic = LABEL_TAG;
   private ImageView iv_act_favour_back = null;
   private FontTextView ft_act_favour_item_activity = null;
   private FontTextView ft_act_favour_item_file = null;
@@ -126,7 +129,12 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_favourite);
     this.initView();
-    this.sendQueryMessage(this.currentLabel);
+    Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.buildTags(tags);
+    this.sendQueryMessage(this.currentTopic);
+    this.echoTopic();
   }
 
   @Override
@@ -150,13 +158,22 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
             if (!"post".equalsIgnoreCase(action)) {
               return;
             }
-            JsonObject queries = body.getObject(Constant.QUERIES);
-            if (queries != null && queries.has(Constant.TYPE)
-                && !Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(queries.getString(Constant.TYPE))) {
+            JsonArray tags = body.getArray(Constant.KEY_TAGS);
+            if (tags == null) {
+              Toast.makeText(FavouriteActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
               return;
             }
-            activities = body.getArray("activities");
-            bindDataToView(currentPageNum);
+            for (int i = 0; i < tags.length(); i++) {
+              if (Constant.LABEL_THEMES.contains(tags.getString(i))) {
+                return;
+              }
+            }
+            if (tags.indexOf(Constant.DATAREGISTRY_TYPE_FAVOURITE) == -1) {
+              tags.push(Constant.DATAREGISTRY_TYPE_FAVOURITE);
+            }
+            buildTags(tags);
+            sendQueryMessage(currentTopic);
+            echoTopic();
           }
         });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
@@ -285,10 +302,10 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
           View view = null;
-          if (this.currentLabel.equals(LABEL_TAG)) {
+          if (this.currentTopic.equals(LABEL_TAG)) {
             view = this.buildTagItemView(this.activities.getObject(index), index, i);
             params.setMargins(10, 15, 10, 15);
-          } else if (this.currentLabel.equals(LABEL_ATTACHMENT)) {
+          } else if (this.currentTopic.equals(LABEL_ATTACHMENT)) {
             view = this.buildAttachmentView(this.activities.getObject(index), index, i);
             params.setMargins(10, 5, 10, 5);
           }
@@ -531,6 +548,54 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   }
 
   /**
+   * 构建查询TAGS
+   * 
+   * @param tags
+   * @return
+   */
+  private JsonArray buildTags(JsonArray tags) {
+    List<String> topics = Arrays.asList(topicNames);
+    // 删除垃圾数据
+    for (int i = 0; i < tags.length(); i++) {
+      String tag = tags.getString(i);
+      boolean isLegalTheme = Constant.LABEL_THEMES.contains(tag);
+      boolean isLegalTopic = topics.contains(tag);
+      if (!isLegalTheme && !isLegalTopic) {
+        tags.remove(i--);
+      }
+    }
+
+    // 如果默认的班级、学期、主题不在tags中就加入 如果存在就设置为当前
+    for (int i = 0; i < tags.length(); i++) {
+      if (topics.contains(tags.getString(i))) {
+        this.currentTopic = tags.getString(i);
+        break;
+      }
+    }
+    if (tags.indexOf(this.currentTopic) == -1) {
+      tags.push(this.currentTopic);
+    }
+    return tags;
+  }
+
+  /**
+   * 回显主题
+   */
+  private void echoTopic() {
+    if (this.currentTopic.equals(LABEL_TAG)) {
+      this.ft_act_favour_item_file.setSelected(false);
+      this.ft_act_favour_item_activity.setSelected(true);
+    } else if (this.currentTopic.equals(LABEL_ATTACHMENT)) {
+      this.ft_act_favour_item_file.setSelected(true);
+      this.ft_act_favour_item_activity.setSelected(false);
+      this.vp_act_favour_result.removeAllViews();
+      this.ll_act_favour_result_bar.removeAllViews();
+      this.iv_act_favour_result_pre.setVisibility(View.INVISIBLE);
+      this.iv_act_favour_result_next.setVisibility(View.INVISIBLE);
+    }
+  }
+
+  /**
    * 初始化View
    */
   private void initView() {
@@ -559,19 +624,12 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    */
   private void onLabelChange(int id) {
     if (id == R.id.ft_act_favour_item_activity) {
-      this.ft_act_favour_item_file.setSelected(false);
-      this.ft_act_favour_item_activity.setSelected(true);
-      this.currentLabel = LABEL_TAG;
+      this.currentTopic = LABEL_TAG;
     } else if (id == R.id.ft_act_favour_item_file) {
-      this.ft_act_favour_item_file.setSelected(true);
-      this.ft_act_favour_item_activity.setSelected(false);
-      this.currentLabel = LABEL_ATTACHMENT;
-      this.vp_act_favour_result.removeAllViews();
-      this.ll_act_favour_result_bar.removeAllViews();
-      this.iv_act_favour_result_pre.setVisibility(View.INVISIBLE);
-      this.iv_act_favour_result_next.setVisibility(View.INVISIBLE);
+      this.currentTopic = LABEL_ATTACHMENT;
     }
-    this.sendQueryMessage(this.currentLabel);
+    this.echoTopic();
+    this.sendQueryMessage(this.currentTopic);
   }
 
   /**

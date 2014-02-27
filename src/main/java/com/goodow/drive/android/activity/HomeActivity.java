@@ -84,6 +84,10 @@ public class HomeActivity extends BaseActivity {
       case R.id.iv_act_main_ebk:
         this.open("电子书");
         break;
+      // 资源库
+      case R.id.iv_act_main_source:
+        this.open("资源库");
+        break;
 
       default:
         break;

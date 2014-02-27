@@ -12,12 +12,15 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -89,10 +92,10 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     public void onClick(View v) {
       if (v.isSelected()) {
         v.setSelected(false);
-        catagory1.remove(((TextView) v).getText().toString());
+        subTags.remove(((TextView) v).getText().toString());
       } else {
         v.setSelected(true);
-        catagory1.add(((TextView) v).getText().toString());
+        subTags.add(((TextView) v).getText().toString());
       }
     }
   }
@@ -103,7 +106,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private ImageView iv_act_source_result_next = null;
 
   // private LinearLayout ll_act_source_result_bar = null;
-  private int totalPageNum = 0;// 总的数据量
+  private int totalAttachmentNum = 0;// 总的数据量
   private int currentPageNum = 0;// 当前页码
   private final int numPerPage = 10;// 查询结果每页显示10条数据
   private final int numPerLine = 5;// 每条显示六个数据
@@ -116,33 +119,28 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private LinearLayout ll_act_source_catagory1 = null;
   private EditText et_act_source_tags = null;
   private ImageView iv_act_source_search_button = null;
-  private int currentContentType = 0;// 搜索一级标签
-  private final List<String> catagory1 = new ArrayList<String>();// 二级标签
 
+  // 当前的contentType对应的ID
+  private String currentContentType = null;// 搜索一级标签
+  private final List<String> subTags = new ArrayList<String>();// 根据一级标签查询得到的二级标签
+  private JsonArray queryingTags = null;// 控制台传递的混合标签
+  private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
 
-  private static final SparseArray<String> idNames = new SparseArray<String>();
-  private static final SparseArray<String> idContentTypes = new SparseArray<String>();
-
+  private static final Map<Object, String> idContentTypes = new HashMap<Object, String>();
   static {
-    idNames.put(R.id.iv_act_source_catagory0_all, "全部");
-    idNames.put(R.id.iv_act_source_catagory0_text, "文本");
-    idNames.put(R.id.iv_act_source_catagory0_image, "图片");
-    idNames.put(R.id.iv_act_source_catagory0_animation, "动画");
-    idNames.put(R.id.iv_act_source_catagory0_audio, "视频");
-    idNames.put(R.id.iv_act_source_catagory0_video, "音频");
-    idNames.put(R.id.iv_act_source_catagory0_ebook, "图画书");
-    idNames.put(R.id.iv_act_source_catagory0_game, "游戏");
-
+    idContentTypes.put("全部", "全部");
+    idContentTypes.put("文本", "application/pdf");
+    idContentTypes.put("图片", "image/jpeg");
+    idContentTypes.put("动画", "application/x-shockwave-flash");
+    idContentTypes.put("视频", "video/mp4");
+    idContentTypes.put("音频", "audio/mpeg");
     idContentTypes.put(R.id.iv_act_source_catagory0_all, "全部");
     idContentTypes.put(R.id.iv_act_source_catagory0_text, "application/pdf");
     idContentTypes.put(R.id.iv_act_source_catagory0_image, "image/jpeg");
     idContentTypes.put(R.id.iv_act_source_catagory0_animation, "application/x-shockwave-flash");
-    idContentTypes.put(R.id.iv_act_source_catagory0_audio, "video/mp4");
-    idContentTypes.put(R.id.iv_act_source_catagory0_video, "audio/mpeg");
-    idContentTypes.put(R.id.iv_act_source_catagory0_ebook, "application/x-shockwave-flash");
-    idContentTypes.put(R.id.iv_act_source_catagory0_game, "application/x-shockwave-flash");
-
+    idContentTypes.put(R.id.iv_act_source_catagory0_video, "video/mp4");
+    idContentTypes.put(R.id.iv_act_source_catagory0_audio, "audio/mpeg");
   }
 
   @Override
@@ -166,9 +164,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       case R.id.iv_act_source_catagory0_animation:
       case R.id.iv_act_source_catagory0_audio:
       case R.id.iv_act_source_catagory0_video:
-      case R.id.iv_act_source_catagory0_ebook:
-      case R.id.iv_act_source_catagory0_game:
-        this.onCatagory0Click(v.getId());
+        this.onContentTypeClick(v.getId());
         break;
       case R.id.iv_act_source_search_button:
         this.onSearchButtonClick(v.getId());
@@ -188,17 +184,62 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_source);
     this.initView();
+    Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    this.queryingTags = msg.getArray(Constant.KEY_TAGS);
+    for (int i = 0; i < this.queryingTags.length(); i++) {
+      String tag = this.queryingTags.getString(i);
+      if (idContentTypes.containsKey(tag)) {
+        this.currentContentType = idContentTypes.get(tag);
+      }
+    }
+    if (this.currentContentType != null) {
+      // 如果从控制台传递的参数中包含了contentType就查询子集分类
+      this.echoContentType(this.currentContentType);
+    }
   }
 
   @Override
   protected void onPause() {
     super.onPause();
+    postHandler.unregisterHandler();
     controlHandler.unregisterHandler();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        String action = body.getString(Constant.KEY_ACTION);
+        // 仅仅处理action为post动作
+        if (!"post".equalsIgnoreCase(action)) {
+          return;
+        }
+        queryingTags = body.getArray(Constant.KEY_TAGS);
+        if (queryingTags == null) {
+          Toast.makeText(SourceActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
+          return;
+        }
+        for (int i = 0; i < queryingTags.length(); i++) {
+          if (Constant.LABEL_THEMES.contains(queryingTags.getString(i))) {
+            return;
+          }
+        }
+        for (int i = 0; i < queryingTags.length(); i++) {
+          String tag = queryingTags.getString(i);
+          if (idContentTypes.containsKey(tag)) {
+            currentContentType = idContentTypes.get(tag);
+          }
+        }
+        if (currentContentType != null) {
+          // 如果从控制台传递的参数中包含了contentType就查询子集分类
+          echoContentType(currentContentType);
+        }
+      }
+    });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
@@ -206,8 +247,14 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         if (body.has("page")) {
           JsonObject page = body.getObject("page");
           if (page.has("goTo")) {
+            pb_act_source_search_progress.setVisibility(View.VISIBLE);
+            currentPageNum = (int) page.getNumber("goTo");
           } else if (page.has("move")) {
+            currentPageNum = currentPageNum + (int) page.getNumber("move");
           }
+          sendQueryMessage(currentContentType, subTags, et_act_source_tags.getText().toString()
+              .trim());
+
         }
       }
     });
@@ -225,6 +272,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       this.tv_act_source_tip.setText(Html.fromHtml(this.getString(R.string.string_source_tip1)));
       return;
     }
+    this.tv_act_source_search_result_tip.setVisibility(View.INVISIBLE);
     this.tv_act_source_tip.setText(null);
     int index = 0;// 下标计数器
     int counter = attachments.length();
@@ -251,7 +299,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       }
       this.ll_act_source_result.addView(innerContainer);
     }
-    for (int i = 0; i < this.totalPageNum; i++) {
+    for (int i = 0; i < this.totalAttachmentNum; i++) {
       ImageView imageView = new ImageView(this);
       if (this.currentPageNum == 0) {
         imageView.setBackgroundResource(R.drawable.common_result_dot_current);
@@ -267,7 +315,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     } else {
       this.iv_act_source_result_pre.setVisibility(View.VISIBLE);
     }
-    if (this.currentPageNum < this.totalPageNum) {
+    if (this.currentPageNum < this.totalAttachmentNum / this.numPerPage) {
       // 小于总页数：向后的显示
       this.iv_act_source_result_next.setVisibility(View.VISIBLE);
     } else {
@@ -283,9 +331,19 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private void bindSubTagToView(JsonArray tags) {
     int len = tags.length();
     for (int i = 0; i < len; i++) {
+      String tag = tags.getString(i);
       TextView child = (TextView) this.inflater.inflate(R.layout.soruce_item_sub_tag, null);
       child.setText(tags.getString(i));
       child.setOnClickListener(new OnSubCatagoryClick());
+      // 查询得到的二级标签中是否包含了控制台传递过来的二级标签
+      for (int j = 0; this.queryingTags != null && j < this.queryingTags.length(); j++) {
+        String queryingTag = this.queryingTags.getString(j);
+        if (tag.equals(queryingTag)) {
+          this.subTags.add(tag);
+          child.setSelected(true);
+          break;
+        }
+      }
       this.ll_act_source_catagory1.addView(child);
     }
   }
@@ -384,6 +442,21 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   }
 
   /**
+   * 回显contentType
+   * 
+   * @param currentContentType
+   */
+  private void echoContentType(String currentContentType) {
+    Set<Entry<Object, String>> entrySet = idContentTypes.entrySet();
+    for (Entry<Object, String> entry : entrySet) {
+      if (entry.getKey() instanceof Integer && entry.getValue().equals(currentContentType)) {
+        this.onContentTypeClick(Integer.parseInt(entry.getKey().toString()));
+        break;
+      }
+    }
+  }
+
+  /**
    * 初始化View对象 设置点击事件 设置光标事件监听
    */
   private void initView() {
@@ -423,8 +496,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * 
    * @param id
    */
-  private void onCatagory0Click(int id) {
-    this.catagory1.clear();
+  private void onContentTypeClick(int id) {
+    this.subTags.clear();
     int len = this.ll_act_source_catagory0.getChildCount();
     for (int i = 0; i < len; i++) {
       if (id != this.ll_act_source_catagory0.getChildAt(i).getId()) {
@@ -435,14 +508,15 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     this.cleanSearchResult();
     if (current.isSelected()) {
       current.setSelected(false);
-      this.currentContentType = 0;
+      this.currentContentType = null;
       this.tv_act_source_tip.setText(this.getString(R.string.string_source_tip0));
+      this.queryingTags = null;
     } else {
       current.setSelected(true);
       this.tv_act_source_tip.setText(null);
-      this.currentContentType = id;
+      this.currentContentType = idContentTypes.get(id);
       if (id != R.id.iv_act_source_catagory0_all) {
-        this.sendQuerySubCatagory(idNames.get(id));
+        this.sendQuerySubCatagory(this.currentContentType);
       }
     }
   }
@@ -457,12 +531,13 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     if (id == R.id.iv_act_source_result_pre && this.currentPageNum >= 0) {
       // 向前翻页
       this.currentPageNum--;
-    } else if (id == R.id.iv_act_source_result_next && this.currentPageNum < this.totalPageNum) {
+    } else if (id == R.id.iv_act_source_result_next
+        && this.currentPageNum < this.totalAttachmentNum) {
       // 向后翻页
       this.currentPageNum++;
     }
-    this.sendQueryMessage(this.currentContentType, this.catagory1, this.et_act_source_tags
-        .getText().toString().trim());
+    this.sendQueryMessage(this.currentContentType, this.subTags, this.et_act_source_tags.getText()
+        .toString().trim());
   }
 
   /**
@@ -471,14 +546,14 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * @param id
    */
   private void onSearchButtonClick(int id) {
-    if (this.currentContentType == 0
-        && this.catagory1.size() == 0
+    if (this.currentContentType == null
+        && this.subTags.size() == 0
         && (this.et_act_source_tags.getText().toString() == null || this.et_act_source_tags
             .getText().toString().trim().equals(""))) {
       Toast.makeText(this, this.getString(R.string.string_source_tip0), Toast.LENGTH_SHORT).show();
     } else {
       this.pb_act_source_search_progress.setVisibility(View.VISIBLE);
-      this.sendQueryMessage(this.currentContentType, this.catagory1, this.et_act_source_tags
+      this.sendQueryMessage(this.currentContentType, this.subTags, this.et_act_source_tags
           .getText().toString().trim());
     }
   }
@@ -486,9 +561,9 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   /**
    * 构建查询文件的bus消息
    */
-  private void sendQueryMessage(int id, List<String> tags, String query) {
+  private void sendQueryMessage(String contentType, List<String> tags, String query) {
     JsonObject msg = Json.createObject();
-    msg.set(Constant.KEY_CONTENTTYPE, idContentTypes.get(id));// 2131296367
+    msg.set(Constant.KEY_CONTENTTYPE, contentType);// 2131296367
     msg.set(Constant.KEY_FROM, this.numPerPage * this.currentPageNum);
     msg.set(Constant.KEY_SIZE, this.numPerPage);
     if (tags.size() > 0) {
@@ -506,7 +581,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
-            totalPageNum = (int) body.getNumber(Constant.KEY_SIZE);
+            totalAttachmentNum = (int) body.getNumber(Constant.KEY_SIZE);
             JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
             bindDataToView(attachments);
           }
@@ -516,8 +591,9 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   /**
    * 构建查询的bus消息查询子级分类
    */
-  private void sendQuerySubCatagory(String parentTag) {
-    JsonObject msg = Json.createObject().set(Constant.KEY_TAGS, Json.createArray().push(parentTag));
+  private void sendQuerySubCatagory(String contentType) {
+    JsonObject msg =
+        Json.createObject().set(Constant.KEY_TAGS, Json.createArray().push(contentType));
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

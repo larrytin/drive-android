@@ -13,6 +13,8 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -137,7 +139,13 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     this.setContentView(R.layout.activity_ebook);
     this.readHistoryData();
     this.initView();
-    this.sendQueryMessage();
+    this.initView();
+    Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.sendQueryMessage(this.buildTags(tags));
+    this.echoTopic();
+    this.saveHistory(Constant.TOPIC, currenTopic);
   }
 
   @Override
@@ -159,11 +167,22 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        JsonObject queries = body.getObject(Constant.QUERIES);
-        if (queries != null && queries.has(Constant.TYPE)
-            && !Constant.DATAREGISTRY_TYPE_EBOOK.equals(queries.getString(Constant.TYPE))) {
+        JsonArray tags = body.getArray(Constant.KEY_TAGS);
+        if (tags == null) {
+          Toast.makeText(EbookActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
           return;
         }
+        for (int i = 0; i < tags.length(); i++) {
+          if (Constant.LABEL_THEMES.contains(tags.getString(i))) {
+            return;
+          }
+        }
+        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_EBOOK) == -1) {
+          tags.push(Constant.DATAREGISTRY_TYPE_EBOOK);
+        }
+        sendQueryMessage(buildTags(tags));
+        echoTopic();
+        saveHistory(Constant.TOPIC, currenTopic);
       }
     });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
@@ -294,6 +313,50 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
   }
 
   /**
+   * 构建查询TAGS
+   * 
+   * @param tags
+   * @return
+   */
+  private JsonArray buildTags(JsonArray tags) {
+    List<String> topics = Arrays.asList(this.topicNames);
+    // 删除垃圾数据
+    for (int i = 0; i < tags.length(); i++) {
+      String tag = tags.getString(i);
+      boolean isLegalTheme = Constant.LABEL_THEMES.contains(tag);
+      boolean isLegalTopic = topics.contains(tag);
+      if (!isLegalTheme && !isLegalTopic) {
+        tags.remove(i--);
+      }
+    }
+
+    // 如果默认的班级、学期、主题不在tags中就加入 如果存在就设置为当前
+    for (int i = 0; i < tags.length(); i++) {
+      if (topics.contains(tags.getString(i))) {
+        this.currenTopic = tags.getString(i);
+        break;
+      }
+    }
+    if (tags.indexOf(this.currenTopic) == -1) {
+      tags.push(this.currenTopic);
+    }
+    return tags;
+  }
+
+  /**
+   * 回显主题
+   */
+  private void echoTopic() {
+    for (int i = 0; i < topicNames.length; i++) {
+      TextView child = (TextView) ll_act_ebook_class.getChildAt(i);
+      child.setSelected(false);
+      if (currenTopic.equals(topicNames[i])) {
+        child.setSelected(true);
+      }
+    }
+  }
+
+  /**
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
@@ -358,7 +421,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
       }
     }
     this.saveHistory(Constant.TOPIC, this.currenTopic);
-    this.sendQueryMessage();
+    this.sendQueryMessage(null);
   }
 
   /**
@@ -403,10 +466,14 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
   /**
    * 构建查询的bus消息
    */
-  private void sendQueryMessage() {
-    JsonObject msg =
-        Json.createObject().set(Constant.KEY_TAGS,
-            Json.createArray().push(Constant.DATAREGISTRY_TYPE_EBOOK).push(this.currenTopic));
+  private void sendQueryMessage(JsonArray tags) {
+    JsonObject msg = Json.createObject();
+    if (tags != null) {
+      msg.set(Constant.KEY_TAGS, tags);
+    } else {
+      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_EBOOK).push(
+          this.currenTopic));
+    }
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
         new MessageHandler<JsonObject>() {
           @Override
@@ -417,5 +484,4 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
           }
         });
   }
-
 }

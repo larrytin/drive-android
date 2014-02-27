@@ -169,20 +169,6 @@
             android:layout_marginTop="@dimen/act_source_catagory0_item_audio_marginTop"
             android:tag="音频"
             />
-        <ImageView
-            android:id="@+id/iv_act_source_catagory0_ebook"
-            style="@style/source_catagory0"
-            android:src="@drawable/source_selector_catagory0_ebook"
-            android:layout_marginTop="@dimen/act_source_catagory0_item_ebook_marginTop"
-            android:tag="图画书"
-            />
-        <ImageView
-            android:id="@+id/iv_act_source_catagory0_game"
-            style="@style/source_catagory0"
-            android:src="@drawable/source_selector_catagory0_game"
-            android:layout_marginTop="@dimen/act_source_catagory0_item_game_marginTop"
-            android:tag="游戏"
-            />
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
