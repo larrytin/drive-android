@@ -5,6 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
 import com.goodow.drive.android.data.DataProvider;
 import com.goodow.drive.android.toolutils.FontUtil;
+import com.goodow.drive.android.view.MarqueeTextView;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -17,6 +18,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
+
+import android.text.TextUtils.TruncateAt;
 
 import android.content.Context;
 import android.content.Intent;
@@ -355,13 +358,15 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     itemImageView.setLayoutParams(itemImageViewParams2);
     itemLayout.addView(itemImageView);
 
-    TextView textView = new TextView(this);
+    TextView textView = new MarqueeTextView(this);
     textView.setWidth(220);
     textView.setTextSize(16);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     textView.setTextColor(Color.WHITE);
     textView.setSingleLine(true);
-    textView.setMaxEms(10);
+    textView.setFocusable(true);
+    textView.setEllipsize(TruncateAt.MARQUEE);
+    textView.setMarqueeRepeatLimit(-1);
     itemLayout.addView(textView);
     itemLayout.setTag(filePath);
     this.setThumbnailsImage(itemImageView, fileName, thumbnail);
