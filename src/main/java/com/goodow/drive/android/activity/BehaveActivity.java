@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
@@ -115,7 +116,6 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
   @Override
   public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     // TODO Auto-generated method stub
-
   }
 
   @Override
@@ -165,6 +165,21 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
   }
 
   @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    this.cleanHistory();
+    Bundle extras = intent.getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    if (msg.has(Constant.KEY_TITLE) && msg.getString(Constant.KEY_TITLE) != null) {
+      this.title = msg.getString(Constant.KEY_TITLE);
+      this.currentTags = msg.getArray(Constant.KEY_TAGS);
+      this.sendQueryMessage();
+    } else {
+      Toast.makeText(this, "数据不完整，请重试", Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  @Override
   protected void onPause() {
     super.onPause();
     postHandler.unregisterHandler();
@@ -183,9 +198,25 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
         if (!"post".equalsIgnoreCase(action)) {
           return;
         }
-        // dataHandler(body);
+        currentTags = body.getArray(Constant.KEY_TAGS);
+        if (currentTags == null) {
+          Toast.makeText(BehaveActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
+          return;
+        }
+        for (int i = 0; i < currentTags.length(); i++) {
+          if (Constant.LABEL_THEMES.contains(currentTags.getString(i))) {
+            return;
+          }
+        }
+        if (body.has(Constant.KEY_TITLE) && body.getString(Constant.KEY_TITLE) != null) {
+          title = body.getString(Constant.KEY_TITLE);
+          sendQueryMessage();
+        } else {
+          Toast.makeText(BehaveActivity.this, "数据不完整，请重试", Toast.LENGTH_SHORT).show();
+        }
       }
     });
+
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
@@ -339,12 +370,24 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
   }
 
   /**
+   * 界面以及数据归零
+   */
+  private void cleanHistory() {
+    this.tv_act_behave_title.setText(null);
+    this.iv_act_behave_behaveite.setVisibility(View.INVISIBLE);
+    this.vp_act_behave_result.removeAllViews();
+    this.iv_act_behave_result_next.setVisibility(View.INVISIBLE);
+    this.iv_act_behave_result_pre.setVisibility(View.INVISIBLE);
+    this.totalPageNum = 0;
+    this.nameViews.clear();
+  }
+
+  /**
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
     this.iv_act_behave_behaveite = (ImageView) this.findViewById(R.id.iv_act_behave_behaveite);
     this.iv_act_behave_behaveite.setOnClickListener(this);
-    this.iv_act_behave_behaveite.setVisibility(View.INVISIBLE);
     this.iv_act_behave_back = (ImageView) this.findViewById(R.id.iv_act_behave_back);
     this.iv_act_behave_back.setOnClickListener(this);
     this.tv_act_behave_title = (TextView) this.findViewById(R.id.tv_act_behave_title);

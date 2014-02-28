@@ -35,7 +35,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="46dp"
         android:layout_toRightOf="@+id/tv_act_behave_title"
-        android:src="@drawable/behave_favourite" />
+        android:src="@drawable/behave_favourite"
+        android:visibility="invisible" />
 
     <!-- 内容 -->
     <RelativeLayout
