@@ -68,7 +68,7 @@
     <dimen name="index_rl_tech_layout_marginTop">520dp</dimen>
     
     <!-- 入学准备  智能开发  图画书的父布局位置 -->
-    <dimen name="index_rl_pre_smart_ebk_layout_marginTop">365dp</dimen>
+    <dimen name="index_rl_pre_smart_ebk_layout_marginTop">375dp</dimen>
     <dimen name="index_rl_pre_smart_ebk_layout_marginRight">360dp</dimen>
     
     <!-- 资源 -->

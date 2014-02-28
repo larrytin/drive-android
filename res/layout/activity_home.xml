@@ -67,7 +67,7 @@
           android:tag="托班"
           />
     </RelativeLayout>
-    
+
     <!-- 示范课程 -->
     <ImageView 
         android:id="@+id/iv_act_main_tech"
@@ -78,14 +78,13 @@
         android:layout_marginTop="@dimen/index_rl_tech_layout_marginTop"
         android:tag="示范课"
         />
-    
-    
+
     <!-- 入学准备  智能开发  图画书 -->
     <RelativeLayout 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/index_rl_pre_smart_ebk_layout_marginTop"
+        android:layout_marginTop="375dp"
         android:layout_marginRight="@dimen/index_rl_pre_smart_ebk_layout_marginRight"
         >
       <ImageView
@@ -119,8 +118,5 @@
           android:layout_alignParentBottom="true"
           android:layout_marginRight="130dp"
           android:layout_marginBottom="80dp"
-          android:visibility="gone"
         />
-
-
 </RelativeLayout>
