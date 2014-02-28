@@ -41,11 +41,11 @@ public class NetWorkListener {
       // 当前的3G信号强度
       float currentG3Strength = strength / MAX_3G_STRENGTH;
       // 强度变化大于0.2
-      if (Math.abs(currentG3Strength - g3Strength) > 0.2) {
+      if (Math.abs(currentG3Strength - g3Strength) > 0.2 || TYPE_NONE.equals(NetWorkName)) {
         g3Strength = currentG3Strength;
         JsonObject info =
             Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
-                g3Strength);
+                getStrength());
         bus.publish(Bus.LOCAL + ADDR, info);
       }
     }
@@ -79,7 +79,7 @@ public class NetWorkListener {
 
   public static final String TYPE_NONE = "none";
 
-  public static String wifiName = null;
+  public String NetWorkName = null;
 
   private final float MAX_3G_STRENGTH = 31;
 
@@ -100,11 +100,12 @@ public class NetWorkListener {
     @Override
     public void onReceive(Context context, Intent intent) {
       float currentWifiStrength = getWifiStrength();
-      if (Math.abs(currentWifiStrength - wifiStrength) > 0.2 || TYPE_NONE.equals(wifiName)) {
+      if (Math.abs(currentWifiStrength - wifiStrength) > 0.2 || TYPE_NONE.equals(NetWorkName)
+          || getStrength() == 0) {
         wifiStrength = currentWifiStrength;
         JsonObject info =
             Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
-                wifiStrength);
+                getStrength());
         bus.publish(Bus.LOCAL + ADDR, info);
       }
     }
@@ -176,27 +177,32 @@ public class NetWorkListener {
     if (info != null) {
       String type = info.getTypeName();
       if (type.equalsIgnoreCase(WIFI)) {
-        return TYPE_WIFI;
+        this.NetWorkName = TYPE_WIFI;
+        return NetWorkName;
       } else if (type.equalsIgnoreCase(MOBILE)) {
         type = info.getSubtypeName();
         if (type.equalsIgnoreCase(GSM) || type.equalsIgnoreCase(GPRS)
             || type.equalsIgnoreCase(EDGE)) {
-          return TYPE_2G;
+          NetWorkName = TYPE_2G;
+          return NetWorkName;
         } else if (type.toLowerCase().startsWith(CDMA) || type.toLowerCase().equals(UMTS)
             || type.toLowerCase().equals(ONEXRTT) || type.toLowerCase().equals(EHRPD)
             || type.toLowerCase().equals(HSUPA) || type.toLowerCase().equals(HSDPA)
             || type.toLowerCase().equals(HSPA)) {
-          return TYPE_3G;
+          NetWorkName = TYPE_3G;
+          return NetWorkName;
         } else if (type.toLowerCase().equals(LTE) || type.toLowerCase().equals(UMB)
             || type.toLowerCase().equals(HSPA_PLUS)) {
-          return TYPE_4G;
+          NetWorkName = TYPE_4G;
+          return NetWorkName;
         }
       }
     } else {
-      this.wifiName = TYPE_NONE;
-      return TYPE_NONE;
+      this.NetWorkName = TYPE_NONE;
+      return NetWorkName;
     }
-    return TYPE_UNKNOWN;
+    this.NetWorkName = TYPE_UNKNOWN;
+    return NetWorkName;
   }
 
   /**
