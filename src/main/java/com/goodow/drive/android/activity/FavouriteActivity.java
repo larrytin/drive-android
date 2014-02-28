@@ -14,8 +14,8 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -38,7 +38,11 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
   private static final String LABEL_TAG = "tag";
   private static final String LABEL_ATTACHMENT = "attachment";
-  private static final String[] topicNames = {LABEL_TAG, LABEL_ATTACHMENT};
+  private static final Map<String, String> LABEL_RELATION = new HashMap<String, String>();
+  static {
+    LABEL_RELATION.put("活动", LABEL_TAG);
+    LABEL_RELATION.put("文件", LABEL_ATTACHMENT);
+  }
   private String currentTopic = LABEL_TAG;
   private ImageView iv_act_favour_back = null;
   private FontTextView ft_act_favour_item_activity = null;
@@ -554,12 +558,11 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    * @return
    */
   private JsonArray buildTags(JsonArray tags) {
-    List<String> topics = Arrays.asList(topicNames);
     // 删除垃圾数据
     for (int i = 0; i < tags.length(); i++) {
       String tag = tags.getString(i);
       boolean isLegalTheme = Constant.LABEL_THEMES.contains(tag);
-      boolean isLegalTopic = topics.contains(tag);
+      boolean isLegalTopic = LABEL_RELATION.containsKey(tag);
       if (!isLegalTheme && !isLegalTopic) {
         tags.remove(i--);
       }
@@ -567,8 +570,8 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
     // 如果默认的班级、学期、主题不在tags中就加入 如果存在就设置为当前
     for (int i = 0; i < tags.length(); i++) {
-      if (topics.contains(tags.getString(i))) {
-        this.currentTopic = tags.getString(i);
+      if (LABEL_RELATION.containsKey(tags.getString(i))) {
+        this.currentTopic = LABEL_RELATION.get(tags.getString(i));
         break;
       }
     }
