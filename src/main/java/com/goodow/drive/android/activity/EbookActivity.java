@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -139,8 +140,18 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     this.setContentView(R.layout.activity_ebook);
     this.readHistoryData();
     this.initView();
-    this.initView();
     Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.sendQueryMessage(this.buildTags(tags));
+    this.echoTopic();
+    this.saveHistory(Constant.TOPIC, currenTopic);
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    Bundle extras = intent.getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
@@ -240,6 +241,21 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     this.readHistoryData();
     this.initView();
     Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.sendQueryMessage(this.buildTags(tags));
+    this.echoGrade();
+    this.echoTerm();
+    this.echoTopic();
+    this.saveHistory(Constant.TOPIC, currenTopic);
+    this.saveHistory(Constant.TERM, currentTerm);
+    this.saveHistory(Constant.GRADE, currentGrade);
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    Bundle extras = intent.getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));

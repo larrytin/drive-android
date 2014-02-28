@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -185,6 +186,24 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     this.setContentView(R.layout.activity_source);
     this.initView();
     Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    this.queryingTags = msg.getArray(Constant.KEY_TAGS);
+    for (int i = 0; i < this.queryingTags.length(); i++) {
+      String tag = this.queryingTags.getString(i);
+      if (idContentTypes.containsKey(tag)) {
+        this.currentContentType = idContentTypes.get(tag);
+      }
+    }
+    if (this.currentContentType != null) {
+      // 如果从控制台传递的参数中包含了contentType就查询子集分类
+      this.echoContentType(this.currentContentType);
+    }
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    Bundle extras = intent.getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
     this.queryingTags = msg.getArray(Constant.KEY_TAGS);
     for (int i = 0; i < this.queryingTags.length(); i++) {

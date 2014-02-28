@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -134,6 +135,17 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     setContentView(R.layout.activity_favourite);
     this.initView();
     Bundle extras = this.getIntent().getExtras();
+    JsonObject msg = (JsonObject) extras.get("msg");
+    JsonArray tags = msg.getArray(Constant.KEY_TAGS);
+    this.buildTags(tags);
+    this.sendQueryMessage(this.currentTopic);
+    this.echoTopic();
+  }
+
+  @Override
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    Bundle extras = intent.getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.buildTags(tags);
