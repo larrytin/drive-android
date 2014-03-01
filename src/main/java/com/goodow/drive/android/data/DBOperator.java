@@ -16,7 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  */
 
-public class DBOperator2 {
+public class DBOperator {
 
   /**
    * 创建N个文件

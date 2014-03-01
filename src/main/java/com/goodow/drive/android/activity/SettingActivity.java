@@ -23,13 +23,16 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
   public void onClick(View view) {
     switch (view.getId()) {
       case R.id.bt_setting_wifi:// wifi设置
-        bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "wifi", null, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "settings.wifi"), null);
         break;
       case R.id.bt_setting_screen_offset:// 屏幕偏移
-        bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "screenOffset", null, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "settings.screenOffset"), null);
         break;
       case R.id.bt_setting_about:// 关于我们
-        bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "aboutUs", null, null);
+        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "aboutUs"), null);
         break;
       case R.id.bt_setting_reboot:// 重启
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);

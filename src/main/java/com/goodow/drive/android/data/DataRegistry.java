@@ -36,6 +36,8 @@ public class DataRegistry {
           JsonObject msg = Json.createObject();
           if (DBDataProvider.insertTagRelation(context, tag)) {
             msg.set(Constant.KEY_STATUS, "ok");
+            // 通知界面刷新
+            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
@@ -44,6 +46,8 @@ public class DataRegistry {
           JsonObject msg = Json.createObject();
           if (DBDataProvider.deleteTagRelation(context, tags)) {
             msg.set(Constant.KEY_STATUS, "ok");
+            // 通知界面刷新
+            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         }
@@ -72,6 +76,8 @@ public class DataRegistry {
           JsonObject msg = Json.createObject();
           if (DBDataProvider.insertStarRelation(context, star)) {
             msg.set(Constant.KEY_STATUS, "ok");
+            // 通知界面刷新
+            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
@@ -80,6 +86,8 @@ public class DataRegistry {
           JsonObject msg = Json.createObject();
           if (DBDataProvider.deleteStarRelation(context, stars)) {
             msg.set(Constant.KEY_STATUS, "ok");
+            // 通知界面刷新
+            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         }
@@ -135,6 +143,8 @@ public class DataRegistry {
           JsonObject msg = Json.createObject();
           if (DBDataProvider.insertFile(context, attachment)) {
             msg.set(Constant.KEY_STATUS, "ok");
+            // 通知界面刷新
+            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
@@ -143,6 +153,8 @@ public class DataRegistry {
           JsonObject msg = Json.createObject();
           if (DBDataProvider.deleteFiles(context, ids)) {
             msg.set(Constant.KEY_STATUS, "ok");
+            // 通知界面刷新
+            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         }

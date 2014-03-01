@@ -53,6 +53,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   private String currentTerm = Constant.LABEL_TERM_SEMESTER0;
   private String currenTopic = topic[0];
   private HandlerRegistration postHandler;
+  private HandlerRegistration refreshHandler;
 
   @Override
   public void onClick(View v) {
@@ -62,8 +63,8 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.bt_care_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            Constant.QUERIES, Json.createObject().set(Constant.TYPE, "收藏")), null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+            Constant.KEY_REDIRECTTO, "favorite"), null);
         break;
       case R.id.bt_care_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -180,6 +181,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   protected void onPause() {
     super.onPause();
     postHandler.unregisterHandler();
+    refreshHandler.unregisterHandler();
   }
 
   @Override
@@ -214,6 +216,14 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
         saveHistory(Constant.TERM, currentTerm);
       }
     });
+
+    refreshHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            sendQueryMessage(null);
+          }
+        });
   }
 
   private void bindDataToView(JsonArray tags) {

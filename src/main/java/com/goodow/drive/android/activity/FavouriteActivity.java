@@ -3,7 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
-import com.goodow.drive.android.data.DataProvider;
+import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.drive.android.view.FontTextView;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -66,7 +66,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   private HandlerRegistration registerPostHandler;
 
   private HandlerRegistration controlHandler;
-  private HandlerRegistration deleteHandler;
+  private HandlerRegistration refreshHandler;
 
   @Override
   public void onClick(View v) {
@@ -158,7 +158,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     super.onPause();
     registerPostHandler.unregisterHandler();
     controlHandler.unregisterHandler();
-    deleteHandler.unregisterHandler();
+    refreshHandler.unregisterHandler();
   }
 
   @Override
@@ -207,73 +207,12 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
         }
       }
     });
-    deleteHandler =
-        bus.registerHandler(Bus.LOCAL + Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+
+    refreshHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            if (activities.length() == 0) {
-              return;
-            }
-            if (!"ok".equals(body.getString("status"))) {
-              // 数据库操作失败
-              Toast.makeText(FavouriteActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
-              return;
-            }
-            // 数据库操作成功
-            int page = -1; // 当前页码
-            JsonArray delActivities = body.getArray("activities");
-            int delLen = delActivities.length();
-            int index = -1;
-            for (int i = 0; i < delLen; i++) {
-              JsonObject delActivity = delActivities.getObject(i);
-              int len = activities.length();
-              // 查找相同的活动
-              for (int j = 0; j < len; j++) {
-                JsonObject activity = activities.get(j);
-
-                JsonObject queries = activity.getObject(Constant.QUERIES);
-                String type = queries.get(Constant.TYPE);
-                String grade = queries.get(Constant.GRADE);
-                String term = queries.get(Constant.TERM);
-                String topic = queries.get(Constant.TOPIC);
-                String title = activity.get(Constant.TITLE);
-
-                JsonObject delQueries = delActivity.getObject(Constant.QUERIES);
-                String delType = delQueries.get(Constant.TYPE);
-                String delGrade = delQueries.get(Constant.GRADE);
-                String delTerm = delQueries.get(Constant.TERM);
-                String delTopic = delQueries.get(Constant.TOPIC);
-                String delTitle = delActivity.get(Constant.TITLE);
-
-                boolean isSameGrade =
-                    (grade == null && delGrade == null)
-                        || (grade != null && delGrade != null && grade.equals(delGrade));
-
-                if ((type != null && type.equalsIgnoreCase(delType)) && isSameGrade
-                    && (term != null && term.equalsIgnoreCase(delTerm))
-                    && (topic != null && topic.equalsIgnoreCase(delTopic))
-                    && (title != null && title.equalsIgnoreCase(delTitle))) {
-                  index = j;
-                  break;
-                }
-              }
-              // 在删除条件匹配的情况下执行
-              if (index >= 0) {
-                activities.remove(index);
-              }
-            }
-            // 在删除条件匹配的情况下执行
-            if (index >= 0) {
-              page = index / numPerPage;
-            }
-            if (page >= 0) {
-              // 删除条件中有匹配的，滚动到最后一个匹配的条件所在的页面
-              bindDataToView(page);
-            } else {
-              // 删除条件中没有匹配的，停留在当前页面
-              bindDataToView(currentPageNum);
-            }
+            sendQueryMessage(currentTopic);
           }
         });
   }
@@ -363,26 +302,22 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    * @param pageNum 条目所处的页码
    * @return
    */
-  private View buildAttachmentView(final JsonObject activity, final int index, int pageNum) {
+  private View buildAttachmentView(final JsonObject attachment, final int index, int pageNum) {
+    String fileName = attachment.getString(Constant.KEY_NAME);
     RelativeLayout itemContainer =
         (RelativeLayout) this.inflater.inflate(R.layout.activity_source_search_result_item, null);
-
     ImageView imageView =
         (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_icon);
-    imageView.setBackgroundResource(R.drawable.case_item_bg);
+    FileTools.setImageThumbnalilUrl(imageView, fileName, attachment
+        .getString(Constant.KEY_THUMBNAIL));
 
-    String title = activity.getString(Constant.KEY_NAME);
     TextView textView =
         (TextView) itemContainer.findViewById(R.id.tv_act_source_search_result_item_filename);
     textView.setWidth(150);
     textView.setTextSize(16);
     textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
-    if (title.matches("^\\d{4}.*")) {
-      textView.setText(title.substring(4, title.length()));
-    } else {
-      textView.setText(title);
-    }
+    textView.setText(fileName);
 
     RelativeLayout.LayoutParams params =
         new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -397,7 +332,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           imageViewFlag.setVisibility(View.INVISIBLE);
         } else {
           bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-              DataProvider.storage_dir + activity.getString(Constant.KEY_URL)), null);
+              attachment.getString(Constant.KEY_URL)), null);
         }
       }
     });
@@ -426,7 +361,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
         msg.set(Constant.KEY_ACTION, "delete");
         msg.set(Constant.KEY_STARS, Json.createArray().push(
             Json.createObject().set(Constant.KEY_TYPE, "attachment").set(Constant.KEY_KEY,
-                activity.getString(Constant.KEY_ID))));
+                attachment.getString(Constant.KEY_ID))));
         bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
@@ -570,6 +505,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    * @return
    */
   private JsonArray buildTags(JsonArray tags) {
+    if (tags == null) {
+      return null;
+    }
     // 删除垃圾数据
     for (int i = 0; i < tags.length(); i++) {
       String tag = tags.getString(i);

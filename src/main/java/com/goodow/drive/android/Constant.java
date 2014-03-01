@@ -6,6 +6,8 @@ import java.util.List;
 public interface Constant {
 
   String ADDR_CONTROL = BusProvider.SID + "control";
+  String ADDR_VIEW = BusProvider.SID + "view";
+  String ADDR_VIEW_REFRESH = ADDR_VIEW + ".refresh";
   String ADDR_PREFIX_VIEW = BusProvider.SID + "view.";
   String ADDR_TOPIC = BusProvider.SID + "topic";
   String ADDR_PLAYER = BusProvider.SID + "player";
@@ -54,6 +56,7 @@ public interface Constant {
   String KEY_ATTACHMENTS = "attachments";//
   String KEY_FROM = "from";//
   String KEY_SIZE = "size";//
+  String KEY_REDIRECTTO = "redirectTo";//
 
   // sd卡
   String STORAGE_DIR = "/mnt/sdcard/";

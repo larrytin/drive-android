@@ -83,6 +83,7 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
 
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
+  private HandlerRegistration refreshHandler;
 
   @Override
   public void onClick(View v) {
@@ -92,9 +93,8 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_prepare_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            Constant.QUERIES,
-            Json.createObject().set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+            Constant.KEY_REDIRECTTO, "favorite"), null);
         break;
       case R.id.iv_act_prepare_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -194,6 +194,7 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
     super.onPause();
     postHandler.unregisterHandler();
     controlHandler.unregisterHandler();
+    refreshHandler.unregisterHandler();
   }
 
   @Override
@@ -243,6 +244,14 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
         }
       }
     });
+
+    refreshHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            sendQueryMessage(null);
+          }
+        });
   }
 
   /**

@@ -108,6 +108,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
 
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
+  private HandlerRegistration refreshHandler;
   private LayoutInflater inflater = null;
 
   @Override
@@ -118,9 +119,8 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_smart_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            Constant.QUERIES,
-            Json.createObject().set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+            Constant.KEY_REDIRECTTO, "favorite"), null);
         break;
       case R.id.iv_act_smart_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -205,6 +205,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     super.onPause();
     postHandler.unregisterHandler();
     controlHandler.unregisterHandler();
+    refreshHandler.unregisterHandler();
   }
 
   @Override
@@ -254,6 +255,14 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
         }
       }
     });
+
+    refreshHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            sendQueryMessage(null);
+          }
+        });
   }
 
   /**

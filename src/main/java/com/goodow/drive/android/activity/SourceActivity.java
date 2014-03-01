@@ -2,7 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.data.DataProvider;
+import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -151,9 +151,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_source_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            Constant.QUERIES,
-            Json.createObject().set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
+        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "favorite"), null);
         break;
       case R.id.iv_act_source_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -188,7 +187,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     Bundle extras = this.getIntent().getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
     this.queryingTags = msg.getArray(Constant.KEY_TAGS);
-    for (int i = 0; i < this.queryingTags.length(); i++) {
+    for (int i = 0; this.queryingTags != null && i < this.queryingTags.length(); i++) {
       String tag = this.queryingTags.getString(i);
       if (idContentTypes.containsKey(tag)) {
         this.currentContentType = idContentTypes.get(tag);
@@ -375,31 +374,28 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * @return
    */
   private View buildItemView(final JsonObject attachment, int index) {
+    String fileName = attachment.getString(Constant.KEY_NAME);
     RelativeLayout itemContainer =
         (RelativeLayout) this.inflater.inflate(R.layout.activity_source_search_result_item, null);
 
     ImageView imageView =
         (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_icon);
-    imageView.setBackgroundResource(R.drawable.case_item_bg);
+    FileTools.setImageThumbnalilUrl(imageView, fileName, attachment
+        .getString(Constant.KEY_THUMBNAIL));
 
-    String title = attachment.getString(Constant.KEY_NAME);
     TextView textView =
         (TextView) itemContainer.findViewById(R.id.tv_act_source_search_result_item_filename);
-    if (title.matches("^\\d{4}.*")) {
-      textView.setText(title.substring(4, title.length()));
-    } else {
-      textView.setText(title);
-    }
+    textView.setText(fileName);
 
     final ImageView imageViewFlag =
         (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_flag);
-    new MyAsyncTask(imageViewFlag).execute(attachment.getString(Constant.KEY_ID));
+    new MyAsyncTask(imageViewFlag).execute(attachment.getString(Constant.KEY_ID));// 异步夹在收藏标记
     imageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         // 打开文件
         bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-            DataProvider.storage_dir + attachment.getString(Constant.KEY_URL)).set("play", 1), null);
+            attachment.getString(Constant.KEY_URL)).set("play", 1), null);
       }
     });
 

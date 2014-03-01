@@ -3,7 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
-import com.goodow.drive.android.data.DataProvider;
+import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.drive.android.toolutils.FontUtil;
 import com.goodow.drive.android.view.MarqueeTextView;
 import com.goodow.realtime.channel.Bus;
@@ -14,22 +14,19 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
-
-import android.text.TextUtils.TruncateAt;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -292,8 +289,8 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
             @Override
             public void onClick(View v) {
               String path = v.getTag().toString();
-              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-                  DataProvider.storage_dir + path).set("play", 1), null);
+              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", path).set(
+                  "play", 1), null);
               // acctachment
               String attachment = path;
               // 此处记录打开的时间
@@ -369,7 +366,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     textView.setMarqueeRepeatLimit(-1);
     itemLayout.addView(textView);
     itemLayout.setTag(filePath);
-    this.setThumbnailsImage(itemImageView, fileName, thumbnail);
+    FileTools.setImageThumbnalilUrl(itemImageView, fileName, thumbnail);
     textView.setText(fileName);
     return itemLayout;
   }
@@ -466,34 +463,4 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
           }
         });
   }
-
-  /**
-   * 给item设置缩略图
-   * 
-   * @param view
-   * @param name
-   */
-  private void setThumbnailsImage(ImageView view, String name, String thumbnail) {
-    // 判断指定的缩略图是否存在
-    if (thumbnail != null && new File(thumbnail).exists()) {
-      // 加载存在的缩略图
-      view.setImageURI(Uri.parse(thumbnail));
-    } else {
-      // 加载默认的缩略图
-      if (name.endsWith(".mp3")) {
-        view.setImageResource(R.drawable.behave_mp3);
-      } else if (name.endsWith(".mp4")) {
-        view.setImageResource(R.drawable.behave_mp4);
-      } else if (name.endsWith(".swf")) {
-        view.setImageResource(R.drawable.behave_flash);
-      } else if (name.endsWith(".pdf")) {
-        view.setImageResource(R.drawable.behave_ebook);
-      } else if (name.endsWith(".jpg")) {
-        view.setImageResource(R.drawable.behave_image);
-      } else {
-        view.setImageResource(R.drawable.behave_image);
-      }
-    }
-  }
-
 }

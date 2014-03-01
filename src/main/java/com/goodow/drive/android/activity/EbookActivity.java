@@ -3,7 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
-import com.goodow.drive.android.data.DataProvider;
+import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -65,6 +65,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
 
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
+  private HandlerRegistration refreshHandler;
 
   @Override
   public void onClick(View v) {
@@ -74,9 +75,8 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_ebook_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            Constant.QUERIES,
-            Json.createObject().set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+            Constant.KEY_REDIRECTTO, "favorite"), null);
         break;
       case R.id.iv_act_ebook_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -164,6 +164,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     super.onPause();
     postHandler.unregisterHandler();
     controlHandler.unregisterHandler();
+    refreshHandler.unregisterHandler();
   }
 
   @Override
@@ -211,6 +212,14 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
         }
       }
     });
+
+    refreshHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            sendQueryMessage(null);
+          }
+        });
   }
 
   /**
@@ -250,15 +259,6 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
               new LinearLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
           params.setMargins(22, 5, 22, 18);
           view.setLayoutParams(params);
-          view.setClickable(true);
-          view.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-                  DataProvider.storage_dir + v.getTag().toString()), null);
-              System.out.println(DataProvider.storage_dir + v.getTag().toString());
-            }
-          });
           innerContainer.addView(view);
           index++;
         }
@@ -291,7 +291,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
    * @param index
    * @return
    */
-  private View buildItemView(int index, JsonObject attachment) {
+  private View buildItemView(int index, final JsonObject attachment) {
     LinearLayout.LayoutParams params =
         new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     LinearLayout itemLayout = new LinearLayout(this);
@@ -302,7 +302,8 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     RelativeLayout.LayoutParams itemImageViewParams2 = new RelativeLayout.LayoutParams(120, 100);
     itemImageViewParams2.addRule(RelativeLayout.CENTER_HORIZONTAL);
     ImageView itemImageView = new ImageView(this);
-    itemImageView.setImageResource(R.drawable.ebook_flash);
+    FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_NAME),
+        attachment.getString(Constant.KEY_THUMBNAIL));
     itemImageView.setLayoutParams(itemImageViewParams2);
     itemLayout.addView(itemImageView);
 
@@ -312,13 +313,15 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     String title = attachment.getString(Constant.KEY_NAME);
-    itemLayout.setTag(attachment.getString(Constant.KEY_URL));
-    if (title.matches("^\\d{4}.*")) {
-      textView.setText(title.substring(4, title.length()));
-    } else {
-      textView.setText(title);
-    }
+    textView.setText(title);
     itemLayout.addView(textView);
+    itemLayout.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+            attachment.getString(Constant.KEY_URL)), null);
+      }
+    });
 
     return itemLayout;
   }

@@ -23,7 +23,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean deleteAllData(Context context) {
-    return DBOperator2.deleteAllTableData(context);
+    return DBOperator.deleteAllTableData(context);
   }
 
   /**
@@ -35,7 +35,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean deleteFiles(Context context, JsonArray tags) {
-    return DBOperator2.deleteFilesByIds(context, tags);
+    return DBOperator.deleteFilesByIds(context, tags);
   }
 
   /**
@@ -47,7 +47,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean deleteStarRelation(Context context, JsonArray stars) {
-    return DBOperator2.deleteStarRelation(context, stars);
+    return DBOperator.deleteStarRelation(context, stars);
   }
 
   /**
@@ -59,7 +59,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean deleteTagRelation(Context context, JsonArray tags) {
-    return DBOperator2.deleteTagRelation(context, tags);
+    return DBOperator.deleteTagRelation(context, tags);
   }
 
   /**
@@ -71,7 +71,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertFile(Context context, JsonArray attachments) {
-    return DBOperator2.createFile(context, attachments);
+    return DBOperator.createFile(context, attachments);
   }
 
   /**
@@ -83,7 +83,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertFile(Context context, JsonObject attachment) {
-    return DBOperator2.createFile(context, Json.createArray().push(attachment));
+    return DBOperator.createFile(context, Json.createArray().push(attachment));
   }
 
   /**
@@ -95,7 +95,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertStarRelation(Context context, JsonObject star) {
-    return DBOperator2.createStarRelation(context, Json.createArray().push(star));
+    return DBOperator.createStarRelation(context, Json.createArray().push(star));
   }
 
   /**
@@ -107,7 +107,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertTagRelation(Context context, JsonArray tags) {
-    return DBOperator2.createTagRelation(context, tags);
+    return DBOperator.createTagRelation(context, tags);
   }
 
   /**
@@ -119,7 +119,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertTagRelation(Context context, JsonObject tag) {
-    return DBOperator2.createTagRelation(context, Json.createArray().push(tag));
+    return DBOperator.createTagRelation(context, Json.createArray().push(tag));
   }
 
   /**
@@ -131,7 +131,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static JsonObject queryFileById(Context context, String id) {
-    return DBOperator2.readFilesByIds(context, Json.createArray().push(id)).getObject(0);
+    return DBOperator.readFilesByIds(context, Json.createArray().push(id)).getObject(0);
   }
 
   /**
@@ -143,8 +143,8 @@ public class DBDataProvider {
    * @status tested
    */
   public static JsonObject queryStarInfo(Context context, JsonObject star) {
-    if (DBOperator2.readStarRelation(context, Json.createArray().push(star)).length() > 0) {
-      return DBOperator2.readStarRelation(context, Json.createArray().push(star)).getObject(0);
+    if (DBOperator.readStarRelation(context, Json.createArray().push(star)).length() > 0) {
+      return DBOperator.readStarRelation(context, Json.createArray().push(star)).getObject(0);
     }
     return null;
   }
@@ -158,7 +158,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static JsonArray querySubTagsInfo(Context context, JsonArray tags) {
-    return DBOperator2.readSubTags(context, tags);
+    return DBOperator.readSubTags(context, tags);
   }
 
   /**
@@ -170,7 +170,7 @@ public class DBDataProvider {
    * @status test useless
    */
   public static JsonObject queryTagInfo(Context context, JsonObject tag) {
-    return DBOperator2.readTagInfo(context, tag);
+    return DBOperator.readTagInfo(context, tag);
   }
 
   /**
@@ -182,7 +182,7 @@ public class DBDataProvider {
    * @status tested
    */
   public static JsonArray readStarByType(Context context, String type) {
-    return DBOperator2.readStarByType(context, type);
+    return DBOperator.readStarByType(context, type);
   }
 
   /**
@@ -203,14 +203,14 @@ public class DBDataProvider {
       }
       sql = sql + "limit " + size + " offset " + from;
       JsonObject attachment =
-          Json.createObject().set(Constant.KEY_SIZE, DBOperator2.readFilesNum(context));
-      attachment.set(Constant.KEY_ATTACHMENTS, DBOperator2.readFilesByKey(context, sql));
+          Json.createObject().set(Constant.KEY_SIZE, DBOperator.readFilesNum(context));
+      attachment.set(Constant.KEY_ATTACHMENTS, DBOperator.readFilesByKey(context, sql));
       return attachment;
     }
 
     JsonObject attachment =
-        Json.createObject().set(Constant.KEY_SIZE, DBOperator2.readFilesNum(context));
-    attachment.set(Constant.KEY_ATTACHMENTS, DBOperator2.readFilesByKey(context, key));
+        Json.createObject().set(Constant.KEY_SIZE, DBOperator.readFilesNum(context));
+    attachment.set(Constant.KEY_ATTACHMENTS, DBOperator.readFilesByKey(context, key));
     return attachment;
   }
 }

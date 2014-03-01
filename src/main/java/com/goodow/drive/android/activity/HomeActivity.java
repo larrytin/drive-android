@@ -42,7 +42,8 @@ public class HomeActivity extends BaseActivity {
     switch (v.getId()) {
     // 收藏
       case R.id.iv_act_main_coll:
-        this.open("收藏");
+        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+            Constant.KEY_REDIRECTTO, "favorite"), null);
         break;
       // 锁屏
       case R.id.iv_act_main_loc:
@@ -52,7 +53,8 @@ public class HomeActivity extends BaseActivity {
         break;
       // 设置
       case R.id.iv_act_main_set:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_PREFIX_VIEW + "settings", null, null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+            Constant.KEY_REDIRECTTO, "settings"), null);
         break;
       // 关机
       case R.id.iv_act_main_clo:
@@ -86,7 +88,8 @@ public class HomeActivity extends BaseActivity {
         break;
       // 资源库
       case R.id.iv_act_main_source:
-        this.open("资源库");
+        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "repository"), null);
         break;
 
       default:

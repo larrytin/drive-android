@@ -3,7 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
-import com.goodow.drive.android.data.DataProvider;
+import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -21,11 +21,7 @@ import java.util.Map;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.media.ThumbnailUtils;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore.Images.Thumbnails;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
@@ -43,32 +39,6 @@ import android.widget.Toast;
 public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     OnPageChangeListener, OnClickListener {
 
-  /**
-   * 异步加载缩略图片
-   * 
-   * @author dpw
-   * 
-   */
-  class MyAsyncTask extends AsyncTask<String, Void, Bitmap> {
-    private ImageView imageView = null;
-
-    public MyAsyncTask(ImageView imageView) {
-      this.imageView = imageView;
-    }
-
-    @Override
-    protected Bitmap doInBackground(String... params) {
-      Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(params[0], Thumbnails.MINI_KIND);
-      bitmap = ThumbnailUtils.extractThumbnail(bitmap, 72, 50);
-      return bitmap;
-    }
-
-    @Override
-    protected void onPostExecute(Bitmap result) {
-      this.imageView.setImageBitmap(result);
-      super.onPostExecute(result);
-    }
-  }
   /**
    * 班级的点击事件
    * 
@@ -164,6 +134,7 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
 
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
+  private HandlerRegistration refreshHandler;;
   private LayoutInflater inflater = null;
 
   @Override
@@ -174,8 +145,8 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_case_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            Constant.QUERIES, Json.createObject().set(Constant.TYPE, "收藏")), null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+            Constant.KEY_REDIRECTTO, "favorite"), null);
         break;
       case R.id.iv_act_case_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -272,6 +243,7 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     super.onPause();
     postHandler.unregisterHandler();
     controlHandler.unregisterHandler();
+    refreshHandler.unregisterHandler();
   }
 
   @Override
@@ -323,6 +295,14 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
         }
       }
     });
+
+    refreshHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            sendQueryMessage(null);
+          }
+        });
   }
 
   /**
@@ -362,13 +342,6 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
               new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
           params.setMargins(10, 10, 10, 10);
           itemView.setLayoutParams(params);
-          itemView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-                  DataProvider.storage_dir + itemView.getTag().toString()), null);
-            }
-          });
           innerContainer.addView(itemView);
           index++;
         }
@@ -400,7 +373,7 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
    * @param index
    * @return
    */
-  private View buildItemView(int index, JsonObject attachment) {
+  private View buildItemView(int index, final JsonObject attachment) {
     LinearLayout.LayoutParams params =
         new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     LinearLayout itemLayout = new LinearLayout(this);
@@ -414,15 +387,11 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     itemImageViewParams.setMargins(0, 30, 0, 0);
     RelativeLayout imageLayout = new RelativeLayout(this);
 
-    ImageView thumbnail = new ImageView(this);
-    thumbnail.setLayoutParams(itemImageViewParams);
-    new MyAsyncTask(thumbnail).execute(attachment.getString(Constant.KEY_URL));
-    imageLayout.addView(thumbnail);
-
     RelativeLayout.LayoutParams itemImageViewParams2 = new RelativeLayout.LayoutParams(100, 100);
     itemImageViewParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
     ImageView itemImageView = new ImageView(this);
-    itemImageView.setImageResource(R.drawable.case_item_bg);
+    FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_NAME),
+        attachment.getString(Constant.KEY_THUMBNAIL));
     itemImageView.setLayoutParams(itemImageViewParams2);
     imageLayout.addView(itemImageView);
     itemLayout.addView(imageLayout);
@@ -433,13 +402,15 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     String title = attachment.getString(Constant.KEY_NAME);
-    itemLayout.setTag(attachment.getString(Constant.KEY_URL));
-    if (title.matches("^\\d{4}.*")) {
-      textView.setText(title.substring(4, title.length()));
-    } else {
-      textView.setText(title);
-    }
+    textView.setText(title);
     itemLayout.addView(textView);
+    itemLayout.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+            attachment.getString(Constant.KEY_URL)), null);
+      }
+    });
 
     return itemLayout;
   }

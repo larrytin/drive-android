@@ -27,54 +27,51 @@ public class ViewRegistry {
   }
 
   public void subscribe() {
-    bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "home", new MessageHandler<JsonObject>() {
+    /**
+     * 打开VIEW[主页，收藏，资源库，设置等]
+     */
+    bus.registerHandler(Constant.ADDR_VIEW, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(ctx, HomeActivity.class);
-        intent.putExtra("msg", message.body());
-        ctx.startActivity(intent);
+        JsonObject body = message.body();
+        String redirectto = body.getString(Constant.KEY_REDIRECTTO);
+        if ("home".equals(redirectto)) {
+          // 去home页面
+          Intent intent = new Intent(ctx, HomeActivity.class);
+          intent.putExtra("msg", message.body());
+          ctx.startActivity(intent);
+        }
+        if ("favorite".equals(redirectto)) {
+          // 去收藏
+          Intent intent = new Intent(ctx, FavouriteActivity.class);
+          intent.putExtra("msg", body);
+          ctx.startActivity(intent);
+        }
+        if ("repository".equals(redirectto)) {
+          // 去资源库
+          Intent intent = new Intent(ctx, SourceActivity.class);
+          intent.putExtra("msg", body);
+          ctx.startActivity(intent);
+        }
+        if ("settings".equals(redirectto)) {
+          Intent intent = new Intent(ctx, SettingActivity.class);
+          ctx.startActivity(intent);
+        }
+        if ("settings.wifi".equals(redirectto)) {
+          ctx.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+        }
+        if ("settings.screenOffset".equals(redirectto)) {
+          Toast.makeText(ctx, "设置屏幕偏移", Toast.LENGTH_LONG).show();
+        }
+        if ("aboutUs".equals(redirectto)) {
+          Toast.makeText(ctx, "sid=" + BusProvider.SID, Toast.LENGTH_LONG).show();
+        }
       }
     });
-    bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "wifi", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        ctx.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
-      }
-    });
-    bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "resolution", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "设置分辨率输出", Toast.LENGTH_LONG).show();
-      }
-    });
-    bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "screenOffset",
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            // Intent intent = new Intent(ctx, HomeActivity.class);
-            // ctx.startActivity(intent);
-            Toast.makeText(ctx, "设置屏幕偏移", Toast.LENGTH_LONG).show();
-          }
-        });
-    bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "aboutUs", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        // Intent intent = new Intent(ctx, HomeActivity.class);
-        // ctx.startActivity(intent);
-        Toast.makeText(ctx, "sid=" + BusProvider.SID, Toast.LENGTH_LONG).show();
-      }
-    });
-    // 打开设置
-    bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "settings", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(ctx, SettingActivity.class);
-        ctx.startActivity(intent);
-      }
-    });
-    // 打开活动详情
+
+    /**
+     * 打开活动详情
+     */
     bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
@@ -83,11 +80,14 @@ public class ViewRegistry {
           return;
         }
         Intent intent = new Intent(ctx, BehaveActivity.class);
-        intent.putExtra("msg", msg);// 原先版本的KEY
+        intent.putExtra("msg", msg);
         ctx.startActivity(intent);
       }
     });
 
+    /**
+     * 打开主题[和谐，托班，示范课，入学准备，智能开发，图画书]
+     */
     bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
@@ -113,9 +113,6 @@ public class ViewRegistry {
         if (Constant.DATAREGISTRY_TYPE_HARMONY.equals(type)) {
           // 和谐
           intent = new Intent(ctx, HarmonyActivity.class);
-        } else if (Constant.DATAREGISTRY_TYPE_FAVOURITE.equals(type)) {
-          // 收藏
-          intent = new Intent(ctx, FavouriteActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_SHIP.equals(type)) {
           // 托班
           intent = new Intent(ctx, CareClassesActivity.class);
@@ -131,9 +128,6 @@ public class ViewRegistry {
         } else if (Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {
           // 图画书
           intent = new Intent(ctx, EbookActivity.class);
-        } else if (Constant.DATAREGISTRY_TYPE_SOURCE.equals(type)) {
-          // 资源库
-          intent = new Intent(ctx, SourceActivity.class);
         } else {
           return;
         }

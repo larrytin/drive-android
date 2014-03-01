@@ -130,6 +130,7 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
   private SharedPreferences sharedPreferences = null;
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
+  private HandlerRegistration refreshHandler;
   private LayoutInflater inflater = null;
 
   @Override
@@ -140,9 +141,8 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_harmony_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, Json.createObject().set("action", "post").set(
-            Constant.QUERIES,
-            Json.createObject().set(Constant.TYPE, Constant.DATAREGISTRY_TYPE_FAVOURITE)), null);
+        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+            Constant.KEY_REDIRECTTO, "favorite"), null);
         break;
       case R.id.iv_act_harmony_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
@@ -238,6 +238,7 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
     super.onPause();
     postHandler.unregisterHandler();
     controlHandler.unregisterHandler();
+    refreshHandler.unregisterHandler();
   }
 
   @Override
@@ -274,6 +275,13 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
         saveHistory(Constant.GRADE, currentGrade);
       }
     });
+    refreshHandler =
+        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            sendQueryMessage(null);
+          }
+        });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {

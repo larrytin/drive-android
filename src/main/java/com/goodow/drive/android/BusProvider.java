@@ -25,7 +25,7 @@ import com.goodow.realtime.json.Json;
  * efficient means such as through injection directly into interested classes.
  */
 public final class BusProvider {
-  public static final String SID = "sid.drive.";
+  public static final String SID = "sidD.drive.";
   private static final String HOST = "data.goodow.com:8080";
   static {
     AndroidPlatform.register();
