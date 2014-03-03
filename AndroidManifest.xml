@@ -3,7 +3,7 @@
     package="com.goodow.android.drive"
     android:versionCode="20"
     android:versionName="0.0.20-SNAPSHOT" >
-
+    
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="19" />
@@ -30,7 +30,8 @@
     <!-- 百度定位 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
     <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
-    
+    <!-- 重启权限 -->
+    <uses-permission android:name="android.permission.REBOOT"/>
 
     <application
         android:allowBackup="true"

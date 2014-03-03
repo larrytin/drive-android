@@ -4,6 +4,9 @@
     <issue id="DrawAllocation" severity="ignore" />
     <issue id="HandlerLeak" severity="ignore" />
     <issue id="OldTargetApi" severity="ignore" />
+    <issue id="ProtectedPermissions">
+        <ignore path="AndroidManifest.xml" />
+    </issue>
     <issue id="SdCardPath" severity="ignore" />
     <issue id="ViewConstructor" severity="ignore" />
     <issue id="WrongCall" severity="ignore" />

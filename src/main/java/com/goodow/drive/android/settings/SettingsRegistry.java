@@ -33,7 +33,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
-import android.widget.Toast;
 
 public class SettingsRegistry {
   public static final String PREFIX = BusProvider.SID + "settings.";
@@ -187,14 +186,6 @@ public class SettingsRegistry {
         softwareMsg.set("Version", DeviceInformationTools.getOsVersion());
         softwareMsg.set("SDK", DeviceInformationTools.getSDK());
         message.reply(msg);
-      }
-    });
-
-    // 重启
-    bus.registerHandler(PREFIX + "reboot", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        Toast.makeText(ctx, "重启", Toast.LENGTH_LONG).show();
       }
     });
 
