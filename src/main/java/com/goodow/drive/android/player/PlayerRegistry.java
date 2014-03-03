@@ -28,7 +28,7 @@ import android.widget.Toast;
 public class PlayerRegistry {
   private final Context ctx;
   private final Bus bus;
-  private SharedPreferences usagePreferences;
+  private final SharedPreferences usagePreferences;
 
   public PlayerRegistry(Bus bus, Context ctx) {
     this.bus = bus;
@@ -157,7 +157,7 @@ public class PlayerRegistry {
                           remove = timestampValue.remove(timestamp);
                         }
                       }
-                      if (remove) {
+                      if (!remove) {
                         continue;
                       }
                       if (timestampValue.isEmpty()) {

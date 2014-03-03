@@ -284,27 +284,6 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
           params.setMargins(10, 5, 10, 18);
           view.setLayoutParams(params);
           view.setClickable(true);
-
-          view.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              String path = v.getTag().toString();
-              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", path).set(
-                  "play", 1), null);
-              // acctachment
-              String attachment = path;
-              // 此处记录打开的时间
-              Set<String> fileOpenInfo =
-                  usagePreferences.getStringSet(attachment, new TreeSet<String>());
-              fileOpenInfo.add(System.currentTimeMillis() + "");
-              Editor editor = usagePreferences.edit();
-              // 如果存在，移除key
-              if (usagePreferences.contains(attachment)) {
-                editor.remove(attachment).commit();
-              }
-              editor.putStringSet(attachment, fileOpenInfo).commit();
-            }
-          });
           innerContainer.addView(view);
           index++;
         }
@@ -339,21 +318,41 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
    */
   private View buildItemView(int index, JsonObject attachment) {
     String fileName = attachment.getString(Constant.KEY_NAME);
-    String filePath = attachment.getString(Constant.KEY_URL);
+    final String filePath = attachment.getString(Constant.KEY_URL);
+    final String attachmentId = attachment.getString(Constant.KEY_ID);
     String thumbnail = attachment.getString(Constant.KEY_ATTACHMENT);
     LinearLayout.LayoutParams params =
         new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     LinearLayout itemLayout = new LinearLayout(this);
     itemLayout.setLayoutParams(params);
-    itemLayout.setClickable(true);
     itemLayout.setOrientation(LinearLayout.VERTICAL);
 
     RelativeLayout.LayoutParams itemImageViewParams2 =
         new RelativeLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
     itemImageViewParams2.addRule(RelativeLayout.CENTER_HORIZONTAL);
     ImageView itemImageView = new ImageView(this);
+    itemImageView.setClickable(true);
     itemImageView.setLayoutParams(itemImageViewParams2);
     itemLayout.addView(itemImageView);
+
+    itemImageView.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set(
+            "play", 1), null);
+        // acctachment
+        // 此处记录打开的时间
+        Set<String> fileOpenInfo =
+            usagePreferences.getStringSet(attachmentId, new TreeSet<String>());
+        fileOpenInfo.add(System.currentTimeMillis() + "");
+        Editor editor = usagePreferences.edit();
+        // 如果存在，移除key
+        if (usagePreferences.contains(attachmentId)) {
+          editor.remove(attachmentId).commit();
+        }
+        editor.putStringSet(attachmentId, fileOpenInfo).commit();
+      }
+    });
 
     TextView textView = new MarqueeTextView(this);
     textView.setWidth(220);
