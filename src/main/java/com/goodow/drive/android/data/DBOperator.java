@@ -37,7 +37,6 @@ public class DBOperator {
       db.beginTransaction();
       for (int i = 0; i < len; i++) {
         JsonObject attachment = attachments.getObject(i);
-        System.out.println(attachment);
         db.execSQL(sql, new String[] {
             attachment.getString(Constant.KEY_ID), attachment.getString(Constant.KEY_NAME),
             attachment.getString(Constant.KEY_CONTENTTYPE),
