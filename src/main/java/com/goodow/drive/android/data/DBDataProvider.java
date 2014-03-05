@@ -71,6 +71,20 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertFile(Context context, JsonArray attachments) {
+    if (attachments == null) {
+      return false;
+    }
+    for (int i = 0; i < attachments.length(); ++i) {
+      JsonObject object = attachments.get(i);
+      String url = object.getString(Constant.KEY_URL);
+      if (url.startsWith(Constant.VIR1_PATH)) {
+        String replace = url.replace(Constant.VIR1_PATH, Constant.SD1_PATH);
+        object.set(Constant.KEY_URL, replace);
+      } else if (url.startsWith(Constant.VIR2_PATH)) {
+        String replace = url.replace(Constant.VIR2_PATH, Constant.SD2_PATH);
+        object.set(Constant.KEY_URL, replace);
+      }
+    }
     return DBOperator.createFile(context, attachments);
   }
 
@@ -83,6 +97,17 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertFile(Context context, JsonObject attachment) {
+    if (attachment == null) {
+      return false;
+    }
+    String url = attachment.getString(Constant.KEY_URL);
+    if (url.startsWith(Constant.VIR1_PATH)) {
+      String replace = url.replace(Constant.VIR1_PATH, Constant.SD1_PATH);
+      attachment.set(Constant.KEY_URL, replace);
+    } else if (url.startsWith(Constant.VIR2_PATH)) {
+      String replace = url.replace(Constant.VIR2_PATH, Constant.SD2_PATH);
+      attachment.set(Constant.KEY_URL, replace);
+    }
     return DBOperator.createFile(context, Json.createArray().push(attachment));
   }
 
