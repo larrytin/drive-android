@@ -114,8 +114,6 @@ public interface Constant {
   String DATA_PATH = "goodow/drive";// 数据存放位置
   String FONT_PATH = "fonts/font.ttf";// 字体的路径
 
-  String SD1_PATH = "/mnt/sdcrad/sd1";// 真实的sd1路径
-  String SD2_PATH = "/mnt/sdcrad/sd2";// 真实的sd2路径
   String VIR1_PATH = "attachments/sd1";// 模拟的sd1路径
   String VIR2_PATH = "attachments/sd2";// 模拟的sd2路径
 

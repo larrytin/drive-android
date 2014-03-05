@@ -1,9 +1,12 @@
 package com.goodow.drive.android.data;
 
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.toolutils.AvaliStoragePathTools;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
+
+import java.util.ArrayList;
 
 import android.content.Context;
 
@@ -71,17 +74,18 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertFile(Context context, JsonArray attachments) {
-    if (attachments == null) {
+    ArrayList<String> storageCard = AvaliStoragePathTools.getStorageCard(context);
+    if (attachments == null || storageCard.size() == 0) {
       return false;
     }
     for (int i = 0; i < attachments.length(); ++i) {
       JsonObject object = attachments.get(i);
       String url = object.getString(Constant.KEY_URL);
       if (url.startsWith(Constant.VIR1_PATH)) {
-        String replace = url.replace(Constant.VIR1_PATH, Constant.SD1_PATH);
+        String replace = url.replace(Constant.VIR1_PATH, storageCard.get(0));
         object.set(Constant.KEY_URL, replace);
-      } else if (url.startsWith(Constant.VIR2_PATH)) {
-        String replace = url.replace(Constant.VIR2_PATH, Constant.SD2_PATH);
+      } else if (url.startsWith(Constant.VIR2_PATH) && storageCard.size() == 2) {
+        String replace = url.replace(Constant.VIR2_PATH, storageCard.get(1));
         object.set(Constant.KEY_URL, replace);
       }
     }
@@ -97,15 +101,16 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertFile(Context context, JsonObject attachment) {
-    if (attachment == null) {
+    ArrayList<String> storageCard = AvaliStoragePathTools.getStorageCard(context);
+    if (attachment == null || storageCard.size() == 0) {
       return false;
     }
     String url = attachment.getString(Constant.KEY_URL);
     if (url.startsWith(Constant.VIR1_PATH)) {
-      String replace = url.replace(Constant.VIR1_PATH, Constant.SD1_PATH);
+      String replace = url.replace(Constant.VIR1_PATH, storageCard.get(0));
       attachment.set(Constant.KEY_URL, replace);
-    } else if (url.startsWith(Constant.VIR2_PATH)) {
-      String replace = url.replace(Constant.VIR2_PATH, Constant.SD2_PATH);
+    } else if (url.startsWith(Constant.VIR2_PATH) && storageCard.size() == 2) {
+      String replace = url.replace(Constant.VIR2_PATH, storageCard.get(1));
       attachment.set(Constant.KEY_URL, replace);
     }
     return DBOperator.createFile(context, Json.createArray().push(attachment));
