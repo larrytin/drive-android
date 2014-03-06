@@ -122,10 +122,10 @@ public class ViewRegistry {
         } else if (Constant.DATAREGISTRY_TYPE_PREPARE.equals(type)) {
           // 入学准备
           intent = new Intent(ctx, PrepareActivity.class);
-        } else if (Constant.DATAREGISTRY_TYPE_SMART.equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_EDUCATION.equals(type)) {
           // 智能开发
           intent = new Intent(ctx, SmartActivity.class);
-        } else if (Constant.DATAREGISTRY_TYPE_EBOOK.equals(type)) {
+        } else if (Constant.DATAREGISTRY_TYPE_READ.equals(type)) {
           // 图画书
           intent = new Intent(ctx, EbookActivity.class);
         } else {

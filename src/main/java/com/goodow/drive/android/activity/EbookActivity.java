@@ -189,8 +189,8 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
             return;
           }
         }
-        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_EBOOK) == -1) {
-          tags.push(Constant.DATAREGISTRY_TYPE_EBOOK);
+        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_READ) == -1) {
+          tags.push(Constant.DATAREGISTRY_TYPE_READ);
         }
         sendQueryMessage(buildTags(tags));
         echoTopic();
@@ -485,7 +485,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     if (tags != null) {
       msg.set(Constant.KEY_TAGS, tags);
     } else {
-      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_EBOOK).push(
+      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_READ).push(
           this.currenTopic));
     }
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,

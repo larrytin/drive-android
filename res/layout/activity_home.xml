@@ -94,18 +94,18 @@
           android:tag="入学准备"
           />
       <ImageView
-          android:id="@+id/iv_act_main_smart"
+          android:id="@+id/iv_act_main_edu"
           style="@style/index_sys_fun"
-          android:src="@drawable/index_selector_smart"
+          android:src="@drawable/index_selector_edu"
           android:layout_below="@+id/iv_act_main_pre"
-          android:tag="智能开发"
+          android:tag="安全教育"
           />
       <ImageView
-          android:id="@+id/iv_act_main_ebk"
+          android:id="@+id/iv_act_main_read"
           style="@style/index_sys_fun"
-          android:src="@drawable/index_selector_ebk"
-          android:layout_below="@+id/iv_act_main_smart"
-          android:tag="电子书"
+          android:src="@drawable/index_selector_read"
+          android:layout_below="@+id/iv_act_main_edu"
+          android:tag="早期阅读"
           />
     </RelativeLayout>
 

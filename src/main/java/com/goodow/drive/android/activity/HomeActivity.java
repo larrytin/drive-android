@@ -79,12 +79,12 @@ public class HomeActivity extends BaseActivity {
         this.open("入学准备");
         break;
       // 智能开发
-      case R.id.iv_act_main_smart:
-        this.open("智能开发");
+      case R.id.iv_act_main_edu:
+        // this.open("安全教育");
         break;
       // 图画书
-      case R.id.iv_act_main_ebk:
-        this.open("电子书");
+      case R.id.iv_act_main_read:
+        // this.open("早期阅读");
         break;
       // 资源库
       case R.id.iv_act_main_source:

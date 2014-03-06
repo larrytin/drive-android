@@ -230,8 +230,8 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
             return;
           }
         }
-        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_SMART) == -1) {
-          tags.push(Constant.DATAREGISTRY_TYPE_SMART);
+        if (tags.indexOf(Constant.DATAREGISTRY_TYPE_EDUCATION) == -1) {
+          tags.push(Constant.DATAREGISTRY_TYPE_EDUCATION);
         }
         sendQueryMessage(buildTags(tags));
         echoGrade();
@@ -321,7 +321,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
               msg.set(Constant.KEY_ACTION, "post");
               msg.set(Constant.KEY_TITLE, title);
               JsonArray tags =
-                  Json.createArray().push(Constant.DATAREGISTRY_TYPE_SMART).push(currentGrade)
+                  Json.createArray().push(Constant.DATAREGISTRY_TYPE_EDUCATION).push(currentGrade)
                       .push(currentTerm).push(title);
               msg.set(Constant.KEY_TAGS, tags);
               bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
@@ -525,8 +525,8 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     if (tags != null) {
       msg.set(Constant.KEY_TAGS, tags);
     } else {
-      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_SMART).push(
-          this.currentGrade).push(this.currentTerm));
+      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_EDUCATION)
+          .push(this.currentGrade).push(this.currentTerm));
     }
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
