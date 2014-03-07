@@ -133,7 +133,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private final static int INIT_PASUE = 1000;
 
   private ImageView backImageView = null;
-  private float currentScale;
+  private float currentScale = 1;
 
   private final Handler subHandler = new Handler() {
     @Override
@@ -820,7 +820,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     int left = videoView.getLeft();
     int right = videoView.getRight();
     int bottom = videoView.getBottom();
-    if (videoView.getWidth() < screenWidth) {
+    if (videoView.getWidth() <= screenWidth) {
       setCenter(0.5, -1);
     } else {
       if (left > 0) {
@@ -830,7 +830,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
         videoView.layout(left - (screenWidth - right), top, screenWidth, bottom);
       }
     }
-    if (videoView.getHeight() < screenHeight) {
+    if (videoView.getHeight() <= screenHeight) {
       setCenter(-1, 0.5);
     } else {
       if (top > 0) {
@@ -844,9 +844,17 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   }
 
   private void getScreenSize() {// 获得屏幕尺寸大小
-    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-    screenWidth = displayMetrics.widthPixels;
-    screenHeight = displayMetrics.heightPixels;
+    if (android.os.Build.VERSION.SDK_INT < 17) {
+      DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+      screenWidth = displayMetrics.widthPixels;
+      screenHeight = displayMetrics.heightPixels;
+    } else {// api>17用新方式
+      WindowManager wm = this.getWindowManager();
+      DisplayMetrics outMetrics = new DisplayMetrics();
+      wm.getDefaultDisplay().getRealMetrics(outMetrics);
+      screenWidth = outMetrics.widthPixels;
+      screenHeight = outMetrics.heightPixels;
+    }
     controlHeight = screenHeight / 8;
   }
 
@@ -972,7 +980,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     float scale = 0;
     switch (fit) {
       case 0:
-        scale = Math.min(1.0f, Math.min(widthScale, heightScale));
+        scale = Math.min(widthScale, heightScale);
         break;
       case 1:
         scale = widthScale;
@@ -984,7 +992,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
         scale = 1;
         break;
     }
-    currentScale = scale;
+    currentScale *= scale;
     videoView.setVideoScale((int) (videoWidth * scale), (int) (videoHeight * scale));
   }
 
