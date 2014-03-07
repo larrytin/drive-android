@@ -13,13 +13,9 @@ import com.goodow.realtime.json.JsonObject;
 
 import java.io.File;
 
-import android.opengl.Visibility;
-
-import android.content.pm.PackageInfo;
-
-import android.content.pm.PackageManager.NameNotFoundException;
-
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -32,7 +28,6 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnHoverListener;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
@@ -124,10 +119,9 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject()
             .set("clear", true), null);
         break;
-      //打印
+      // 打印
       case R.id.iv_include_picture_print:
-        bus.send(Bus.LOCAL + BusProvider.SID + "print", Json.createObject().set("path", path),
-            null);
+        bus.send(Bus.LOCAL + BusProvider.SID + "print", Json.createObject().set("path", path), null);
         break;
       default:
         break;
@@ -372,7 +366,8 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     this.ll_include_picture_tools = (LinearLayout) this.findViewById(R.id.ll_include_picture_tools);
     this.iv_include_picture_pen =
         (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_pen);
-    iv_include_picture_print= (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_print);
+    iv_include_picture_print =
+        (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_print);
     PackageInfo packageInfo;
     try {
       packageInfo = this.getPackageManager().getPackageInfo("com.dynamixsoftware.printhand", 0);
@@ -387,17 +382,28 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     controlRectRight =
         new Rect(displayMetrics.widthPixels / 3 * 2, 0, displayMetrics.widthPixels,
             displayMetrics.heightPixels);
-    mImageView.setOnHoverListener(new OnHoverListener() {
+    // mImageView.setOnHoverListener(new OnHoverListener() {
+    // @Override
+    // public boolean onHover(View v, MotionEvent event) {
+    // switch (event.getAction()) {
+    // case MotionEvent.ACTION_HOVER_MOVE:
+    // if (!toolBarHandler.hasMessages(0)
+    // && controlRectRight.contains((int) event.getRawX(), (int) event.getRawY())) {
+    // ll_include_picture_tools.setVisibility(View.VISIBLE);
+    // delayDissmissToolsbar();
+    // }
+    // break;
+    // }
+    // return true;
+    // }
+    // });
+    mImageView.setOnTouchListener(new OnTouchListener() {
+
       @Override
-      public boolean onHover(View v, MotionEvent event) {
-        switch (event.getAction()) {
-          case MotionEvent.ACTION_HOVER_MOVE:
-            if (!toolBarHandler.hasMessages(0)
-                && controlRectRight.contains((int) event.getRawX(), (int) event.getRawY())) {
-              ll_include_picture_tools.setVisibility(View.VISIBLE);
-              delayDissmissToolsbar();
-            }
-            break;
+      public boolean onTouch(View v, MotionEvent event) {
+        if (!toolBarHandler.hasMessages(0)) {
+          ll_include_picture_tools.setVisibility(View.VISIBLE);
+          delayDissmissToolsbar();
         }
         return true;
       }

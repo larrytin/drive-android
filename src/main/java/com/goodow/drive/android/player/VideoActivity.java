@@ -38,7 +38,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnHoverListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
@@ -547,18 +546,30 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     // });
     controlRectButtom = new Rect(0, screenHeight / 3 * 2, screenWidth, screenHeight);
     controlRectRight = new Rect(screenWidth / 3 * 2, 0, screenWidth, screenHeight);
-    videoView.setOnHoverListener(new OnHoverListener() {
+    // videoView.setOnHoverListener(new OnHoverListener() {
+    // @Override
+    // public boolean onHover(View v, MotionEvent event) {
+    // switch (event.getAction()) {
+    // case MotionEvent.ACTION_HOVER_MOVE:
+    // if (!isControllerShow
+    // && (controlRectButtom.contains((int) event.getRawX(), (int) event.getRawY()) ||
+    // controlRectRight
+    // .contains((int) event.getRawX(), (int) event.getRawY()))) {// 是否显示控制器
+    // showController();// 显示控制器
+    // hideControllerDelay();// 延迟隐藏
+    // }
+    // break;
+    // }
+    // return true;
+    // }
+    // });
+    videoView.setOnTouchListener(new OnTouchListener() {
+
       @Override
-      public boolean onHover(View v, MotionEvent event) {
-        switch (event.getAction()) {
-          case MotionEvent.ACTION_HOVER_MOVE:
-            if (!isControllerShow
-                && (controlRectButtom.contains((int) event.getRawX(), (int) event.getRawY()) || controlRectRight
-                    .contains((int) event.getRawX(), (int) event.getRawY()))) {// 是否显示控制器
-              showController();// 显示控制器
-              hideControllerDelay();// 延迟隐藏
-            }
-            break;
+      public boolean onTouch(View v, MotionEvent event) {
+        if (!isControllerShow) {// 是否显示控制器
+          showController();// 显示控制器
+          hideControllerDelay();// 延迟隐藏
         }
         return true;
       }
