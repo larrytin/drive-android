@@ -28,6 +28,7 @@ public final class BusProvider {
   public static final String SID = "sid.drive.";
   private static final String HOST = "data.goodow.com:8080";
   static {
+
     AndroidPlatform.register();
   }
   private static final ReconnectBusClient ConnectBUS = new ReconnectBusClient("ws://" + HOST
