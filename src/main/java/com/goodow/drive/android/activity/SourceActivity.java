@@ -333,7 +333,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     } else {
       this.iv_act_source_result_pre.setVisibility(View.VISIBLE);
     }
-    if (this.currentPageNum < this.totalAttachmentNum / this.numPerPage) {
+    if (this.currentPageNum < (this.totalAttachmentNum % this.numPerPage == 0
+        ? this.totalAttachmentNum / this.numPerPage - 1 : this.totalAttachmentNum / this.numPerPage)) {
       // 小于总页数：向后的显示
       this.iv_act_source_result_next.setVisibility(View.VISIBLE);
     } else {
@@ -561,6 +562,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * @param id
    */
   private void onSearchButtonClick(int id) {
+    this.totalAttachmentNum = 0;
+    this.currentPageNum = 0;
     if (this.currentContentType == null
         && this.subTags.size() == 0
         && (this.et_act_source_tags.getText().toString() == null || this.et_act_source_tags

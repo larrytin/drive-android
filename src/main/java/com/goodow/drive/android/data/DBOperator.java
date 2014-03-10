@@ -305,52 +305,11 @@ public class DBOperator {
    * 根据文件的标签属性查询文件
    * 
    * @param context
-   * @param key
+   * @param sql
    * @return
+   * @status checking
    */
-  public static JsonArray readFilesByKey(Context context, JsonObject key) {
-    String sql = null;
-    String[] params = null;
-    StringBuilder sqlBuilder = new StringBuilder();
-    JsonArray tags = key.getArray(Constant.KEY_TAGS);// 取tags的并集
-    int len_tags = tags == null ? 0 : tags.length();
-    for (int i = 0; i < len_tags; i++) {
-      sqlBuilder.append(
-          "SELECT KEY FROM T_RELATION WHERE TAG = '" + tags.getString(i)
-              + "' AND TYPE = 'attachment' ").append("INTERSECT ");
-    }
-    sqlBuilder.delete(sqlBuilder.lastIndexOf("INTERSECT ") >= 0 ? sqlBuilder
-        .lastIndexOf("INTERSECT ") : 0, sqlBuilder.length());
-
-    if (key.getString(Constant.KEY_QUERY) != null
-        && key.getString(Constant.KEY_CONTENTTYPE) != null) {
-      sqlBuilder.append(" SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
-          + key.getString(Constant.KEY_QUERY) + "%' AND TYPE = 'attachment' ");
-      sql =
-          "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ") AND CONTENTTYPE = ?"
-              + " AND NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
-      params = new String[] {key.getString(Constant.KEY_CONTENTTYPE)};
-    } else if (key.getString(Constant.KEY_QUERY) == null
-        && key.getString(Constant.KEY_CONTENTTYPE) != null) {
-      sql =
-          "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ") AND CONTENTTYPE = ? ";
-      params = new String[] {key.getString(Constant.KEY_CONTENTTYPE)};
-    } else if (key.getString(Constant.KEY_QUERY) != null
-        && key.getString(Constant.KEY_CONTENTTYPE) == null) {
-      sqlBuilder.append(" SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
-          + key.getString(Constant.KEY_QUERY) + "%' AND TYPE = 'attachment' ");
-      sql =
-          "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ")"
-              + " AND NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%'";
-    } else if (key.getString(Constant.KEY_QUERY) == null
-        && key.getString(Constant.KEY_CONTENTTYPE) == null) {
-      sql = "SELECT * FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString() + ")";
-    }
-    if (key.has(Constant.KEY_SIZE) && key.has(Constant.KEY_FROM)) {
-      sql =
-          sql + " limit " + (int) key.getNumber(Constant.KEY_SIZE) + " offset "
-              + (int) key.getNumber(Constant.KEY_FROM);
-    }
+  public static JsonArray readFilesBySql(Context context, String sql, String[] params) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     Cursor cursor = null;
@@ -366,43 +325,7 @@ public class DBOperator {
         file.set(Constant.KEY_CONTENTLENGTH, cursor.getInt(cursor.getColumnIndex("SIZE")));
         file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
         file.set(Constant.KEY_THUMBNAIL, cursor.getString(cursor.getColumnIndex("THUMBNAILS")));
-        files.push(file);
-      }
-      db.setTransactionSuccessful();
-    } catch (Exception e) {
-    } finally {
-      db.endTransaction();
-      if (cursor != null) {
-        cursor.close();
-      }
-      db.close();
-    }
-    return files;
-  }
-
-  /**
-   * 根据文件的标签属性查询文件
-   * 
-   * @param context
-   * @param key
-   * @return
-   */
-  public static JsonArray readFilesByKey(Context context, String sql) {
-    DBHelper dbOpenHelper = DBHelper.getInstance(context);
-    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-    Cursor cursor = null;
-    JsonArray files = Json.createArray();
-    try {
-      db.beginTransaction();
-      cursor = db.rawQuery(sql, null);
-      while (cursor.moveToNext()) {
-        JsonObject file = Json.createObject();
-        file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
-        file.set(Constant.KEY_NAME, cursor.getString(cursor.getColumnIndex("NAME")));
-        file.set(Constant.KEY_CONTENTTYPE, cursor.getString(cursor.getColumnIndex("CONTENTTYPE")));
-        file.set(Constant.KEY_CONTENTLENGTH, cursor.getInt(cursor.getColumnIndex("SIZE")));
-        file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
-        file.set(Constant.KEY_THUMBNAIL, cursor.getString(cursor.getColumnIndex("THUMBNAILS")));
+        file.set(Constant.KEY_CATAGORY, cursor.getString(cursor.getColumnIndex("TAG")));
         files.push(file);
       }
       db.setTransactionSuccessful();
@@ -421,16 +344,17 @@ public class DBOperator {
    * 查询文件总数量
    * 
    * @param context
+   * @param sql
    * @return
    */
-  public static int readFilesNum(Context context) {
+  public static int readFilesNum(Context context, String sql) {
     int result = 0;
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     Cursor cursor = null;
     try {
       db.beginTransaction();
-      cursor = db.rawQuery("SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE", null);
+      cursor = db.rawQuery(sql, null);
       if (cursor.moveToNext()) {
         result = cursor.getInt((cursor.getColumnIndex("TOTAL_NUM")));
       }

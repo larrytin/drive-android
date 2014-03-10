@@ -57,6 +57,7 @@ public interface Constant {
   String KEY_FROM = "from";//
   String KEY_SIZE = "size";//
   String KEY_REDIRECTTO = "redirectTo";//
+  String KEY_CATAGORY = "catagory";// 素材类别
 
   // sd卡
   String STORAGE_DIR = "/mnt/sdcard/";
