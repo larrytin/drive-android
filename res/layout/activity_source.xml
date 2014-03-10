@@ -179,6 +179,8 @@
         android:layout_marginBottom="@dimen/act_source_search_edit_layout_marginBottom"
         android:background="@drawable/source_shape_search_bg"
         android:padding="@dimen/act_source_search_edit_layout_padding"
+        android:focusable="true"  
+        android:focusableInTouchMode="true"
         >
         <EditText
             android:id="@+id/et_act_source_tags"

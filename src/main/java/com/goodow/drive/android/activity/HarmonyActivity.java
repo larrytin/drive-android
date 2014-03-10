@@ -536,7 +536,7 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
       }
       LinearLayout.LayoutParams params =
           new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-      params.setMargins(10, 5, 10, 0);
+      params.setMargins(5, 5, 10, 0);
       TextView child = (TextView) this.inflater.inflate(layoutId, null);
       child.setLayoutParams(params);
       child.setSelected(false);

@@ -571,8 +571,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       Toast.makeText(this, this.getString(R.string.string_source_tip0), Toast.LENGTH_SHORT).show();
     } else {
       this.pb_act_source_search_progress.setVisibility(View.VISIBLE);
-      this.sendQueryMessage(this.currentContentType, this.subTags, this.et_act_source_tags
-          .getText().toString().trim());
+      this.sendQueryMessage(this.currentContentType == null ? "全部" : this.currentContentType,
+          this.subTags, this.et_act_source_tags.getText().toString().trim());
     }
   }
 
