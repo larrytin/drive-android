@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.settings.SettingsRegistry;
+import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -11,6 +12,7 @@ import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.JsonObject;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -30,6 +32,12 @@ public class BaseActivity extends Activity {
 
   private HandlerRegistration controlHandler;
   private HandlerRegistration brightnessHandler;
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    BusProvider.SID = DeviceInformationTools.getLocalMacAddressFromWifiInfo(this) + ".drive.";
+    super.onCreate(savedInstanceState);
+  }
 
   @Override
   protected void onPause() {
