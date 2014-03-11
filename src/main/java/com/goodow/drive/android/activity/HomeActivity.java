@@ -12,7 +12,7 @@ import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.channel.State;
-import com.goodow.realtime.channel.impl.ReconnectBusClient;
+import com.goodow.realtime.channel.impl.ReconnectBus;
 import com.goodow.realtime.core.Handler;
 import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.core.Platform;
@@ -32,7 +32,7 @@ public class HomeActivity extends BaseActivity {
 
   private static boolean registried;
   private HandlerRegistration openHandlerReg;
-  private final ReconnectBusClient connectBus = BusProvider.getConnectBus();
+  private final ReconnectBus connectBus = BusProvider.getConnectBus();
   private HandlerRegistration netWorkHandlerReg;
   private int schedulePeriodic;
 

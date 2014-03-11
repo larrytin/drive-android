@@ -3,7 +3,7 @@ package com.goodow.drive.android;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.channel.impl.WebSocketBusClient;
+import com.goodow.realtime.channel.impl.WebSocketBus;
 import com.goodow.realtime.java.JavaPlatform;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
@@ -21,8 +21,8 @@ public class DataSource {
 
   public static void main(String[] args) throws IOException {
     final Bus bus =
-        new WebSocketBusClient("ws://data.goodow.com:8080/eventbus/websocket", Json.createObject()
-            .set("forkLocal", true));
+        new WebSocketBus("ws://data.goodow.com:8080/eventbus/websocket", Json.createObject().set(
+            "forkLocal", true));
 
     bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
       @Override
