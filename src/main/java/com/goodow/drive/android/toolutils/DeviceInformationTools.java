@@ -86,9 +86,18 @@ public class DeviceInformationTools {
 
   // 根据Wifi信息获取本地Mac
   public static String getLocalMacAddressFromWifiInfo(Context context) {
+    String mac = null;
     WifiManager mWifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-    WifiInfo mWifiInfo = mWifiManager.getConnectionInfo();
-    return mWifiInfo.getMacAddress();
+    if (mWifiManager.isWifiEnabled()) {
+      WifiInfo mWifiInfo = mWifiManager.getConnectionInfo();
+      mac = mWifiInfo.getMacAddress();
+    } else {
+      mWifiManager.setWifiEnabled(true);
+      WifiInfo mWifiInfo = mWifiManager.getConnectionInfo();
+      mac = mWifiInfo.getMacAddress();
+      mWifiManager.setWifiEnabled(false);
+    }
+    return mac;
   }
 
   public static String getOsCodeName() {
