@@ -14,6 +14,7 @@ import com.artifex.mupdf.MuPDFActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -134,7 +135,7 @@ public class PlayerRegistry {
             msg.set("sid", BusProvider.SID.split("[.]")[0]);
             msg.set("analytics", analytics);
             // 发送统计信息到服务器
-            BusProvider.getConnectBus().send(Constant.ADDR_PLAYER + ".analytics", msg,
+            BusProvider.getConnectBus().send("sid.drive.player.analytics", msg,
                 new MessageHandler<JsonObject>() {
                   @Override
                   public void handle(Message<JsonObject> message) {
@@ -151,13 +152,13 @@ public class PlayerRegistry {
                     for (Map.Entry<String, Set<String>> entry : fileOpenInfo.entrySet()) {
                       String attachmentKey = entry.getKey();
                       Set<String> timestampValue = entry.getValue();
-                      boolean remove = false;
+                      Set<String> tmpSet = new HashSet<String>();
                       for (String timestamp : timestampValue) {
                         if (Long.parseLong(timestamp) <= lastTimestamp) {
-                          remove = timestampValue.remove(timestamp);
+                          tmpSet.add(timestamp);
                         }
                       }
-                      if (!remove) {
+                      if (!timestampValue.removeAll(tmpSet)) {
                         continue;
                       }
                       if (timestampValue.isEmpty()) {

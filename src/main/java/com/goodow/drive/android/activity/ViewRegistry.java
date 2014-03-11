@@ -64,7 +64,7 @@ public class ViewRegistry {
           Toast.makeText(ctx, "设置屏幕偏移", Toast.LENGTH_LONG).show();
         }
         if ("aboutUs".equals(redirectto)) {
-          Toast.makeText(ctx, "sid=" + BusProvider.SID, Toast.LENGTH_LONG).show();
+          Toast.makeText(ctx, "sid=" + BusProvider.SID.split("[.]")[0], Toast.LENGTH_LONG).show();
         }
       }
     });
