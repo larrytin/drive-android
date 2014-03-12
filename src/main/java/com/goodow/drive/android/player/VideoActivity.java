@@ -563,17 +563,17 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     // return true;
     // }
     // });
-    videoView.setOnTouchListener(new OnTouchListener() {
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (!isControllerShow) {// 是否显示控制器
-          showController();// 显示控制器
-          hideControllerDelay();// 延迟隐藏
-        }
-        return true;
-      }
-    });
+//    videoView.setOnTouchListener(new OnTouchListener() {
+//
+//      @Override
+//      public boolean onTouch(View v, MotionEvent event) {
+//        if (!isControllerShow) {// 是否显示控制器
+//          showController();// 显示控制器
+//          hideControllerDelay();// 延迟隐藏
+//        }
+//        return true;
+//      }
+//    });
 
     try {
       jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
@@ -1052,5 +1052,14 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       }
     }
     isControllerShow = true;
+  }
+
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent ev) {
+    if (!isControllerShow) {// 是否显示控制器
+      showController();// 显示控制器
+      hideControllerDelay();// 延迟隐藏
+    }
+    return super.dispatchTouchEvent(ev);
   }
 }
