@@ -17,8 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -127,7 +131,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private JsonArray queryingTags = null;// 控制台传递的混合标签
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
-
+  private SharedPreferences usagePreferences;
   private static final Map<Object, String> idContentTypes = new HashMap<Object, String>();
   static {
     idContentTypes.put("全部", "全部");
@@ -197,6 +201,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       // 如果从控制台传递的参数中包含了contentType就查询子集分类
       this.echoContentType(this.currentContentType);
     }
+    usagePreferences = getSharedPreferences(BehaveActivity.USAGE_STATISTIC, Context.MODE_PRIVATE);
   }
 
   @Override
@@ -378,7 +383,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     String fileName = attachment.getString(Constant.KEY_NAME);
     RelativeLayout itemContainer =
         (RelativeLayout) this.inflater.inflate(R.layout.activity_source_search_result_item, null);
-
+    final String attachmentId = attachment.getString(Constant.KEY_ID);
     ImageView imageView =
         (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_icon);
     FileTools.setImageThumbnalilUrl(imageView, fileName, attachment
@@ -397,6 +402,17 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         // 打开文件
         bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
             attachment.getString(Constant.KEY_URL)).set("play", 1), null);
+        // acctachment
+        // 此处记录打开的时间
+        Set<String> fileOpenInfo =
+            usagePreferences.getStringSet(attachmentId, new TreeSet<String>());
+        fileOpenInfo.add(System.currentTimeMillis() + "");
+        Editor editor = usagePreferences.edit();
+        // 如果存在，移除key
+        if (usagePreferences.contains(attachmentId)) {
+          editor.remove(attachmentId).commit();
+        }
+        editor.putStringSet(attachmentId, fileOpenInfo).commit();
       }
     });
 

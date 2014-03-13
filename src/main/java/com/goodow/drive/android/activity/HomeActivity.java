@@ -112,13 +112,12 @@ public class HomeActivity extends BaseActivity {
     subscribe();
     sendAnalyticsMessage();
     // 每隔1天,发送一次数据到服务器
-    schedulePeriodic =
-        Platform.scheduler().schedulePeriodic(24 * 60 * 60 * 1000, new Handler<Void>() {
-          @Override
-          public void handle(Void event) {
-            sendAnalyticsMessage();
-          }
-        });
+    schedulePeriodic = Platform.scheduler().schedulePeriodic(5 * 60 * 1000, new Handler<Void>() {
+      @Override
+      public void handle(Void event) {
+        sendAnalyticsMessage();
+      }
+    });
     BaiduLocation.INSTANCE.setContext(getApplicationContext());
     mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
     BaiduLocation.INSTANCE.init();
