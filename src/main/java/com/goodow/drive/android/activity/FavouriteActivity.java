@@ -576,6 +576,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
    * @param id
    */
   private void onLabelChange(int id) {
+    this.currentPageNum = 0;
     if (id == R.id.ft_act_favour_item_activity) {
       this.currentTopic = LABEL_TAG;
     } else if (id == R.id.ft_act_favour_item_file) {

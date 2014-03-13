@@ -272,7 +272,10 @@ public class DBDataProvider {
       int size = (int) key.getNumber(Constant.KEY_SIZE);
       sql = "SELECT UUID FROM T_FILE ";
       if (key.getString(Constant.KEY_QUERY) != null) {
-        sql = sql + "WHERE NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%' ";
+        sql =
+            sql + "WHERE NAME LIKE '%" + key.getString(Constant.KEY_QUERY)
+                + "%' UNION SELECT KEY FROM T_RELATION WHERE TAG LIKE '%"
+                + key.getString(Constant.KEY_QUERY) + "%'";
       }
       // 查询页码
       sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE WHERE UUID IN(" + sql + ")";
@@ -303,8 +306,11 @@ public class DBDataProvider {
         sql = "SELECT UUID FROM T_FILE WHERE CONTENTTYPE = ";
       } else {
         sql =
-            "SELECT UUID FROM T_FILE WHERE UUID IN (" + sqlBuilder.toString()
-                + ") AND CONTENTTYPE = ";
+            "SELECT UUID FROM T_FILE WHERE UUID IN ("
+                + sqlBuilder.toString()
+                + " AND TAG LIKE '%"
+                + (key.getString(Constant.KEY_QUERY) == null ? "" : key
+                    .getString(Constant.KEY_QUERY)) + "%'" + ") AND CONTENTTYPE = ";
       }
       sql =
           sql
