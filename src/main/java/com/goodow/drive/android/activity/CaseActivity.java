@@ -339,7 +339,9 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
           // 构建ItemView对象
           final View itemView = this.buildItemView(index, attachments.getObject(index));
           LinearLayout.LayoutParams params =
-              new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+              new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(
+                  R.dimen.act_case_result_item_width), getResources().getDimensionPixelSize(
+                  R.dimen.act_case_result_item_height));
           params.setMargins(10, 10, 10, 10);
           itemView.setLayoutParams(params);
           innerContainer.addView(itemView);
@@ -349,6 +351,10 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
       }
       this.nameViews.add(rootContainer);
       ImageView imageView = new ImageView(this);
+      LayoutParams layoutParams =
+          new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_result_dot_width),
+              getResources().getDimensionPixelSize(R.dimen.common_result_dot_height));
+      imageView.setLayoutParams(layoutParams);
       if (i == 0) {
         imageView.setBackgroundResource(R.drawable.common_result_dot_current);
       } else {
@@ -387,7 +393,10 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     itemImageViewParams.setMargins(0, 30, 0, 0);
     RelativeLayout imageLayout = new RelativeLayout(this);
 
-    RelativeLayout.LayoutParams itemImageViewParams2 = new RelativeLayout.LayoutParams(100, 100);
+    RelativeLayout.LayoutParams itemImageViewParams2 =
+        new RelativeLayout.LayoutParams(getResources().getDimensionPixelSize(
+            R.dimen.act_case_result_item_image_width), getResources().getDimensionPixelSize(
+            R.dimen.act_case_result_item_image_height));
     itemImageViewParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
     ImageView itemImageView = new ImageView(this);
     FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_URL),
@@ -397,8 +406,10 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     itemLayout.addView(imageLayout);
 
     TextView textView = new TextView(this);
-    textView.setWidth(150);
-    textView.setTextSize(18);
+    textView
+        .setWidth(getResources().getDimensionPixelSize(R.dimen.act_case_result_item_text_width));
+    textView.setTextSize(getResources()
+        .getDimensionPixelSize(R.dimen.act_case_result_item_textSize));
     textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     String title = attachment.getString(Constant.KEY_NAME);
@@ -525,12 +536,20 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     // 初始化年级
     this.ll_act_case_grade = (LinearLayout) this.findViewById(R.id.ll_act_case_grade);
     int gradeChildren = this.gradeNames.length;
+    LayoutParams longWidthParams =
+        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.commen_grade_width_long),
+            getResources().getDimensionPixelSize(R.dimen.common_grade_height));
+    LayoutParams commonWidthParams =
+        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_grade_width),
+            getResources().getDimensionPixelSize(R.dimen.common_grade_height));
     for (int i = 0; i < gradeChildren; i++) {
       int layoutId = R.layout.common_item_grade_short;
-      if (this.gradeNames[3].equals(this.gradeNames[i])) {
-        layoutId = R.layout.common_item_grade_long;
-      }
       TextView child = (TextView) this.inflater.inflate(layoutId, null);
+      if (this.gradeNames[3].equals(this.gradeNames[i])) {
+        child.setLayoutParams(longWidthParams);
+      } else {
+        child.setLayoutParams(commonWidthParams);
+      }
       child.setSelected(false);
       if (this.currentGrade.equals(this.gradeNames[i])) {
         child.setSelected(true);
@@ -544,6 +563,7 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     int termChildren = this.termNames.length;
     for (int i = 0; i < termChildren; i++) {
       TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
+      child.setLayoutParams(commonWidthParams);
       child.setSelected(false);
       if (this.currentTerm.equals(this.termNames[i])) {
         child.setSelected(true);
@@ -555,17 +575,35 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     // 初始化分类
     this.ll_act_case_class = (LinearLayout) this.findViewById(R.id.ll_act_case_class);
     int topicChildren = this.topicNames.length;
+    longWidthParams =
+        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width_long),
+            getResources().getDimensionPixelSize(R.dimen.common_class_height));
+    longWidthParams.setMargins(getResources()
+        .getDimensionPixelSize(R.dimen.common_class_marginLeft), getResources()
+        .getDimensionPixelSize(R.dimen.common_class_marginTop), getResources()
+        .getDimensionPixelSize(R.dimen.common_class_marginRight), 0);
+    commonWidthParams =
+        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width),
+            getResources().getDimensionPixelSize(R.dimen.common_class_height));
+    commonWidthParams.setMargins(getResources().getDimensionPixelSize(
+        R.dimen.common_class_marginLeft), getResources().getDimensionPixelSize(
+        R.dimen.common_class_marginTop), getResources().getDimensionPixelSize(
+        R.dimen.common_class_marginRight), 0);
     for (int i = 0; i < topicChildren; i++) {
       int layoutId = R.layout.common_item_class_short;
+      TextView child;
       if (Constant.DOMIAN_MUSIC.equals(this.topicNames[i])
           || Constant.DOMIAN_ART.equals(this.topicNames[i])) {
         layoutId = R.layout.common_item_class_long;
+        child = (TextView) this.inflater.inflate(layoutId, null);
+        child.setLayoutParams(longWidthParams);
+      } else {
+        child = (TextView) this.inflater.inflate(layoutId, null);
+        child.setLayoutParams(commonWidthParams);
       }
-      LinearLayout.LayoutParams params =
-          new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-      params.setMargins(5, 5, 5, 0);
-      TextView child = (TextView) this.inflater.inflate(layoutId, null);
-      child.setLayoutParams(params);
+      child.setTextSize(getResources().getDimensionPixelSize(R.dimen.common_class_textSize));
+      child.setPadding(0, getResources().getDimensionPixelSize(R.dimen.common_class_paddingTop), 0,
+          0);
       child.setSelected(false);
       if (this.currenTopic.equals(this.topicNames[i])) {
         child.setSelected(true);

@@ -6,7 +6,9 @@
     tools:context=".MainActivity" >
 
     <!-- 状态栏 -->
-    <include layout="@layout/include_status" />
+    <com.goodow.drive.android.view.StatusView
+        style="@style/status" 
+    />
     
     <!-- 收藏  锁定屏幕  设置  关机 -->
     <RelativeLayout 
@@ -31,13 +33,13 @@
           />
       <ImageView
           android:id="@+id/iv_act_main_set"
-          style="@style/index_sys_fun"
+          style="@style/index_sys_fun2"
           android:src="@drawable/index_selector_set"
           android:layout_below="@+id/iv_act_main_loc"
           />
       <ImageView
           android:id="@+id/iv_act_main_clo"
-          style="@style/index_sys_fun"
+          style="@style/index_sys_fun2"
           android:src="@drawable/index_selector_clo"
           android:layout_below="@+id/iv_act_main_set"
           />
@@ -55,13 +57,13 @@
         >
       <ImageView
           android:id="@+id/iv_act_main_har"
-          style="@style/index_sys_fun"
+          style="@style/index_sys_harmany"
           android:src="@drawable/index_selector_har"
           android:tag="和谐"
           />
       <ImageView
           android:id="@+id/iv_act_main_ship"
-          style="@style/index_sys_fun"
+          style="@style/index_sys_care"
           android:src="@drawable/index_selector_ship"
           android:layout_below="@+id/iv_act_main_har"
           android:tag="托班"
@@ -84,25 +86,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="375dp"
+        android:layout_marginTop="@dimen/index_rl_pre_smart_ebk_layout_marginTop"
         android:layout_marginRight="@dimen/index_rl_pre_smart_ebk_layout_marginRight"
         >
       <ImageView
           android:id="@+id/iv_act_main_pre"
-          style="@style/index_sys_fun"
+          style="@style/index_sys_pre_edu_read"
           android:src="@drawable/index_selector_pre"
           android:tag="入学准备"
           />
       <ImageView
           android:id="@+id/iv_act_main_edu"
-          style="@style/index_sys_fun"
+          style="@style/index_sys_pre_edu_read"
           android:src="@drawable/index_selector_edu"
           android:layout_below="@+id/iv_act_main_pre"
           android:tag="安全教育"
           />
       <ImageView
           android:id="@+id/iv_act_main_read"
-          style="@style/index_sys_fun"
+          style="@style/index_sys_pre_edu_read"
           android:src="@drawable/index_selector_read"
           android:layout_below="@+id/iv_act_main_edu"
           android:tag="早期阅读"
@@ -111,12 +113,12 @@
 
     <ImageView
          android:id="@+id/iv_act_main_source"
-          style="@style/index_sys_fun"
+          style="@style/index_sys_source"
           android:src="@drawable/index_source"
           android:tag="电子书"
           android:layout_alignParentRight="true"
           android:layout_alignParentBottom="true"
-          android:layout_marginRight="130dp"
-          android:layout_marginBottom="80dp"
+          android:layout_marginRight="@dimen/act_home_source_marginRight"
+          android:layout_marginBottom="@dimen/act_home_source_marginBottom"
         />
 </RelativeLayout>

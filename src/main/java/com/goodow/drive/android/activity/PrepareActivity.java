@@ -288,12 +288,22 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
           // 构建ItemView对象
           TextView textView = new TextView(this);
           LinearLayout.LayoutParams params =
-              new LinearLayout.LayoutParams(130, LayoutParams.WRAP_CONTENT);
-          params.setMargins(12, 40, 12, 40);
+              new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(
+                  R.dimen.common_result_width), getResources().getDimensionPixelSize(
+                  R.dimen.common_result_height));
+          params.setMargins(getResources().getDimensionPixelSize(
+              R.dimen.act_prepare_result_marginLeftRight), getResources().getDimensionPixelSize(
+              R.dimen.act_prepare_result_marginTopBottom), getResources().getDimensionPixelSize(
+              R.dimen.act_prepare_result_marginLeftRight), getResources().getDimensionPixelSize(
+              R.dimen.act_prepare_result_marginTopBottom));
           textView.setLayoutParams(params);
           textView.setGravity(Gravity.CENTER_HORIZONTAL);
-          textView.setPadding(15, 10, 18, 0);
-          textView.setTextSize(18);
+          textView.setPadding(getResources().getDimensionPixelSize(
+              R.dimen.common_result_paddingLeft), getResources().getDimensionPixelSize(
+              R.dimen.common_result_paddingTop), getResources().getDimensionPixelSize(
+              R.dimen.common_result_paddingRight), 0);
+          textView
+              .setTextSize(getResources().getDimensionPixelSize(R.dimen.common_result_textSize));
           textView.setMaxLines(2);
           final String title = tags.getString(index);
           if (title.matches("^\\d{4}.*")) {
@@ -323,6 +333,10 @@ public class PrepareActivity extends BaseActivity implements OnPageChangeListene
       }
       this.nameViews.add(rootContainer);
       ImageView imageView = new ImageView(this);
+      LayoutParams layoutParams =
+          new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_result_dot_width),
+              getResources().getDimensionPixelSize(R.dimen.common_result_dot_height));
+      imageView.setLayoutParams(layoutParams);
       if (i == 0) {
         imageView.setBackgroundResource(R.drawable.common_result_dot_current);
       } else {

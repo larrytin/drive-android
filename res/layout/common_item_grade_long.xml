@@ -2,6 +2,6 @@
 <com.goodow.drive.android.view.FontTextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ftv_common_item_grade_long"
     style="@style/style_common_grade"
-    android:layout_width="90dp"
+    android:layout_width="@dimen/commen_grade_width_long"
     android:background="@drawable/common_selector_grade_long"
 />

@@ -92,7 +92,7 @@ public class HomeActivity extends BaseActivity {
         break;
       // 智能开发
       case R.id.iv_act_main_edu:
-        // this.open("安全教育");
+        this.open("安全教育");
         break;
       // 图画书
       case R.id.iv_act_main_read:

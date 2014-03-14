@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_include_picture_tools"
     android:layout_width="wrap_content"
-    android:layout_height="500dp"
+    android:layout_height="wrap_content"
     android:layout_gravity="center_vertical|right"
     android:orientation="vertical"
     android:paddingLeft="20dp"
@@ -11,57 +11,56 @@
     >
     <ImageView
         android:id="@+id/iv_include_picture_zoom_out"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/video_toobar_item_width"
+        android:layout_height="@dimen/video_toobar_item_height"
         android:src="@drawable/image_selector_zoom_out"
         android:clickable="true"
         android:onClick="onBarClick"
-        android:layout_weight="1"
         />
     <ImageView
         android:id="@+id/iv_include_picture_zoom_in"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/video_toobar_item_width"
+        android:layout_height="@dimen/video_toobar_item_height"
         android:src="@drawable/image_selector_zoom_in"
         android:clickable="true"
         android:onClick="onBarClick"
-        android:layout_weight="1"
+        android:layout_marginTop="@dimen/video_toobar_item_margin"
         />
     <ImageView
         android:id="@+id/iv_include_picture_full_screen"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/video_toobar_item_width"
+        android:layout_height="@dimen/video_toobar_item_height"
         android:src="@drawable/image_selector_full_screen"
         android:clickable="true"
         android:onClick="onBarClick"
-        android:layout_weight="1"
+        android:layout_marginTop="@dimen/video_toobar_item_margin"
         />
     <ImageView
         android:id="@+id/iv_include_picture_pen"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/video_toobar_item_width"
+        android:layout_height="@dimen/video_toobar_item_height"
         android:src="@drawable/image_selector_pen"
         android:clickable="true"
         android:onClick="onBarClick"
-        android:layout_weight="1"
+        android:layout_marginTop="@dimen/video_toobar_item_margin"
         />
     <ImageView
         android:id="@+id/iv_include_picture_eraser"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/video_toobar_item_width"
+        android:layout_height="@dimen/video_toobar_item_height"
         android:src="@drawable/image_selector_eraser"
         android:clickable="true"
         android:onClick="onBarClick"
-        android:layout_weight="1"
+        android:layout_marginTop="@dimen/video_toobar_item_margin"
         />
     <ImageView
         android:id="@+id/iv_include_picture_print"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/video_toobar_item_width"
+        android:layout_height="@dimen/video_toobar_item_height"
         android:src="@drawable/image_selector_print"
         android:clickable="true"
         android:onClick="onBarClick"
-        android:layout_weight="1"
+        android:layout_marginTop="@dimen/video_toobar_item_margin"
         />
     
 </LinearLayout>

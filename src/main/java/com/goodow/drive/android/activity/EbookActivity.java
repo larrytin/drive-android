@@ -228,10 +228,6 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
           }
           // 构建ItemView对象
           View view = buildItemView(index, attachments.getObject(index));
-          LinearLayout.LayoutParams params =
-              new LinearLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
-          params.setMargins(22, 5, 22, 18);
-          view.setLayoutParams(params);
           innerContainer.addView(view);
           index++;
         }
@@ -239,6 +235,10 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
       }
       this.nameViews.add(rootContainer);
       ImageView imageView = new ImageView(this);
+      LayoutParams layoutParams =
+          new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_result_dot_width),
+              getResources().getDimensionPixelSize(R.dimen.common_result_dot_height));
+      imageView.setLayoutParams(layoutParams);
       if (i == 0) {
         imageView.setBackgroundResource(R.drawable.common_result_dot_current);
       } else {
@@ -266,13 +266,19 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
    */
   private View buildItemView(int index, final JsonObject attachment) {
     LinearLayout.LayoutParams params =
-        new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        new LinearLayout.LayoutParams(getResources().getDimensionPixelOffset(
+            R.dimen.act_read_result_item_width), getResources().getDimensionPixelOffset(
+            R.dimen.act_read_result_item_height));
+    params.setMargins(22, 5, 22, 18);
     LinearLayout itemLayout = new LinearLayout(this);
     itemLayout.setLayoutParams(params);
     itemLayout.setClickable(true);
     itemLayout.setOrientation(LinearLayout.VERTICAL);
 
-    RelativeLayout.LayoutParams itemImageViewParams2 = new RelativeLayout.LayoutParams(120, 100);
+    RelativeLayout.LayoutParams itemImageViewParams2 =
+        new RelativeLayout.LayoutParams(getResources().getDimensionPixelOffset(
+            R.dimen.act_read_result_item_image_width), getResources().getDimensionPixelOffset(
+            R.dimen.act_read_result_item_image_height));
     itemImageViewParams2.addRule(RelativeLayout.CENTER_HORIZONTAL);
     ImageView itemImageView = new ImageView(this);
     FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_URL),
@@ -282,7 +288,8 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
 
     TextView textView = new TextView(this);
     textView.setWidth(150);
-    textView.setTextSize(18);
+    textView.setTextSize(getResources().getDimensionPixelOffset(
+        R.dimen.act_read_result_item_textSize));
     textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     String title = attachment.getString(Constant.KEY_NAME);

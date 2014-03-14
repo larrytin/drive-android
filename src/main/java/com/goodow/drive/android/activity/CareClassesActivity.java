@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
@@ -36,11 +37,11 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   // 云朵activity
   private RelativeLayout rl_act_care_result_container = null;
   // 返回键
-  private Button bt_care_back;
+  private ImageView bt_care_back;
   // 收藏键
-  private Button bt_care_coll;
+  private ImageView bt_care_coll;
   // 黑屏
-  private Button bt_care_loc;
+  private ImageView bt_care_loc;
   // sp
   private SharedPreferences sharedPreferences = null;
   private final static String SHAREDNAME = "careClassesHistory";
@@ -106,6 +107,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     if (hasFocus) {
       ((RadioButton) v).setChecked(true);
       v.setBackgroundResource(R.drawable.care_item_bg_selected);
+      v.setLayoutParams(new LinearLayout.LayoutParams(10, 10));
     } else {
       if (!((RadioButton) v).isChecked()) {
         v.setBackgroundResource(R.drawable.care_item_bg);
@@ -151,7 +153,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.care_classes_activity);
+    this.setContentView(R.layout.activity_careclass);
     this.readHistoryData();
     this.initView();
     Bundle extras = this.getIntent().getExtras();
@@ -307,9 +309,9 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     int len = this.ll_care_classes_topic.getChildCount();
     for (int i = 0; i < len; i++) {
       TextView child = (TextView) this.ll_care_classes_topic.getChildAt(i);
-      child.setSelected(false);
+      setSelect(child, false);
       if (this.currenTopic.equals(child.getText().toString())) {
-        child.setSelected(true);
+        setSelect(child, true);
         this.saveHistory(Constant.TOPIC, this.currenTopic);
       }
     }
@@ -330,9 +332,9 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   }
 
   private void initView() {
-    this.bt_care_back = (Button) findViewById(R.id.bt_care_back);
-    this.bt_care_coll = (Button) findViewById(R.id.bt_care_coll);
-    this.bt_care_loc = (Button) findViewById(R.id.bt_care_loc);
+    this.bt_care_back = (ImageView) findViewById(R.id.bt_care_back);
+    this.bt_care_coll = (ImageView) findViewById(R.id.bt_care_coll);
+    this.bt_care_loc = (ImageView) findViewById(R.id.bt_care_loc);
     this.bt_care_back.setOnClickListener(this);
     this.bt_care_coll.setOnClickListener(this);
     this.bt_care_loc.setOnClickListener(this);
@@ -353,9 +355,9 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     for (int i = 0; i < len_ll_care_classes_topic; i++) {
       TextView topic = (TextView) this.ll_care_classes_topic.getChildAt(i);
       topic.setText(this.topic[i]);
-      topic.setSelected(false);
+      setSelect(topic, false);
       if (this.currenTopic.equals(topic.getText())) {
-        topic.setSelected(true);
+        setSelect(topic, true);
       }
       topic.setOnClickListener(this);
     }
@@ -417,9 +419,9 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     int len = this.ll_care_classes_topic.getChildCount();
     for (int i = 0; i < len; i++) {
       TextView child = (TextView) this.ll_care_classes_topic.getChildAt(i);
-      child.setSelected(false);
+      setSelect(child, false);
       if (id == child.getId()) {
-        child.setSelected(true);
+        setSelect(child, true);
         this.currenTopic = child.getText().toString();
         this.saveHistory(Constant.TOPIC, this.currenTopic);
       }
@@ -460,4 +462,28 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       }
     });
   }
+
+  private void setSelect(View view, boolean bool) {
+    LinearLayout.LayoutParams params =
+        (android.widget.LinearLayout.LayoutParams) view.getLayoutParams();
+    if (bool) {
+      params.width =
+          getResources().getDimensionPixelSize(R.dimen.act_care_topic_item_width_selected);
+      params.height =
+          getResources().getDimensionPixelSize(R.dimen.act_care_topic_item_height_selected);
+      params.topMargin =
+          getResources().getDimensionPixelSize(R.dimen.act_care_topic_item_margin_selected);
+      params.bottomMargin =
+          getResources().getDimensionPixelSize(R.dimen.act_care_topic_item_margin_selected);
+    } else {
+      params.width = getResources().getDimensionPixelSize(R.dimen.act_care_topic_item_width);
+      params.height = getResources().getDimensionPixelSize(R.dimen.act_care_topic_item_height);
+      params.topMargin = getResources().getDimensionPixelSize(R.dimen.act_care_topic_item_margin);
+      params.bottomMargin =
+          getResources().getDimensionPixelSize(R.dimen.act_care_topic_item_margin);
+    }
+    view.setLayoutParams(params);
+    view.setSelected(bool);
+  }
+
 }

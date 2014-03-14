@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.toolutils.FileTools;
+import com.goodow.drive.android.view.DrawableLeftTextView;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -101,10 +102,10 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     public void onClick(View v) {
       if (v.isSelected()) {
         v.setSelected(false);
-        subTags.remove(((TextView) v).getText().toString());
+        subTags.remove(((DrawableLeftTextView) v).getText().toString());
       } else {
         v.setSelected(true);
-        subTags.add(((TextView) v).getText().toString());
+        subTags.add(((DrawableLeftTextView) v).getText().toString());
       }
     }
   }
@@ -455,23 +456,26 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     int len = tags.length();
     for (int i = 0; i < len; i++) {
       String tag = tags.getString(i);
-      TextView child = (TextView) this.inflater.inflate(R.layout.soruce_item_sub_tag, null);
+      DrawableLeftTextView view = new DrawableLeftTextView(SourceActivity.this);
+      TextView child = (TextView) view.findViewById(R.id.tv_subtag);
       child.setText(tags.getString(i));
-      child.setOnClickListener(new OnSubCatagoryClick());
+      view.setOnClickListener(new OnSubCatagoryClick());
       // 查询得到的二级标签中是否包含了控制台传递过来的二级标签
       for (int j = 0; this.queryingTags != null && j < this.queryingTags.length(); j++) {
         String queryingTag = this.queryingTags.getString(j);
         if (tag.equals(queryingTag)) {
           this.subTags.add(tag);
-          child.setSelected(true);
+          view.setSelected(true);
           break;
         }
       }
       LayoutParams layoutParams =
           new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-      layoutParams.setMargins(10, 0, 10, 0);
-      child.setLayoutParams(layoutParams);
-      this.ll_act_source_catagory1.addView(child);
+      layoutParams.setMargins(getResources().getDimensionPixelOffset(
+          R.dimen.act_source_search_subtag_margin), 0, getResources().getDimensionPixelOffset(
+          R.dimen.act_source_search_subtag_margin), 0);
+      view.setLayoutParams(layoutParams);
+      this.ll_act_source_catagory1.addView(view);
     }
   }
 

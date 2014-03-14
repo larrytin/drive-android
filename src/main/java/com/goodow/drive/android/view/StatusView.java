@@ -1,4 +1,4 @@
-package com.goodow.drive.android.cusview;
+package com.goodow.drive.android.view;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
@@ -20,12 +20,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,7 +51,7 @@ public class StatusView extends LinearLayout {
       // 分钟变化
       if (action.equals(Intent.ACTION_TIME_TICK)) {
         currentTime = getSystemTime();
-        invalidate();
+        update();
       }
     }
   };
@@ -74,14 +70,14 @@ public class StatusView extends LinearLayout {
       if (body.has(Constant.TYPE)) {
         netType = body.getString(Constant.TYPE);
         if (NetWorkListener.WIFI.equalsIgnoreCase(netType)) {
-          netType = "WIFI";
+          netType = "WIFI ";
         } else if (NetWorkListener.TYPE_2G.equals(netType)
             || NetWorkListener.TYPE_3G.equals(netType) || NetWorkListener.TYPE_4G.equals(netType)) {
-          netType = "3G";
+          netType = "3G ";
         }
         netStrength = (float) body.getNumber("strength");
         if (netStrength <= 0.0f) {
-          netType = "无网络";
+          netType = "无网络 ";
         }
       }
       if (netStrength <= 0.0f) {
@@ -91,7 +87,7 @@ public class StatusView extends LinearLayout {
       } else if (netStrength > 0.3f && netStrength <= 1.0f) {
         currentImageId = R.drawable.status_network_all;
       }
-      invalidate();
+      update();
     }
   };
   private HandlerRegistration controlhandler;
@@ -104,42 +100,13 @@ public class StatusView extends LinearLayout {
   public StatusView(Context context, AttributeSet attrs) {
     super(context, attrs);
     this.context = context;
+    View.inflate(context, R.layout.include_status, this);
     this.settingReceiver = new NetWorkListener(context);
-    this.setPadding(10, 10, 10, 10);
-    this.setOrientation(LinearLayout.HORIZONTAL);
-
-    this.netTypeView = new TextView(context);
-    this.netTypeView.setTextColor(Color.parseColor("#666666"));
-    this.netTypeView.setText(netType);
-    this.netTypeView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-    this.netTypeView.setGravity(Gravity.CENTER);
-    this.netTypeView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-    LinearLayout.LayoutParams textViewParams =
-        new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-    textViewParams.weight = 2;
-    this.netTypeView.setLayoutParams(textViewParams);
-    this.addView(netTypeView);
-
-    this.netStatusView = new ImageView(context);
-    this.netStatusView.setImageResource(R.drawable.status_network_null);
-    LinearLayout.LayoutParams imageViewParams =
-        new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-    imageViewParams.weight = 1;
-    this.netStatusView.setLayoutParams(imageViewParams);
-    this.addView(netStatusView);
-
-    this.currentTimeView = new TextView(context);
-    this.currentTimeView.setTextColor(Color.parseColor("#666666"));
+    this.netTypeView = (TextView) findViewById(R.id.tv_status_netTypeView);
+    this.netStatusView = (ImageView) findViewById(R.id.iv_status_netStatusView);
+    this.currentTimeView = (TextView) findViewById(R.id.tv_status_currentTimeView);
     this.currentTime = this.getSystemTime();
-    this.currentTimeView.setText(this.currentTime);
-    this.currentTimeView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-    LinearLayout.LayoutParams timeViewParams =
-        new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-    timeViewParams.weight = 3;
-    this.currentTimeView.setLayoutParams(timeViewParams);
-    this.currentTimeView.setGravity(Gravity.CENTER);
-    this.currentTimeView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-    this.addView(currentTimeView);
+    update();
   }
 
   public StatusView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -165,8 +132,23 @@ public class StatusView extends LinearLayout {
     controlhandler.unregisterHandler();
   }
 
-  @Override
-  protected void onDraw(Canvas canvas) {
+  /**
+   * 获取当前时间
+   * 
+   * @return
+   */
+  private String getSystemTime() {
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat date = new SimpleDateFormat(" MM月dd日", Locale.CHINA);
+    SimpleDateFormat time = new SimpleDateFormat(" hh:mm", Locale.CHINA);
+    GregorianCalendar cal = new GregorianCalendar();
+    String result =
+        date.format(calendar.getTime()) + (cal.get(GregorianCalendar.AM_PM) == 0 ? " AM" : " PM")
+            + time.format(calendar.getTime());
+    return result;
+  }
+
+  private void update() {
     if (this.netTypeView != null) {
       this.netTypeView.setText(this.netType);
     }
@@ -176,23 +158,5 @@ public class StatusView extends LinearLayout {
     if (this.currentTimeView != null) {
       this.currentTimeView.setText(this.currentTime);
     }
-    super.onDraw(canvas);
-  }
-
-  /**
-   * 获取当前时间
-   * 
-   * @return
-   */
-  private String getSystemTime() {
-    Calendar calendar = Calendar.getInstance();
-    SimpleDateFormat date = new SimpleDateFormat("MM月dd日", Locale.CHINA);
-    SimpleDateFormat time = new SimpleDateFormat("hh:mm", Locale.CHINA);
-    GregorianCalendar cal = new GregorianCalendar();
-    String result =
-        date.format(calendar.getTime()) + " "
-            + (cal.get(GregorianCalendar.AM_PM) == 0 ? "AM" : "PM")
-            + time.format(calendar.getTime());
-    return result;
   }
 }

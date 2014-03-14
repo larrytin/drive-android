@@ -5,7 +5,9 @@
     android:background="@drawable/smart_bg" >
 
     <!--  状态栏  -->
-    <include layout="@layout/include_status" />
+    <com.goodow.drive.android.view.StatusView
+	style="@style/status" 
+    />
 
     <!-- 大小班级 -->
     <LinearLayout

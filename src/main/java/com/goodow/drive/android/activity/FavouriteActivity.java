@@ -267,11 +267,19 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           if (this.currentTopic.equals(LABEL_TAG)) {
             view = this.buildTagItemView(this.activities.getObject(index), index, i);
             tagList.add(view);
-            params.setMargins(10, 15, 10, 15);
+            params.setMargins(getResources().getDimensionPixelOffset(
+                R.dimen.act_favourite_result_actitem_marginLeftRight), getResources()
+                .getDimensionPixelOffset(R.dimen.act_favourite_result_actitem_marginTop),
+                getResources().getDimensionPixelOffset(
+                    R.dimen.act_favourite_result_actitem_marginLeftRight), 0);
           } else if (this.currentTopic.equals(LABEL_ATTACHMENT)) {
             view = this.buildAttachmentView(this.activities.getObject(index), index, i);
             attachList.add(view);
-            params.setMargins(10, 5, 10, 5);
+            params.setMargins(getResources().getDimensionPixelOffset(
+                R.dimen.act_favourite_result_fileitem_marginLeftRight), getResources()
+                .getDimensionPixelOffset(R.dimen.act_favourite_result_fileitem_marginTop),
+                getResources().getDimensionPixelOffset(
+                    R.dimen.act_favourite_result_fileitem_marginLeftRight), 0);
           }
           view.setLayoutParams(params);
           innerContainer.addView(view);
@@ -282,6 +290,10 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
       this.tempView.add(rootContainer);
       // 构建页码栏
       ImageView imageView = new ImageView(this);
+      LayoutParams layoutParams =
+          new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_result_dot_width),
+              getResources().getDimensionPixelSize(R.dimen.common_result_dot_height));
+      imageView.setLayoutParams(layoutParams);
       if (i == 0) {
         imageView.setBackgroundResource(R.drawable.common_result_dot_current);
       } else {
@@ -322,18 +334,25 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
     TextView textView =
         (TextView) itemContainer.findViewById(R.id.tv_act_source_search_result_item_filename);
-    textView.setWidth(150);
-    textView.setTextSize(16);
+    textView.setWidth(getResources().getDimensionPixelOffset(
+        R.dimen.act_favourite_result_fileitem_text_width));
+    textView.setTextSize(getResources().getDimensionPixelOffset(
+        R.dimen.act_favourite_result_fileitem_textSize));
+    textView.setTextColor(Color.WHITE);
     textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     textView.setText(fileName);
     textView.setTextColor(Color.WHITE);
 
     RelativeLayout.LayoutParams params =
-        new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        new RelativeLayout.LayoutParams(getResources().getDimensionPixelOffset(
+            R.dimen.act_favourite_result_fileitem_flag_width), getResources()
+            .getDimensionPixelOffset(R.dimen.act_favourite_result_fileitem_flag_height));
     final ImageView imageViewFlag =
         (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_flag);
-    params.setMargins(100, 20, 0, 0);
+    params.setMargins(getResources().getDimensionPixelOffset(
+        R.dimen.act_favourite_result_fileitem_flag_marginLeft), getResources()
+        .getDimensionPixelOffset(R.dimen.act_favourite_result_fileitem_flag_marginTop), 0, 0);
     imageViewFlag.setLayoutParams(params);
     imageViewFlag.setBackgroundResource(R.drawable.favour_file_delete);
     if (isEditMode) {
@@ -419,9 +438,11 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
     TextView textView = new TextView(this);
     textView.setId(index + 1);
-    textView.setPadding(13, 10, 13, 0);
+    textView.setPadding(getResources().getDimensionPixelOffset(
+        R.dimen.act_favourite_result_actitem_text_paddingLeftRight), 10, getResources()
+        .getDimensionPixelOffset(R.dimen.act_favourite_result_actitem_text_paddingLeftRight), 0);
     textView.setTextColor(Color.BLACK);
-    textView.setTextSize(18);
+    textView.setTextSize(getResources().getDimensionPixelOffset(R.dimen.common_result_textSize));
     textView.setMaxLines(2);
     final JsonArray tags = Json.parse(activity.getString(Constant.KEY_TAG));
     final String title = tags.getString(tags.length() - 1);
@@ -432,7 +453,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     }
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     RelativeLayout.LayoutParams textViewParams =
-        new RelativeLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
+        new RelativeLayout.LayoutParams(getResources().getDimensionPixelOffset(
+            R.dimen.act_favourite_result_actitem_common_width), getResources()
+            .getDimensionPixelOffset(R.dimen.act_favourite_result_actitem_common_height));
     textViewParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
     textView.setLayoutParams(textViewParams);
     textView.setBackgroundResource(R.drawable.favour_selector_item);
@@ -441,7 +464,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
     final ImageView imageView = new ImageView(this);
     RelativeLayout.LayoutParams imageViewParams =
-        new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        new RelativeLayout.LayoutParams(getResources().getDimensionPixelOffset(
+            R.dimen.act_favourite_result_actitem_selector_width), getResources()
+            .getDimensionPixelOffset(R.dimen.act_favourite_result_actitem_selector_height));
     imageView.setClickable(true);
     imageView.setBackgroundResource(R.drawable.favour_del);
     if (isEditMode) {

@@ -5,7 +5,9 @@
     android:background="@drawable/case_bg" >
 
     <!--  状态栏  -->
-    <include layout="@layout/include_status" />
+    <com.goodow.drive.android.view.StatusView
+	style="@style/status" 
+    />
 
     <!-- 大小班级 -->
     <LinearLayout
@@ -81,8 +83,8 @@
         <!-- 查询结果 上一页-->
         <ImageView
             android:id="@+id/rl_act_case_result_pre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/common_result_pre_next_width"
+            android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:src="@drawable/common_result_pre"
@@ -101,8 +103,8 @@
         <!-- 查询结果 下一页-->
         <ImageView
             android:id="@+id/rl_act_case_result_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/common_result_pre_next_width"
+            android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/common_result_next"

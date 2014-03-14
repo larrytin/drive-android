@@ -1,22 +1,28 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_picture_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="#000000"
-    android:id="@+id/activity_picture_layout" >
+    android:background="#000000" >
 
     <ImageView
         android:id="@+id/actvity_picture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    <ImageView
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/video_back_marginLeft"
+        android:layout_marginTop="@dimen/video_back_marginTop" >
+
+        <include
             android:id="@+id/iv_common_back"
-            android:layout_marginTop="@dimen/common_back_margin"
-            android:layout_marginLeft="@dimen/common_back_margin"
-            android:layout_width="@dimen/common_back_width"
-            android:layout_height="@dimen/common_back_height"
-            android:src="@drawable/common_selector_back" />
+            layout="@layout/include_back" />
+    </RelativeLayout>
 
     <!-- 画图工具 -->
+
     <include layout="@layout/include_draw_tools_bar" />
+
 </FrameLayout>

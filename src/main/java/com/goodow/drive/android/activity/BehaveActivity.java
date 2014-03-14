@@ -33,7 +33,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -269,7 +268,8 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
         if (j == 1) {
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-          params.setMargins(0, 40, 0, 0);
+          params.setMargins(0, getResources().getDimensionPixelSize(
+              R.dimen.act_behave_result_item_margin), 0, 0);
           innerContainer.setLayoutParams(params);
         }
         // 列数量
@@ -287,6 +287,10 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
       }
       this.nameViews.add(rootContainer);
       ImageView imageView = new ImageView(this);
+      LayoutParams layoutParams =
+          new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_result_dot_width),
+              getResources().getDimensionPixelSize(R.dimen.common_result_dot_height));
+      imageView.setLayoutParams(layoutParams);
       if (i == 0) {
         imageView.setBackgroundResource(R.drawable.common_result_dot_current);
       } else {
@@ -316,16 +320,21 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     String fileName = attachment.getString(Constant.KEY_NAME);
     final String filePath = attachment.getString(Constant.KEY_URL);
     final String attachmentId = attachment.getString(Constant.KEY_ID);
-    String thumbnail = attachment.getString(Constant.KEY_THUMBNAIL);
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 120);
-    LinearLayout itemLayout = new LinearLayout(this);
+    String thumbnail = attachment.getString(Constant.KEY_ATTACHMENT);
+    LinearLayout.LayoutParams params =
+        new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(
+            R.dimen.act_behave_result_item_width), getResources().getDimensionPixelSize(
+            R.dimen.act_behave_result_item_height));
     params.setMargins(10, 18, 10, 18);
+    LinearLayout itemLayout = new LinearLayout(this);
     itemLayout.setLayoutParams(params);
     itemLayout.setOrientation(LinearLayout.VERTICAL);
 
-    RelativeLayout.LayoutParams itemImageViewParams2 =
-        new RelativeLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
-    itemImageViewParams2.addRule(RelativeLayout.CENTER_HORIZONTAL);
+    LinearLayout.LayoutParams itemImageViewParams2 =
+        new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(
+            R.dimen.act_behave_result_item_image_width), getResources().getDimensionPixelSize(
+            R.dimen.act_behave_result_item_image_height));
+    itemImageViewParams2.gravity = Gravity.CENTER_HORIZONTAL;
     ImageView itemImageView = new ImageView(this);
     itemImageView.setClickable(true);
     itemImageView.setLayoutParams(itemImageViewParams2);
@@ -351,8 +360,12 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     });
 
     TextView textView = new MarqueeTextView(this);
-    textView.setWidth(220);
-    textView.setTextSize(16);
+    LayoutParams layoutParams =
+        new LayoutParams(getResources().getDimensionPixelSize(
+            R.dimen.act_behave_result_item_text_width), LayoutParams.WRAP_CONTENT);
+    textView.setLayoutParams(layoutParams);
+    textView.setTextSize(getResources().getDimensionPixelSize(
+        R.dimen.act_behave_result_item_textSize));
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     textView.setTextColor(Color.WHITE);
     textView.setSingleLine(true);

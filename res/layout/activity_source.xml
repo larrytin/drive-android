@@ -5,7 +5,9 @@
     android:background="@drawable/source_bg" >
 
     <!--  状态栏  -->
-    <include layout="@layout/include_status" />
+    <!-- <com.goodow.drive.android.view.StatusView
+	style="@style/status" 
+    /> -->
 
     <!-- 提示语 -->
     <TextView
@@ -15,7 +17,7 @@
         android:layout_centerHorizontal="true"
         android:text="@string/string_source_tip0"
         android:textColor="#006699"
-        android:textSize="16sp"
+        android:textSize="@dimen/act_source_search_tip_textSize"
         android:layout_marginTop="@dimen/act_source_search_tip_marginTop"
          />
 
@@ -57,8 +59,8 @@
         <!-- 查询结果 上一页-->
         <ImageView
             android:id="@+id/iv_act_source_result_pre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/common_result_pre_next_width"
+            android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:src="@drawable/common_result_pre"
@@ -78,14 +80,15 @@
             android:listSelector="#00000000"
             android:alwaysDrawnWithCache="true"
             android:scrollbars="none"
+            android:verticalSpacing="25dp"
             
             ></GridView>
 
         <!-- 查询结果 下一页-->
         <ImageView
             android:id="@+id/iv_act_source_result_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/common_result_pre_next_width"
+            android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/common_result_next"
@@ -94,6 +97,7 @@
             />
         <!-- 查询结果提示 -->
         <TextView
+            android:textSize="@dimen/act_source_search_tip_textSize"
             android:id="@+id/tv_act_source_search_result_tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,7 +109,7 @@
         <ProgressBar
             android:id="@+id/pb_act_source_search_progress"
             style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/act_source_search_progress_width"
             android:layout_height="wrap_content" 
             android:layout_centerInParent="true"
             android:visibility="gone"
@@ -166,8 +170,8 @@
             />
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/act_source_search_root_width"
+        android:layout_height="@dimen/act_source_search_root_height"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
@@ -177,16 +181,24 @@
         android:focusable="true"  
         android:focusableInTouchMode="true"
         >
-        <EditText
-            android:id="@+id/et_act_source_tags"
-            android:layout_width="@dimen/act_source_search_edit_width"
-            android:layout_height="match_parent"
-            android:hint="@string/string_source_search_hint"
-            android:textSize="16sp"
-            android:background="@drawable/source_shape_search_edit_bg"
-            android:drawableLeft="@drawable/source_search_flag"
-            android:singleLine="true"
-            />
+        <FrameLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+          <EditText
+              android:paddingLeft="@dimen/act_source_search_edit_paddingLeft"
+              android:id="@+id/et_act_source_tags"
+              android:layout_width="@dimen/act_source_search_edit_width"
+              android:layout_height="match_parent"
+              android:hint="@string/string_source_search_hint"
+              android:textSize="@dimen/act_source_search_edit_textSize"
+              android:background="@drawable/source_shape_search_edit_bg"
+              android:singleLine="true" />
+          <ImageView 
+              android:layout_gravity="center_vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:src="@drawable/source_search_flag"/>
+        </FrameLayout>
         <ImageView
             android:id="@+id/iv_act_source_search_button"
             android:layout_width="wrap_content"
@@ -203,7 +215,7 @@
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="@dimen/act_source_search_subtag_marginBottom"
         >
     </LinearLayout>
 </RelativeLayout>

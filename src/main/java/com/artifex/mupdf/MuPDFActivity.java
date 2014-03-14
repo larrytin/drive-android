@@ -92,9 +92,12 @@ public class MuPDFActivity extends BaseActivity {
     View mView = mInflater.inflate(R.layout.include_player_back, null);
     mImageView = (ImageView) mView.findViewById(R.id.iv_act_favour_back);
     RelativeLayout.LayoutParams mLayoutParams =
-        new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    mLayoutParams.leftMargin = 50;
-    mLayoutParams.topMargin = 60;
+        new RelativeLayout.LayoutParams(getResources().getDimensionPixelOffset(
+            R.dimen.act_home_fun_width), getResources().getDimensionPixelOffset(
+            R.dimen.act_home_fun_height));
+    mLayoutParams.leftMargin =
+        getResources().getDimensionPixelOffset(R.dimen.video_back_marginLeft);
+    mLayoutParams.topMargin = getResources().getDimensionPixelOffset(R.dimen.video_back_marginTop);
     mView.setLayoutParams(mLayoutParams);
 
     mImageView.setOnClickListener(new OnClickListener() {
@@ -117,6 +120,11 @@ public class MuPDFActivity extends BaseActivity {
     Button next = new Button(this);
     Button zoomIn = new Button(this);
     Button zoomOut = new Button(this);
+    previous
+        .setTextSize(getResources().getDimensionPixelOffset(R.dimen.pdf_player_button_textSize));
+    next.setTextSize(getResources().getDimensionPixelOffset(R.dimen.pdf_player_button_textSize));
+    zoomIn.setTextSize(getResources().getDimensionPixelOffset(R.dimen.pdf_player_button_textSize));
+    zoomOut.setTextSize(getResources().getDimensionPixelOffset(R.dimen.pdf_player_button_textSize));
     previous.setText("上一页");
     next.setText("下一页");
     zoomIn.setText("缩小");

@@ -4,89 +4,101 @@
     android:layout_height="match_parent"
     android:background="@drawable/behave_bg" >
 
-    <!--  状态栏  -->
-    <include layout="@layout/include_status" />
-    <!--  后退  -->
-    <ImageView
-        android:id="@+id/iv_act_behave_back"
+    <!-- 状态栏 -->
+
+    <com.goodow.drive.android.view.StatusView
+	style="@style/status" 
+    />
+    <!-- 后退 -->
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        android:clickable="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="120dp"
-        android:src="@drawable/common_selector_back" />
+        android:layout_marginLeft="@dimen/act_behave_back_marginLeft"
+        android:layout_marginTop="@dimen/act_behave_back_marginTop" >
+
+        <include
+            android:id="@+id/iv_act_behave_back"
+            layout="@layout/include_back" />
+    </RelativeLayout>
 
     <!-- 标题 -->
+
     <TextView
         android:id="@+id/tv_act_behave_title"
-        android:layout_width="330dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="220dp"
-        android:layout_marginTop="50dp"
-        android:textSize="22sp"
+        android:layout_width="@dimen/act_behave_title_width"
+        android:layout_height="@dimen/act_behave_title_height"
+        android:layout_marginLeft="@dimen/act_behave_title_marginLeft"
+        android:layout_marginTop="@dimen/act_behave_title_marginTop"
         android:gravity="center"
-        />
+        android:textSize="@dimen/act_behave_title_textSize" />
     <!-- 收藏功能 -->
+
     <ImageView
         android:id="@+id/iv_act_behave_behaveite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/act_behave_coll_width"
+        android:layout_height="@dimen/act_behave_coll_height"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="@dimen/act_behave_coll_marginTop"
         android:layout_toRightOf="@+id/tv_act_behave_title"
         android:src="@drawable/behave_favourite"
         android:visibility="invisible" />
 
     <!-- 内容 -->
+
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="400dp"
+        android:layout_height="@dimen/act_behave_result_content_root_height"
         android:layout_centerInParent="true" >
 
         <!-- 上一页 -->
+
         <ImageView
             android:id="@+id/iv_act_behave_result_pre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/common_result_pre_next_width"
+            android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/act_behave_result_pre_marginLeft"
             android:clickable="true"
-            android:layout_marginLeft="50dp"
             android:src="@drawable/common_result_pre" />
 
         <!-- 内容 -->
+
         <android.support.v4.view.ViewPager
             android:id="@+id/vp_act_behave_result"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
+            android:layout_height="@dimen/act_behave_result_content_height"
             android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/act_behave_result_content_marginLeft"
+            android:layout_marginTop="@dimen/act_behave_result_content_marginTop"
+            android:layout_marginRight="@dimen/act_behave_result_content_marginRight"
+            android:layout_marginBottom="@dimen/act_behave_result_content_marginBottom"
             android:layout_toRightOf="@+id/iv_act_behave_result_pre"
-            android:layout_toLeftOf="@+id/iv_act_behave_result_next"
-            android:layout_marginLeft="55dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="50dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_toLeftOf="@+id/iv_act_behave_result_next" />
 
         <!-- 下一页 -->
+
         <ImageView
             android:id="@+id/iv_act_behave_result_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/common_result_pre_next_width"
+            android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/act_behave_result_next_marginRight"
             android:clickable="true"
-            android:paddingRight="10dp"
             android:src="@drawable/common_result_next" />
 
         <!-- 页码栏 -->
+
         <LinearLayout
             android:id="@+id/ll_act_behave_result_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
-            android:orientation="horizontal"
-            android:layout_alignParentBottom="true">
+            android:orientation="horizontal" >
         </LinearLayout>
     </RelativeLayout>
+
 </RelativeLayout>

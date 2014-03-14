@@ -1,45 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:goodow="http://schemas.android.com/apk/res/com.goodow.android.drive"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="#aa000000"
     android:gravity="center_vertical" >
 
-    <AbsoluteLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="65px" >
- 
-        <ImageButton
-            android:id="@+id/ibtn_media_controler_play_pause"
-            android:layout_width="31px"
-            android:layout_height="33px"
-            android:layout_x="74px"
-            android:layout_y="20px" />
+        android:layout_height="65dp"
+        android:orientation="horizontal" >
 
-        <SeekBar
-            android:id="@+id/sb_media_controler_seekbar"
-            android:layout_width="444px"
-            android:layout_height="wrap_content"
-            android:progressDrawable="@drawable/common_player_seekbar_bg"
-            android:thumb="@drawable/common_player_seekbar_thumb"
-            android:layout_x="146px"
-            android:layout_y="22px" />
+        <!-- 开始暂停按钮 -->
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5" >
+
+            <ImageButton
+                android:id="@+id/ibtn_media_controler_play_pause"
+                android:layout_width="@dimen/video_play_width"
+                android:layout_height="@dimen/video_play_height"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+        <!-- 进度条和时间 -->
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" 
-            android:layout_x="598px"
-            android:layout_y="20px" >
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="22"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <com.goodow.drive.android.view.ThumbSeekbar
+                android:id="@+id/sb_media_controler_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/video_play_height"
+                android:layout_weight="1"
+                android:maxHeight="@dimen/video_seekbar_height"
+                android:progressDrawable="@drawable/common_player_seekbar_bg"
+                android:thumb="@drawable/common_player_seekbar_thumb"
+                goodow:thumb_width="@dimen/video_thumb_width"
+                goodow:thumb_height="@dimen/video_thumb_height"
+                />
 
             <TextView
                 android:id="@+id/tv_media_controler_has_played"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5.0dip"
+                android:layout_marginLeft="5dp"
                 android:text="00:00"
                 android:textColor="@color/video_white"
-                android:textSize="20px" />
+                android:textSize="@dimen/video_textSize" />
 
             <TextView
                 android:id="@+id/tv_media_controler_divider"
@@ -47,42 +60,64 @@
                 android:layout_height="wrap_content"
                 android:text="/"
                 android:textColor="@color/video_white"
-                android:textSize="22px" />
-            
+                android:textSize="@dimen/video_textSize" />
+
             <TextView
                 android:id="@+id/tv_media_controler_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00:00"
                 android:textColor="@color/video_white"
-                android:textSize="22px" />
+                android:textSize="@dimen/video_textSize" />
+        </LinearLayout>
+        <!-- 重播按钮 -->
 
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10" >
+
+            <Button
+                android:id="@+id/btn_media_controler_replay"
+                android:layout_width="@dimen/video_replay_width"
+                android:layout_height="@dimen/video_replay_height"
+                android:layout_centerInParent="true"
+                android:background="@drawable/common_player_replay" />
+        </RelativeLayout>
+        <!-- 音量 -->
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_media_controler_sound"
+                android:layout_width="@dimen/video_sound_width"
+                android:layout_height="@dimen/video_sound_height"
+                android:background="@drawable/common_player_sound" />
+
+            <com.goodow.drive.android.view.ThumbSeekbar
+                android:id="@+id/sb_media_controler_sound_seekbar"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/video_play_height"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:maxHeight="@dimen/video_seekbar_height"
+                goodow:thumb_width="@dimen/video_thumb_width"
+                goodow:thumb_height="@dimen/video_thumb_height"
+                android:progressDrawable="@drawable/common_player_seekbar_bg"
+                android:thumb="@drawable/common_player_seekbar_thumb" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_media_controler_replay"
-            android:layout_width="40px"
-            android:layout_height="33px"
-            android:layout_x="850px"
-            android:layout_y="20px"
-            android:background="@drawable/common_player_replay" />
-
-        <Button
-            android:id="@+id/btn_media_controler_sound"
-            android:layout_width="44px"
-            android:layout_height="34px"
-            android:layout_x="973px"
-            android:layout_y="20px"
-            android:background="@drawable/common_player_sound" />
-        <SeekBar 
-            android:id="@+id/sb_media_controler_sound_seekbar"
-            android:layout_width="150px"
-            android:layout_height="wrap_content"
-            android:progressDrawable="@drawable/common_player_seekbar_bg"
-            android:thumb="@drawable/common_player_seekbar_thumb"
-            android:layout_x="1024px"
-            android:layout_y="20px"/>
-    </AbsoluteLayout>
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2" >
+        </RelativeLayout>
+    </LinearLayout>
 
     <!-- android:progressDrawable="@drawable/player_movie_seek_bar" -->
 

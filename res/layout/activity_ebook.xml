@@ -5,14 +5,16 @@
     android:background="@drawable/ebook_bg" >
 
     <!--  状态栏  -->
-    <include layout="@layout/include_status" />
+    <!-- <com.goodow.drive.android.view.StatusView
+	style="@style/status" 
+    /> -->
 
     <!--  后退  收藏  锁屏  -->
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="130dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop"
+        android:layout_marginLeft="@dimen/act_harmony_fun_bar_marginLeft"
         >
         <include
             android:id="@+id/iv_act_ebook_back"
@@ -36,17 +38,17 @@
     <!-- 查询结果 -->
     <RelativeLayout
         android:id="@+id/rl_act_ebook_result"
-        android:layout_width="810dp"
-        android:layout_height="400dp"
+        android:layout_width="@dimen/act_read_result_root_width"
+        android:layout_height="@dimen/act_read_result_root_height"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="150dp"
-        android:layout_marginRight="110dp"
+        android:layout_marginTop="@dimen/act_read_result_root_marginTop"
+        android:layout_marginRight="@dimen/act_read_result_root_marginRight"
         >
         <!-- 查询结果 上一页-->
         <ImageView
             android:id="@+id/rl_act_ebook_result_pre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/common_result_pre_next_width"
+            android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:src="@drawable/common_result_pre"
@@ -57,7 +59,7 @@
         <!-- 查询结果 -->
         <android.support.v4.view.ViewPager
           android:id="@+id/vp_act_ebook_result"
-          android:layout_width="650dp"
+          android:layout_width="@dimen/act_read_result_width"
           android:layout_height="fill_parent"
           android:layout_centerHorizontal="true"
           />
@@ -65,8 +67,8 @@
         <!-- 查询结果 下一页-->
         <ImageView
             android:id="@+id/rl_act_ebook_result_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/common_result_pre_next_width"
+            android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/common_result_next"

@@ -5,8 +5,8 @@
 
     <ImageView
         android:id="@+id/iv_act_source_search_result_item_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/act_source_result_item_image_width"
+        android:layout_height="@dimen/act_source_result_item_image_height"
         android:layout_centerHorizontal="true"
         android:clickable="true"
         />
@@ -16,7 +16,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/case_item_bg"
         android:textColor="#000000"
-        android:textSize="16sp"
+        android:textSize="@dimen/act_source_result_item_textSize"
+        android:minLines="2"
         android:maxLines="2"
         android:gravity="center_horizontal"
         android:layout_centerHorizontal="true"
@@ -25,12 +26,12 @@
 
     <ImageView
         android:id="@+id/iv_act_source_search_result_item_flag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/act_source_search_result_item_flag_width"
+        android:layout_height="@dimen/act_source_search_result_item_flag_height"
         android:layout_alignBottom="@+id/iv_act_source_search_result_item_icon"
         android:layout_alignLeft="@+id/iv_act_source_search_result_item_icon"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/act_source_search_result_item_flag_marginBottom"
         android:clickable="true"
-        android:layout_marginLeft="58dp"/>
+        android:layout_marginLeft="@dimen/act_source_search_result_item_flag_marginLeft"/>
 
 </RelativeLayout>

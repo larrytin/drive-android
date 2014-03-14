@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- HomeActivity 主页 480x800 -->
+    <dimen name="act_home_fun_width">35dp</dimen><!-- launcher页面系统功能栏,收藏&&黑屏 宽度-->
+    <dimen name="act_home_fun_height">35dp</dimen><!-- launcher页面系统功能栏,收藏&&黑屏 高度-->
+    <dimen name="act_home_fun2_width">24dp</dimen><!-- launcher页面系统功能栏,设置&&关机 宽度-->
+    <dimen name="act_home_fun2_height">24dp</dimen><!-- launcher页面系统功能栏,设置&&关机 高度-->
+    <dimen name="act_home_fun_margin">5dp</dimen><!-- 收藏&&黑屏&&设置&&关机之间的间距 -->
+    <dimen name="index_rl_sys_fun_layout_marginLeft">30dp</dimen><!-- 首页四个功能栏 收藏 锁屏  设置  关机的父布局位置 -->
+    <dimen name="index_rl_sys_fun_layout_marginTop">65dp</dimen><!-- 首页四个功能栏 收藏 锁屏  设置  关机的父布局位置 -->
+    <dimen name="act_home_harmany_width">95dp</dimen><!-- 和谐发展的宽 -->
+    <dimen name="act_home_harmany_height">40dp</dimen><!-- 和谐发展的高 -->
+    <dimen name="act_home_care_width">95dp</dimen><!-- 托班的宽 -->
+    <dimen name="act_home_care_height">50dp</dimen><!-- 托班的高 -->
+    <dimen name="act_home_har_care_margin">0dp</dimen><!-- 和谐和托班之间的间距 -->
+    <dimen name="index_rl_har_ship_layout_marginLeft">125dp</dimen><!-- 和谐托班位置 -->
+    <dimen name="index_rl_har_ship_layout_marginTop">105dp</dimen><!-- 和谐托班位置 -->
+    <dimen name="act_home_source_marginRight">50dp</dimen><!-- 课程辅助资源屏幕右侧距离 -->
+    <dimen name="act_home_source_marginBottom">35dp</dimen><!-- 课程辅助资源屏幕下方距离 -->
+    <dimen name="act_home_source_width">64dp</dimen><!-- 课程辅助资源宽度 -->
+    <dimen name="act_home_source_height">64dp</dimen><!-- 课程辅助资源高度 -->
+    <dimen name="index_rl_tech_layout_marginLeft">120dp</dimen><!-- 示范课程的布局位置 -->
+    <dimen name="index_rl_tech_layout_marginTop">225dp</dimen><!-- 示范课程的布局位置 -->
+    <dimen name="act_home_pre_edu_read_width">95dp</dimen><!-- 入学准备&安全教育&早期阅读 -->
+    <dimen name="act_home_pre_edu_read_height">25dp</dimen><!-- 入学准备&安全教育&早期阅读 -->
+    <dimen name="act_home_pre_edu_read_margin">0dp</dimen><!-- 入学准备&安全教育&早期阅读之间间距 -->
+    <dimen name="index_rl_pre_smart_ebk_layout_marginTop">163dp</dimen><!-- 入学准备  智能开发  图画书的父布局位置 -->
+    <dimen name="index_rl_pre_smart_ebk_layout_marginRight">144dp</dimen><!-- 入学准备  智能开发  图画书的父布局位置 -->
+    
+    <!-- HarmonyActivity 和谐 480x800 -->
+    <dimen name="act_harmony_fun_bar_marginLeft">20dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_harmony_fun_bar_marginTop">60dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_harmony_grade_radio_group_width">133dp</dimen><!-- 年级RadioGroup的宽度 -->
+    <dimen name="act_harmony_grade_radio_group_marginLeft">110dp</dimen><!-- 年级RadioGroup的左边距 -->
+    <dimen name="act_harmony_grade_radio_group_marginTop">9dp</dimen><!-- 年级RadioGroup的上边距 -->
+    <dimen name="act_harmony_term_radio_group_width">64dp</dimen><!-- 学期RadioGroup的宽度 -->
+    <dimen name="act_harmony_term_radio_group_marginLeft">27dp</dimen><!-- 学期RadioGroup的左边距 -->
+    <dimen name="act_harmony_term_radio_group_marginTop">9dp</dimen><!-- 学期RadioGroup的上边距 -->
+    <dimen name="act_harmony_topic_radio_group_width">410dp</dimen><!-- 主题RadioGroup的宽度 -->
+    <dimen name="act_harmony_topic_radio_group_marginTop">45dp</dimen><!-- 主题RadioGroup的上边距 -->
+    <dimen name="act_harmony_topic_radio_group_paddingLeft">30dp</dimen><!-- 主题RadioGroup的内左边距 -->
+    <dimen name="act_harmony_result_root_width">435dp</dimen><!-- 查询结果的跟节点的宽度 -->
+    <dimen name="act_harmony_result_root_height">160dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_harmony_result_root_marginRight">36dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_harmony_result_width">354dp</dimen><!-- 查询结果的宽度 -->
+    
+    <!-- 班级样式 480x800 -->
+    <dimen name="common_grade_width">31dp</dimen><!-- 班级宽度 -->
+    <dimen name="common_grade_height">25dp</dimen><!-- 班级高度 -->
+    <dimen name="common_grade_textSize">7sp</dimen><!-- 班级字体大小 -->
+    <dimen name="commen_grade_width_long">42dp</dimen><!-- 加长型班级的宽度 -->
+    
+    <!-- 分类item样式 480x800 -->
+    <dimen name="common_class_width_long">74dp</dimen><!-- 分类item宽度加长型 -->
+    <dimen name="common_class_width">37dp</dimen><!-- 分类item宽度 -->
+    <dimen name="common_class_height">20dp</dimen><!-- 分类item高度 -->
+    <dimen name="common_class_marginLeft">3dp</dimen><!-- 分类item左margin -->
+    <dimen name="common_class_marginTop">3dp</dimen><!-- 分类item上margin -->
+    <dimen name="common_class_marginRight">3dp</dimen><!-- 分类item右margin -->
+    <dimen name="common_class_marginBottom">0dp</dimen><!-- 分类item下margin -->
+    <dimen name="common_class_textSize">5sp</dimen><!-- 分类item字体大小 -->
+    <dimen name="common_class_paddingTop">4dp</dimen><!-- 分类item字体下padding -->
+    
+    <!-- 查询结果的样式 480x800 -->
+    <dimen name="common_result_width">53dp</dimen><!-- 查询结果item的宽度 -->
+    <dimen name="common_result_height">40dp</dimen><!-- 查询结果item的高度 -->
+    <dimen name="common_result_textSize">4sp</dimen><!-- 查询结果item的字体大小 -->
+    <dimen name="common_result_dot_width">8dp</dimen><!-- 查询结果分页小圆点的宽度 -->
+    <dimen name="common_result_dot_height">8dp</dimen><!-- 查询结果分页小圆点的高度 -->
+    <dimen name="common_result_pre_next_width">28dp</dimen><!-- 查询结果上下页宽度 -->
+    <dimen name="common_result_pre_next_height">28dp</dimen><!-- 查询结果上下页高度 -->
+    <dimen name="common_result_marginLeftRight">3dp</dimen><!-- 查询结果左右间距 -->
+    <dimen name="common_result_marginTopBottom">5dp</dimen><!-- 查询结果上下间距 -->
+    <dimen name="common_result_paddingLeft">6dp</dimen><!-- 查询结果文字左边距 -->
+    <dimen name="common_result_paddingRight">8dp</dimen><!-- 查询结果文字右边距 -->
+    <dimen name="common_result_paddingTop">7dp</dimen><!-- 查询结果上间距 -->
+    
+    <!-- CareClassesActivity 托班 480x800 -->
+    <dimen name="act_care_term_marginLeft">230dp</dimen><!-- 托班学期左边距 -->
+    <dimen name="act_care_term_marginTop">15dp</dimen><!-- 托班学期上边距 -->
+    <dimen name="act_care_topic_marginLeft">102dp</dimen><!-- 托班主题左边距 -->
+    <dimen name="act_care_topic_marginTop">42dp</dimen><!-- 托班主题上边距 -->
+    <dimen name="act_care_topic_width">100dp</dimen><!-- 托班主题的宽度 -->
+    <dimen name="act_care_topic_item_width">80dp</dimen><!-- 托班主题条目宽度 -->
+    <dimen name="act_care_topic_item_width_selected">100dp</dimen><!-- 托班主题条目选中状态宽度 -->
+    <dimen name="act_care_topic_item_height">18dp</dimen><!-- 托班主题条目高度 -->
+    <dimen name="act_care_topic_item_height_selected">23dp</dimen><!-- 托班主题条目高度 -->
+    <dimen name="act_care_topic_item_textSize">7sp</dimen><!-- 托班主题条目字体大小 -->
+    <dimen name="act_care_topic_item_margin">4dp</dimen><!-- 托班主题条目间距 -->
+    <dimen name="act_care_topic_item_margin_selected">1dp</dimen><!-- 托班主题选中状态条目间距 -->
+    <dimen name="act_care_cloud_root_width">300dp</dimen><!-- 云朵根节点宽度 -->
+    <dimen name="act_care_cloud_root_height">220dp</dimen><!-- 云朵根节点高度 -->
+    <dimen name="act_care_cloud_root_marginLeft">220dp</dimen><!-- 云朵根节点左边距 -->
+    <dimen name="act_care_cloud_root_marginTop">50dp</dimen><!-- 云朵根节点上边距 -->
+    <dimen name="act_care_cloud_width">43dp</dimen><!-- 云朵宽度 -->
+    <dimen name="act_care_cloud_height">33dp</dimen><!-- 云朵高度 -->
+    <dimen name="act_care_cloud_textSize">6sp</dimen><!-- 云朵内字体大小 -->
+    <dimen name="act_care_cloud_paddingLeftRight">5dp</dimen><!-- 云朵内左右边距 -->
+    <dimen name="act_care_cloud_paddingTop">5dp</dimen><!-- 云朵内上边距 -->
+    <dimen name="act_care_cloud_1_marginTop">2dp</dimen><!-- 云朵1上边距 -->
+    <dimen name="act_care_cloud_1_marginLeft">20dp</dimen><!-- 云朵1左边距 -->
+    <dimen name="act_care_cloud_2_marginTop">60dp</dimen><!-- 云朵2上边距 -->
+    <dimen name="act_care_cloud_2_marginLeft">63dp</dimen><!-- 云朵2左边距 -->
+    <dimen name="act_care_cloud_3_marginTop">78dp</dimen><!-- 云朵3上边距 -->
+    <dimen name="act_care_cloud_3_marginLeft">10dp</dimen><!-- 云朵3左边距 -->
+    <dimen name="act_care_cloud_4_marginBottom">50dp</dimen><!-- 云朵4下边距 -->
+    <dimen name="act_care_cloud_4_marginLeft">85dp</dimen><!-- 云朵4左边距 -->
+    <dimen name="act_care_cloud_5_marginBottom">27dp</dimen><!-- 云朵5上边距 -->
+    <dimen name="act_care_cloud_5_marginLeft">40dp</dimen><!-- 云朵5左边距 -->
+    <dimen name="act_care_cloud_6_marginTop">15dp</dimen><!-- 云朵6上边距 -->
+    <dimen name="act_care_cloud_6_marginRight">80dp</dimen><!-- 云朵6左边距 -->
+    <dimen name="act_care_cloud_7_marginTop">25dp</dimen><!-- 云朵7上边距 -->
+    <dimen name="act_care_cloud_7_marginRight">25dp</dimen><!-- 云朵7左边距 -->
+    <dimen name="act_care_cloud_8_marginTop">100dp</dimen><!-- 云朵8上边距 -->
+    <dimen name="act_care_cloud_8_marginRight">77dp</dimen><!-- 云朵8左边距 -->
+    <dimen name="act_care_cloud_9_marginBottom">25dp</dimen><!-- 云朵9上边距 -->
+    <dimen name="act_care_cloud_9_marginRight">23dp</dimen><!-- 云朵9左边距 -->
+    <dimen name="act_care_cloud_10_marginBottom">10dp</dimen><!-- 云朵10上边距 -->
+    <dimen name="act_care_cloud_10_marginRight">75dp</dimen><!-- 云朵10左边距 -->
+    
+    <!-- PrepareActivity 入学准备 480x800 -->
+    <dimen name="act_prepare_fun_bar_marginLeft">20dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_prepare_fun_bar_marginTop">60dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_prepare_term_radio_group_width">64dp</dimen><!-- 学期RadioGroup的宽度 -->
+    <dimen name="act_prepare_term_radio_group_marginLeft">112dp</dimen><!-- 学期RadioGroup的左边距 -->
+    <dimen name="act_prepare_term_radio_group_marginTop">12dp</dimen><!-- 学期RadioGroup的上边距 -->
+    <dimen name="act_prepare_topic_root_width">150dp</dimen><!-- 主题父节点的宽度 -->
+    <dimen name="act_prepare_topic_root_height">250dp</dimen><!-- 主题父节点的高度 -->
+    <dimen name="act_prepare_topic_root_marginLeft">70dp</dimen><!-- 主题父节点的左边距 -->
+    <dimen name="act_prepare_topic_root_marginTop">50dp</dimen><!-- 主题父节点的上边距 -->
+    <dimen name="act_prepare_result_root_width">300dp</dimen><!-- 查询结果的跟节点的宽度 -->
+    <dimen name="act_prepare_result_root_height">170dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_prepare_result_root_marginRight">10dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_prepare_result_width">245dp</dimen><!-- 查询结果的宽度 -->
+    <dimen name="act_prepare_topic_item_width">80dp</dimen><!-- 主题条目宽度 -->
+    <dimen name="act_prepare_topic_item_width_long">128dp</dimen><!-- 主题条目加长型宽度 -->
+    <dimen name="act_prepare_topic_item_height">-2dp</dimen><!-- 主题条目高度 -->
+    <dimen name="act_prepare_topic_item_textSize">8sp</dimen><!-- 主题条目字体大小 -->
+    <dimen name="act_prepare_topic_item_padding">25dp</dimen><!-- 主题条目间距 -->
+    <dimen name="act_prepare_result_item_paddingLeft">15dp</dimen><!-- 查询结果条目左边距 -->
+    <dimen name="act_prepare_result_item_paddingTop">10dp</dimen><!-- 查询结果条目上边距 -->
+    <dimen name="act_prepare_result_item_paddingRight">18dp</dimen><!-- 查询结果条目右边距 -->
+    <dimen name="act_prepare_result_marginLeftRight">4dp</dimen><!-- 查询结果条目左右间距 -->
+    <dimen name="act_prepare_result_marginTopBottom">20dp</dimen><!-- 查询结果条目上下间距 -->
+    
+    <!-- BehaveActivity 活动 480x800 -->
+    <dimen name="act_behave_title_width">141dp</dimen><!-- 活动标题宽度 -->
+    <dimen name="act_behave_title_height">33dp</dimen><!-- 活动标题高度 -->
+    <dimen name="act_behave_title_marginLeft">90dp</dimen><!-- 活动标题左边距 -->
+    <dimen name="act_behave_title_marginTop">20dp</dimen><!-- 活动标题上边距 -->
+    <dimen name="act_behave_title_textSize">8sp</dimen><!-- 活动标题字体大小 -->
+    <dimen name="act_behave_coll_width">41dp</dimen><!-- 活动收藏宽度 -->
+    <dimen name="act_behave_coll_height">41dp</dimen><!-- 活动收藏高度 -->
+    <dimen name="act_behave_coll_marginTop">13dp</dimen><!-- 活动收藏上边距 -->
+    <dimen name="act_behave_result_pre_marginLeft">22dp</dimen><!-- 活动查询结果上一页左边距 -->
+    <dimen name="act_behave_result_next_marginRight">3dp</dimen><!-- 活动查询结果下一页右边距 -->
+    <dimen name="act_behave_result_content_marginLeft">25dp</dimen><!-- 活动查询结果内容左边距 -->
+    <dimen name="act_behave_result_content_marginTop">25dp</dimen><!-- 活动查询结果内容上边距 -->
+    <dimen name="act_behave_result_content_marginRight">25dp</dimen><!-- 活动查询结果内容右边距 -->
+    <dimen name="act_behave_result_content_marginBottom">20dp</dimen><!-- 活动查询结果内容下边距 -->
+    <dimen name="act_behave_result_content_height">160dp</dimen><!-- 活动查询结果内容高度 -->
+    <dimen name="act_behave_result_content_root_height">200dp</dimen><!-- 活动查询结果内容跟节点高度 -->
+    <dimen name="act_behave_back_marginLeft">15dp</dimen><!-- 活动后退键左边距 -->
+    <dimen name="act_behave_back_marginTop">55dp</dimen><!-- 活动后退键上边距 -->
+    <dimen name="act_behave_result_item_image_width">40dp</dimen><!-- 查询结果条目中图片宽度 -->
+    <dimen name="act_behave_result_item_image_height">41dp</dimen><!-- 查询结果条目中图片高度 -->
+    <dimen name="act_behave_result_item_text_width">56dp</dimen><!-- 查询结果条目文字宽度 -->
+    <dimen name="act_behave_result_item_textSize">5sp</dimen><!-- 查询结果条目文字大小 -->
+    <dimen name="act_behave_result_item_width">54dp</dimen><!-- 查询结果条目宽度 -->
+    <dimen name="act_behave_result_item_height">120dp</dimen><!-- 查询结果条目高度 -->
+    <dimen name="act_behave_result_item_margin">16dp</dimen><!-- 查询结果条目两行之间的间距 -->
+    
+    <!-- CaseActivity 示范课 480x800 -->
+    <dimen name="act_case_fun_bar_marginLeft">20dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_case_fun_bar_marginTop">60dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_case_grade_radio_group_width">133dp</dimen><!-- 年级RadioGroup的宽度 -->
+    <dimen name="act_case_grade_radio_group_marginLeft">110dp</dimen><!-- 年级RadioGroup的左边距 -->
+    <dimen name="act_case_grade_radio_group_marginTop">9dp</dimen><!-- 年级RadioGroup的上边距 -->
+    <dimen name="act_case_term_radio_group_width">64dp</dimen><!-- 学期RadioGroup的宽度 -->
+    <dimen name="act_case_term_radio_group_marginLeft">27dp</dimen><!-- 学期RadioGroup的左边距 -->
+    <dimen name="act_case_term_radio_group_marginTop">9dp</dimen><!-- 学期RadioGroup的上边距 -->
+    <dimen name="act_case_topic_radio_group_marginTop">55dp</dimen><!-- 主题RadioGroup的上边距 -->
+    <dimen name="act_case_topic_radio_group_marginRight">55dp</dimen><!-- 主题RadioGroup的右边距 -->
+    <dimen name="act_case_result_root_width">415dp</dimen><!-- 查询结果的跟节点的宽度 -->
+    <dimen name="act_case_result_root_height">210dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_case_result_root_paddingTop">40dp</dimen><!-- 查询结果的跟节点的上边距 -->
+    <dimen name="act_case_result_root_marginRight">33dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_case_result_width">354dp</dimen><!-- 查询结果的宽度 -->
+    <dimen name="act_case_result_item_image_width">45dp</dimen><!-- 查询结果条目图片宽度 -->
+    <dimen name="act_case_result_item_image_height">41dp</dimen><!-- 查询结果条目图片高度 -->
+    <dimen name="act_case_result_item_width">56dp</dimen><!-- 查询结果条目高度 -->
+    <dimen name="act_case_result_item_height">65dp</dimen><!-- 查询结果条目高度 -->
+    <dimen name="act_case_result_item_text_width">56dp</dimen><!-- 查询结果条目文字宽度 -->
+    <dimen name="act_case_result_item_textSize">5sp</dimen><!-- 查询结果条目文字大小 -->
+    
+    <!-- FavouriteActivity 收藏 480x800 -->
+    <dimen name="act_favourite_back_marginLeft">20dp</dimen><!-- 后退键左边距 -->
+    <dimen name="act_favourite_back_marginTop">20dp</dimen><!-- 后退键上边距 -->
+    <dimen name="act_favourite_item_width">45dp</dimen><!-- 活动和文件的宽度 -->
+    <dimen name="act_favourite_item_height">35dp</dimen><!-- 活动和文件的高度 -->
+    <dimen name="act_favourite_item_marginTop">90dp</dimen><!-- 活动和文件的上边距 -->
+    <dimen name="act_favourite_activity_marginLeft">130dp</dimen><!-- 活动左边距 -->
+    <dimen name="act_favourite_file_marginLeft">190dp</dimen><!-- 文件左边距 -->
+    <dimen name="act_favourite_textSize">11sp</dimen><!-- 活动和文件的文字大小 -->
+    <dimen name="act_favourite_result_root_width">420dp</dimen><!-- 查询结果根节点宽度 -->
+    <dimen name="act_favourite_result_root_height">180dp</dimen><!-- 查询结果根节点高度 -->
+    <dimen name="act_favourite_result_root_marginBottom">10dp</dimen><!-- 查询结果根节点下边距 -->
+    <dimen name="act_favourite_result_root_marginRight">20dp</dimen><!-- 查询结果根节点右边距 -->
+    <dimen name="act_favourite_result_width">335dp</dimen><!-- 查询结果的宽度 -->
+    <dimen name="act_favourite_result_height">132dp</dimen><!-- 查询结果的高度 -->
+    <dimen name="act_favourite_result_actitem_marginLeftRight">4dp</dimen><!-- 查询活动结果条目的左右间距 -->
+    <dimen name="act_favourite_result_actitem_marginTop">15dp</dimen><!-- 查询活动结果条目的上边距 -->
+    <dimen name="act_favourite_result_actitem_common_width">46dp</dimen><!-- 查询活动结果条目正常状态宽度 -->
+    <dimen name="act_favourite_result_actitem_common_height">36dp</dimen><!-- 查询活动结果条目正常状态高度 -->
+    <dimen name="act_favourite_result_actitem_selector_width">15dp</dimen><!-- 查询活动结果条目选中状态宽度 -->
+    <dimen name="act_favourite_result_actitem_selector_height">15dp</dimen><!-- 查询活动结果条目选中状态宽度 -->
+    <dimen name="act_favourite_result_actitem_text_paddingLeftRight">5dp</dimen><!-- 查询活动结果条目文字左右边距 -->
+    <dimen name="act_favourite_result_fileitem_marginLeftRight">4dp</dimen><!-- 查询文件结果条目的左右间距 -->
+    <dimen name="act_favourite_result_fileitem_marginTop">0dp</dimen><!-- 查询文件结果条目的上边距 -->
+    <dimen name="act_favourite_result_fileitem_common_width">48dp</dimen><!-- 查询文件结果条目正常状态宽度 -->
+    <dimen name="act_favourite_result_fileitem_common_height">40dp</dimen><!-- 查询文件结果条目正常状态高度 -->
+    <dimen name="act_favourite_result_fileitem_flag_width">22dp</dimen><!-- 查询文件结果条目选中标记宽度 -->
+    <dimen name="act_favourite_result_fileitem_flag_height">22dp</dimen><!-- 查询文件结果条目选中标记高度 -->
+    <dimen name="act_favourite_result_fileitem_flag_marginLeft">40dp</dimen><!-- 查询文件结果条目选中标记左边距 -->
+    <dimen name="act_favourite_result_fileitem_flag_marginTop">5dp</dimen><!-- 查询文件结果条目选中标记上边距 -->
+    <dimen name="act_favourite_result_fileitem_textSize">5sp</dimen><!-- 查询文件结果条目文字大小 -->
+    <dimen name="act_favourite_result_fileitem_text_width">55dp</dimen><!-- 查询文件结果条目文字宽度 -->
+    
+    <!-- SourceActivity 资源 480x800-->
+    <dimen name="act_source_fun_bar_marginLeft">20dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_source_fun_bar_marginTop">60dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_source_search_tip_marginTop">38dp</dimen><!-- 提示语上边距 -->
+    <dimen name="act_source_search_catagory0_layout_height">130dp</dimen><!-- 一级分类的布局高度 -->
+    <dimen name="act_source_search_catagory0_layout_marginBottom">10dp</dimen><!-- 一级分类的布局的下边距 -->
+    <dimen name="act_source_search_edit_layout_marginBottom">33dp</dimen><!-- 输入框的布局的下边距 -->
+    <dimen name="act_source_search_edit_layout_padding">2dp</dimen><!-- 输入框的布局的内边距 -->
+    <dimen name="act_source_search_edit_width">225dp</dimen><!-- 输入框宽度 -->
+    <dimen name="act_source_search_root_width">263dp</dimen><!-- 搜索根节点的宽度 -->
+    <dimen name="act_source_search_root_height">20dp</dimen><!-- 搜索根节点的高度 -->
+    <dimen name="act_source_search_edit_textSize">8sp</dimen><!-- 搜索输入框中字体的大小 -->
+    <dimen name="act_source_search_edit_paddingLeft">30dp</dimen><!-- 搜索输入框左边距 -->
+    <dimen name="act_source_catagory0_item_width">50dp</dimen><!-- 一级分类条目的宽度 -->
+    <dimen name="act_source_catagory0_item_height">80dp</dimen><!-- 一级分类条目的高度 -->
+    <dimen name="act_source_catagory0_item_margin">5dp</dimen><!-- 一级分类条目之间的间隔 -->
+    <dimen name="act_source_catagory0_item_all_marginLeft">100dp</dimen><!-- 一级分类第一个条目的左边距 -->
+    <dimen name="act_source_catagory0_item_all_marginTop">20dp</dimen><!-- 一级分类第一个条目的上边距 -->
+    <dimen name="act_source_catagory0_item_text_marginTop">8dp</dimen><!-- 一级分类第二个条目的上边距 -->
+    <dimen name="act_source_catagory0_item_image_marginTop">5dp</dimen><!-- 一级分类第三个条目的上边距 -->
+    <dimen name="act_source_catagory0_item_animation_marginTop">5dp</dimen><!-- 一级分类第四个条目的上边距 -->
+    <dimen name="act_source_catagory0_item_video_marginTop">8dp</dimen><!-- 一级分类第五个条目的上边距 -->
+    <dimen name="act_source_catagory0_item_audio_marginTop">11dp</dimen><!-- 一级分类第六个条目的上边距 -->
+    <dimen name="act_source_result_root_width">430dp</dimen><!-- 查询结果的跟节点的宽度 -->
+    <dimen name="act_source_result_root_height">175dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_source_result_root_marginTop">50dp</dimen><!-- 查询结果的跟节点的上边距 -->
+    <dimen name="act_source_result_root_marginRight">20dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_source_result_width">350dp</dimen><!-- 查询结果的宽度 -->
+    <dimen name="act_source_result_item_width">57dp</dimen><!-- 查询结果条目的宽度 -->
+    <dimen name="act_source_result_item_height">63dp</dimen><!-- 查询结果条目的高度 -->
+    <dimen name="act_source_result_item_image_width">43dp</dimen><!-- 查询结果条目中图片的宽度 -->
+    <dimen name="act_source_result_item_image_height">43dp</dimen><!-- 查询结果条目中图片的高度 -->
+    <dimen name="act_source_result_item_textSize">7sp</dimen><!-- 查询结果条目的字体大小 -->
+    <dimen name="act_source_search_tip_textSize">7sp</dimen><!-- 提示语字体大小 -->
+    <dimen name="act_source_search_progress_width">35dp</dimen><!-- 查询进度宽度 -->
+    <dimen name="act_source_search_result_item_flag_width">25dp</dimen><!-- 查询结果条目上的标记宽度 -->
+    <dimen name="act_source_search_result_item_flag_height">25dp</dimen><!-- 查询结果条目上的标记高度 -->
+    <dimen name="act_source_search_result_item_flag_marginBottom">18dp</dimen><!-- 查询结果条目上的标记下边距 -->
+    <dimen name="act_source_search_result_item_flag_marginLeft">26dp</dimen><!-- 查询结果条目上的标记左边距 -->
+    <dimen name="act_source_search_subtag_textSize">7sp</dimen><!-- 二级分类字体大小 -->
+    <dimen name="act_source_search_subtag_image_width">12dp</dimen><!-- 二级分类条目宽度 -->
+    <dimen name="act_source_search_subtag_image_height">12dp</dimen><!-- 二级分类条目高度 -->
+    <dimen name="act_source_search_subtag_margin">5dp</dimen><!-- 二级分类之间的间距 -->
+    <dimen name="act_source_search_subtag_marginBottom">12dp</dimen><!-- 二级分类的下边距 -->
+    
+    <!-- 状态栏距离顶部和左侧距离 480x 800-->
+    <dimen name="status_width">150dp</dimen><!-- 状态栏宽度 -->
+    <dimen name="status_height">25dp</dimen><!-- 状态栏高度 -->
+    <dimen name="status_margin_top">10dp</dimen><!-- 状态栏上边距 -->
+    <dimen name="status_margin_right">15dp</dimen><!-- 状态拉右边距 -->
+    <dimen name="status_text_size">5sp</dimen><!-- 状态栏字体大小 -->
+    <dimen name="status_padding">1dp</dimen><!-- 状态栏四周padding -->
+    <dimen name="status_image_width">9dp</dimen><!-- 状态栏信号强度图片宽度 -->
+    <dimen name="status_image_height">7dp</dimen><!-- 状态栏信号强度图片高度 -->
+    
+    <!-- Setting 设置 480p -->
+    <dimen name="setting_item_bt_height">34dp</dimen><!-- 按钮高度 -->
+    <dimen name="setting_item_bt_text_size">14sp</dimen><!-- 按钮字体大小 -->
+    <dimen name="setting_item_bt_spacing">10dp</dimen><!-- 按钮间距 -->
+    <dimen name="setting_back_marginLeft">10dp</dimen><!-- 返回键左边距 -->
+    <dimen name="setting_back_marginTop">20dp</dimen><!-- 返回键上边距 -->
+    
+    <!-- VideoActivity视频播放器 480x800 -->
+    <dimen name="video_back_marginLeft">13dp</dimen><!-- 视频播放器返回键左边距 -->
+    <dimen name="video_back_marginTop">24dp</dimen><!-- 视频播放器返回键上边距 -->
+    <dimen name="video_play_width">15dp</dimen><!-- 播放按钮宽度 -->
+    <dimen name="video_play_height">17dp</dimen><!-- 播放按钮高度 -->
+    <dimen name="video_replay_width">20dp</dimen><!-- 重播按钮宽度 -->
+    <dimen name="video_replay_height">16dp</dimen><!-- 重播按钮高度 -->
+    <dimen name="video_sound_width">22dp</dimen><!-- 音量按钮宽度 -->
+    <dimen name="video_sound_height">17dp</dimen><!-- 音量按钮高度 -->
+    <dimen name="video_textSize">11sp</dimen><!-- 进度字体大小 -->
+    <dimen name="video_thumb_width">25dp</dimen><!-- 进度条滑块宽度 -->
+    <dimen name="video_thumb_height">25dp</dimen><!-- 进度条滑块高度 -->
+    <dimen name="video_seekbar_height">5dp</dimen><!-- 进度条高度 -->
+    <dimen name="video_thumb_padding">0dp</dimen><!-- 滑块左右边距 -->
+    <dimen name="video_title_height">20dp</dimen><!-- 标题栏高度 -->
+    <dimen name="video_toobar_item_width">37dp</dimen><!-- 工具栏条目宽度 -->
+    <dimen name="video_toobar_item_height">35dp</dimen><!-- 工具栏条目高度 -->
+    <dimen name="video_toobar_item_margin">15dp</dimen><!-- 工具栏条目之间的间距 -->
+    
+    <!-- 早期阅读 480x800 -->
+    <dimen name="act_read_result_root_width">350dp</dimen><!-- 早期阅读查询结果根节点宽度 -->
+    <dimen name="act_read_result_root_height">170dp</dimen><!-- 早期阅读查询结果根节点高度 -->
+    <dimen name="act_read_result_root_marginTop">70dp</dimen><!-- 查询结果根节点上边距 -->
+    <dimen name="act_read_result_root_marginRight">40dp</dimen><!-- 查询结果根节点右边距 -->
+    <dimen name="act_read_result_width">300dp</dimen><!-- 查询结果宽度 -->
+    <dimen name="act_read_result_item_image_width">45dp</dimen><!-- 查询结果条目图片宽度 -->
+    <dimen name="act_read_result_item_image_height">41dp</dimen><!-- 查询结果条目图片高度 -->
+    <dimen name="act_read_result_item_width">45dp</dimen><!-- 查询结果条目宽度 -->
+    <dimen name="act_read_result_item_height">65dp</dimen><!-- 查询结果条目高度 -->
+    <dimen name="act_read_result_item_textSize">5sp</dimen><!-- 查询结果字体大小 -->
+    <dimen name="act_read_result_item_text_width">56dp</dimen><!-- 查询结果条目文字宽度 -->
+    
+    <!-- PDF播放器 480x800 -->
+    <dimen name="pdf_player_button_textSize">6sp</dimen><!-- pdf播放器按钮字体大小 -->
+    
+</resources>

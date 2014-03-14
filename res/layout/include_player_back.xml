@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/iv_act_favour_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/act_home_fun_width"
+        android:layout_height="@dimen/act_home_fun_height"
         android:focusable="true"
         android:clickable="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginLeft="@dimen/video_back_marginLeft"
+        android:layout_marginTop="@dimen/video_back_marginTop"
         android:src="@drawable/common_selector_back" >
 </ImageView>

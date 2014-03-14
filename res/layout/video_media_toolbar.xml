@@ -2,21 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="500dp"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:gravity="center_vertical" >
 
     <ImageView
         android:id="@+id/iv_act_picture_pen"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/video_toobar_item_width"
+        android:layout_height="@dimen/video_toobar_item_height"
         android:background="@drawable/image_selector_pen"
         />
 
     <ImageView
         android:id="@+id/iv_act_picture_eraser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/video_toobar_item_width"
+        android:layout_height="@dimen/video_toobar_item_height"
         android:background="@drawable/image_selector_eraser"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="@dimen/video_toobar_item_margin"
         />
 
 </LinearLayout>

@@ -221,7 +221,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     this.titleView = getLayoutInflater().inflate(R.layout.video_media_title, null);
     this.tv_media_title_name = (TextView) this.titleView.findViewById(R.id.tv_media_title_name);
     this.toolView = View.inflate(this, R.layout.video_media_toolbar, null);
-    this.titleWindow = new PopupWindow(this.titleView, screenWidth, 60);
+    this.titleWindow = new PopupWindow(this.titleView, screenWidth, controlHeight);
     this.videoView = (VideoView) findViewById(R.id.vv);
     videoView.setOnTouchListener(this);
     this.toolWindow = new PopupWindow(this.toolView, 70, 170);
@@ -855,7 +855,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       screenWidth = outMetrics.widthPixels;
       screenHeight = outMetrics.heightPixels;
     }
-    controlHeight = screenHeight / 8;
+    controlHeight = screenHeight / 10;
   }
 
   private void handleMsg(JsonObject msg) {

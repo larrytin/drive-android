@@ -332,13 +332,23 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
           // 构建ItemView对象
           TextView textView = new TextView(this);
           LinearLayout.LayoutParams params =
-              new LinearLayout.LayoutParams(130, LayoutParams.WRAP_CONTENT);
-          params.setMargins(7, 12, 7, 12);
+              new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(
+                  R.dimen.common_result_width), getResources().getDimensionPixelSize(
+                  R.dimen.common_result_height));
+          params.setMargins(getResources().getDimensionPixelSize(
+              R.dimen.common_result_marginLeftRight), getResources().getDimensionPixelSize(
+              R.dimen.common_result_marginTopBottom), getResources().getDimensionPixelSize(
+              R.dimen.common_result_marginLeftRight), getResources().getDimensionPixelSize(
+              R.dimen.common_result_marginTopBottom));
           textView.setLayoutParams(params);
-          textView.setTextSize(18);
+          textView
+              .setTextSize(getResources().getDimensionPixelSize(R.dimen.common_result_textSize));
           textView.setMaxLines(2);
           textView.setGravity(Gravity.CENTER_HORIZONTAL);
-          textView.setPadding(15, 10, 18, 0);
+          textView.setPadding(getResources().getDimensionPixelSize(
+              R.dimen.common_result_paddingLeft), getResources().getDimensionPixelSize(
+              R.dimen.common_result_paddingTop), getResources().getDimensionPixelSize(
+              R.dimen.common_result_paddingRight), 0);
           final String title = tags.getString(index);
           if (title.matches("^\\d{4}.*")) {
             textView.setText(title.substring(4, title.length()));
@@ -367,6 +377,10 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
       }
       this.nameViews.add(rootContainer);
       ImageView imageView = new ImageView(this);
+      LayoutParams layoutParams =
+          new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_result_dot_width),
+              getResources().getDimensionPixelSize(R.dimen.common_result_dot_height));
+      imageView.setLayoutParams(layoutParams);
       if (i == 0) {
         imageView.setBackgroundResource(R.drawable.common_result_dot_current);
       } else {
@@ -496,12 +510,20 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
     // 初始化年级
     this.ll_act_harmony_grade = (LinearLayout) this.findViewById(R.id.ll_act_harmony_grade);
     int gradeChildren = this.gradeNames.length;
+    LayoutParams longWidthParams =
+        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.commen_grade_width_long),
+            getResources().getDimensionPixelSize(R.dimen.common_grade_height));
+    LayoutParams commonWidthParams =
+        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_grade_width),
+            getResources().getDimensionPixelSize(R.dimen.common_grade_height));
     for (int i = 0; i < gradeChildren; i++) {
       int layoutId = R.layout.common_item_grade_short;
-      if (Constant.LABEL_GRADE_PRE.equals(this.gradeNames[i])) {
-        layoutId = R.layout.common_item_grade_long;
-      }
       TextView child = (TextView) this.inflater.inflate(layoutId, null);
+      if (Constant.LABEL_GRADE_PRE.equals(this.gradeNames[i])) {
+        child.setLayoutParams(longWidthParams);
+      } else {
+        child.setLayoutParams(commonWidthParams);
+      }
       child.setSelected(false);
       if (this.currentGrade.equals(this.gradeNames[i])) {
         child.setSelected(true);
@@ -516,6 +538,7 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
     int termChildren = this.termNames.length;
     for (int i = 0; i < termChildren; i++) {
       TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
+      child.setLayoutParams(commonWidthParams);
       child.setSelected(false);
       if (this.currentTerm.equals(termMap.get(this.termNames[i]))) {
         child.setSelected(true);
@@ -528,17 +551,35 @@ public class HarmonyActivity extends BaseActivity implements OnFocusChangeListen
     // 初始化分类
     this.ll_act_harmony_class = (LinearLayout) this.findViewById(R.id.ll_act_harmony_class);
     int topicChildren = this.topicNames.length;
+    longWidthParams =
+        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width_long),
+            getResources().getDimensionPixelSize(R.dimen.common_class_height));
+    longWidthParams.setMargins(getResources()
+        .getDimensionPixelSize(R.dimen.common_class_marginLeft), getResources()
+        .getDimensionPixelSize(R.dimen.common_class_marginTop), getResources()
+        .getDimensionPixelSize(R.dimen.common_class_marginRight), 0);
+    commonWidthParams =
+        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width),
+            getResources().getDimensionPixelSize(R.dimen.common_class_height));
+    commonWidthParams.setMargins(getResources().getDimensionPixelSize(
+        R.dimen.common_class_marginLeft), getResources().getDimensionPixelSize(
+        R.dimen.common_class_marginTop), getResources().getDimensionPixelSize(
+        R.dimen.common_class_marginRight), 0);
     for (int i = 0; i < topicChildren; i++) {
       int layoutId = R.layout.common_item_class_short;
+      TextView child;
       if (Constant.DOMIAN_MUSIC.equals(this.topicNames[i])
           || Constant.DOMIAN_ART.equals(this.topicNames[i])) {
         layoutId = R.layout.common_item_class_long;
+        child = (TextView) this.inflater.inflate(layoutId, null);
+        child.setLayoutParams(longWidthParams);
+      } else {
+        child = (TextView) this.inflater.inflate(layoutId, null);
+        child.setLayoutParams(commonWidthParams);
       }
-      LinearLayout.LayoutParams params =
-          new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-      params.setMargins(5, 5, 10, 0);
-      TextView child = (TextView) this.inflater.inflate(layoutId, null);
-      child.setLayoutParams(params);
+      child.setTextSize(getResources().getDimensionPixelSize(R.dimen.common_class_textSize));
+      child.setPadding(0, getResources().getDimensionPixelSize(R.dimen.common_class_paddingTop), 0,
+          0);
       child.setSelected(false);
       if (this.currenTopic.equals(this.topicNames[i])) {
         child.setSelected(true);

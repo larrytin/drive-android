@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.goodow.drive.android.cusview.StatusView xmlns:android="http://schemas.android.com/apk/res/android" 
-    android:layout_width="270dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/index_status_bg"
-    android:layout_alignParentTop="true"
-    android:layout_alignParentRight="true"
-    android:layout_marginTop="20dp"
-    android:layout_marginRight="100dp"
-    android:orientation="horizontal"
-    >
-    
-</com.goodow.drive.android.cusview.StatusView>
+    android:gravity="center_vertical"
+    android:orientation="horizontal" >
 
+    <TextView
+        android:id="@+id/tv_status_netTypeView"
+        style="@style/status_text"/>
+
+    <ImageView
+        android:id="@+id/iv_status_netStatusView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/status_network_all" />
+
+    <TextView
+        android:id="@+id/tv_status_currentTimeView"
+        style="@style/status_text"/>
+
+</LinearLayout>
