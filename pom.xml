@@ -72,6 +72,11 @@
       <artifactId>maps-geosdk</artifactId>
       <version>4.0</version>
     </dependency>
+    <dependency>
+      <groupId>com.baidu.maps.android</groupId>
+      <artifactId>maps-sdk-all</artifactId>
+      <version>2.4.0</version>
+    </dependency>
   </dependencies>
 
   <build>

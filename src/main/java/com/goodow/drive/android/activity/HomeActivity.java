@@ -26,9 +26,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 public class HomeActivity extends BaseActivity {
 
@@ -39,23 +46,48 @@ public class HomeActivity extends BaseActivity {
   private final ReconnectBus connectBus = BusProvider.getConnectBus();
   private HandlerRegistration netWorkHandlerReg;
   private int schedulePeriodic;
-
+  public static final String AUTH = "AuthImformation";
+  private SharedPreferences authSp = null;
   // 联网状态为1
   private int flag = 0;
   // 记录注册OnOpen状态
   private boolean registeredOnOpen = false;
   // 记录注册网络监听状态
   private boolean registeredNetWork = false;
-
+  private ConnectivityManager mConnectivityManager;
+  private NetworkInfo networkInfo;
   private LocationClient mLocationClient;
+
+  private boolean registeredOnOpen1 = false;
+
+  private HandlerRegistration openHandlerReg1;
+
+  private boolean ConnectStatus = true;
+  // 1分钟 TODO:
+  private int periodicTime = 60000;
+  private int schPeriodicTime;
+
+  // 标记
+  private boolean unConnect = false;
+
+  // 4天校驗一次 TODO:
+  private int number = 1;
+
+  // TODO:如果为false，不校验，默认不校验
+  private boolean openAuth = false;
 
   public void onClick(View v) {
 
     switch (v.getId()) {
     // 收藏
       case R.id.iv_act_main_coll:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
-            Constant.KEY_REDIRECTTO, "favorite"), null);
+        if (openAuth) {
+          checkActivate(Json.createObject().set(Constant.KEY_REDIRECTTO, "favorite"), Bus.LOCAL
+              + Constant.ADDR_VIEW);
+        } else {
+          this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
+              Constant.KEY_REDIRECTTO, "favorite"), null);
+        }
         break;
       // 锁屏
       case R.id.iv_act_main_loc:
@@ -100,8 +132,13 @@ public class HomeActivity extends BaseActivity {
         break;
       // 资源库
       case R.id.iv_act_main_source:
-        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
-            "repository"), null);
+        if (openAuth) {
+          checkActivate(Json.createObject().set(Constant.KEY_REDIRECTTO, "repository"), Bus.LOCAL
+              + Constant.ADDR_VIEW);
+        } else {
+          bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+              "repository"), null);
+        }
         break;
 
       default:
@@ -113,20 +150,31 @@ public class HomeActivity extends BaseActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_home);
+    authSp = this.getSharedPreferences(AUTH, Context.MODE_PRIVATE);
     subscribe();
     sendAnalyticsMessage();
-    // 每隔1天,发送一次数据到服务器
-    schedulePeriodic = Platform.scheduler().schedulePeriodic(5 * 60 * 1000, new Handler<Void>() {
+    // 每隔1天,发送一次数据到服务器 TODO:发布时修改时间为一天
+    schedulePeriodic = Platform.scheduler().schedulePeriodic(1 * 60 * 1000, new Handler<Void>() {
       @Override
       public void handle(Void event) {
         sendAnalyticsMessage();
+        if (openAuth) {
+          number--;
+          if (number == 0) {
+            sendAuth();
+            number = 1;// TODO:修改几天校验一次
+          }
+        }
       }
     });
     BaiduLocation.INSTANCE.setContext(getApplicationContext());
     mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
     BaiduLocation.INSTANCE.init();
-    // 数据库打包，将数据库放到asset目录下即可，数据库名为：keruixing
+    // 数据库打包，将数据库放到asset目录下即可，数据库名为：keruixing TODO：数据库
     copyDataBases();
+    if (openAuth) {
+      checkAuth();
+    }
   }
 
   @Override
@@ -155,6 +203,32 @@ public class HomeActivity extends BaseActivity {
         }
         float netStrength = (float) body.getNumber("strength");
         if (netStrength <= 0.0f) {
+          // 标记
+          if (openAuth && !unConnect) {
+            unConnect = true;
+            // 断网,10分钟后，不让用户使用；
+            schPeriodicTime = Platform.scheduler().scheduleDelay(periodicTime, new Handler<Void>() {
+              @Override
+              public void handle(Void event) {
+                ConnectStatus = false;
+                ComponentName component =
+                    ((ActivityManager) HomeActivity.this.getSystemService(Context.ACTIVITY_SERVICE))
+                        .getRunningTasks(1).get(0).topActivity;
+                String topClassName = component.getClassName();
+                if (!"com.goodow.drive.android.activity.HomeActivity".equals(topClassName)
+                    && !"com.goodow.drive.android.activity.NotificationActivity"
+                        .equals(topClassName)) {
+                  bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set("redirectTo",
+                      "home"), null);
+                }
+                if (!"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
+                  bus.send(Bus.LOCAL + BusProvider.SID + "notification", Json.createObject().set(
+                      "content", "您无法继续使用，请联网操作"), null);
+                }
+
+              }
+            });
+          }
           // 无网络
           flag = -1;
           // 由无网络变为有网络(此处不分3G,WIFI)
@@ -162,10 +236,76 @@ public class HomeActivity extends BaseActivity {
           // 重连
           connectBus.reconnect();
           flag = 0;
+          if (openAuth) {
+            unConnect = false;
+            Platform.scheduler().cancelTimer(schPeriodicTime);
+            ConnectStatus = true;
+          }
+        } else if (openAuth) {
+          unConnect = false;
+          Platform.scheduler().cancelTimer(schPeriodicTime);
+          ConnectStatus = true;
         }
       }
     });
     mLocationClient.start();
+  }
+
+  private void checkActivate(JsonObject msg, String address) {
+    // 联网且激活时
+    if (authSp.getBoolean("activate", false) && ConnectStatus) {
+      this.bus.send(address, msg, null);
+    } else if (authSp.getBoolean("activate", false) && !ConnectStatus) {
+      Toast.makeText(this, "当前无网络，请联网继续操作...", Toast.LENGTH_LONG).show();
+      // 锁定或未激活
+    } else {
+      if (authSp.getBoolean("locked", false)) {
+        Toast.makeText(this, "当前设备被锁定", Toast.LENGTH_LONG).show();
+      }
+      networkInfo = mConnectivityManager.getActiveNetworkInfo();
+      // 无网络
+      if (networkInfo == null) {
+        Toast.makeText(this, "当前无网络，请联网...", Toast.LENGTH_LONG).show();
+      }
+      // 校驗
+      sendAuth();
+    }
+  }
+
+  private void checkAuth() {
+    mConnectivityManager =
+        (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+    networkInfo = mConnectivityManager.getActiveNetworkInfo();
+    if (networkInfo != null) {
+      ConnectStatus = true;
+    } else {
+      // 未激活之前
+      if (!authSp.contains("activate")) {
+        bus.send(Bus.LOCAL + BusProvider.SID + "notification", Json.createObject().set("content",
+            "激活设备,请关闭wifi,保持3G联网状态"), null);
+      }
+      unConnect = true;// 无网络
+      schPeriodicTime = Platform.scheduler().scheduleDelay(periodicTime, new Handler<Void>() {
+        @Override
+        public void handle(Void event) {
+          ConnectStatus = false;
+          ComponentName component =
+              ((ActivityManager) HomeActivity.this.getSystemService(Context.ACTIVITY_SERVICE))
+                  .getRunningTasks(1).get(0).topActivity;
+          String topClassName = component.getClassName();
+          if (!"com.goodow.drive.android.activity.HomeActivity".equals(topClassName)
+              && !"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
+            bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set("redirectTo", "home"),
+                null);
+          }
+          if (!"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
+            bus.send(Bus.LOCAL + BusProvider.SID + "notification", Json.createObject().set(
+                "content", "您无法继续使用，请联网操作"), null);
+          }
+        }
+      });
+    }
+    sendAuth();
   }
 
   /**
@@ -210,7 +350,12 @@ public class HomeActivity extends BaseActivity {
     msg.set("action", "post");
     JsonArray tags = Json.createArray().push(type);
     msg.set(Constant.KEY_TAGS, tags);
-    this.bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
+    if (openAuth) {
+      checkActivate(msg, Bus.LOCAL + Constant.ADDR_TOPIC);
+    } else {
+      this.bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
+    }
+
   }
 
   private void sendAnalyticsMessage() {
@@ -238,6 +383,30 @@ public class HomeActivity extends BaseActivity {
     }
   }
 
+  private void sendAuth() {
+    if (State.OPEN == connectBus.getReadyState()) {
+      // 校验
+      connectBus.send(Bus.LOCAL + BusProvider.SID + "auth.request", null, null);
+    } else {
+      connectBus.reconnect();
+      // 记录注册状态，如果已注册，不应重复注册
+      if (registeredOnOpen1) {
+        return;
+      }
+      registeredOnOpen1 = true;// 注册
+      // 监听网络状况
+      openHandlerReg1 =
+          connectBus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
+            @Override
+            public void handle(Message<JsonObject> message) {
+              connectBus.send(Bus.LOCAL + BusProvider.SID + "auth.request", null, null);
+              registeredOnOpen1 = false;
+              openHandlerReg1.unregisterHandler();
+            }
+          });
+    }
+  }
+
   private void subscribe() {
     if (!registried) {
       registried = true;
@@ -247,4 +416,5 @@ public class HomeActivity extends BaseActivity {
       new DataRegistry(bus, this).subscribe();
     }
   }
+
 }

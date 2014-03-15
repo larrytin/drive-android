@@ -4,6 +4,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.BMapManager;
 
 import android.content.Context;
 
@@ -24,6 +25,7 @@ public enum BaiduLocation {
   private Context mContext;
   // 百度地图授权的key
   private static final String KEY = "rrTM3ndAtByixCIGQaDupKvu";
+  private BMapManager mBMapManager = null;
 
   private BaiduLocation() {
   }
@@ -37,7 +39,10 @@ public enum BaiduLocation {
 
   // 初始化操作
   public void init() {
-
+    if (mBMapManager == null) {
+      mBMapManager = new BMapManager(mContext.getApplicationContext());
+    }
+    mBMapManager.init(KEY, null);
     mLocationClient.setAK(KEY);
     myListener = new MyLocationListener();
     mLocationClient.registerLocationListener(myListener);

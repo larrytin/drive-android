@@ -2,6 +2,7 @@ package com.goodow.drive.android.settings;
 
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.activity.HomeActivity;
 import com.goodow.drive.android.activity.NotificationActivity;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
@@ -12,13 +13,18 @@ import com.goodow.realtime.json.JsonObject;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
+import com.baidu.mapapi.utils.DistanceUtil;
+import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 import java.io.File;
 
+import android.app.ActivityManager;
 import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.media.AudioManager;
@@ -33,15 +39,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.Toast;
 
 public class SettingsRegistry {
   public static final String PREFIX = BusProvider.SID + "settings.";
   private final Context ctx;
   private final Bus bus;
+  private SharedPreferences authSp = null;
 
   public SettingsRegistry(Bus bus, Context ctx) {
     this.bus = bus;
     this.ctx = ctx;
+    authSp = ctx.getSharedPreferences(HomeActivity.AUTH, Context.MODE_PRIVATE);
   }
 
   public void subscribe() {
@@ -113,9 +122,9 @@ public class SettingsRegistry {
                 }
                 JsonObject msg = Json.createObject();
                 msg.set("time", location.getTime());
-                msg.set("errocode", location.getLocType());
+                msg.set("errorcode", location.getLocType());
                 msg.set("latitude", location.getLatitude());
-                msg.set("longtitude", location.getLongitude());
+                msg.set("longitude", location.getLongitude());
                 msg.set("radius", location.getRadius());
                 if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                   msg.set("address", location.getAddrStr());
@@ -290,5 +299,105 @@ public class SettingsRegistry {
         ctx.startActivity(intent);
       }
     });
+
+    // 由服务器来处理验证信息
+    BusProvider.getConnectBus().registerHandler(BusProvider.SID + "auth.request",
+        new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            // 百度地图
+            bus.send(Bus.LOCAL + PREFIX + "location.baidu", null, new MessageHandler<JsonObject>() {
+              @Override
+              public void handle(Message<JsonObject> message) {
+                JsonObject msg = message.body();
+                // 发送的验证消息
+                final JsonObject send = Json.createObject();
+                send.set("sid", DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx));
+                send.set("imei", DeviceInformationTools.getIMEI(ctx));
+                send.set("errorcode", msg.getNumber("errorcode"));
+                // 定位成功
+                if (msg.getNumber("errorcode") == 161.0) {
+                  double latitude = msg.getNumber("latitude");
+                  double longitude = msg.getNumber("longitude");
+                  send.set("latitude", latitude);
+                  send.set("longitude", longitude);
+                  send.set("radius", msg.getNumber("radius"));
+                  send.set("address", msg.getString("address"));
+                  // 临时的存储latitude,longitude
+                  authSp.edit().putFloat("latitudetmp", (float) latitude).putFloat("longitudetmp",
+                      (float) longitude).commit();
+                  if (authSp.getFloat("latitude", -1) != -1
+                      && authSp.getFloat("longitude", -1) != -1) {
+                    // GeoPoint(int latitudeE6, int longitudeE6)
+                    // latitudeE6 - 纬度坐标，单位是微度
+                    // longitudeE6 - 经度坐标，单位是微度
+                    GeoPoint p1LL =
+                        new GeoPoint((int) (authSp.getFloat("latitude", -1) * 1E6), (int) (authSp
+                            .getFloat("longitude", -1) * 1E6));
+                    GeoPoint p2LL = new GeoPoint((int) (latitude * 1E6), (int) (longitude * 1E6));
+                    double distance = DistanceUtil.getDistance(p1LL, p2LL);// 單位：米
+                    send.set("distance", distance);
+                  }
+                }
+                authInformation(send);
+              }
+            });
+          }
+
+          private void authInformation(final JsonObject send) {
+            BusProvider.getConnectBus().send("sid.drive.auth", send,
+                new MessageHandler<JsonObject>() {
+                  @Override
+                  public void handle(Message<JsonObject> message) {
+                    JsonObject msg = message.body();
+                    if (!(msg.has("status") || msg.has("content"))) {
+                      return;
+                    }
+                    if ("ok".equals(msg.getString("status"))) {
+                      // 校验通过
+                      Editor mEditor = authSp.edit();
+                      mEditor.putFloat("latitude", authSp.getFloat("latitudetmp", -1));
+                      mEditor.putFloat("longitude", authSp.getFloat("longitudetmp", -1));
+                      mEditor.putBoolean("activate", true);
+                      mEditor.commit();
+                      Toast.makeText(ctx, "校验通过", Toast.LENGTH_LONG).show();
+                    }
+                    if ("reject".equals(msg.getString("status"))) {
+                      authSp.edit().putBoolean("locked", true).commit();
+                      authSp.edit().putBoolean("activate", false).commit();
+                      // 当前的栈顶是否为homeActivity
+                      ComponentName component =
+                          ((ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE))
+                              .getRunningTasks(1).get(0).topActivity;
+                      String topClassName = component.getClassName();
+                      // 如果当前界面是HomeActivity
+                      if (!"com.goodow.drive.android.activity.HomeActivity".equals(topClassName)
+                          && !"com.goodow.drive.android.activity.NotificationActivity"
+                              .equals(topClassName)) {
+                        bus.send(Constant.ADDR_VIEW, Json.createObject().set("redirectTo", "home"),
+                            null);
+                      }
+                      if (msg.has("content")
+                          && !"com.goodow.drive.android.activity.NotificationActivity"
+                              .equals(topClassName)) {
+                        bus.send(Bus.LOCAL + BusProvider.SID + "notification", Json.createObject()
+                            .set("content", msg.getString("content")), null);
+                      }
+                    }
+                    if ("unlocked".equals(msg.getString("status"))) {
+                      // 非第一次
+                      if (authSp.contains("activate")) {
+                        Toast.makeText(ctx, "解锁成功", Toast.LENGTH_LONG).show();
+                      }
+                      // 解锁，清除数据，让其继续校验
+                      authSp.edit().clear().commit();
+                      // 重新校验
+                      BusProvider.getConnectBus().send(
+                          Bus.LOCAL + BusProvider.SID + "auth.request", null, null);
+                    }
+                  }
+                });
+          }
+        });
   }
 }
