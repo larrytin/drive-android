@@ -320,7 +320,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     String fileName = attachment.getString(Constant.KEY_NAME);
     final String filePath = attachment.getString(Constant.KEY_URL);
     final String attachmentId = attachment.getString(Constant.KEY_ID);
-    String thumbnail = attachment.getString(Constant.KEY_ATTACHMENT);
+    String thumbnail = attachment.getString(Constant.KEY_THUMBNAIL);
     LinearLayout.LayoutParams params =
         new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     LinearLayout itemLayout = new LinearLayout(this);
