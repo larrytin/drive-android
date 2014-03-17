@@ -230,8 +230,8 @@ public class DBDataProvider {
   public static JsonObject searchFilesByKey(Context context, JsonObject key) {
     // 排序条件
     final List<String> catagories =
-        Arrays.asList("活动设计", "文学作品", "说明文字", "背景知识", "乐谱", "图片", "动态图", "参考图", "挂图", "轮廓图", "头饰",
-            "手偶", "胸牌", "动画", "电子书", "视频", "游戏", "音频", "音效");
+        Arrays.asList("活动设计", "文学作品", "说明文字", "背景知识", "乐谱", "教学图片", "动态图", "参考图", "挂图", "轮廓图",
+            "头饰", "手偶", "胸牌", "动画", "电子书", "视频", "音频", "音效");
     // 排序集合
     Set<JsonObject> set = new TreeSet<JsonObject>(new Comparator<JsonObject>() {
       @Override
