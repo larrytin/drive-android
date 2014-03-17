@@ -92,7 +92,7 @@ public class HomeActivity extends BaseActivity {
         break;
       // 图画书
       case R.id.iv_act_main_read:
-        // this.open("早期阅读");
+        this.open("早期阅读");
         break;
       // 资源库
       case R.id.iv_act_main_source:

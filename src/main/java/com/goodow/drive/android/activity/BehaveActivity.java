@@ -269,7 +269,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
         if (j == 1) {
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-          params.setMargins(0, 48, 0, 0);
+          params.setMargins(0, 40, 0, 0);
           innerContainer.setLayoutParams(params);
         }
         // 列数量
@@ -317,10 +317,9 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     final String filePath = attachment.getString(Constant.KEY_URL);
     final String attachmentId = attachment.getString(Constant.KEY_ID);
     String thumbnail = attachment.getString(Constant.KEY_THUMBNAIL);
-    LinearLayout.LayoutParams params =
-        new LinearLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
+    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(120, 120);
     LinearLayout itemLayout = new LinearLayout(this);
-    params.setMargins(10, 0, 10, 18);
+    params.setMargins(10, 18, 10, 18);
     itemLayout.setLayoutParams(params);
     itemLayout.setOrientation(LinearLayout.VERTICAL);
 
