@@ -22,6 +22,10 @@ import com.goodow.realtime.json.JsonObject;
 
 import com.baidu.location.LocationClient;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +33,7 @@ import android.view.View;
 public class HomeActivity extends BaseActivity {
 
   public static final String TAG = HomeActivity.class.getSimpleName();
-
+  private static final String DATABASENAME = "keruixing";
   private static boolean registried;
   private HandlerRegistration openHandlerReg;
   private final ReconnectBus connectBus = BusProvider.getConnectBus();
@@ -121,6 +125,8 @@ public class HomeActivity extends BaseActivity {
     BaiduLocation.INSTANCE.setContext(getApplicationContext());
     mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
     BaiduLocation.INSTANCE.init();
+    // 数据库打包，将数据库放到asset目录下即可，数据库名为：keruixing
+    // copyDataBases();
   }
 
   @Override
@@ -160,6 +166,38 @@ public class HomeActivity extends BaseActivity {
       }
     });
     mLocationClient.start();
+  }
+
+  /**
+   * 将数据库从assets目录拷贝到databases目录下
+   */
+  private void copyDataBases() {
+    final String dataBaseDir = "data/data/" + HomeActivity.this.getPackageName() + "/databases";
+    final File dbFile = new File(dataBaseDir, DATABASENAME);
+    if (!(dbFile.exists() && dbFile.length() > 0)) {
+      new Thread() {
+        @Override
+        public void run() {
+          try {
+            InputStream is = HomeActivity.this.getAssets().open(DATABASENAME);
+            File filedir = new File(dataBaseDir);
+            if (!filedir.exists()) {
+              filedir.mkdir();
+            }
+            FileOutputStream fos = new FileOutputStream(new File(dbFile.getAbsolutePath()));
+            int len = 0;
+            byte[] buffer = new byte[1024];
+            while ((len = is.read(buffer)) != -1) {
+              fos.write(buffer, 0, len);
+            }
+            is.close();
+            fos.close();
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        };
+      }.start();
+    }
   }
 
   /**
