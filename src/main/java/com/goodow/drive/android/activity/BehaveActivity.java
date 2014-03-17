@@ -281,7 +281,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
           View view = buildItemView(index, attachments.getObject(index));
           LinearLayout.LayoutParams params =
               new LinearLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
-          params.setMargins(10, 5, 10, 18);
+          params.setMargins(10, 20, 10, 18);
           view.setLayoutParams(params);
           view.setClickable(true);
           innerContainer.addView(view);
