@@ -279,10 +279,6 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
           }
           // 构建ItemView对象
           View view = buildItemView(index, attachments.getObject(index));
-          LinearLayout.LayoutParams params =
-              new LinearLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
-          params.setMargins(10, 20, 10, 18);
-          view.setLayoutParams(params);
           view.setClickable(true);
           innerContainer.addView(view);
           index++;
@@ -322,8 +318,9 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     final String attachmentId = attachment.getString(Constant.KEY_ID);
     String thumbnail = attachment.getString(Constant.KEY_THUMBNAIL);
     LinearLayout.LayoutParams params =
-        new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        new LinearLayout.LayoutParams(120, LayoutParams.WRAP_CONTENT);
     LinearLayout itemLayout = new LinearLayout(this);
+    params.setMargins(10, 0, 10, 18);
     itemLayout.setLayoutParams(params);
     itemLayout.setOrientation(LinearLayout.VERTICAL);
 
