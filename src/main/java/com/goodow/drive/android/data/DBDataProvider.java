@@ -230,8 +230,9 @@ public class DBDataProvider {
   public static JsonObject searchFilesByKey(Context context, JsonObject key) {
     // 排序条件
     final List<String> catagories =
-        Arrays.asList("活动设计", "文学作品", "说明文字", "背景知识", "乐谱", "教学图片", "动态图", "参考图", "挂图", "轮廓图",
-            "头饰", "手偶", "胸牌", "动画", "电子书", "视频", "音频", "音效");
+        Arrays.asList("素材-活动设计", "素材-文学作品", "素材-说明文字", "素材-背景知识", "素材-乐谱", "素材-教学图片", "素材-动态图",
+            "素材-参考图", "素材-挂图", "素材-轮廓图", "素材-头饰", "素材-手偶", "素材-胸牌", "素材-动画", "素材-电子书", "素材-视频",
+            "素材-音频", "素材-音效");
     // 排序集合
     Set<JsonObject> set = new TreeSet<JsonObject>(new Comparator<JsonObject>() {
       @Override
@@ -320,7 +321,7 @@ public class DBDataProvider {
               + (key.getString(Constant.KEY_QUERY) == null ? "" : key.getString(Constant.KEY_QUERY));
 
       // 查询页码
-      sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE WHERE UUID IN(" + sql + ")";
+      sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE WHERE UUID IN(" + sql + "%')";
 
       sql = sql + "%' LIMIT " + size + " OFFSET " + from;
 
