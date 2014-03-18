@@ -79,21 +79,54 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   private HandlerRegistration postHandler;
   private Rect controlRectRight;
 
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent ev) {
+    if (!toolBarHandler.hasMessages(0)) {
+      ll_include_picture_tools.setVisibility(View.VISIBLE);
+      delayDissmissToolsbar();
+    }
+    return super.dispatchTouchEvent(ev);
+  }
+
   // 画笔功能的点击事件
   public void onBarClick(View v) {
     switch (v.getId()) {
     // 放大
       case R.id.iv_include_picture_zoom_out:
+        if (isDrawing) {
+          isDrawing = false;
+          iv_common_back.setVisibility(View.VISIBLE);
+          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
+              "annotation", false), null);
+          delayDissmissToolsbar();
+          iv_include_picture_pen.setSelected(false);
+        }
         bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomBy", 1.1),
             null);
         break;
       // 缩小
       case R.id.iv_include_picture_zoom_in:
+        if (isDrawing) {
+          isDrawing = false;
+          iv_common_back.setVisibility(View.VISIBLE);
+          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
+              "annotation", false), null);
+          delayDissmissToolsbar();
+          iv_include_picture_pen.setSelected(false);
+        }
         bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomBy", 0.9),
             null);
         break;
       // 1:1
       case R.id.iv_include_picture_full_screen:
+        if (isDrawing) {
+          isDrawing = false;
+          iv_common_back.setVisibility(View.VISIBLE);
+          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
+              "annotation", false), null);
+          delayDissmissToolsbar();
+          iv_include_picture_pen.setSelected(false);
+        }
         bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomTo", 1), null);
         break;
       // 画笔的获取与丢弃
@@ -121,6 +154,14 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         break;
       // 打印
       case R.id.iv_include_picture_print:
+        if (isDrawing) {
+          isDrawing = false;
+          iv_common_back.setVisibility(View.VISIBLE);
+          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
+              "annotation", false), null);
+          delayDissmissToolsbar();
+          iv_include_picture_pen.setSelected(false);
+        }
         bus.send(Bus.LOCAL + BusProvider.SID + "print", Json.createObject().set("path", path), null);
         break;
       default:
@@ -397,17 +438,17 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     // return true;
     // }
     // });
-    mImageView.setOnTouchListener(new OnTouchListener() {
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        if (!toolBarHandler.hasMessages(0)) {
-          ll_include_picture_tools.setVisibility(View.VISIBLE);
-          delayDissmissToolsbar();
-        }
-        return true;
-      }
-    });
+    // mImageView.setOnTouchListener(new OnTouchListener() {
+    //
+    // @Override
+    // public boolean onTouch(View v, MotionEvent event) {
+    // if (!toolBarHandler.hasMessages(0)) {
+    // ll_include_picture_tools.setVisibility(View.VISIBLE);
+    // delayDissmissToolsbar();
+    // }
+    // return true;
+    // }
+    // });
 
   }
 
