@@ -13,12 +13,8 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -33,18 +29,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class EbookActivity extends BaseActivity implements OnPageChangeListener, OnClickListener {
-  private final String[] topicNames = {
-      Constant.DOMIAN_FAIRYTALE, Constant.DOMIAN_HAPPY_BABY, Constant.DOMIAN_OTHER};
-  // 当前状态
-  private String currenTopic = Constant.DOMIAN_FAIRYTALE;
-
   // 后退收藏锁屏
   private ImageView iv_act_ebook_back = null;
   private ImageView iv_act_ebook_coll = null;
   private ImageView iv_act_ebook_loc = null;
-
-  // 分类
-  private LinearLayout ll_act_ebook_class = null;
 
   private final int numPerPage = 8;// 查询结果每页显示8条数据
   private final int numPerLine = 4;// 每条显示四个数据
@@ -59,9 +47,6 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
   private int totalPageNum = 0;
 
   private final ArrayList<View> nameViews = new ArrayList<View>();
-
-  private final static String SHAREDNAME = "ebookHistory";// 配置文件的名称
-  private SharedPreferences sharedPreferences = null;
 
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
@@ -82,12 +67,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
-      // 类别的选中事件
-      case R.id.ftv_act_ebook_class_fairytale:
-      case R.id.ftv_act_ebook_class_happy_baby:
-      case R.id.ftv_act_ebook_class_other:
-        this.onMyClassViewClick(v.getId());
-        // 查询结果翻页
+      // 查询结果翻页
       case R.id.rl_act_ebook_result_pre:
       case R.id.rl_act_ebook_result_next:
         this.onResultPrePageClick(v.getId());
@@ -138,14 +118,11 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_ebook);
-    this.readHistoryData();
     this.initView();
     Bundle extras = this.getIntent().getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
-    this.echoTopic();
-    this.saveHistory(Constant.TOPIC, currenTopic);
   }
 
   @Override
@@ -155,8 +132,6 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
-    this.echoTopic();
-    this.saveHistory(Constant.TOPIC, currenTopic);
   }
 
   @Override
@@ -193,8 +168,6 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
           tags.push(Constant.DATAREGISTRY_TYPE_READ);
         }
         sendQueryMessage(buildTags(tags));
-        echoTopic();
-        saveHistory(Constant.TOPIC, currenTopic);
       }
     });
     controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
@@ -333,41 +306,15 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
    * @return
    */
   private JsonArray buildTags(JsonArray tags) {
-    List<String> topics = Arrays.asList(this.topicNames);
     // 删除垃圾数据
     for (int i = 0; i < tags.length(); i++) {
       String tag = tags.getString(i);
       boolean isLegalTheme = Constant.LABEL_THEMES.contains(tag);
-      boolean isLegalTopic = topics.contains(tag);
-      if (!isLegalTheme && !isLegalTopic) {
+      if (!isLegalTheme) {
         tags.remove(i--);
       }
     }
-
-    // 如果默认的班级、学期、主题不在tags中就加入 如果存在就设置为当前
-    for (int i = 0; i < tags.length(); i++) {
-      if (topics.contains(tags.getString(i))) {
-        this.currenTopic = tags.getString(i);
-        break;
-      }
-    }
-    if (tags.indexOf(this.currenTopic) == -1) {
-      tags.push(this.currenTopic);
-    }
     return tags;
-  }
-
-  /**
-   * 回显主题
-   */
-  private void echoTopic() {
-    for (int i = 0; i < topicNames.length; i++) {
-      TextView child = (TextView) ll_act_ebook_class.getChildAt(i);
-      child.setSelected(false);
-      if (currenTopic.equals(topicNames[i])) {
-        child.setSelected(true);
-      }
-    }
   }
 
   /**
@@ -382,17 +329,6 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     this.iv_act_ebook_coll.setOnClickListener(this);
     this.iv_act_ebook_loc.setOnClickListener(this);
 
-    // 初始化分类
-    this.ll_act_ebook_class = (LinearLayout) this.findViewById(R.id.ll_act_ebook_class);
-    int classChildren = this.ll_act_ebook_class.getChildCount();
-    for (int i = 0; i < classChildren; i++) {
-      TextView child = (TextView) this.ll_act_ebook_class.getChildAt(i);
-      child.setOnClickListener(this);
-      if (this.currenTopic.equals(this.topicNames[i])) {
-        child.setSelected(true);
-      }
-    }
-
     // 初始化查询结果视图
     this.vp_act_ebook_result = (ViewPager) this.findViewById(R.id.vp_act_ebook_result);
     this.vp_act_ebook_result.setOnPageChangeListener(this);
@@ -406,36 +342,6 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     // 初始化结果数量视图
     this.ll_act_ebook_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_ebook_result_bar);
 
-  }
-
-  /**
-   * 处理类别的点击事件
-   * 
-   * @param i
-   */
-  private void onMyClassViewClick(int id) {
-    switch (id) {
-      case R.id.ftv_act_ebook_class_fairytale:
-        this.currenTopic = Constant.DOMIAN_FAIRYTALE;
-        break;
-      case R.id.ftv_act_ebook_class_happy_baby:
-        this.currenTopic = Constant.DOMIAN_HAPPY_BABY;
-        break;
-      case R.id.ftv_act_ebook_class_other:
-        this.currenTopic = Constant.DOMIAN_OTHER;
-        break;
-      default:
-        break;
-    }
-    for (int i = 0; i < this.ll_act_ebook_class.getChildCount(); i++) {
-      if (id == this.ll_act_ebook_class.getChildAt(i).getId()) {
-        this.ll_act_ebook_class.getChildAt(i).setSelected(true);
-      } else {
-        this.ll_act_ebook_class.getChildAt(i).setSelected(false);
-      }
-    }
-    this.saveHistory(Constant.TOPIC, this.currenTopic);
-    this.sendQueryMessage(null);
   }
 
   /**
@@ -456,28 +362,6 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
   }
 
   /**
-   * 查询历史数据
-   */
-  private void readHistoryData() {
-    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
-    this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);
-  }
-
-  /**
-   * 保存到历史数据
-   * 
-   * @param key
-   * @param value
-   */
-  private void saveHistory(String key, String value) {
-    if (this.sharedPreferences != null) {
-      Editor edit = this.sharedPreferences.edit();
-      edit.putString(key, value);
-      edit.commit();
-    }
-  }
-
-  /**
    * 构建查询的bus消息
    */
   private void sendQueryMessage(JsonArray tags) {
@@ -485,8 +369,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     if (tags != null) {
       msg.set(Constant.KEY_TAGS, tags);
     } else {
-      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_READ).push(
-          this.currenTopic));
+      msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_READ));
     }
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
         new MessageHandler<JsonObject>() {
