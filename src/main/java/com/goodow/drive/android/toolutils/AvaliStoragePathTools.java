@@ -1,5 +1,8 @@
 package com.goodow.drive.android.toolutils;
 
+import com.goodow.drive.android.Constant;
+import com.goodow.realtime.json.JsonObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -22,6 +25,52 @@ public final class AvaliStoragePathTools {
 
   private static ArrayList<String> mMounts = new ArrayList<String>();// 挂载路径和本地Flash可用路径的集合
   private static ArrayList<String> mVold = new ArrayList<String>();// /system/etc/vold.fstab文件中对所有挂载路径的集合
+
+  /**
+   * 获取有效路径(包含验证有无goodow目录)
+   * 
+   * @return 返回有效的绝对路径
+   */
+  public static ArrayList<String> getStorageCard(Context context) {
+    ArrayList<String> storageCard = getStorageCard();
+    if (storageCard.size() == 1) {
+      File file = new File(storageCard.get(0) + "/goodow");
+      if (!file.exists()) {
+        storageCard.remove(0);
+      }
+    } else if (storageCard.size() > 1) {
+      File file = new File(storageCard.get(1) + "/goodow");
+      if (!file.exists()) {
+        storageCard.remove(1);
+      }
+    }
+    if (storageCard.size() == 0) {
+      Toast.makeText(context.getApplicationContext(), "未插入SD卡或SD卡中未包含资源文件夹", Toast.LENGTH_LONG)
+          .show();
+    }
+    return storageCard;
+  }
+
+  /**
+   * 替换attachment中url,thumbnail的sd卡路径
+   * 
+   * @param attachment
+   * @return 是否替换成功
+   */
+  public static boolean replacePath(JsonObject attachment) {
+    ArrayList<String> storageCard = getStorageCard();
+    if (storageCard.size() == 0) {
+      return false;
+    }
+    String url = attachment.getString(Constant.KEY_URL);
+    String thumbnail = attachment.getString(Constant.KEY_THUMBNAIL);
+    if (url.startsWith(Constant.VIR1_PATH)) {
+      replaceString(attachment, Constant.VIR1_PATH, storageCard.get(0));
+    } else if (url.startsWith(Constant.VIR2_PATH) && storageCard.size() == 2) {
+      replaceString(attachment, Constant.VIR2_PATH, storageCard.get(1));
+    }
+    return true;
+  }
 
   /**
    * 对直接从挂载的路径下获取外卡的路径和通过读取系统文件获得的挂载路径进行对比
@@ -60,31 +109,6 @@ public final class AvaliStoragePathTools {
     // 对直接从挂载的路径下获取外卡的路径和通过读取系统文件获得的挂载路径进行对比
     compareMountsWithVold();
     return mMounts;
-  }
-
-  /**
-   * 获取有效路径(包含验证有无goodow目录)
-   * 
-   * @return 返回有效的绝对路径
-   */
-  public static ArrayList<String> getStorageCard(Context context) {
-    ArrayList<String> storageCard = getStorageCard();
-    if (storageCard.size() == 1) {
-      File file = new File(storageCard.get(0) + "/goodow");
-      if (!file.exists()) {
-        storageCard.remove(0);
-      }
-    } else if (storageCard.size() > 1) {
-      File file = new File(storageCard.get(1) + "/goodow");
-      if (!file.exists()) {
-        storageCard.remove(1);
-      }
-    }
-    if (storageCard.size() == 0) {
-      Toast.makeText(context.getApplicationContext(), "未插入SD卡或SD卡中未包含资源文件夹", Toast.LENGTH_LONG)
-          .show();
-    }
-    return storageCard;
   }
 
   /**
@@ -157,6 +181,15 @@ public final class AvaliStoragePathTools {
         localScanner.close();
       }
     }
+  }
+
+  private static void replaceString(JsonObject attachment, String target, String replace) {
+    String url = attachment.getString(Constant.KEY_URL);
+    String thumbnail = attachment.getString(Constant.KEY_THUMBNAIL);
+    String replaceUrl = url.replace(target, replace);
+    String replaceThumbnail = thumbnail.replace(target, replace);
+    attachment.set(Constant.KEY_URL, replaceUrl);
+    attachment.set(Constant.KEY_THUMBNAIL, replaceThumbnail);
   }
 
   public AvaliStoragePathTools() {

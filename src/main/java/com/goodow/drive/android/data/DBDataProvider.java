@@ -6,7 +6,6 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -80,19 +79,13 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertFile(Context context, JsonArray attachments) {
-    ArrayList<String> storageCard = AvaliStoragePathTools.getStorageCard(context);
-    if (attachments == null || storageCard.size() == 0) {
+    if (attachments == null) {
       return false;
     }
     for (int i = 0; i < attachments.length(); ++i) {
-      JsonObject object = attachments.get(i);
-      String url = object.getString(Constant.KEY_URL);
-      if (url.startsWith(Constant.VIR1_PATH)) {
-        String replace = url.replace(Constant.VIR1_PATH, storageCard.get(0));
-        object.set(Constant.KEY_URL, replace);
-      } else if (url.startsWith(Constant.VIR2_PATH) && storageCard.size() == 2) {
-        String replace = url.replace(Constant.VIR2_PATH, storageCard.get(1));
-        object.set(Constant.KEY_URL, replace);
+      JsonObject object = attachments.getObject(i);
+      if (!AvaliStoragePathTools.replacePath(object)) {
+        return false;
       }
     }
     return DBOperator.createFile(context, attachments);
@@ -107,17 +100,11 @@ public class DBDataProvider {
    * @status tested
    */
   public static boolean insertFile(Context context, JsonObject attachment) {
-    ArrayList<String> storageCard = AvaliStoragePathTools.getStorageCard(context);
-    if (attachment == null || storageCard.size() == 0) {
+    if (attachment == null) {
       return false;
     }
-    String url = attachment.getString(Constant.KEY_URL);
-    if (url.startsWith(Constant.VIR1_PATH)) {
-      String replace = url.replace(Constant.VIR1_PATH, storageCard.get(0));
-      attachment.set(Constant.KEY_URL, replace);
-    } else if (url.startsWith(Constant.VIR2_PATH) && storageCard.size() == 2) {
-      String replace = url.replace(Constant.VIR2_PATH, storageCard.get(1));
-      attachment.set(Constant.KEY_URL, replace);
+    if (!AvaliStoragePathTools.replacePath(attachment)) {
+      return false;
     }
     return DBOperator.createFile(context, Json.createArray().push(attachment));
   }
