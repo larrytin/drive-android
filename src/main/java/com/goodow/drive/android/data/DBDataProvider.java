@@ -194,7 +194,30 @@ public class DBDataProvider {
    * @status tested
    */
   public static JsonArray querySubTagsInfo(Context context, JsonArray tags) {
-    return DBOperator.readSubTags(context, tags);
+    // 排序条件
+    final List<String> sortList =
+        Arrays.asList("健康", "托班", "语言", "社会", "数学", "科学", "艺术(美术)", "艺术(音乐)", "教学图片", "参考图", "挂图",
+            "轮廓图", "头饰", "手偶", "胸牌", "文学作品动画", "音乐作品动画", "数学教学动画", "其他动画", "文学作品动画", "音乐作品动画",
+            "数学教学动画", "其他动画", "教学用视频", "教学示范课", "音乐表演视频", "音乐作品音频", "文学作品音频", "音效");
+    // 排序集合
+    Set<String> set = new TreeSet<String>(new Comparator<String>() {
+      @Override
+      public int compare(String str1, String str2) {
+        int temp = sortList.indexOf(str1) - sortList.indexOf(str2);
+        return temp == 0 ? 1 : temp;
+      }
+    });
+    JsonArray noOrderJsonArray = DBOperator.readSubTags(context, tags);
+    for (int i = 0; i < noOrderJsonArray.length(); ++i) {
+      String str = noOrderJsonArray.getString(i);
+      set.add(str);
+    }
+    JsonArray orderJsonArray = Json.createArray();
+    Iterator<String> iterator = set.iterator();
+    while (iterator.hasNext()) {
+      orderJsonArray.push(iterator.next());
+    }
+    return orderJsonArray;
   }
 
   /**

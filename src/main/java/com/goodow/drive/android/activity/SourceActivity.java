@@ -368,6 +368,10 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
           break;
         }
       }
+      LayoutParams layoutParams =
+          new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+      layoutParams.setMargins(10, 0, 10, 0);
+      child.setLayoutParams(layoutParams);
       this.ll_act_source_catagory1.addView(child);
     }
   }
