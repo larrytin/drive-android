@@ -308,7 +308,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
         (RelativeLayout) this.inflater.inflate(R.layout.activity_source_search_result_item, null);
     ImageView imageView =
         (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_icon);
-    FileTools.setImageThumbnalilUrl(imageView, fileName, attachment
+    FileTools.setImageThumbnalilUrl(imageView, attachment.getString(Constant.KEY_URL), attachment
         .getString(Constant.KEY_THUMBNAIL));
 
     TextView textView =

@@ -275,7 +275,7 @@ public class EbookActivity extends BaseActivity implements OnPageChangeListener,
     RelativeLayout.LayoutParams itemImageViewParams2 = new RelativeLayout.LayoutParams(120, 100);
     itemImageViewParams2.addRule(RelativeLayout.CENTER_HORIZONTAL);
     ImageView itemImageView = new ImageView(this);
-    FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_NAME),
+    FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_URL),
         attachment.getString(Constant.KEY_THUMBNAIL));
     itemImageView.setLayoutParams(itemImageViewParams2);
     itemLayout.addView(itemImageView);

@@ -386,7 +386,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     final String attachmentId = attachment.getString(Constant.KEY_ID);
     ImageView imageView =
         (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_icon);
-    FileTools.setImageThumbnalilUrl(imageView, fileName, attachment
+    FileTools.setImageThumbnalilUrl(imageView, attachment.getString(Constant.KEY_URL), attachment
         .getString(Constant.KEY_THUMBNAIL));
 
     TextView textView =

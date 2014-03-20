@@ -390,7 +390,7 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     RelativeLayout.LayoutParams itemImageViewParams2 = new RelativeLayout.LayoutParams(100, 100);
     itemImageViewParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
     ImageView itemImageView = new ImageView(this);
-    FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_NAME),
+    FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_URL),
         attachment.getString(Constant.KEY_THUMBNAIL));
     itemImageView.setLayoutParams(itemImageViewParams2);
     imageLayout.addView(itemImageView);

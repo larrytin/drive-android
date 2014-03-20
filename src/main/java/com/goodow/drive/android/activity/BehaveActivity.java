@@ -361,7 +361,7 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
     textView.setMarqueeRepeatLimit(-1);
     itemLayout.addView(textView);
     itemLayout.setTag(filePath);
-    FileTools.setImageThumbnalilUrl(itemImageView, fileName, thumbnail);
+    FileTools.setImageThumbnalilUrl(itemImageView, filePath, thumbnail);
     textView.setText(fileName);
     return itemLayout;
   }
