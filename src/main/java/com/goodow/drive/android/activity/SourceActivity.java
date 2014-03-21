@@ -30,12 +30,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,16 +107,145 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     }
   }
 
+  /**
+   * 结果适配器
+   * 
+   * @author dpw
+   * 
+   */
+  private class ResultAdapter extends BaseAdapter {
+
+    private Context context = null;
+    private JsonArray attachments = null;
+
+    public ResultAdapter(Context context) {
+      this.context = context;
+    }
+
+    @Override
+    public int getCount() {
+      if (this.attachments != null) {
+        return this.attachments.length();
+      }
+      return 0;
+    }
+
+    @Override
+    public Object getItem(int position) {
+      if (this.attachments != null) {
+        return this.attachments.getObject(position);
+      }
+      return null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+      return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      View itemView = null;
+      if (convertView != null) {
+        itemView = convertView;
+      } else {
+        itemView =
+            LayoutInflater.from(this.context).inflate(R.layout.activity_source_search_result_item,
+                null);
+      }
+      final JsonObject attachment = this.attachments.getObject(position);
+      String fileName = attachment.getString(Constant.KEY_NAME);
+      final String attachmentId = attachment.getString(Constant.KEY_ID);
+      ImageView imageView =
+          (ImageView) itemView.findViewById(R.id.iv_act_source_search_result_item_icon);
+      FileTools.setImageThumbnalilUrl(imageView, attachment.getString(Constant.KEY_URL), attachment
+          .getString(Constant.KEY_THUMBNAIL));
+
+      TextView textView =
+          (TextView) itemView.findViewById(R.id.tv_act_source_search_result_item_filename);
+      textView.setText(fileName);
+
+      final ImageView imageViewFlag =
+          (ImageView) itemView.findViewById(R.id.iv_act_source_search_result_item_flag);
+      new MyAsyncTask(imageViewFlag).execute(attachment.getString(Constant.KEY_ID));// 异步夹在收藏标记
+      imageView.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          // 打开文件
+          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+              attachment.getString(Constant.KEY_URL)).set("play", 1), null);
+          // acctachment
+          // 此处记录打开的时间
+          Set<String> fileOpenInfo =
+              usagePreferences.getStringSet(attachmentId, new TreeSet<String>());
+          fileOpenInfo.add(System.currentTimeMillis() + "");
+          Editor editor = usagePreferences.edit();
+          // 如果存在，移除key
+          if (usagePreferences.contains(attachmentId)) {
+            editor.remove(attachmentId).commit();
+          }
+          editor.putStringSet(attachmentId, fileOpenInfo).commit();
+        }
+      });
+
+      imageView.setOnLongClickListener(new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+          if (imageViewFlag.getTag() == null
+              || (!"0".equals(imageViewFlag.getTag().toString()) && !"1".equals(imageViewFlag
+                  .getTag().toString()))) {
+            // 0处于已点击未收藏 1处于已经收藏 非0非1处于原始状态
+            imageViewFlag.setBackgroundResource(R.drawable.source_favourite);
+            imageViewFlag.setVisibility(View.VISIBLE);
+            imageViewFlag.setTag("0");
+          }
+          return true;
+        }
+      });
+
+      imageViewFlag.setOnClickListener(new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+          if (imageViewFlag.getTag().toString().equals("0")) {
+            // 0处于已点击未收藏
+            JsonObject msg = Json.createObject();
+            msg.set(Constant.KEY_ACTION, "post");
+            msg.set(Constant.KEY_STAR, Json.createObject().set(Constant.KEY_TYPE, "attachment")
+                .set(Constant.KEY_KEY, attachment.getString(Constant.KEY_ID)));
+            bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+              @Override
+              public void handle(Message<JsonObject> message) {
+                JsonObject body = message.body();
+                if ("ok".equalsIgnoreCase(body.getString(Constant.KEY_STATUS))) {
+                  Toast.makeText(SourceActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
+                  imageViewFlag.setBackgroundResource(R.drawable.source_favourited);
+                  imageViewFlag.setTag("1");
+                } else {
+                  Toast.makeText(SourceActivity.this, "收藏失败，请重试", Toast.LENGTH_SHORT).show();
+                }
+              }
+            });
+          }
+        }
+      });
+      return itemView;
+    }
+
+    public void reset(JsonArray attachments) {
+      this.attachments = attachments;
+    }
+  }
+
   private TextView tv_act_source_tip = null;
   private ImageView iv_act_source_result_pre = null;
-  private LinearLayout ll_act_source_result = null;
+  private GridView gr_act_source_result = null;
+  private ResultAdapter resultAdapter = null;
   private ImageView iv_act_source_result_next = null;
 
-  // private LinearLayout ll_act_source_result_bar = null;
   private int totalAttachmentNum = 0;// 总的数据量
   private int currentPageNum = 0;// 当前页码
   private final int numPerPage = 10;// 查询结果每页显示10条数据
-  private final int numPerLine = 5;// 每条显示六个数据
 
   private LayoutInflater inflater = null;
   private TextView tv_act_source_search_result_tip = null;
@@ -288,8 +419,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    */
   private void bindDataToView(JsonArray attachments) {
     this.pb_act_source_search_progress.setVisibility(View.INVISIBLE);
-    // this.ll_act_source_result_bar.removeAllViews();
-    this.ll_act_source_result.removeAllViews();
     if (attachments == null || attachments.length() == 0) {
       this.tv_act_source_search_result_tip.setVisibility(View.VISIBLE);
       this.tv_act_source_tip.setText(Html.fromHtml(this.getString(R.string.string_source_tip1)));
@@ -297,40 +426,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     }
     this.tv_act_source_search_result_tip.setVisibility(View.INVISIBLE);
     this.tv_act_source_tip.setText(null);
-    int index = 0;// 下标计数器
-    int counter = attachments.length();
-    // 行数量
-    for (int j = 0; j < numPerPage / numPerLine; j++) {
-      if (index >= counter) {
-        break;
-      }
-      LinearLayout innerContainer = new LinearLayout(this);
-      innerContainer.setOrientation(LinearLayout.HORIZONTAL);
-      // 列数量
-      for (int k = 0; k < numPerLine; k++) {
-        if (index >= counter) {
-          break;
-        }
-        // 构建ItemView对象
-        View view = this.buildItemView(attachments.getObject(index), index);
-        LinearLayout.LayoutParams params =
-            new LinearLayout.LayoutParams(150, LayoutParams.WRAP_CONTENT);
-        params.setMargins(10, 10, 10, 10);
-        view.setLayoutParams(params);
-        innerContainer.addView(view);
-        index++;
-      }
-      this.ll_act_source_result.addView(innerContainer);
-    }
-    for (int i = 0; i < this.totalAttachmentNum; i++) {
-      ImageView imageView = new ImageView(this);
-      if (this.currentPageNum == 0) {
-        imageView.setBackgroundResource(R.drawable.common_result_dot_current);
-      } else {
-        imageView.setBackgroundResource(R.drawable.common_result_dot_other);
-      }
-      // this.ll_act_source_result_bar.addView(imageView);
-    }
+    this.resultAdapter.reset(attachments);
+    this.resultAdapter.notifyDataSetChanged();
 
     if (this.currentPageNum == 0) {
       // 第一页：向前的不显示
@@ -377,100 +474,9 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   }
 
   /**
-   * 构建条目View对象
-   * 
-   * @param name 条目要显示的名称
-   * @param index 条目的数据在数据集中的下标
-   * @return
-   */
-  private View buildItemView(final JsonObject attachment, int index) {
-    String fileName = attachment.getString(Constant.KEY_NAME);
-    RelativeLayout itemContainer =
-        (RelativeLayout) this.inflater.inflate(R.layout.activity_source_search_result_item, null);
-    final String attachmentId = attachment.getString(Constant.KEY_ID);
-    ImageView imageView =
-        (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_icon);
-    FileTools.setImageThumbnalilUrl(imageView, attachment.getString(Constant.KEY_URL), attachment
-        .getString(Constant.KEY_THUMBNAIL));
-
-    TextView textView =
-        (TextView) itemContainer.findViewById(R.id.tv_act_source_search_result_item_filename);
-    textView.setText(fileName);
-
-    final ImageView imageViewFlag =
-        (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_flag);
-    new MyAsyncTask(imageViewFlag).execute(attachment.getString(Constant.KEY_ID));// 异步夹在收藏标记
-    imageView.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        // 打开文件
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-            attachment.getString(Constant.KEY_URL)).set("play", 1), null);
-        // acctachment
-        // 此处记录打开的时间
-        Set<String> fileOpenInfo =
-            usagePreferences.getStringSet(attachmentId, new TreeSet<String>());
-        fileOpenInfo.add(System.currentTimeMillis() + "");
-        Editor editor = usagePreferences.edit();
-        // 如果存在，移除key
-        if (usagePreferences.contains(attachmentId)) {
-          editor.remove(attachmentId).commit();
-        }
-        editor.putStringSet(attachmentId, fileOpenInfo).commit();
-      }
-    });
-
-    imageView.setOnLongClickListener(new OnLongClickListener() {
-      @Override
-      public boolean onLongClick(View v) {
-        if (imageViewFlag.getTag() == null
-            || (!"0".equals(imageViewFlag.getTag().toString()) && !"1".equals(imageViewFlag
-                .getTag().toString()))) {
-          // 0处于已点击未收藏 1处于已经收藏 非0非1处于原始状态
-          imageViewFlag.setBackgroundResource(R.drawable.source_favourite);
-          imageViewFlag.setVisibility(View.VISIBLE);
-          imageViewFlag.setTag("0");
-        }
-        return true;
-      }
-    });
-
-    imageViewFlag.setOnClickListener(new OnClickListener() {
-
-      @Override
-      public void onClick(View v) {
-        if (imageViewFlag.getTag().toString().equals("0")) {
-          // 0处于已点击未收藏
-          JsonObject msg = Json.createObject();
-          msg.set(Constant.KEY_ACTION, "post");
-          msg.set(Constant.KEY_STAR, Json.createObject().set(Constant.KEY_TYPE, "attachment").set(
-              Constant.KEY_KEY, attachment.getString(Constant.KEY_ID)));
-          bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
-            @Override
-            public void handle(Message<JsonObject> message) {
-              JsonObject body = message.body();
-              if ("ok".equalsIgnoreCase(body.getString(Constant.KEY_STATUS))) {
-                Toast.makeText(SourceActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
-                imageViewFlag.setBackgroundResource(R.drawable.source_favourited);
-                imageViewFlag.setTag("1");
-              } else {
-                Toast.makeText(SourceActivity.this, "收藏失败，请重试", Toast.LENGTH_SHORT).show();
-              }
-            }
-          });
-        }
-      }
-    });
-
-    return itemContainer;
-  }
-
-  /**
    * 清空查询结果
    */
   private void cleanSearchResult() {
-    this.ll_act_source_result.removeAllViews();
-    // this.ll_act_source_result_bar.removeAllViews();
     this.iv_act_source_result_pre.setVisibility(View.INVISIBLE);
     this.iv_act_source_result_next.setVisibility(View.INVISIBLE);
     this.et_act_source_tags.setText(null);
@@ -498,11 +504,11 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private void initView() {
     this.iv_act_source_result_pre = (ImageView) this.findViewById(R.id.iv_act_source_result_pre);
     this.iv_act_source_result_pre.setOnClickListener(this);
-    this.ll_act_source_result = (LinearLayout) this.findViewById(R.id.ll_act_source_result);
+    this.gr_act_source_result = (GridView) this.findViewById(R.id.gr_act_source_result);
+    this.resultAdapter = new ResultAdapter(this);
+    this.gr_act_source_result.setAdapter(this.resultAdapter);
     this.iv_act_source_result_next = (ImageView) this.findViewById(R.id.iv_act_source_result_next);
     this.iv_act_source_result_next.setOnClickListener(this);
-    // this.ll_act_source_result_bar = (LinearLayout)
-    // this.findViewById(R.id.ll_act_source_result_bar);
 
     this.tv_act_source_tip = (TextView) this.findViewById(R.id.tv_act_source_tip);
     this.tv_act_source_search_result_tip =

@@ -67,14 +67,19 @@
             />
 
         <!-- 查询结果 -->
-        <LinearLayout
-          android:id="@+id/ll_act_source_result"
-          android:layout_width="@dimen/act_source_result_width"
-          android:layout_height="fill_parent"
-          android:layout_centerHorizontal="true"
-          android:orientation="vertical"
-          >
-        </LinearLayout>
+        <GridView
+            android:id="@+id/gr_act_source_result" 
+            android:layout_width="@dimen/act_source_result_width"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="100dp"
+            android:numColumns="5"
+            android:cacheColorHint="#00000000"
+            android:background="#00000000"
+            android:listSelector="#00000000"
+            android:alwaysDrawnWithCache="true"
+            android:scrollbars="none"
+            
+            ></GridView>
 
         <!-- 查询结果 下一页-->
         <ImageView
@@ -105,16 +110,6 @@
             android:layout_centerInParent="true"
             android:visibility="gone"
             />
-        <!-- 查询结果 页码数量-->
-        <LinearLayout
-            android:id="@+id/ll_act_source_result_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_centerInParent="true"
-            android:layout_alignParentBottom="true"
-            >
-        </LinearLayout>
     </RelativeLayout>
 
     <!-- 检索条件 -->
