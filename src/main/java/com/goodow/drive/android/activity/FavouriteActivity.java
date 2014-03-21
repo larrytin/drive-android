@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -56,6 +57,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
   private JsonArray activities = null;
 
   private final ArrayList<View> tempView = new ArrayList<View>();
+  private final ArrayList<View> attachList = new ArrayList<View>();
+  private final ArrayList<View> tagList = new ArrayList<View>();
+
   private final int numPerPage = 10; // 查询结果每页显示10条数据
   private final int numPerLine = 5; // 每条显示五个数据
 
@@ -67,6 +71,8 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
   private HandlerRegistration controlHandler;
   private HandlerRegistration refreshHandler;
+
+  private boolean isEditMode;// 是否处于编辑模式
 
   @Override
   public void onClick(View v) {
@@ -81,6 +87,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
       case R.id.ft_act_favour_item_activity:
       case R.id.ft_act_favour_item_file:
         onLabelChange(v.getId());
+        isEditMode = false;
         break;
       // 翻页的点击事件
       case R.id.iv_act_favour_result_pre:
@@ -259,9 +266,11 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           View view = null;
           if (this.currentTopic.equals(LABEL_TAG)) {
             view = this.buildTagItemView(this.activities.getObject(index), index, i);
+            tagList.add(view);
             params.setMargins(10, 15, 10, 15);
           } else if (this.currentTopic.equals(LABEL_ATTACHMENT)) {
             view = this.buildAttachmentView(this.activities.getObject(index), index, i);
+            attachList.add(view);
             params.setMargins(10, 5, 10, 5);
           }
           view.setLayoutParams(params);
@@ -325,11 +334,21 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
         (ImageView) itemContainer.findViewById(R.id.iv_act_source_search_result_item_flag);
     params.setMargins(100, 20, 0, 0);
     imageViewFlag.setLayoutParams(params);
+    imageViewFlag.setBackgroundResource(R.drawable.favour_file_delete);
+    if (isEditMode) {
+      imageViewFlag.setVisibility(View.VISIBLE);
+    } else {
+      imageViewFlag.setVisibility(View.INVISIBLE);
+    }
     imageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (imageViewFlag.getVisibility() == View.VISIBLE) {
-          imageViewFlag.setVisibility(View.INVISIBLE);
+        if (isEditMode) {
+          if (imageViewFlag.getVisibility() == View.VISIBLE) {
+            imageViewFlag.setVisibility(View.INVISIBLE);
+          } else {
+            imageViewFlag.setVisibility(View.VISIBLE);
+          }
         } else {
           bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
               attachment.getString(Constant.KEY_URL)), null);
@@ -341,14 +360,16 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
 
       @Override
       public boolean onLongClick(View v) {
-        if (imageViewFlag.getTag() == null
-            || (!imageViewFlag.getTag().toString().equals("0") && !imageViewFlag.getTag()
-                .toString().equals("1"))) {
-          imageViewFlag.setBackgroundResource(R.drawable.favour_file_delete);
-          imageViewFlag.setVisibility(View.VISIBLE);
-          imageViewFlag.setTag("0");
+        if (isEditMode) {
+          isEditMode = false;
+          for (View view : attachList) {
+            ((ViewGroup) view).getChildAt(2).setVisibility(View.INVISIBLE);
+          }
         } else {
-          imageViewFlag.setVisibility(View.INVISIBLE);
+          isEditMode = true;
+          for (View view : attachList) {
+            ((ViewGroup) view).getChildAt(2).setVisibility(View.VISIBLE);
+          }
         }
         return true;
       }
@@ -422,7 +443,13 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
         new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     imageView.setClickable(true);
     imageView.setBackgroundResource(R.drawable.favour_del);
-    imageView.setVisibility(View.INVISIBLE);
+    if (isEditMode) {
+      textView.setSelected(true);
+      imageView.setVisibility(View.VISIBLE);
+    } else {
+      textView.setSelected(false);
+      imageView.setVisibility(View.INVISIBLE);
+    }
     imageView.setTag(activity);
     imageViewParams.addRule(RelativeLayout.RIGHT_OF, index + 1); // 要和TextView的ID保持一直
     imageViewParams.addRule(RelativeLayout.CENTER_IN_PARENT);
@@ -436,9 +463,14 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
       @Override
       public void onClick(View v) {
         TextView texViewTemp = (TextView) v;
-        if (texViewTemp.isSelected()) {
-          texViewTemp.setSelected(false);
-          imageView.setVisibility(View.INVISIBLE);
+        if (isEditMode) {
+          if (texViewTemp.isSelected()) {
+            texViewTemp.setSelected(false);
+            imageView.setVisibility(View.INVISIBLE);
+          } else {
+            texViewTemp.setSelected(true);
+            imageView.setVisibility(View.VISIBLE);
+          }
         } else {
           JsonObject msg = Json.createObject();
           msg.set(Constant.KEY_ACTION, "post");
@@ -457,12 +489,18 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
       @Override
       public boolean onLongClick(View v) {
         TextView texViewTemp = (TextView) v;
-        if (texViewTemp.isSelected()) {
-          texViewTemp.setSelected(false);
-          imageView.setVisibility(View.INVISIBLE);
+        if (isEditMode) {
+          isEditMode = false;
+          for (View view : tagList) {
+            ((ViewGroup) view).getChildAt(0).setSelected(false);
+            ((ViewGroup) view).getChildAt(1).setVisibility(View.INVISIBLE);
+          }
         } else {
-          texViewTemp.setSelected(true);
-          imageView.setVisibility(View.VISIBLE);
+          isEditMode = true;
+          for (View view : tagList) {
+            ((ViewGroup) view).getChildAt(0).setSelected(true);
+            ((ViewGroup) view).getChildAt(1).setVisibility(View.VISIBLE);
+          }
         }
         return true;
       }
