@@ -326,45 +326,42 @@ public class DBDataProvider {
       sqlBuilder.delete(sqlBuilder.lastIndexOf(" , ") >= 0 ? sqlBuilder.lastIndexOf(" , ") : 0,
           sqlBuilder.length());
       if ("".equals(sqlBuilder.toString().trim())) {// 二级检索条件是null
+        String query =
+            key.getString(Constant.KEY_QUERY) == null ? "" : key.getString(Constant.KEY_QUERY);
+        // 符合条件的文件ID
         sql =
-            "SELECT UUID FROM T_FILE WHERE CONTENTTYPE = '"
-                + key.getString(Constant.KEY_CONTENTTYPE) + "' ";
-
-        if (key.getString(Constant.KEY_QUERY) != null) {
-          sql =
-              "SELECT UUID FROM T_FILE F INNER JOIN T_RELATION R ON F.UUID = R.KEY AND F.NAME LIKE '%"
-                  + key.getString(Constant.KEY_QUERY) + "%' AND R.TAG LIKE '%"
-                  + key.getString(Constant.KEY_QUERY) + "%' AND F.CONTENTTYPE = '"
-                  + key.getString(Constant.KEY_CONTENTTYPE) + "' GROUP BY F.UUID";
-        }
+            "SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '"
+                + key.getString(Constant.KEY_CONTENTTYPE)
+                + "' AND R.TAG LIKE '%"
+                + query
+                + "%' GROUP BY F.UUID UNION SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '"
+                + key.getString(Constant.KEY_CONTENTTYPE) + "' AND F.NAME LIKE '%" + query
+                + "%' group by F.UUID";
         // 查询页码
         sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE WHERE UUID IN(" + sql + ")";
+        // 分页
+        sql = sql + " LIMIT " + size + " OFFSET " + from;
+
       } else {
-        // 查询出一级二级条件下的所有文件ID
-        String subSql =
-            "SELECT B.KEY FROM T_RELATION A INNER JOIN T_RELATION B ON A.KEY = B.TAG AND A.TAG = '"
-                + key.getString(Constant.KEY_CONTENTTYPE) + "' AND B.TAG IN ("
-                + sqlBuilder.toString() + ")";
-
-        String relationSql = "SELECT KEY FROM T_RELATION WHERE KEY IN (" + subSql + ") ";
-        String fileSql = "SELECT UUID FROM T_FILE WHERE UUID IN (" + subSql + ") ";
-
-        if (key.getString(Constant.KEY_QUERY) != null) {
-          relationSql =
-              relationSql + " AND TAG LIKE '%" + key.getString(Constant.KEY_QUERY) + "%' ";
-
-          fileSql = fileSql + " AND NAME LIKE '%" + key.getString(Constant.KEY_QUERY) + "%' ";
-
-        }
-        relationSql = relationSql + "GROUP BY KEY";
-        fileSql = fileSql + "GROUP BY UUID";
-
-        sql = relationSql + " UNION " + fileSql + " LIMIT " + size + " OFFSET " + from;
+        String contentType = key.getString(Constant.KEY_CONTENTTYPE);
+        String query =
+            key.getString(Constant.KEY_QUERY) == null ? "" : key.getString(Constant.KEY_QUERY);
+        sql =
+            "SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '"
+                + contentType
+                + "'  AND R.TAG LIKE '%"
+                + query
+                + "%' AND F.UUID IN (SELECT KEY FROM T_RELATION WHERE TAG IN ("
+                + sqlBuilder.toString()
+                + ") AND TYPE = 'attachment')  GROUP BY F.UUID UNION SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '"
+                + contentType + "' AND F.NAME LIKE '%" + query
+                + "%' AND F.UUID IN (SELECT KEY FROM T_RELATION WHERE TAG IN ("
+                + sqlBuilder.toString() + ") AND TYPE = 'attachment')  group by F.UUID ";
 
         // 查询页码
-        sqlOfCounter =
-            "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE WHERE UUID IN(" + relationSql + " UNION "
-                + fileSql + ")";
+        sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE WHERE UUID IN(" + sql + ")";
+        // 分页
+        sql = sql + " LIMIT " + size + " OFFSET " + from;
       }
 
       sql =
