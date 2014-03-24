@@ -100,6 +100,9 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private class OnSubCatagoryClick implements OnClickListener {
     @Override
     public void onClick(View v) {
+      gr_act_source_result.setVisibility(View.INVISIBLE);
+      iv_act_source_result_next.setVisibility(View.INVISIBLE);
+      iv_act_source_result_pre.setVisibility(View.INVISIBLE);
       if (v.isSelected()) {
         v.setSelected(false);
         subTags.remove(((DrawableLeftTextView) v).getText().toString());
@@ -422,6 +425,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    */
   private void bindDataToView(JsonArray attachments) {
     this.pb_act_source_search_progress.setVisibility(View.INVISIBLE);
+    this.gr_act_source_result.setVisibility(View.VISIBLE);
     if (attachments == null || attachments.length() == 0) {
       this.tv_act_source_search_result_tip.setVisibility(View.VISIBLE);
       this.tv_act_source_tip.setText(Html.fromHtml(this.getString(R.string.string_source_tip1)));
@@ -546,6 +550,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    */
   private void onContentTypeClick(int id) {
     this.subTags.clear();
+    this.gr_act_source_result.setVisibility(View.INVISIBLE);
     int len = this.ll_act_source_catagory0.getChildCount();
     for (int i = 0; i < len; i++) {
       if (id != this.ll_act_source_catagory0.getChildAt(i).getId()) {

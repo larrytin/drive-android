@@ -87,8 +87,8 @@
     <dimen name="act_source_catagory0_item_height">100dp</dimen><!-- 一级分类条目的高度 -->
     <dimen name="act_source_catagory0_item_margin">15dp</dimen><!-- 一级分类条目之间的间隔 -->
     <dimen name="act_source_catagory0_item_all_marginLeft">280dp</dimen><!-- 一级分类第一个条目的左边距 -->
-    <dimen name="act_source_catagory0_item_all_marginTop">26dp</dimen><!-- 一级分类第一个条目的上边距 -->
-    <dimen name="act_source_catagory0_item_text_marginTop">5dp</dimen><!-- 一级分类第二个条目的上边距 -->
+    <dimen name="act_source_catagory0_item_all_marginTop">42dp</dimen><!-- 一级分类第一个条目的上边距 -->
+    <dimen name="act_source_catagory0_item_text_marginTop">0dp</dimen><!-- 一级分类第二个条目的上边距 -->
     <dimen name="act_source_catagory0_item_image_marginTop">0dp</dimen><!-- 一级分类第三个条目的上边距 -->
     <dimen name="act_source_catagory0_item_animation_marginTop">0dp</dimen><!-- 一级分类第四个条目的上边距 -->
     <dimen name="act_source_catagory0_item_video_marginTop">5dp</dimen><!-- 一级分类第五个条目的上边距 -->
