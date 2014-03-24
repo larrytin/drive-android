@@ -327,6 +327,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
     textView.setMaxLines(2);
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     textView.setText(fileName);
+    textView.setTextColor(Color.WHITE);
 
     RelativeLayout.LayoutParams params =
         new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
