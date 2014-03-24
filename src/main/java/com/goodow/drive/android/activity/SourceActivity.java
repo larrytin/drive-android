@@ -74,6 +74,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
           if (body != null) {
             view.setVisibility(View.VISIBLE);
             view.setBackgroundResource(R.drawable.source_favourited);
+          } else {
+            view.setVisibility(View.GONE);
           }
         }
       });
