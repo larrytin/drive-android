@@ -26,7 +26,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -368,10 +367,6 @@ public class BehaveActivity extends BaseActivity implements OnPageChangeListener
         R.dimen.act_behave_result_item_textSize));
     textView.setGravity(Gravity.CENTER_HORIZONTAL);
     textView.setTextColor(Color.WHITE);
-    textView.setSingleLine(true);
-    textView.setFocusable(true);
-    textView.setEllipsize(TruncateAt.MARQUEE);
-    textView.setMarqueeRepeatLimit(-1);
     itemLayout.addView(textView);
     itemLayout.setTag(filePath);
     FileTools.setImageThumbnalilUrl(itemImageView, filePath, thumbnail);

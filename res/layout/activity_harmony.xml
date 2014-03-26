@@ -92,12 +92,19 @@
             />
         
         <!-- 查询结果 -->
-        <android.support.v4.view.ViewPager 
-          android:id="@+id/vp_act_harmony_result"
-          android:layout_width="@dimen/act_harmony_result_width"
-          android:layout_height="fill_parent"
-          android:layout_centerHorizontal="true"
-          />
+        <GridView
+            android:layout_centerHorizontal="true"
+            android:id="@+id/vp_act_harmony_result" 
+            android:layout_width="@dimen/act_harmony_result_width"
+            android:layout_height="wrap_content"
+            android:numColumns="6"
+            android:cacheColorHint="#00000000"
+            android:background="#00000000"
+            android:listSelector="#00000000"
+            android:alwaysDrawnWithCache="true"
+            android:scrollbars="none"
+            android:verticalSpacing="25dp" >
+        </GridView>
 
         <!-- 查询结果 下一页-->
         <ImageView 
@@ -110,13 +117,24 @@
             android:clickable="true"
             android:visibility="invisible"
             />
+        
+        <!-- 查询进度提示 -->
+        <ProgressBar
+            android:id="@+id/pb_act_result_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="@dimen/act_source_search_progress_width"
+            android:layout_height="wrap_content" 
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            />
+        
         <!-- 查询结果 页码数量-->
         <LinearLayout
             android:id="@+id/ll_act_harmony_result_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             >
         </LinearLayout>

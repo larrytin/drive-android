@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.adapter.CommonPageAdapter;
 import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -12,7 +11,6 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,22 +20,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
-    OnPageChangeListener, OnClickListener {
+public class CaseActivity extends BaseActivity implements OnClickListener {
 
   /**
    * 班级的点击事件
@@ -48,6 +44,7 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
   private class OnGradeClickListener implements OnClickListener {
     @Override
     public void onClick(View v) {
+      currentPageNum = 0;
       currentGrade = ((TextView) v).getText().toString();
       saveHistory(Constant.GRADE, currentGrade);
       sendQueryMessage(null);
@@ -64,6 +61,7 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
   private class OnTermClickListener implements OnClickListener {
     @Override
     public void onClick(View v) {
+      currentPageNum = 0;
       currentTerm = termMap.get(((TextView) v).getText().toString());
       saveHistory(Constant.TERM, currentTerm);
       sendQueryMessage(null);
@@ -80,11 +78,71 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
   private class OnTopicClickListener implements OnClickListener {
     @Override
     public void onClick(View v) {
+      currentPageNum = 0;
       currenTopic = ((TextView) v).getText().toString();
       saveHistory(Constant.TOPIC, currenTopic);
       sendQueryMessage(null);
       echoTopic();
     }
+  }
+
+  private class ResultAdapter extends BaseAdapter {
+    private JsonArray attachments = null;
+
+    @Override
+    public int getCount() {
+      if (attachments != null) {
+        return attachments.length();
+      }
+      return 0;
+    }
+
+    @Override
+    public Object getItem(int position) {
+      if (attachments != null) {
+        return attachments.getObject(position);
+      }
+      return null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+      return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+      if (convertView == null) {
+        convertView = View.inflate(CaseActivity.this, R.layout.common_result, null);
+        ResultAdapterHolder holder = new ResultAdapterHolder();
+        holder.iv_common_result = (ImageView) convertView.findViewById(R.id.iv_common_result);
+        holder.tv_common_result = (TextView) convertView.findViewById(R.id.tv_common_result);
+        convertView.setTag(holder);
+      }
+      final JsonObject attachment = attachments.getObject(position);
+      ResultAdapterHolder holder = (ResultAdapterHolder) convertView.getTag();
+      FileTools.setImageThumbnalilUrl(holder.iv_common_result, attachment
+          .getString(Constant.KEY_URL), attachment.getString(Constant.KEY_THUMBNAIL));
+
+      String title = attachment.getString(Constant.KEY_NAME);
+      holder.tv_common_result.setText(title);
+      convertView.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+              attachment.getString(Constant.KEY_URL)), null);
+        }
+      });
+      return convertView;
+    }
+
+    public void reset(JsonArray attachments) {
+      this.attachments = attachments;
+    }
+  }
+  private class ResultAdapterHolder {
+    private ImageView iv_common_result;
+    private TextView tv_common_result;
   }
 
   private final String[] gradeNames = {
@@ -94,48 +152,52 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
   private final String[] topicNames = {
       Constant.DOMIAN_HEALTH, Constant.DOMIAN_LANGUAGE, Constant.DOMIAN_WORLD,
       Constant.DOMIAN_SCIENCE, Constant.DOMIAN_MATH, Constant.DOMIAN_MUSIC, Constant.DOMIAN_ART};
+
   private static final Map<String, String> termMap = new HashMap<String, String>();
   static {
     termMap.put(Constant.TERM_SEMESTER0, Constant.LABEL_TERM_SEMESTER0);
     termMap.put(Constant.TERM_SEMESTER1, Constant.LABEL_TERM_SEMESTER1);
   }
-
   // 当前状态
   private String currentGrade = Constant.LABEL_GRADE_LITTLE;
   private String currentTerm = Constant.LABEL_TERM_SEMESTER0;
   private String currenTopic = Constant.DOMIAN_HEALTH;
+
   // 后退收藏锁屏
   private ImageView iv_act_case_back = null;
   private ImageView iv_act_case_coll = null;
-
   private ImageView iv_act_case_loc = null;
   // 年级
   private LinearLayout ll_act_case_grade = null;
   // 学期
   private LinearLayout ll_act_case_term = null;
+
   // 分类
   private LinearLayout ll_act_case_class = null;
-  private final int numPerPage = 10;// 查询结果每页显示18条数据
+  private final int numPerPage = 10;// 查询结果每页显示10条数据
+  private GridView vp_act_case_result = null;
 
-  private final int numPerLine = 5;// 每条显示六个数据
-  private ViewPager vp_act_case_result = null;
-  private CommonPageAdapter myPageAdapter = null;
   // 翻页按钮
   private ImageView rl_act_case_result_pre = null;
   private ImageView rl_act_case_result_next = null;
 
   // 页码状态
   private LinearLayout ll_act_case_result_bar = null;
-  private int totalPageNum = 0;
+  // 查询进度
+  private ProgressBar pb_act_result_progress;
 
-  private final ArrayList<View> nameViews = new ArrayList<View>();
   private final static String SHAREDNAME = "caseHistory";// 配置文件的名称
   private SharedPreferences sharedPreferences = null;
-
-  private HandlerRegistration postHandler;
+  private HandlerRegistration postHandler;;
   private HandlerRegistration controlHandler;
-  private HandlerRegistration refreshHandler;;
+
+  private HandlerRegistration refreshHandler;
+
   private LayoutInflater inflater = null;
+
+  private ResultAdapter resultAdapter;// 结果gridview适配器
+  private int currentPageNum;// 当前结果页数
+  private int totalAttachmentNum;// 结果总数
 
   @Override
   public void onClick(View v) {
@@ -160,48 +222,6 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
 
       default:
         break;
-    }
-  }
-
-  @Override
-  public void onFocusChange(View v, boolean hasFocus) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void onPageScrollStateChanged(int state) {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void onPageSelected(int position) {
-    if (position == 0) {
-      this.rl_act_case_result_pre.setVisibility(View.INVISIBLE);
-    } else {
-      this.rl_act_case_result_pre.setVisibility(View.VISIBLE);
-    }
-    if (position == totalPageNum - 1) {
-      this.rl_act_case_result_next.setVisibility(View.INVISIBLE);
-    } else {
-      this.rl_act_case_result_next.setVisibility(View.VISIBLE);
-    }
-
-    for (int i = 0; i < this.ll_act_case_result_bar.getChildCount(); i++) {
-      if (position == i) {
-        this.ll_act_case_result_bar.getChildAt(i).setBackgroundResource(
-            R.drawable.common_result_dot_current);
-      } else {
-        this.ll_act_case_result_bar.getChildAt(i).setBackgroundResource(
-            R.drawable.common_result_dot_other);
-      }
     }
   }
 
@@ -287,11 +307,11 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
         if (body.has("page")) {
           JsonObject page = body.getObject("page");
           if (page.has("goTo")) {
-            vp_act_case_result.setCurrentItem((int) page.getNumber("goTo"));
+            currentPageNum = (int) page.getNumber("goTo");
           } else if (page.has("move")) {
-            int currentItem = vp_act_case_result.getCurrentItem();
-            vp_act_case_result.setCurrentItem(currentItem + (int) page.getNumber("move"));
+            currentPageNum = currentPageNum + (int) page.getNumber("move");
           }
+          sendQueryMessage(null);
         }
       }
     });
@@ -309,121 +329,23 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
    * 把查询完成的结果绑定到结果View
    */
   private void bindDataToView(JsonArray attachments) {
-    this.ll_act_case_result_bar.removeAllViews();
-    this.vp_act_case_result.removeAllViews();
-    this.nameViews.clear();
-    if (attachments == null) {
-      return;
-    }
-
-    int index = 0;// 下标计数器
-    int counter = attachments.length();
-    this.totalPageNum =
-        (counter % this.numPerPage == 0) ? (counter / numPerPage) : (counter / this.numPerPage + 1);
-    // 页码数量
-    for (int i = 0; i < totalPageNum; i++) {
-      LinearLayout rootContainer = new LinearLayout(this);
-      rootContainer.setOrientation(LinearLayout.VERTICAL);
-      // 行数量
-      for (int j = 0; j < numPerPage / numPerLine; j++) {
-        if (index >= counter) {
-          break;
-        }
-        LinearLayout innerContainer = new LinearLayout(this);
-        innerContainer.setOrientation(LinearLayout.HORIZONTAL);
-        // 列数量
-        for (int k = 0; k < numPerLine; k++) {
-          if (index >= counter) {
-            break;
-          }
-          // 构建ItemView对象
-          final View itemView = this.buildItemView(index, attachments.getObject(index));
-          LinearLayout.LayoutParams params =
-              new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(
-                  R.dimen.act_case_result_item_width), getResources().getDimensionPixelSize(
-                  R.dimen.act_case_result_item_height));
-          params.setMargins(10, 10, 10, 10);
-          itemView.setLayoutParams(params);
-          innerContainer.addView(itemView);
-          index++;
-        }
-        rootContainer.addView(innerContainer);
-      }
-      this.nameViews.add(rootContainer);
-      ImageView imageView = new ImageView(this);
-      LayoutParams layoutParams =
-          new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_result_dot_width),
-              getResources().getDimensionPixelSize(R.dimen.common_result_dot_height));
-      imageView.setLayoutParams(layoutParams);
-      if (i == 0) {
-        imageView.setBackgroundResource(R.drawable.common_result_dot_current);
-      } else {
-        imageView.setBackgroundResource(R.drawable.common_result_dot_other);
-      }
-      this.ll_act_case_result_bar.addView(imageView);
-    }
-    this.myPageAdapter = new CommonPageAdapter(this.nameViews);
-    this.vp_act_case_result.setAdapter(this.myPageAdapter);
-    if (this.totalPageNum > 1) {
+    onPageSelected(currentPageNum);
+    pb_act_result_progress.setVisibility(View.INVISIBLE);
+    if (this.currentPageNum == 0) {
+      // 第一页：向前的不显示
       this.rl_act_case_result_pre.setVisibility(View.INVISIBLE);
+    } else {
+      this.rl_act_case_result_pre.setVisibility(View.VISIBLE);
+    }
+    if (this.currentPageNum < (this.totalAttachmentNum % this.numPerPage == 0
+        ? this.totalAttachmentNum / this.numPerPage - 1 : this.totalAttachmentNum / this.numPerPage)) {
+      // 小于总页数：向后的显示
       this.rl_act_case_result_next.setVisibility(View.VISIBLE);
     } else {
-      this.rl_act_case_result_pre.setVisibility(View.INVISIBLE);
       this.rl_act_case_result_next.setVisibility(View.INVISIBLE);
     }
-  }
-
-  /**
-   * 构建子View
-   * 
-   * @param index
-   * @return
-   */
-  private View buildItemView(int index, final JsonObject attachment) {
-    LinearLayout.LayoutParams params =
-        new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    LinearLayout itemLayout = new LinearLayout(this);
-    itemLayout.setLayoutParams(params);
-    itemLayout.setClickable(true);
-    itemLayout.setOrientation(LinearLayout.VERTICAL);
-
-    RelativeLayout.LayoutParams itemImageViewParams =
-        new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    itemImageViewParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-    itemImageViewParams.setMargins(0, 30, 0, 0);
-    RelativeLayout imageLayout = new RelativeLayout(this);
-
-    RelativeLayout.LayoutParams itemImageViewParams2 =
-        new RelativeLayout.LayoutParams(getResources().getDimensionPixelSize(
-            R.dimen.act_case_result_item_image_width), getResources().getDimensionPixelSize(
-            R.dimen.act_case_result_item_image_height));
-    itemImageViewParams2.addRule(RelativeLayout.CENTER_IN_PARENT);
-    ImageView itemImageView = new ImageView(this);
-    FileTools.setImageThumbnalilUrl(itemImageView, attachment.getString(Constant.KEY_URL),
-        attachment.getString(Constant.KEY_THUMBNAIL));
-    itemImageView.setLayoutParams(itemImageViewParams2);
-    imageLayout.addView(itemImageView);
-    itemLayout.addView(imageLayout);
-
-    TextView textView = new TextView(this);
-    textView
-        .setWidth(getResources().getDimensionPixelSize(R.dimen.act_case_result_item_text_width));
-    textView.setTextSize(getResources()
-        .getDimensionPixelSize(R.dimen.act_case_result_item_textSize));
-    textView.setMaxLines(2);
-    textView.setGravity(Gravity.CENTER_HORIZONTAL);
-    String title = attachment.getString(Constant.KEY_NAME);
-    textView.setText(title);
-    itemLayout.addView(textView);
-    itemLayout.setOnClickListener(new OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-            attachment.getString(Constant.KEY_URL)), null);
-      }
-    });
-
-    return itemLayout;
+    resultAdapter.reset(attachments);
+    resultAdapter.notifyDataSetChanged();
   }
 
   /**
@@ -614,8 +536,9 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     }
 
     // 初始化查询结果视图
-    this.vp_act_case_result = (ViewPager) this.findViewById(R.id.vp_act_case_result);
-    this.vp_act_case_result.setOnPageChangeListener(this);
+    this.vp_act_case_result = (GridView) this.findViewById(R.id.vp_act_case_result);
+    resultAdapter = new ResultAdapter();
+    this.vp_act_case_result.setAdapter(resultAdapter);
 
     // 初始化查询结果控制
     this.rl_act_case_result_pre = (ImageView) this.findViewById(R.id.rl_act_case_result_pre);
@@ -626,6 +549,29 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
     // 初始化结果数量视图
     this.ll_act_case_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_case_result_bar);
 
+    // 查询进度
+    pb_act_result_progress = (ProgressBar) findViewById(R.id.pb_act_result_progress);
+
+  }
+
+  private void onPageSelected(int position) {
+    int totalPageNum =
+        (totalAttachmentNum / numPerPage) + (totalAttachmentNum % numPerPage > 0 ? 1 : 0);
+    ll_act_case_result_bar.removeAllViews();
+    for (int i = 0; i < totalPageNum; i++) {
+      ImageView imageView = new ImageView(CaseActivity.this);
+      LayoutParams layoutParams =
+          new LinearLayout.LayoutParams(getResources().getDimensionPixelOffset(
+              R.dimen.common_result_dot_width), getResources().getDimensionPixelOffset(
+              R.dimen.common_result_dot_height));
+      imageView.setLayoutParams(layoutParams);
+      if (position == i) {
+        imageView.setBackgroundResource(R.drawable.common_result_dot_current);
+      } else {
+        imageView.setBackgroundResource(R.drawable.common_result_dot_other);
+      }
+      ll_act_case_result_bar.addView(imageView);
+    }
   }
 
   /**
@@ -674,20 +620,25 @@ public class CaseActivity extends BaseActivity implements OnFocusChangeListener,
    */
   private void sendQueryMessage(JsonArray tags) {
     JsonObject msg = Json.createObject();
+    msg.set(Constant.KEY_FROM, numPerPage * currentPageNum);
+    msg.set(Constant.KEY_SIZE, numPerPage);
     if (tags != null) {
       msg.set(Constant.KEY_TAGS, tags);
     } else {
       msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_CASE).push(
           this.currentGrade).push(this.currentTerm).push(this.currenTopic));
     }
+    pb_act_result_progress.setVisibility(View.VISIBLE);
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
             JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
+            totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
             bindDataToView(attachments);
           }
         });
   }
+
 }

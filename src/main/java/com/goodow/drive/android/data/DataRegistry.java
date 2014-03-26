@@ -57,9 +57,7 @@ public class DataRegistry {
     bus.registerHandler(Constant.ADDR_TAG_CHILDREN, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        message.reply(DBDataProvider.querySubTagsInfo(context, message.body().getArray(
-            Constant.KEY_TAGS)));
-        // message.reply(DBDataProvider.querySubTagsInfoBySql(context, message.body()));//分页查询接口
+        message.reply(DBDataProvider.querySubTagsInfoBySql(context, message.body()));// 分页查询接口
       }
     });
     // 收藏的增删改查
@@ -99,8 +97,7 @@ public class DataRegistry {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
-        message.reply(DBDataProvider.readStarByType(context, body.getString(Constant.KEY_TYPE)));
-        // message.reply(DBDataProvider.readStarByTypeByKey(context, body));//分页查询接口
+        message.reply(DBDataProvider.readStarByTypeByKey(context, body));// 分页查询接口
       }
     });
     // 数据库批量测试数据

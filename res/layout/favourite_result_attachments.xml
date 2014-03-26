@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/iv_favourite_attachments"
+        android:layout_width="@dimen/common_result_image_width"
+        android:layout_height="@dimen/common_result_image_height"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/behave_mp4" />
+
+    <com.goodow.drive.android.view.MarqueeTextView
+        android:id="@+id/tv_favourite_attachments"
+        android:layout_width="@dimen/act_case_result_item_text_width"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_favourite_attachments"
+        android:gravity="center_horizontal"
+        android:textSize="@dimen/common_result_textSize"
+        android:textColor="#ffffff" />
+
+    <ImageView
+        android:layout_marginTop="@dimen/coomon_result_flag_marginTop"
+        android:id="@+id/iv_favourite_attachments_del"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/favour_file_delete" />
+
+</RelativeLayout>
