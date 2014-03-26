@@ -56,10 +56,10 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * 
    */
   class MyAsyncTask extends AsyncTask<String, Void, Boolean> {
-    private View view = null;
+    private View starView = null;
 
-    public MyAsyncTask(View view) {
-      this.view = view;
+    public MyAsyncTask(View starView) {
+      this.starView = starView;
     }
 
     @Override
@@ -73,10 +73,12 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         public void handle(Message<JsonObject> message) {
           JsonObject body = message.body();
           if (body != null) {
-            view.setVisibility(View.VISIBLE);
-            view.setBackgroundResource(R.drawable.source_favourited);
+            starView.setVisibility(View.VISIBLE);
+            starView.setBackgroundResource(R.drawable.source_favourited);
+            starView.setTag(status_stared);
           } else {
-            view.setVisibility(View.GONE);
+            starView.setVisibility(View.GONE);
+            starView.setTag(null);
           }
         }
       });
@@ -86,7 +88,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     @Override
     protected void onPostExecute(Boolean result) {
       if (result) {
-        view.setVisibility(View.VISIBLE);
+        starView.setVisibility(View.VISIBLE);
       }
       super.onPostExecute(result);
     }
@@ -198,12 +200,12 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         @Override
         public boolean onLongClick(View v) {
           if (imageViewFlag.getTag() == null
-              || (!"0".equals(imageViewFlag.getTag().toString()) && !"1".equals(imageViewFlag
-                  .getTag().toString()))) {
+              || (!status_unstar.equals(imageViewFlag.getTag().toString()) && !status_stared
+                  .equals(imageViewFlag.getTag().toString()))) {
             // 0处于已点击未收藏 1处于已经收藏 非0非1处于原始状态
             imageViewFlag.setBackgroundResource(R.drawable.source_favourite);
             imageViewFlag.setVisibility(View.VISIBLE);
-            imageViewFlag.setTag("0");
+            imageViewFlag.setTag(status_unstar);
           }
           return true;
         }
@@ -213,7 +215,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
 
         @Override
         public void onClick(View v) {
-          if (imageViewFlag.getTag().toString().equals("0")) {
+          if (imageViewFlag.getTag().toString().equals(status_unstar)) {
             // 0处于已点击未收藏
             JsonObject msg = Json.createObject();
             msg.set(Constant.KEY_ACTION, "post");
@@ -226,7 +228,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
                 if ("ok".equalsIgnoreCase(body.getString(Constant.KEY_STATUS))) {
                   Toast.makeText(SourceActivity.this, "收藏成功", Toast.LENGTH_SHORT).show();
                   imageViewFlag.setBackgroundResource(R.drawable.source_favourited);
-                  imageViewFlag.setTag("1");
+                  imageViewFlag.setTag(status_stared);
                 } else {
                   Toast.makeText(SourceActivity.this, "收藏失败，请重试", Toast.LENGTH_SHORT).show();
                 }
@@ -243,6 +245,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     }
   }
 
+  private final static String status_unstar = "0";
+  private final static String status_stared = "1";
   private TextView tv_act_source_tip = null;
   private ImageView iv_act_source_result_pre = null;
   private GridView gr_act_source_result = null;
