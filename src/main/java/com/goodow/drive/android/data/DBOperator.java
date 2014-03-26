@@ -347,14 +347,14 @@ public class DBOperator {
    * @param sql
    * @return
    */
-  public static int readFilesNum(Context context, String sql) {
+  public static int readFilesNum(Context context, String sql, String[] params) {
     int result = 0;
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     Cursor cursor = null;
     try {
       db.beginTransaction();
-      cursor = db.rawQuery(sql, null);
+      cursor = db.rawQuery(sql, params);
       if (cursor.moveToNext()) {
         result = cursor.getInt((cursor.getColumnIndex("TOTAL_NUM")));
       }
@@ -383,6 +383,52 @@ public class DBOperator {
     if (type.equals("attachment")) {
       sql = "SELECT * FROM T_FILE WHERE UUID IN ( SELECT TAG FROM T_STAR WHERE TYPE = ? )";
     }
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    JsonArray result = Json.createArray();
+    try {
+      db.beginTransaction();
+      cursor = db.rawQuery(sql, new String[] {type});
+      if (type.equals("attachment")) {
+        while (cursor.moveToNext()) {
+          JsonObject file = Json.createObject();
+          file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
+          file.set(Constant.KEY_NAME, cursor.getString(cursor.getColumnIndex("NAME")));
+          file.set(Constant.KEY_CONTENTTYPE, cursor.getString(cursor.getColumnIndex("CONTENTTYPE")));
+          file.set(Constant.KEY_CONTENTLENGTH, cursor.getInt(cursor.getColumnIndex("SIZE")));
+          file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
+          file.set(Constant.KEY_THUMBNAIL, cursor.getString(cursor.getColumnIndex("THUMBNAILS")));
+          result.push(file);
+        }
+      } else {
+        while (cursor.moveToNext()) {
+          result.push(Json.createObject().set(Constant.KEY_TYPE,
+              cursor.getString(cursor.getColumnIndex("TYPE"))).set(Constant.KEY_TAG,
+              cursor.getString(cursor.getColumnIndex("TAG"))));
+        }
+      }
+      db.setTransactionSuccessful();
+    } catch (Exception e) {
+    } finally {
+      db.endTransaction();
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return result;
+  }
+
+  /**
+   * 根据提供的类型查询收藏信息的集合
+   * 
+   * @param context
+   * @param type
+   * @return TAGS或ATTACHMENTS
+   * @status tested
+   */
+  public static JsonArray readStarByTypeBySql(Context context, String type, String sql) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     Cursor cursor = null;
@@ -491,6 +537,37 @@ public class DBOperator {
     try {
       db.beginTransaction();
       cursor = db.rawQuery(sqlBuilder.toString(), params);
+      while (cursor.moveToNext()) {
+        result.push(cursor.getString(cursor.getColumnIndex("KEY")));
+      }
+      db.setTransactionSuccessful();
+    } catch (Exception e) {
+    } finally {
+      db.endTransaction();
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return result;
+  }
+
+  /**
+   * 根据提供的若干标签查询子标签
+   * 
+   * @param context
+   * @param tags
+   * @return
+   * @status tested
+   */
+  public static JsonArray readSubTagsBySql(Context context, String sql, String[] params) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    JsonArray result = Json.createArray();
+    try {
+      db.beginTransaction();
+      cursor = db.rawQuery(sql, params);
       while (cursor.moveToNext()) {
         result.push(cursor.getString(cursor.getColumnIndex("KEY")));
       }

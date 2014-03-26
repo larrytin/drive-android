@@ -253,7 +253,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private int currentPageNum = 0;// 当前页码
   private final int numPerPage = 10;// 查询结果每页显示10条数据
 
-  private LayoutInflater inflater = null;
   private TextView tv_act_source_search_result_tip = null;
 
   private ProgressBar pb_act_source_search_progress = null;
@@ -540,7 +539,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         (ImageView) this.findViewById(R.id.iv_act_source_search_button);
     this.iv_act_source_search_button.setOnClickListener(this);
 
-    this.inflater = LayoutInflater.from(this);
   }
 
   /**
@@ -636,7 +634,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
-            totalAttachmentNum = (int) body.getNumber(Constant.KEY_SIZE);
+            totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
             JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
             bindDataToView(attachments);
           }

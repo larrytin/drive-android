@@ -208,6 +208,77 @@ public class DBDataProvider {
   }
 
   /**
+   * 分页查询N个标签关系映射下的标签
+   * 
+   * @param context
+   * @param object
+   * @return
+   * @status tested
+   */
+  public static JsonObject querySubTagsInfoBySql(Context context, JsonObject key) {
+    // 排序条件
+    final List<String> sortList =
+        Arrays.asList("健康", "托班", "语言", "社会", "数学", "科学", "艺术(美术)", "艺术(音乐)", "教学图片", "参考图", "挂图",
+            "轮廓图", "头饰", "手偶", "胸牌", "文学作品动画", "音乐作品动画", "数学教学动画", "其他动画", "文学作品动画", "音乐作品动画",
+            "数学教学动画", "其他动画", "教学用视频", "教学示范课", "音乐表演视频", "音乐作品音频", "文学作品音频", "音效");
+    // 排序集合
+    Set<String> set = new TreeSet<String>(new Comparator<String>() {
+      @Override
+      public int compare(String str1, String str2) {
+        int temp = sortList.indexOf(str1) - sortList.indexOf(str2);
+        return temp == 0 ? 1 : temp;
+      }
+    });
+
+    int from = 0;
+    if (key.has(Constant.KEY_FROM)) {
+      from = (int) key.getNumber(Constant.KEY_FROM);
+    }
+    int size = 10;
+    if (key.has(Constant.KEY_SIZE)) {
+      size = (int) key.getNumber(Constant.KEY_SIZE);
+    }
+    JsonArray tags = key.getArray(Constant.KEY_TAGS);
+    StringBuilder sqlBuilder = new StringBuilder();
+    int len_tags = tags.length();
+    String[] params = new String[len_tags];
+    for (int i = 0; i < len_tags; i++) {
+      String tag = tags.getString(i);
+      sqlBuilder.append("SELECT KEY FROM T_RELATION WHERE TAG = ? AND TYPE = 'tag' ").append(
+          "INTERSECT ");
+      params[i] = tag;
+    }
+    sqlBuilder.delete(sqlBuilder.lastIndexOf("INTERSECT ") >= 0 ? sqlBuilder
+        .lastIndexOf("INTERSECT ") : 0, sqlBuilder.length());
+
+    String sql = sqlBuilder.toString();
+
+    // 查询页码
+    String sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM (" + sql + ")";
+
+    // 分页
+    sql = "select KEY from (" + sql + ") LIMIT " + size + " OFFSET " + from;
+
+    JsonArray noOrderJsonArray = DBOperator.readSubTagsBySql(context, sql, params);
+    for (int i = 0; i < noOrderJsonArray.length(); ++i) {
+      String str = noOrderJsonArray.getString(i);
+      set.add(str);
+    }
+    JsonArray orderJsonArray = Json.createArray();
+    Iterator<String> iterator = set.iterator();
+    while (iterator.hasNext()) {
+      orderJsonArray.push(iterator.next());
+    }
+
+    JsonObject result =
+        Json.createObject().set(Constant.KEY_COUNT,
+            DBOperator.readFilesNum(context, sqlOfCounter, params));
+    result.set(Constant.KEY_TAGS, orderJsonArray);
+
+    return result;
+  }
+
+  /**
    * 查询一个关系映射的详细信息
    * 
    * @param context
@@ -232,6 +303,47 @@ public class DBDataProvider {
   }
 
   /**
+   * 分页查询收藏列表
+   * 
+   * @param context
+   * @param key
+   * @return
+   * @status tested
+   */
+  public static JsonObject readStarByTypeByKey(Context context, JsonObject key) {
+    String type = Constant.KEY_TAG;
+    if (key.has(Constant.KEY_TYPE)) {
+      type = key.getString(Constant.KEY_TYPE);
+    }
+    int from = 0;
+    if (key.has(Constant.KEY_FROM)) {
+      from = (int) key.getNumber(Constant.KEY_FROM);
+    }
+    int size = 10;
+    if (key.has(Constant.KEY_SIZE)) {
+      size = (int) key.getNumber(Constant.KEY_SIZE);
+    }
+
+    String sql = "SELECT * FROM T_STAR WHERE TYPE = ? LIMIT " + size + " OFFSET " + from;
+    if (type.equals("attachment")) {
+      sql =
+          "SELECT * FROM T_FILE WHERE UUID IN ( SELECT TAG FROM T_STAR WHERE TYPE = ? ) LIMIT "
+              + size + " OFFSET " + from;
+    }
+
+    String sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM T_STAR WHERE TYPE = '" + type + "'";
+    JsonObject result =
+        Json.createObject().set(Constant.KEY_COUNT,
+            DBOperator.readFilesNum(context, sqlOfCounter, null));
+    if (Constant.KEY_TAG.equals(type)) {
+      result.set(Constant.KEY_TAGS, DBOperator.readStarByTypeBySql(context, type, sql));
+    } else {
+      result.set(Constant.KEY_ATTACHMENTS, DBOperator.readStarByTypeBySql(context, type, sql));
+    }
+    return result;
+  }
+
+  /**
    * 根据文件的标签属性查询文件
    * 
    * @param key
@@ -253,7 +365,14 @@ public class DBDataProvider {
         return temp == 0 ? 1 : temp;
       }
     });
-
+    int from = 0;
+    if (key.has(Constant.KEY_FROM)) {
+      from = (int) key.getNumber(Constant.KEY_FROM);
+    }
+    int size = 10;
+    if (key.has(Constant.KEY_SIZE)) {
+      size = (int) key.getNumber(Constant.KEY_SIZE);
+    }
     // 查询语句
     String sql = null;
     String sqlOfCounter = null;
@@ -274,14 +393,14 @@ public class DBDataProvider {
               + sqlBuilder.toString() + ")";
       // 查询页码
       sqlOfCounter =
-          "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE F where UUID = IN(" + sqlBuilder.toString()
-              + ")";
+          "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE F where UUID IN(" + sqlBuilder.toString() + ")";
+
+      // 分页
+      sql = sql + " LIMIT " + size + " OFFSET " + from;
     }
     // 资源搜索
     if ("全部".equals(key.getString(Constant.KEY_CONTENTTYPE))) {
       // 搜索-->“全部”标签下的文件
-      int from = (int) key.getNumber(Constant.KEY_FROM);
-      int size = (int) key.getNumber(Constant.KEY_SIZE);
       sql = "SELECT UUID FROM T_FILE ";
       if (key.getString(Constant.KEY_QUERY) != null) {
         sql =
@@ -302,8 +421,6 @@ public class DBDataProvider {
     if (key.getString(Constant.KEY_CONTENTTYPE) != null
         && !"全部".equals(key.getString(Constant.KEY_CONTENTTYPE))) {
       // 搜索-->其他标签下的文件
-      int from = (int) key.getNumber(Constant.KEY_FROM);
-      int size = (int) key.getNumber(Constant.KEY_SIZE);
       StringBuilder sqlBuilder = new StringBuilder();
       JsonArray tags = key.getArray(Constant.KEY_TAGS);// 取tags的交集
       int len_tags = tags == null ? 0 : tags.length();
@@ -370,7 +487,8 @@ public class DBDataProvider {
     }
 
     JsonObject attachment =
-        Json.createObject().set(Constant.KEY_SIZE, DBOperator.readFilesNum(context, sqlOfCounter));
+        Json.createObject().set(Constant.KEY_COUNT,
+            DBOperator.readFilesNum(context, sqlOfCounter, null));
     attachment.set(Constant.KEY_ATTACHMENTS, orderJsonArray);
     return attachment;
   }

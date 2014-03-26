@@ -54,8 +54,9 @@ public interface Constant {
   String KEY_THUMBNAIL = "thumbnail";//
   String KEY_ATTACHMENT = "attachment";//
   String KEY_ATTACHMENTS = "attachments";//
-  String KEY_FROM = "from";//
-  String KEY_SIZE = "size";//
+  String KEY_FROM = "from";// 从数据库的第from条记录开始查询
+  String KEY_SIZE = "size";// 要查询的记录数量是size
+  String KEY_COUNT = "count";// 总的数据量是count
   String KEY_REDIRECTTO = "redirectTo";//
   String KEY_CATAGORY = "catagory";// 素材类别
 
