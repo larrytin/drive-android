@@ -371,7 +371,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener,
           }
         } else {
           bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-              attachment.getString(Constant.KEY_URL)), null);
+              attachment.getString(Constant.KEY_URL)).set("play", 1), null);
         }
       }
     });
