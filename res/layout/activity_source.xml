@@ -138,7 +138,7 @@
             style="@style/source_catagory0"
             android:src="@drawable/source_selector_catagory0_text"
             android:layout_marginTop="@dimen/act_source_catagory0_item_text_marginTop"
-            android:tag="文本"
+            android:tag="活动设计"
             />
         <ImageView
             android:id="@+id/iv_act_source_catagory0_image"
@@ -167,6 +167,13 @@
             android:src="@drawable/source_selector_catagory0_audio"
             android:layout_marginTop="@dimen/act_source_catagory0_item_audio_marginTop"
             android:tag="音频"
+            />
+        <ImageView
+            android:id="@+id/iv_act_source_catagory0_ebook"
+            style="@style/source_catagory0"
+            android:src="@drawable/source_selector_catagory0_ebook"
+            android:layout_marginTop="@dimen/act_source_catagory0_item_ebook_marginTop"
+            android:tag="电子书"
             />
     </LinearLayout>
     <LinearLayout

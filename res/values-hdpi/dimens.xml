@@ -250,6 +250,7 @@
     <dimen name="act_source_catagory0_item_animation_marginTop">5dp</dimen><!-- 一级分类第四个条目的上边距 -->
     <dimen name="act_source_catagory0_item_video_marginTop">8dp</dimen><!-- 一级分类第五个条目的上边距 -->
     <dimen name="act_source_catagory0_item_audio_marginTop">11dp</dimen><!-- 一级分类第六个条目的上边距 -->
+    <dimen name="act_source_catagory0_item_ebook_marginTop">27dp</dimen><!-- 一级分类第七个条目的上边距 -->
     <dimen name="act_source_result_root_width">430dp</dimen><!-- 查询结果的跟节点的宽度 -->
     <dimen name="act_source_result_root_height">175dp</dimen><!-- 查询结果的跟节点的高度 -->
     <dimen name="act_source_result_root_marginTop">50dp</dimen><!-- 查询结果的跟节点的上边距 -->

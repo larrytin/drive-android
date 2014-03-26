@@ -273,19 +273,23 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private HandlerRegistration controlHandler;
   private SharedPreferences usagePreferences;
   private static final Map<Object, String> idContentTypes = new HashMap<Object, String>();
+  private static final Map<Object, String> idTags = new HashMap<Object, String>();
   static {
-    idContentTypes.put("全部", "全部");
-    idContentTypes.put("文本", "application/pdf");
-    idContentTypes.put("图片", "image/jpeg");
-    idContentTypes.put("动画", "application/x-shockwave-flash");
-    idContentTypes.put("视频", "video/mp4");
-    idContentTypes.put("音频", "audio/mpeg");
     idContentTypes.put(R.id.iv_act_source_catagory0_all, "全部");
     idContentTypes.put(R.id.iv_act_source_catagory0_text, "application/pdf");
     idContentTypes.put(R.id.iv_act_source_catagory0_image, "image/jpeg");
     idContentTypes.put(R.id.iv_act_source_catagory0_animation, "application/x-shockwave-flash");
     idContentTypes.put(R.id.iv_act_source_catagory0_video, "video/mp4");
     idContentTypes.put(R.id.iv_act_source_catagory0_audio, "audio/mpeg");
+    idContentTypes.put(R.id.iv_act_source_catagory0_ebook, "application/x-shockwave-flash");
+
+    idTags.put(R.id.iv_act_source_catagory0_all, "全部");
+    idTags.put(R.id.iv_act_source_catagory0_text, "活动设计");
+    idTags.put(R.id.iv_act_source_catagory0_image, "图片");
+    idTags.put(R.id.iv_act_source_catagory0_animation, "动画");
+    idTags.put(R.id.iv_act_source_catagory0_video, "视频");
+    idTags.put(R.id.iv_act_source_catagory0_audio, "音频");
+    idTags.put(R.id.iv_act_source_catagory0_ebook, "电子书");
   }
 
   @Override
@@ -308,6 +312,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       case R.id.iv_act_source_catagory0_animation:
       case R.id.iv_act_source_catagory0_audio:
       case R.id.iv_act_source_catagory0_video:
+      case R.id.iv_act_source_catagory0_ebook:
         this.onContentTypeClick(v.getId());
         break;
       case R.id.iv_act_source_search_button:
@@ -428,12 +433,14 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    */
   private void bindDataToView(JsonArray attachments) {
     this.pb_act_source_search_progress.setVisibility(View.INVISIBLE);
-    this.gr_act_source_result.setVisibility(View.VISIBLE);
     if (attachments == null || attachments.length() == 0) {
       this.tv_act_source_search_result_tip.setVisibility(View.VISIBLE);
       this.tv_act_source_tip.setText(Html.fromHtml(this.getString(R.string.string_source_tip1)));
       return;
     }
+    this.iv_act_source_result_pre.setClickable(true);
+    this.iv_act_source_result_next.setClickable(true);
+    this.gr_act_source_result.setVisibility(View.VISIBLE);
     this.tv_act_source_search_result_tip.setVisibility(View.INVISIBLE);
     this.tv_act_source_tip.setText(null);
     this.resultAdapter.reset(attachments);
@@ -552,6 +559,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    */
   private void onContentTypeClick(int id) {
     this.subTags.clear();
+    this.subTags.add(idTags.get(id));
     this.gr_act_source_result.setVisibility(View.INVISIBLE);
     int len = this.ll_act_source_catagory0.getChildCount();
     for (int i = 0; i < len; i++) {
@@ -571,7 +579,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       this.tv_act_source_tip.setText(null);
       this.currentContentType = idContentTypes.get(id);
       if (id != R.id.iv_act_source_catagory0_all) {
-        this.sendQuerySubCatagory(this.currentContentType);
+        this.sendQuerySubCatagory(this.subTags.get(0));
       }
     }
   }
@@ -582,12 +590,14 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * @param id
    */
   private void onResultPrePageClick(int id) {
+    this.iv_act_source_result_pre.setClickable(false);
+    this.iv_act_source_result_next.setClickable(false);
     this.pb_act_source_search_progress.setVisibility(View.VISIBLE);
     if (id == R.id.iv_act_source_result_pre && this.currentPageNum >= 0) {
       // 向前翻页
       this.currentPageNum--;
     } else if (id == R.id.iv_act_source_result_next
-        && this.currentPageNum < this.totalAttachmentNum) {
+        && this.currentPageNum <= this.totalAttachmentNum) {
       // 向后翻页
       this.currentPageNum++;
     }
@@ -651,6 +661,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private void sendQuerySubCatagory(String contentType) {
     JsonObject msg =
         Json.createObject().set(Constant.KEY_TAGS, Json.createArray().push(contentType));
+    msg.set(Constant.KEY_FROM, 0);
+    msg.set(Constant.KEY_SIZE, 20);// 假设每个一级搜索下的标签不多于20
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
