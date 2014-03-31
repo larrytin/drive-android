@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/security_bg" >
+
+    <!-- 状态栏 -->
+    <!-- <com.goodow.drive.android.view.StatusView style="@style/status" /> -->
+    
+    <!-- 后退  收藏  锁屏 -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/act_harmony_fun_bar_marginLeft"
+        android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop" >
+
+        <include
+            android:id="@+id/iv_act_security_back"
+            layout="@layout/include_back" />
+
+        <ImageView
+            android:id="@+id/iv_act_security_coll"
+            style="@style/index_sys_fun"
+            android:layout_below="@id/iv_act_security_back"
+            android:clickable="true"
+            android:src="@drawable/common_selector_coll" />
+
+        <ImageView
+            android:id="@+id/iv_act_security_loc"
+            style="@style/index_sys_fun"
+            android:layout_below="@id/iv_act_security_coll"
+            android:clickable="true"
+            android:src="@drawable/common_selector_loc" />
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:id="@+id/ll_act_security_teacher"
+        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="230dp"
+        android:layout_marginTop="210dp">
+        <ImageView
+            android:clickable="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/security_teacher"/>
+        <ImageView
+            android:tag="小班上"
+            style="@style/security_grade"
+            android:src="@drawable/security_small_0"/>
+        <ImageView
+            android:tag="小班下"
+            style="@style/security_grade"
+            android:src="@drawable/security_small_1"/>
+        <ImageView
+            android:tag="中班上"
+            style="@style/security_grade"
+            android:src="@drawable/security_middle_0"/>
+        <ImageView
+            android:tag="中班下"
+            style="@style/security_grade"
+            android:src="@drawable/security_middle_1"/>
+        <ImageView
+            android:tag="大班上"
+            style="@style/security_grade"
+            android:src="@drawable/security_large_0"/>
+        <ImageView
+            android:tag="大班下"
+            style="@style/security_grade"
+            android:src="@drawable/security_large_1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_act_security_children"
+        android:gravity="center_vertical"
+        android:layout_marginTop="420dp"
+        android:layout_marginLeft="240dp" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:clickable="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/security_children"/>
+        <ImageView
+            android:tag="小班上"
+            style="@style/security_grade"
+            android:src="@drawable/security_small_0"/>
+        <ImageView
+            android:tag="小班下"
+            style="@style/security_grade"
+            android:src="@drawable/security_small_1"/>
+        <ImageView
+            android:tag="中班上"
+            style="@style/security_grade"
+            android:src="@drawable/security_middle_0"/>
+        <ImageView
+            android:tag="中班下"
+            style="@style/security_grade"
+            android:src="@drawable/security_middle_1"/>
+        <ImageView
+            android:tag="大班上"
+            style="@style/security_grade"
+            android:src="@drawable/security_large_0"/>
+        <ImageView
+            android:tag="大班下"
+            style="@style/security_grade"
+            android:src="@drawable/security_large_1"/>
+    </LinearLayout>
+    
+    
+
+</RelativeLayout>

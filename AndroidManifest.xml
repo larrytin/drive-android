@@ -91,7 +91,7 @@
         </activity>
         <!-- 智能 -->
         <activity
-            android:name="com.goodow.drive.android.activity.SmartActivity"
+            android:name="com.goodow.drive.android.activity.SecurityActivity"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             android:configChanges="keyboardHidden|orientation|screenSize"

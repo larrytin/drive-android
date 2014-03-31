@@ -124,7 +124,7 @@ public class ViewRegistry {
           intent = new Intent(ctx, PrepareActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_EDUCATION.equals(type)) {
           // 智能开发
-          intent = new Intent(ctx, SmartActivity.class);
+          intent = new Intent(ctx, SecurityActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_READ.equals(type)) {
           // 图画书
           intent = new Intent(ctx, EbookActivity.class);
