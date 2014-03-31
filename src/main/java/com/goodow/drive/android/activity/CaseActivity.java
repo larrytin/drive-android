@@ -113,7 +113,7 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
       if (convertView == null) {
-        convertView = View.inflate(CaseActivity.this, R.layout.common_result, null);
+        convertView = View.inflate(CaseActivity.this, R.layout.result_common, null);
         ResultAdapterHolder holder = new ResultAdapterHolder();
         holder.iv_common_result = (ImageView) convertView.findViewById(R.id.iv_common_result);
         holder.tv_common_result = (TextView) convertView.findViewById(R.id.tv_common_result);

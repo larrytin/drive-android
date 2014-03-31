@@ -58,7 +58,7 @@ public class FavouriteAttachmentsView extends RelativeLayout {
   }
 
   private void initVIew(Context context) {
-    View.inflate(context, R.layout.favourite_result_attachments, this);
+    View.inflate(context, R.layout.result_favourite_attachments, this);
     tv_favourite_attachments = (TextView) findViewById(R.id.tv_favourite_attachments);
     iv_favourite_attachments_del = (ImageView) findViewById(R.id.iv_favourite_attachments_del);
     iv_favourite_attachments = (ImageView) findViewById(R.id.iv_favourite_attachments);

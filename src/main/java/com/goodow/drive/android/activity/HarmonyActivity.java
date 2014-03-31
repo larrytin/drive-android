@@ -112,7 +112,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
       if (convertView == null) {
-        convertView = View.inflate(HarmonyActivity.this, R.layout.common_result_yellow, null);
+        convertView = View.inflate(HarmonyActivity.this, R.layout.result_common_yellow, null);
         ResultAdapterHolder holder = new ResultAdapterHolder();
         holder.common_result_yellow =
             (TextView) convertView.findViewById(R.id.common_result_yellow);

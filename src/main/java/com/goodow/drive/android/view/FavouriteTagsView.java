@@ -57,7 +57,7 @@ public class FavouriteTagsView extends LinearLayout {
   }
 
   private void initView(Context context) {
-    View.inflate(context, R.layout.favourite_result_tags, this);
+    View.inflate(context, R.layout.result_favourite_tags, this);
     iv_favourite_tags = (ImageView) findViewById(R.id.iv_favourite_tags);
     iv_favourite_tags_del = (ImageView) findViewById(R.id.iv_favourite_tags_del);
     tv_favourite_tags = (TextView) findViewById(R.id.tv_favourite_tags);

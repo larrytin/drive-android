@@ -4,172 +4,166 @@
     android:layout_height="match_parent"
     android:background="@drawable/prepare_bg" >
 
-    <!--  状态栏  -->
-    <com.goodow.drive.android.view.StatusView
-	style="@style/status" 
-    />
-     
-    <!--上下学期 -->
+    <!-- 上下学期 -->
+
     <LinearLayout
         android:id="@+id/ll_act_prepare_term"
         android:layout_width="@dimen/act_prepare_term_radio_group_width"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_prepare_term_radio_group_marginLeft"
         android:layout_marginTop="@dimen/act_prepare_term_radio_group_marginTop"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal" >
+
         <com.goodow.drive.android.view.FontTextView
             android:id="@+id/ftv_act_prepare_top"
             style="@style/style_common_grade"
             android:checked="true"
-            android:text="@string/string_text_term_semester0"
-             />
+            android:text="@string/string_text_term_semester0" />
+
         <com.goodow.drive.android.view.FontTextView
             android:id="@+id/ftv_act_prepare_bottom"
             style="@style/style_common_grade"
             android:text="@string/string_text_term_semester1" />
     </LinearLayout>
 
-    <!-- 活动分类 @des 更容易适配 对性能有影响 -->
     <LinearLayout
         android:layout_width="@dimen/act_prepare_topic_root_width"
         android:layout_height="@dimen/act_prepare_topic_root_height"
-        android:orientation="vertical"
         android:layout_marginLeft="@dimen/act_prepare_topic_root_marginLeft"
-        android:layout_marginTop="@dimen/act_prepare_topic_root_marginTop"
-        >
-        <!-- 语言 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-            <com.goodow.drive.android.view.FontTextView
-              android:id="@+id/ftv_act_prepare_class_language"
-              style="@style/prepare_class"
-              android:text="@string/string_text_language"
-              android:layout_centerInParent="true"
-                />
-        </RelativeLayout>
-        <!-- 思维 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-            <com.goodow.drive.android.view.FontTextView
-              android:id="@+id/ftv_act_prepare_class_thinking"
-              style="@style/prepare_class"
-              android:text="@string/string_text_thinking"
-              android:layout_alignParentRight="true"
-                />
-        </RelativeLayout>
-        <!-- 阅读与书写 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-            <com.goodow.drive.android.view.FontTextView
-              android:id="@+id/ftv_act_prepare_class_read_write"
-              style="@style/prepare_class"
-              android:text="@string/string_text_read_write"
-              android:layout_alignParentLeft="true"
-                />
-        </RelativeLayout>
-        <!-- 学些品质 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-            <com.goodow.drive.android.view.FontTextView
-              android:id="@+id/ftv_act_prepare_class_quality"
-              style="@style/prepare_class"
-              android:text="@string/string_text_quality"
-              android:layout_alignParentRight="true"
-              android:layout_width="@dimen/act_prepare_topic_item_width_long"
-              android:background="@drawable/prepare_selector_topic_long"
-                />
-        </RelativeLayout>
+        android:orientation="horizontal" >
 
+        <!-- 语言 -->
+
+        <ImageView
+            android:id="@+id/ftv_act_prepare_class_language"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/prepare_selector_topic_language"
+            android:tag="语言" />
+        <!-- 思维 -->
+
+        <ImageView
+            android:id="@+id/ftv_act_prepare_class_thinking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/prepare_selector_topic_thinking"
+            android:tag="思维" />
+        <!-- 阅读与书写 -->
+
+        <ImageView
+            android:id="@+id/ftv_act_prepare_class_read_write"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/prepare_selector_topic_read"
+            android:tag="阅读与书写" />
+        <!-- 习惯与学习品质 -->
+
+        <ImageView
+            android:id="@+id/ftv_act_prepare_class_quality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/prepare_selector_topic_habit"
+            android:tag="习惯与学习品质" />
     </LinearLayout>
 
+    <!-- 后退  收藏  锁屏 -->
 
-    <!--  后退  收藏  锁屏  -->
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/act_prepare_fun_bar_marginTop"
         android:layout_marginLeft="@dimen/act_prepare_fun_bar_marginLeft"
-        >
+        android:layout_marginTop="@dimen/act_prepare_fun_bar_marginTop" >
+
         <include
             android:id="@+id/iv_act_prepare_back"
-            layout="@layout/include_back"/>
+            layout="@layout/include_back" />
+
         <ImageView
-          android:id="@+id/iv_act_prepare_coll"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_coll"
-          android:layout_below="@+id/iv_act_prepare_back"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_prepare_coll"
+            style="@style/index_sys_fun"
+            android:layout_below="@+id/iv_act_prepare_back"
+            android:clickable="true"
+            android:src="@drawable/common_selector_coll" />
+
         <ImageView
-          android:id="@+id/iv_act_prepare_loc"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_loc"
-          android:layout_below="@+id/iv_act_prepare_coll"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_prepare_loc"
+            style="@style/index_sys_fun"
+            android:layout_below="@+id/iv_act_prepare_coll"
+            android:clickable="true"
+            android:src="@drawable/common_selector_loc" />
     </RelativeLayout>
 
+    <!-- 状态栏 -->
+
+    <com.goodow.drive.android.view.StatusView style="@style/status" />
+
     <!-- 查询结果 -->
+
     <RelativeLayout
+        android:layout_marginTop="250dp"
         android:id="@+id/rl_act_prepare_result"
         android:layout_width="@dimen/act_prepare_result_root_width"
         android:layout_height="@dimen/act_prepare_result_root_height"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/act_prepare_result_root_marginRight"
-        >
-        <!-- 查询结果 上一页-->
+        android:layout_marginRight="@dimen/act_prepare_result_root_marginRight" >
+
+        <!-- 查询结果 上一页 -->
+
         <ImageView
             android:id="@+id/rl_act_prepare_result_pre"
             android:layout_width="@dimen/common_result_pre_next_width"
             android:layout_height="@dimen/common_result_pre_next_height"
-            android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/common_result_pre"
+            android:layout_centerVertical="true"
             android:clickable="true"
-            android:visibility="invisible"
-            />
-
+            android:src="@drawable/common_result_pre"
+            android:visibility="invisible" />
+        
         <!-- 查询结果 -->
-        <android.support.v4.view.ViewPager
-          android:id="@+id/vp_act_prepare_result"
-          android:layout_width="@dimen/act_prepare_result_width"
-          android:layout_height="fill_parent"
-          android:layout_centerHorizontal="true"
-          />
+        <GridView
+            android:layout_centerHorizontal="true"
+            android:id="@+id/vp_act_prepare_result" 
+            android:layout_width="@dimen/act_prepare_result_width"
+            android:layout_height="wrap_content"
+            android:numColumns="5"
+            android:cacheColorHint="#00000000"
+            android:background="#00000000"
+            android:listSelector="#00000000"
+            android:alwaysDrawnWithCache="true"
+            android:scrollbars="none"
+            android:verticalSpacing="65dp" >
+        </GridView>
 
-        <!-- 查询结果 下一页-->
+        <!-- 查询结果 下一页 -->
+
         <ImageView
             android:id="@+id/rl_act_prepare_result_next"
             android:layout_width="@dimen/common_result_pre_next_width"
             android:layout_height="@dimen/common_result_pre_next_height"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:src="@drawable/common_result_next"
+            android:layout_centerVertical="true"
             android:clickable="true"
-            android:visibility="invisible"
+            android:src="@drawable/common_result_next"
+            android:visibility="invisible" />
+        
+        <!-- 查询进度提示 -->
+        <ProgressBar
+            android:id="@+id/pb_act_result_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="@dimen/act_source_search_progress_width"
+            android:layout_height="wrap_content" 
+            android:layout_centerInParent="true"
+            android:visibility="gone"
             />
+
         <LinearLayout
             android:id="@+id/ll_act_prepare_result_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_centerInParent="true"
             android:layout_alignParentBottom="true"
-            >
+            android:layout_centerInParent="true"
+            android:orientation="horizontal" >
         </LinearLayout>
     </RelativeLayout>
 
