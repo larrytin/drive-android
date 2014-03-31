@@ -26,7 +26,7 @@ import com.goodow.realtime.json.Json;
  */
 public final class BusProvider {
   public static String SID = "sid.drive.";
-  private static final String HOST = "data.goodow.com:8080";
+  private static final String HOST = "test.goodow.com:8080";
   static {
 
     AndroidPlatform.register();

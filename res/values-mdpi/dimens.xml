@@ -38,12 +38,6 @@
     <dimen name="act_case_result_root_paddingTop">100dp</dimen><!-- 查询结果的跟节点的右边距 -->
     <dimen name="act_case_result_root_marginRight">85dp</dimen><!-- 查询结果的跟节点的右边距 -->
     <dimen name="act_case_result_width">850dp</dimen><!-- 查询结果的宽度 -->
-    <dimen name="act_case_result_item_image_width">100dp</dimen><!-- 查询结果条目图片宽度 -->
-    <dimen name="act_case_result_item_image_height">100dp</dimen><!-- 查询结果条目图片高度 -->
-    <dimen name="act_case_result_item_width">150dp</dimen><!-- 查询结果条目高度 -->
-    <dimen name="act_case_result_item_height">150dp</dimen><!-- 查询结果条目高度 -->
-    <dimen name="act_case_result_item_text_width">150dp</dimen><!-- 查询结果条目文字宽度 -->
-    <dimen name="act_case_result_item_textSize">18px</dimen><!-- 查询结果条目文字大小 -->
 
     <!-- 入学准备 720p @author DPW ITEM DEFAULT DPW-->
     <dimen name="act_prepare_fun_bar_marginLeft">40dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
@@ -116,20 +110,6 @@
     <dimen name="act_source_search_subtag_margin">10dp</dimen><!-- 二级分类之间的间距 -->
     <dimen name="act_source_search_subtag_marginBottom">20dp</dimen><!-- 二级分类的下边距 -->
     
-    <!--
-         Customize dimensions originally defined in res/values/dimens.xml (such as
-         screen margins) for mobile phone devices (e.g. 5" moblie phone) here.
-    -->
-
-    <!-- ****************手机用,4寸屏小米1,5寸屏galaxy_s4测试 *******************-->
-    
-    <!-- ****************公用返回键**************** -->
-    <!-- 返回键宽度和高度 -->
-    <dimen name="common_back_width">36dp</dimen>
-    <dimen name="common_back_height">30dp</dimen>
-    <!-- 返回键对于左上角的margin -->
-    <dimen name="common_back_margin">18dp</dimen>
-    
     <!-- HomeActivity 主页 720p -->
     <dimen name="act_home_fun_width">77dp</dimen><!-- launcher页面系统功能栏,收藏&&黑屏 宽度-->
     <dimen name="act_home_fun_height">77dp</dimen><!-- launcher页面系统功能栏,收藏&&黑屏 高度-->
@@ -188,9 +168,10 @@
     
     <!-- 查询结果上图下字样式 720p -->
     <dimen name="common_result_textSize">18px</dimen><!-- 查询结果字体大小 -->
+    <dimen name="common_result_text_width">130dp</dimen><!-- 查询结果字体宽度 -->
     <dimen name="common_result_image_width">95dp</dimen><!-- 查询结果图片宽度 -->
     <dimen name="common_result_image_height">95dp</dimen><!-- 查询结果图片高度 -->
-    <dimen name="coomon_result_flag_marginTop">20dp</dimen><!-- 查询结果图片高度 -->
+    <dimen name="coomon_result_flag_marginTop">20dp</dimen><!-- 查询结果删除图片上边距 -->
         
     <!-- CareClassesActivity 托班 720p -->
     <dimen name="act_care_term_marginLeft">549dp</dimen><!-- 托班学期左边距 -->
@@ -244,23 +225,14 @@
     <dimen name="act_behave_coll_width">93dp</dimen><!-- 活动收藏宽度 -->
     <dimen name="act_behave_coll_height">57dp</dimen><!-- 活动收藏高度 -->
     <dimen name="act_behave_coll_marginTop">46dp</dimen><!-- 活动收藏上边距 -->
-    <dimen name="act_behave_result_pre_marginLeft">50dp</dimen><!-- 活动查询结果上一页左边距 -->
-    <dimen name="act_behave_result_next_marginRight">10dp</dimen><!-- 活动查询结果下一页右边距 -->
-    <dimen name="act_behave_result_content_marginLeft">55dp</dimen><!-- 活动查询结果内容左边距 -->
-    <dimen name="act_behave_result_content_marginTop">20dp</dimen><!-- 活动查询结果内容上边距 -->
-    <dimen name="act_behave_result_content_marginRight">50dp</dimen><!-- 活动查询结果内容右边距 -->
-    <dimen name="act_behave_result_content_marginBottom">10dp</dimen><!-- 活动查询结果内容下边距 -->
-    <dimen name="act_behave_result_content_height">350dp</dimen><!-- 活动查询结果内容高度 -->
-    <dimen name="act_behave_result_content_root_height">400dp</dimen><!-- 活动查询结果内容跟节点高度 -->
+    <dimen name="act_behave_result_width">1000dp</dimen><!-- 活动查询结果内容高度 -->
+    <dimen name="act_behave_result_height">350dp</dimen><!-- 活动查询结果内容高度 -->
+    <dimen name="act_behave_result_root_width">1190dp</dimen><!-- 活动查询结果内容跟节点高度 -->
+    <dimen name="act_behave_result_root_height">400dp</dimen><!-- 活动查询结果内容跟节点高度 -->
+    <dimen name="act_behave_result_root_marginLeft">65dp</dimen><!-- 活动查询结果内容跟节点左边距 -->
+    <dimen name="act_behave_result_root_marginTop">198dp</dimen><!-- 活动查询结果内容跟节点上边距 -->
     <dimen name="act_behave_back_marginLeft">30dp</dimen><!-- 活动后退键左边距 -->
     <dimen name="act_behave_back_marginTop">150dp</dimen><!-- 活动后退键上边距 -->
-    <dimen name="act_behave_result_item_image_width">95dp</dimen><!-- 查询结果条目中图片宽度 -->
-    <dimen name="act_behave_result_item_image_height">95dp</dimen><!-- 查询结果条目中图片高度 -->
-    <dimen name="act_behave_result_item_text_width">120dp</dimen><!-- 查询结果条目文字宽度 -->
-    <dimen name="act_behave_result_item_textSize">16px</dimen><!-- 查询结果条目文字大小 -->
-    <dimen name="act_behave_result_item_width">120dp</dimen><!-- 查询结果条目宽度 -->
-    <dimen name="act_behave_result_item_height">120dp</dimen><!-- 查询结果条目高度 -->
-    <dimen name="act_behave_result_item_margin">40dp</dimen><!-- 查询结果条目两行之间的间距 -->
     
     <!-- FavouriteActivity 收藏 720p-->
     <dimen name="act_favourite_back_marginLeft">50dp</dimen><!-- 后退键左边距 -->

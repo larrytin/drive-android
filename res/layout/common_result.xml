@@ -11,9 +11,10 @@
         android:layout_height="@dimen/common_result_image_height" />
 
     <com.goodow.drive.android.view.MarqueeTextView
+        android:textColor="#ffffff"
         android:textSize="@dimen/common_result_textSize"
         android:id="@+id/tv_common_result"
-        android:layout_width="@dimen/act_case_result_item_text_width"
+        android:layout_width="@dimen/common_result_text_width"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal" />
 

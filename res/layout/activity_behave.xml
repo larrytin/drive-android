@@ -6,9 +6,9 @@
 
     <!-- 状态栏 -->
 
-    <com.goodow.drive.android.view.StatusView
+<!--     <com.goodow.drive.android.view.StatusView
 	style="@style/status" 
-    />
+    /> -->
     <!-- 后退 -->
 
     <RelativeLayout
@@ -47,9 +47,10 @@
     <!-- 内容 -->
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/act_behave_result_content_root_height"
-        android:layout_centerInParent="true" >
+        android:layout_marginTop="@dimen/act_behave_result_root_marginTop"
+        android:layout_marginLeft="@dimen/act_behave_result_root_marginLeft"
+        android:layout_width="@dimen/act_behave_result_root_width"
+        android:layout_height="@dimen/act_behave_result_root_height" >
 
         <!-- 上一页 -->
 
@@ -59,23 +60,25 @@
             android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/act_behave_result_pre_marginLeft"
             android:clickable="true"
             android:src="@drawable/common_result_pre" />
 
-        <!-- 内容 -->
+        <!-- 查询结果 -->
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vp_act_behave_result"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/act_behave_result_content_height"
+        <GridView
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="@dimen/act_behave_result_content_marginLeft"
-            android:layout_marginTop="@dimen/act_behave_result_content_marginTop"
-            android:layout_marginRight="@dimen/act_behave_result_content_marginRight"
-            android:layout_marginBottom="@dimen/act_behave_result_content_marginBottom"
-            android:layout_toRightOf="@+id/iv_act_behave_result_pre"
-            android:layout_toLeftOf="@+id/iv_act_behave_result_next" />
+            android:id="@+id/vp_act_behave_result"
+            android:layout_width="@dimen/act_behave_result_width"
+            android:layout_height="wrap_content"
+            android:alwaysDrawnWithCache="true"
+            android:background="#00000000"
+            android:cacheColorHint="#00000000"
+            android:listSelector="#00000000"
+            android:numColumns="7"
+            android:scrollbars="none"
+            android:verticalSpacing="75dp" >
+
+        </GridView>
 
         <!-- 下一页 -->
 
@@ -85,9 +88,18 @@
             android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/act_behave_result_next_marginRight"
             android:clickable="true"
             android:src="@drawable/common_result_next" />
+        
+        <!-- 查询进度提示 -->
+        <ProgressBar
+            android:id="@+id/pb_act_result_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="@dimen/act_source_search_progress_width"
+            android:layout_height="wrap_content" 
+            android:layout_centerInParent="true"
+            android:visibility="gone"
+            />
 
         <!-- 页码栏 -->
 
