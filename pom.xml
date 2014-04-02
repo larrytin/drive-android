@@ -17,6 +17,7 @@
   <properties>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
+    <maven.build.timestamp.format>yyyy-MM-dd_HH_mm</maven.build.timestamp.format>
   </properties>
 
   <repositories>
@@ -39,17 +40,17 @@
       </snapshots>
     </repository>
   </repositories>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
     </dependency>
-    <dependency> 
-      <groupId>com.google.android</groupId> 
-      <artifactId>support-v4</artifactId> 
-      <version>r7</version> 
-    </dependency> 
+    <dependency>
+      <groupId>com.google.android</groupId>
+      <artifactId>support-v4</artifactId>
+      <version>r7</version>
+    </dependency>
     <dependency>
       <groupId>com.goodow.realtime</groupId>
       <artifactId>realtime-android</artifactId>
@@ -66,9 +67,9 @@
       <version>4.0</version>
     </dependency>
   </dependencies>
-  
+
   <build>
-    <finalName>${project.artifactId}</finalName>
+    <finalName>${project.artifactId}-${maven.build.timestamp}</finalName>
     <plugins>
       <plugin>
         <groupId>com.jayway.maven.plugins.android.generation2</groupId>

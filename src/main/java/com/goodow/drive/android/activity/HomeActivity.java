@@ -126,7 +126,7 @@ public class HomeActivity extends BaseActivity {
     mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
     BaiduLocation.INSTANCE.init();
     // 数据库打包，将数据库放到asset目录下即可，数据库名为：keruixing
-    // copyDataBases();
+    copyDataBases();
   }
 
   @Override
