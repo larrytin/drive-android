@@ -48,11 +48,16 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
 
   private final String[] termNames = {Constant.LABEL_TERM_SEMESTER0, Constant.LABEL_TERM_SEMESTER1};
   // 活动topic
-  private final String[] topic = new String[] {
+  private String[] topic;
+  // 活动topic上学期
+  private final String[] topic_1 = new String[] {
       "我有一个幼儿园", "找找,藏藏", "飘飘,跳跳,滚滚", "我会……", "小小手", "好吃哎", "汽车嘀嘀嘀", "快乐红色", "暖暖的……"};
+  // 活动topic下学期
+  private final String[] topic_2 = new String[] {
+      "我想长大", "亲亲热热一家人", "小动物来了", "绿绿的……", "快乐的声音", "大大小小", "从头玩到脚", "特别喜欢你", "清凉一夏"};
   // 当前选中状态
   private String currentTerm = Constant.LABEL_TERM_SEMESTER0;
-  private String currenTopic = topic[0];
+  private String currenTopic = "";
   private HandlerRegistration postHandler;
   private HandlerRegistration refreshHandler;
 
@@ -296,6 +301,11 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       TextView child = (TextView) this.ll_care_classes_term.getChildAt(i);
       child.setSelected(false);
       if (termNames[i].equals(this.currentTerm)) {
+        if (i == 0) {
+          topic = topic_1;
+        } else if (i == 1) {
+          topic = topic_2;
+        }
         child.setSelected(true);
         this.saveHistory(Constant.TERM, this.currentTerm);
       }
@@ -309,6 +319,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     int len = this.ll_care_classes_topic.getChildCount();
     for (int i = 0; i < len; i++) {
       TextView child = (TextView) this.ll_care_classes_topic.getChildAt(i);
+      child.setText(this.topic[i]);
       setSelect(child, false);
       if (this.currenTopic.equals(child.getText().toString())) {
         setSelect(child, true);
@@ -352,6 +363,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
 
     this.ll_care_classes_topic = (LinearLayout) findViewById(R.id.ll_care_classes_topic);
     int len_ll_care_classes_topic = this.ll_care_classes_topic.getChildCount();
+    topic = topic_1;
     for (int i = 0; i < len_ll_care_classes_topic; i++) {
       TextView topic = (TextView) this.ll_care_classes_topic.getChildAt(i);
       topic.setText(this.topic[i]);
@@ -402,11 +414,18 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       TextView child = (TextView) this.ll_care_classes_term.getChildAt(i);
       child.setSelected(false);
       if (id == child.getId()) {
+        if (i == 0) {
+          topic = topic_1;
+        } else if (i == 1) {
+          topic = topic_2;
+        }
         child.setSelected(true);
         this.currentTerm = termNames[i];
         this.saveHistory(Constant.TERM, this.currentTerm);
       }
     }
+    currenTopic = "";
+    echoTopic();
     this.sendQueryMessage(null);
   }
 

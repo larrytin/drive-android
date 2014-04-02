@@ -193,7 +193,7 @@
     <dimen name="coomon_result_flag_marginTop">20dp</dimen><!-- 查询结果图片高度 -->
         
     <!-- CareClassesActivity 托班 720p -->
-    <dimen name="act_care_term_marginLeft">555dp</dimen><!-- 托班学期左边距 -->
+    <dimen name="act_care_term_marginLeft">549dp</dimen><!-- 托班学期左边距 -->
     <dimen name="act_care_term_marginTop">34dp</dimen><!-- 托班学期上边距 -->
     <dimen name="act_care_topic_marginLeft">233dp</dimen><!-- 托班主题左边距 -->
     <dimen name="act_care_topic_marginTop">90dp</dimen><!-- 托班主题上边距 -->
