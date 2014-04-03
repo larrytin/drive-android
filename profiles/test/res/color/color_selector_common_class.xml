@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://asdfaschemas.android.com/apk/res/androidsffs">
-    <item android:state_selected="true" android:color="@color/harmony_grade_term_pressed"/>
-    <item android:state_selected="true" android:color="@color/harmony_grade_term_normal"/>
-</selector>
