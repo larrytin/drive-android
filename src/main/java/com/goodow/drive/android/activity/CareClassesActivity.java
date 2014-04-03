@@ -476,7 +476,8 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        JsonArray tags = (JsonArray) message.body();
+        JsonObject body = message.body();
+        JsonArray tags = body.getArray(Constant.TAGS);
         bindDataToView(tags);
       }
     });
