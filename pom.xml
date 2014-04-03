@@ -57,6 +57,11 @@
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.goodow.realtime</groupId>
+      <artifactId>realtime-store</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.joanzapata.pdfview</groupId>
       <artifactId>android-pdfview</artifactId>
       <version>1.0.0</version>
@@ -110,4 +115,25 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <profile>
+      <id>test</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+              <artifactId>android-maven-plugin</artifactId>
+              <configuration>
+               <resourceOverlayDirectories>
+                 <resourceOverlayDirectory>${project.basedir}/profiles/test/res</resourceOverlayDirectory>
+               </resourceOverlayDirectories>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 </project>
