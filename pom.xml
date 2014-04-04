@@ -34,7 +34,7 @@
     </repository>
     <repository>
       <id>goodow-thirdparty</id>
-      <url>https://raw.github.com/goodow/maven/master/repositories/thirdparty/</url>
+      <url>https://raw.githubusercontent.com/goodow/maven/master/repositories/thirdparty/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
@@ -127,9 +127,9 @@
               <groupId>com.jayway.maven.plugins.android.generation2</groupId>
               <artifactId>android-maven-plugin</artifactId>
               <configuration>
-               <resourceOverlayDirectories>
-                 <resourceOverlayDirectory>${project.basedir}/profiles/test/res</resourceOverlayDirectory>
-               </resourceOverlayDirectories>
+                <resourceOverlayDirectories>
+                  <resourceOverlayDirectory>${project.basedir}/profiles/test/res</resourceOverlayDirectory>
+                </resourceOverlayDirectories>
               </configuration>
             </plugin>
           </plugins>
