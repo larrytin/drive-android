@@ -51,7 +51,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   private String[] topic;
   // 活动topic上学期
   private final String[] topic_1 = new String[] {
-      "我有一个幼儿园", "找找,藏藏", "飘飘,跳跳,滚滚", "我会……", "小小手", "好吃哎", "汽车嘀嘀嘀", "快乐红色", "暖暖的……"};
+      "我有一个幼儿园", "找找.藏藏", "飘飘,跳跳,滚滚", "我会……", "小小手", "好吃哎", "汽车嘀嘀嘀", "快乐红色", "暖暖的……"};
   // 活动topic下学期
   private final String[] topic_2 = new String[] {
       "我想长大", "亲亲热热一家人", "小动物来了", "绿绿的……", "快乐的声音", "大大小小", "从头玩到脚", "特别喜欢你", "清凉一夏"};
