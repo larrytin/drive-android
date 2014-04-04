@@ -164,7 +164,8 @@ public class MuPDFActivity extends BaseActivity {
     zoomOut.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (scale < 1.0f) {
+        // 解决首次进入无法放大
+        if (scale == 2.5 || scale < 1.0f) {
           scale = 1.0f;
         }
         if (scale < 1.6f) {
