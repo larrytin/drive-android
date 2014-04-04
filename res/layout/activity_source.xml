@@ -5,9 +5,9 @@
     android:background="@drawable/source_bg" >
 
     <!--  状态栏  -->
-    <!-- <com.goodow.drive.android.view.StatusView
+    <com.goodow.drive.android.view.StatusView
 	style="@style/status" 
-    /> -->
+    />
 
     <!-- 提示语 -->
     <TextView

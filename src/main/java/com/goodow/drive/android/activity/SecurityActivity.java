@@ -35,14 +35,14 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
   public void onClick(View v) {
     switch (v.getId()) {
     // 后退 收藏 锁屏
-      case R.id.iv_act_smart_back:
+      case R.id.iv_act_security_back:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
-      case R.id.iv_act_smart_coll:
+      case R.id.iv_act_security_coll:
         this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
             Constant.KEY_REDIRECTTO, "favorite"), null);
         break;
-      case R.id.iv_act_smart_loc:
+      case R.id.iv_act_security_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;

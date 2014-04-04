@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -71,6 +72,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
         ResultAdapterHolder holder = new ResultAdapterHolder();
         holder.iv_common_result = (ImageView) convertView.findViewById(R.id.iv_common_result);
         holder.tv_common_result = (TextView) convertView.findViewById(R.id.tv_common_result);
+        holder.tv_common_result.setTextColor(Color.WHITE);
         convertView.setTag(holder);
       }
       final JsonObject attachment = attachments.getObject(position);

@@ -5,7 +5,7 @@
     android:background="@drawable/security_bg" >
 
     <!-- 状态栏 -->
-    <!-- <com.goodow.drive.android.view.StatusView style="@style/status" /> -->
+    <com.goodow.drive.android.view.StatusView style="@style/status" />
     
     <!-- 后退  收藏  锁屏 -->
     <RelativeLayout
