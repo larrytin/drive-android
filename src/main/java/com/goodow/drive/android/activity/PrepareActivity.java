@@ -177,7 +177,6 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
         break;
       case R.id.iv_act_prepare_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
       // 学期的选中事件
       case R.id.ftv_act_prepare_top:

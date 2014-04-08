@@ -125,7 +125,6 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
         break;
       case R.id.iv_act_ebook_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
       // 查询结果翻页
       case R.id.rl_act_ebook_result_pre:

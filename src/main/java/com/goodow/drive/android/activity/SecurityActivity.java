@@ -44,7 +44,6 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
         break;
       case R.id.iv_act_security_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
     }
   }

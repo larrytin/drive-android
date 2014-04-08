@@ -304,7 +304,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         break;
       case R.id.iv_act_source_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
       case R.id.iv_act_source_catagory0_all:
       case R.id.iv_act_source_catagory0_text:

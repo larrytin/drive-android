@@ -35,8 +35,9 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
@@ -229,11 +230,14 @@ public class SettingsRegistry {
               mWindowManager.removeView(mView);
               mLayoutParams.type = LayoutParams.TYPE_PRIORITY_PHONE;
               mWindowManager.addView(mView, mLayoutParams);
-              mView.setOnClickListener(new OnClickListener() {
+              mView.setOnTouchListener(new OnTouchListener() {
                 @Override
-                public void onClick(View v) {
-                  bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness",
-                      1), null);
+                public boolean onTouch(View v, MotionEvent event) {
+                  if (MotionEvent.ACTION_DOWN == event.getAction()) {
+                    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set(
+                        "brightness", 1), null);
+                  }
+                  return true;
                 }
               });
             }

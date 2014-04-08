@@ -124,7 +124,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
         break;
       case R.id.iv_act_smart_loc:
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
-        Toast.makeText(this, "黑屏", Toast.LENGTH_LONG).show();
         break;
       // 查询结果翻页
       case R.id.rl_act_smart_result_pre:
