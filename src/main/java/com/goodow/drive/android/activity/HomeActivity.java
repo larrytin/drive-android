@@ -12,7 +12,6 @@ import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.channel.State;
-import com.goodow.realtime.channel.impl.ReconnectBus;
 import com.goodow.realtime.core.Handler;
 import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.core.Platform;
@@ -43,7 +42,6 @@ public class HomeActivity extends BaseActivity {
   private static final String DATABASENAME = "keruixing";
   private static boolean registried;
   private HandlerRegistration openHandlerReg;
-  private final ReconnectBus connectBus = BusProvider.getConnectBus();
   private HandlerRegistration netWorkHandlerReg;
   private int schedulePeriodic;
   public static final String AUTH = "AuthImformation";
@@ -234,7 +232,7 @@ public class HomeActivity extends BaseActivity {
           // 由无网络变为有网络(此处不分3G,WIFI)
         } else if (flag == -1) {
           // 重连
-          connectBus.reconnect();
+          BusProvider.reconnect();
           flag = 0;
           if (openAuth) {
             unConnect = false;
@@ -359,51 +357,49 @@ public class HomeActivity extends BaseActivity {
   }
 
   private void sendAnalyticsMessage() {
-    if (State.OPEN == connectBus.getReadyState()) {
+    if (State.OPEN == bus.getReadyState()) {
       // 请求将播放信息统计发送到服务器
-      connectBus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
+      bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
     } else {
-      Log.w("EventBus Status", connectBus.getReadyState().name());
-      connectBus.reconnect();
+      Log.w("EventBus Status", bus.getReadyState().name());
+      BusProvider.reconnect();
       // 记录注册状态，如果已注册，不应重复注册
       if (registeredOnOpen) {
         return;
       }
       registeredOnOpen = true;// 注册
       // 监听网络状况
-      openHandlerReg =
-          connectBus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
-            @Override
-            public void handle(Message<JsonObject> message) {
-              connectBus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
-              registeredOnOpen = false;
-              openHandlerReg.unregisterHandler();
-            }
-          });
+      openHandlerReg = bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
+        @Override
+        public void handle(Message<JsonObject> message) {
+          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
+          registeredOnOpen = false;
+          openHandlerReg.unregisterHandler();
+        }
+      });
     }
   }
 
   private void sendAuth() {
-    if (State.OPEN == connectBus.getReadyState()) {
+    if (State.OPEN == bus.getReadyState()) {
       // 校验
-      connectBus.send(Bus.LOCAL + BusProvider.SID + "auth.request", null, null);
+      bus.send(Bus.LOCAL + BusProvider.SID + "auth.request", null, null);
     } else {
-      connectBus.reconnect();
+      BusProvider.reconnect();
       // 记录注册状态，如果已注册，不应重复注册
       if (registeredOnOpen1) {
         return;
       }
       registeredOnOpen1 = true;// 注册
       // 监听网络状况
-      openHandlerReg1 =
-          connectBus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
-            @Override
-            public void handle(Message<JsonObject> message) {
-              connectBus.send(Bus.LOCAL + BusProvider.SID + "auth.request", null, null);
-              registeredOnOpen1 = false;
-              openHandlerReg1.unregisterHandler();
-            }
-          });
+      openHandlerReg1 = bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
+        @Override
+        public void handle(Message<JsonObject> message) {
+          bus.send(Bus.LOCAL + BusProvider.SID + "auth.request", null, null);
+          registeredOnOpen1 = false;
+          openHandlerReg1.unregisterHandler();
+        }
+      });
     }
   }
 

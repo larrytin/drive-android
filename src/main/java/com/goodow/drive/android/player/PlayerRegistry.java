@@ -102,7 +102,7 @@ public class PlayerRegistry {
         ctx.startActivity(intent);
       }
     });
-    BusProvider.getConnectBus().registerHandler(Constant.ADDR_PLAYER + ".analytics.request",
+    bus.registerHandler(Constant.ADDR_PLAYER + ".analytics.request",
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
@@ -135,42 +135,41 @@ public class PlayerRegistry {
             msg.set("sid", BusProvider.SID.split("[.]")[0]);
             msg.set("analytics", analytics);
             // 发送统计信息到服务器
-            BusProvider.getConnectBus().send("sid.drive.player.analytics", msg,
-                new MessageHandler<JsonObject>() {
-                  @Override
-                  public void handle(Message<JsonObject> message) {
-                    JsonObject msg = message.body();
-                    // 发送成功后，清除记录
-                    if (!("ok".equals(msg.getString("status")) && msg.has("ack"))) {
-                      return;
-                    }
-                    // 得到返回的时间戳
-                    long lastTimestamp = (long) msg.getNumber("ack");
-                    Map<String, Set<String>> fileOpenInfo =
-                        (Map<String, Set<String>>) usagePreferences.getAll();
-                    // 删除比返回时间戳小的记录
-                    for (Map.Entry<String, Set<String>> entry : fileOpenInfo.entrySet()) {
-                      String attachmentKey = entry.getKey();
-                      Set<String> timestampValue = entry.getValue();
-                      Set<String> tmpSet = new HashSet<String>();
-                      for (String timestamp : timestampValue) {
-                        if (Long.parseLong(timestamp) <= lastTimestamp) {
-                          tmpSet.add(timestamp);
-                        }
-                      }
-                      if (!timestampValue.removeAll(tmpSet)) {
-                        continue;
-                      }
-                      if (timestampValue.isEmpty()) {
-                        usagePreferences.edit().remove(attachmentKey).commit();
-                      } else {
-                        Editor editor = usagePreferences.edit();
-                        editor.remove(attachmentKey).commit();
-                        editor.putStringSet(attachmentKey, timestampValue).commit();
-                      }
+            bus.send("sid.drive.player.analytics", msg, new MessageHandler<JsonObject>() {
+              @Override
+              public void handle(Message<JsonObject> message) {
+                JsonObject msg = message.body();
+                // 发送成功后，清除记录
+                if (!("ok".equals(msg.getString("status")) && msg.has("ack"))) {
+                  return;
+                }
+                // 得到返回的时间戳
+                long lastTimestamp = (long) msg.getNumber("ack");
+                Map<String, Set<String>> fileOpenInfo =
+                    (Map<String, Set<String>>) usagePreferences.getAll();
+                // 删除比返回时间戳小的记录
+                for (Map.Entry<String, Set<String>> entry : fileOpenInfo.entrySet()) {
+                  String attachmentKey = entry.getKey();
+                  Set<String> timestampValue = entry.getValue();
+                  Set<String> tmpSet = new HashSet<String>();
+                  for (String timestamp : timestampValue) {
+                    if (Long.parseLong(timestamp) <= lastTimestamp) {
+                      tmpSet.add(timestamp);
                     }
                   }
-                });
+                  if (!timestampValue.removeAll(tmpSet)) {
+                    continue;
+                  }
+                  if (timestampValue.isEmpty()) {
+                    usagePreferences.edit().remove(attachmentKey).commit();
+                  } else {
+                    Editor editor = usagePreferences.edit();
+                    editor.remove(attachmentKey).commit();
+                    editor.putStringSet(attachmentKey, timestampValue).commit();
+                  }
+                }
+              }
+            });
           }
         });
   }
