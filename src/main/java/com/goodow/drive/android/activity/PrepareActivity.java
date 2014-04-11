@@ -2,6 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.data.DBDataProvider;
 import com.goodow.drive.android.view.PrepareResultView;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -11,15 +12,21 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,40 +74,42 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
       } else {
         view = new PrepareResultView(PrepareActivity.this);
       }
-      JsonObject object = attachments.getObject(position);
-      final String title = object.getString(Constant.KEY_TAG);
-      JsonArray attachments = object.getArray(Constant.KEY_ATTACHMENTS);
-      for (int i = 0; i < attachments.length(); i++) {
-        final String filePath = attachments.getObject(i).getString(Constant.KEY_URL);
-        if (filePath.endsWith(".swf")) {
-          view.setLeftEyeEnable(true);
-          view.setOnLeftEyeClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", filePath)
-                  .set("play", 1), null);
-            }
-          });
+      if (parent.getChildCount() == position) {
+        view.setLeftEyeEnable(false);
+        view.setRightEyeEnable(false);
+        JsonObject tag = attachments.getObject(position);
+        String title = tag.getString(Constant.KEY_TAG);
+        JsonArray array = tag.getArray(Constant.KEY_ATTACHMENTS);
+        if (title.matches("^\\d{4}.*")) {
+          view.setText(title.substring(4, title.length()));
         } else {
-          view.setLeftEyeEnable(false);
+          view.setText(title);
         }
-        if (filePath.endsWith(".pdf")) {
-          view.setRightEyeEnable(true);
-          view.setOnRightEyeClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", filePath)
-                  .set("play", 1), null);
-            }
-          });
-        } else {
-          view.setRightEyeEnable(false);
+        for (int i = 0; i < array.length(); i++) {
+          JsonObject object = array.getObject(i);
+          final String filePath = object.getString(Constant.KEY_URL);
+          if (filePath.endsWith(".pdf")) {
+            view.setLeftEyeEnable(true);
+            view.setOnLeftEyeClickListener(new OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject()
+                    .set("path", filePath).set("play", 1), null);
+              }
+            });
+          }
+          if (filePath.endsWith(".swf")) {
+            view.setRightEyeEnable(true);
+            view.setOnRightEyeClickListener(new OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject()
+                    .set("path", filePath).set("play", 1), null);
+              }
+            });
+          }
         }
-      }
-      if (title.matches("^\\d{4}.*")) {
-        view.setText(title.substring(4, title.length()));
       } else {
-        view.setText(title);
       }
       return view;
     }
@@ -163,6 +172,10 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
   private int totalAttachmentNum;// 结果总数
+
+  private ExecutorService newCachedThreadPool;
+
+  private TreeMap<String, JsonArray> treeMap;
 
   @Override
   public void onClick(View v) {
@@ -228,6 +241,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
     this.setContentView(R.layout.activity_prepare);
     this.readHistoryData();
     this.initView();
+    // newCachedThreadPool = Executors.newCachedThreadPool();
     Bundle extras = this.getIntent().getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
@@ -302,7 +316,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
           } else if (page.has("move")) {
             currentPageNum = currentPageNum + (int) page.getNumber("move");
           }
-          sendQueryMessage(null);
+          bindDataToView();
         }
       }
     });
@@ -317,9 +331,61 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   }
 
   /**
+   * 异步查询文件用
+   * 
+   * @param view
+   * @param title
+   */
+  private void asyncQueryFiles(final PrepareResultView view, final String title) {
+    JsonObject msg = Json.createObject();
+    JsonArray tags =
+        Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(currentTerm).push(
+            currenTopic).push(title);
+    msg.set(Constant.KEY_TAGS, tags);
+    new AsyncTask<JsonObject, Void, JsonObject>() {
+      @Override
+      protected JsonObject doInBackground(JsonObject... messages) {
+        // long start = System.currentTimeMillis();
+        JsonObject object = DBDataProvider.queryFilesByTagName(PrepareActivity.this, messages[0]);
+        // long end = System.currentTimeMillis() - start;
+        // System.out.println("end:" + end);
+        return object;
+      }
+
+      @Override
+      protected void onPostExecute(JsonObject result) {
+        JsonArray attachments = result.getArray(Constant.KEY_ATTACHMENTS);
+        for (int i = 0; i < attachments.length(); i++) {
+          final String filePath = attachments.getObject(i).getString(Constant.KEY_URL);
+          if (filePath.endsWith(".pdf")) {
+            view.setLeftEyeEnable(true);
+            view.setOnLeftEyeClickListener(new OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject()
+                    .set("path", filePath).set("play", 1), null);
+              }
+            });
+          }
+          if (filePath.endsWith(".swf")) {
+            view.setRightEyeEnable(true);
+            view.setOnRightEyeClickListener(new OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject()
+                    .set("path", filePath).set("play", 1), null);
+              }
+            });
+          }
+        }
+      };
+    }.executeOnExecutor(newCachedThreadPool, msg);
+  }
+
+  /**
    * 把查询完成的结果绑定到结果View
    */
-  private void bindDataToView(JsonArray tags) {
+  private void bindDataToView() {
     onPageSelected(currentPageNum);
     pb_act_result_progress.setVisibility(View.INVISIBLE);
     if (this.currentPageNum == 0) {
@@ -335,7 +401,21 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
     } else {
       this.rl_act_prepare_result_next.setVisibility(View.INVISIBLE);
     }
-    resultAdapter.reset(tags);
+    JsonArray jsonArray = Json.createArray();
+    Set<Entry<String, JsonArray>> entrySet = treeMap.entrySet();
+    Iterator<Entry<String, JsonArray>> iterator = entrySet.iterator();
+    for (int i = 0; i < numPerPage * currentPageNum + numPerPage; ++i) {
+      if (iterator.hasNext()) {
+        Entry<String, JsonArray> next = iterator.next();
+        if (i >= numPerPage * currentPageNum) {
+          JsonObject object = Json.createObject();
+          object.set(Constant.KEY_TAG, next.getKey());
+          object.set(Constant.KEY_ATTACHMENTS, next.getValue());
+          jsonArray.push(object);
+        }
+      }
+    }
+    resultAdapter.reset(jsonArray);
     resultAdapter.notifyDataSetChanged();
   }
 
@@ -380,6 +460,39 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
       tags.push(this.currenTopic);
     }
     return tags;
+  }
+
+  private void combineTags(JsonArray tags) {
+    // JsonObject temp =
+    // Json.createObject().set(Constant.KEY_TAG, "★不要等一等").set(Constant.KEY_URL,
+    // "/mnt/sdcard/goodow/drive/入学准备/语言/9005丹丹和多多/丹丹和多多-dh.pdf");
+    // tags.push(temp);
+    // JsonObject temp2 =
+    // Json.createObject().set(Constant.KEY_TAG, "★不要等一等").set(Constant.KEY_URL,
+    // "/mnt/sdcard/goodow/drive/入学准备/语言/9005丹丹和多多/丹丹和多多-dh.swf");
+    // tags.push(temp2);
+    treeMap = new TreeMap<String, JsonArray>(new Comparator<String>() {
+      @Override
+      public int compare(String str1, String str2) {
+        if (str1.equals(str2)) {
+          return 0;
+        }
+        if (str1.startsWith("★")) {
+          return -1;
+        } else {
+          return 1;
+        }
+      }
+    });
+    for (int i = 0; i < tags.length(); i++) {
+      JsonObject object = tags.getObject(i);
+      String key = object.getString(Constant.KEY_TAG);
+      if (treeMap.containsKey(key)) {
+        treeMap.get(key).push(object);
+      } else {
+        treeMap.put(key, Json.createArray().push(object));
+      }
+    }
   }
 
   /**
@@ -551,49 +664,6 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
     this.sendQueryMessage(null);
   }
 
-  private void queryFiles(final PrepareResultView view, final String title) {
-    JsonObject msg = Json.createObject();
-    JsonArray tags =
-        Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(currentTerm).push(
-            currenTopic).push(title);
-    msg.set(Constant.KEY_TAGS, tags);
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
-            for (int i = 0; i < attachments.length(); i++) {
-              final String filePath = attachments.getObject(i).getString(Constant.KEY_URL);
-              if (filePath.endsWith(".swf")) {
-                view.setLeftEyeEnable(true);
-                view.setOnLeftEyeClickListener(new OnClickListener() {
-                  @Override
-                  public void onClick(View v) {
-                    bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-                        filePath).set("play", 1), null);
-                  }
-                });
-              } else {
-                view.setLeftEyeEnable(false);
-              }
-              if (filePath.endsWith(".pdf")) {
-                view.setRightEyeEnable(true);
-                view.setOnRightEyeClickListener(new OnClickListener() {
-                  @Override
-                  public void onClick(View v) {
-                    bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
-                        filePath).set("play", 1), null);
-                  }
-                });
-              } else {
-                view.setRightEyeEnable(false);
-              }
-            }
-          }
-        });
-  }
-
   /**
    * 查询历史数据
    */
@@ -621,72 +691,25 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
    * 构建查询的bus消息,get动作处理
    */
   private void sendQueryMessage(JsonArray tags) {
-    // JsonObject msg = Json.createObject();
-    // msg.set(Constant.KEY_FROM, numPerPage * currentPageNum);
-    // msg.set(Constant.KEY_SIZE, numPerPage);
-    // if (tags != null) {
-    // msg.set(Constant.KEY_TAGS, tags);
-    // } else {
-    // msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(
-    // this.currentTerm).push(this.currenTopic));
-    // }
-    // pb_act_result_progress.setVisibility(View.VISIBLE);
-    // bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
-    // @Override
-    // public void handle(Message<JsonObject> message) {
-    // JsonObject body = message.body();
-    // totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
-    // JsonArray tags = body.getArray(Constant.TAGS);
-    // bindDataToView(tags);
-    // }
-    // });
     JsonObject msg = Json.createObject();
-    msg.set(Constant.KEY_FROM, numPerPage * currentPageNum);
-    msg.set(Constant.KEY_SIZE, numPerPage);
     if (tags != null) {
       msg.set(Constant.KEY_TAGS, tags);
     } else {
       msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(
           this.currentTerm).push(this.currenTopic));
     }
-    final String curTerm = new String(this.currentTerm);
-    final String curTopc = new String(this.currenTopic);
     pb_act_result_progress.setVisibility(View.VISIBLE);
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        final JsonObject result = Json.createObject();
-        JsonObject body = message.body(); // {"count":2.0,"tags":["上课该怎么做","你喜欢谁"]}
-        result.set(Constant.KEY_COUNT, body.getNumber(Constant.KEY_COUNT));
-        final JsonArray jsonArray = body.getArray(Constant.KEY_TAGS);// tags
-        final JsonArray tagsArray = Json.createArray();
-        final int length = jsonArray.length();
-        if (length > 0) {
-          final List arrList = new ArrayList<Integer>();
-          for (int i = 0; i < length; i++) {
-            bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, Json.createObject().set(
-                Constant.KEY_TAGS,
-                Json.createArray().push(Constant.DATAREGISTRY_TYPE_PREPARE).push(currentTerm).push(
-                    currenTopic).push(jsonArray.getString(i))), new MessageHandler<JsonObject>() {
-              @Override
-              public void handle(Message<JsonObject> message) {
-                arrList.add(0);
-                JsonObject body = message.body();
-                body.set(Constant.KEY_TAG, jsonArray.getString(arrList.size() - 1));
-                System.out.println(arrList.size() - 1);
-                tagsArray.push(body);
-                if (tagsArray.length() == length) {
-                  result.set(Constant.KEY_TAGS, tagsArray);
-                  System.out.println(tagsArray);
-                  totalAttachmentNum = (int) result.getNumber(Constant.KEY_COUNT);
-                  bindDataToView(tagsArray);
-                }
-              }
-            });
+    bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN_ATTACHMENTS, msg,
+        new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
+            JsonArray tags = body.getArray(Constant.TAGS);
+            combineTags(tags);
+            bindDataToView();
           }
-        }
-      }
-    });
+        });
   }
 
   private void topicChooser(int id) {

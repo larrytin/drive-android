@@ -341,6 +341,38 @@ public class DBOperator {
   }
 
   /**
+   * 用于异步查询tag及其对应的文件
+   * 
+   * @param context
+   * @param sql
+   * @param params
+   * @return
+   */
+  public static JsonArray readFilesByTagNameWithSql(Context context, String sql, String[] params) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    JsonArray files = Json.createArray();
+    try {
+      db.setLockingEnabled(false);
+      cursor = db.rawQuery(sql, params);
+      while (cursor.moveToNext()) {
+        JsonObject file = Json.createObject();
+        file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
+        file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
+        files.push(file);
+      }
+    } catch (Exception e) {
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return files;
+  }
+
+  /**
    * 查询文件总数量
    * 
    * @param context
@@ -553,13 +585,38 @@ public class DBOperator {
   }
 
   /**
-   * 根据提供的若干标签查询子标签
+   * 根据提供的若干标签查询子标签及其文件
    * 
    * @param context
-   * @param tags
+   * @param sql
+   * @param params
    * @return
-   * @status tested
    */
+  public static JsonArray readSubTagsAndAttachmentsBySql(Context context, String sql,
+      String[] params) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursor = null;
+    JsonArray result = Json.createArray();
+    try {
+      cursor = db.rawQuery(sql, params);
+      while (cursor.moveToNext()) {
+        JsonObject file = Json.createObject();
+        file.set(Constant.KEY_ID, cursor.getString(cursor.getColumnIndex("UUID")));
+        file.set(Constant.KEY_URL, cursor.getString(cursor.getColumnIndex("FILEPATH")));
+        file.set(Constant.KEY_TAG, cursor.getString(cursor.getColumnIndex("TAG")));
+        result.push(file);
+      }
+    } catch (Exception e) {
+    } finally {
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
+    }
+    return result;
+  }
+
   public static JsonArray readSubTagsBySql(Context context, String sql, String[] params) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();

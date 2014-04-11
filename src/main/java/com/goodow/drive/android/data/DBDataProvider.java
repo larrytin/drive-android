@@ -157,6 +157,27 @@ public class DBDataProvider {
     return DBOperator.readFilesByIds(context, Json.createArray().push(id)).getObject(0);
   }
 
+  public static JsonObject queryFilesByTagName(Context context, JsonObject key) {
+    JsonArray tags = key.getArray(Constant.KEY_TAGS);
+    StringBuilder sqlBuilder = new StringBuilder();
+    sqlBuilder.append("SELECT F.UUID AS UUID,F.FILEPATH AS FILEPATH FROM T_FILE F,(");
+    int len_tags = tags.length();
+    String[] params = new String[len_tags];
+    for (int i = 0; i < len_tags; i++) {
+      String tag = tags.getString(i);
+      sqlBuilder.append("SELECT KEY FROM T_RELATION WHERE TAG = ? AND TYPE = 'attachment' ");
+      if (i != len_tags - 1) {
+        sqlBuilder.append("INTERSECT ");
+      }
+      params[i] = tag;
+    }
+    sqlBuilder.append(") T WHERE F.UUID = T.KEY");
+    JsonArray jsonArray =
+        DBOperator.readFilesByTagNameWithSql(context, sqlBuilder.toString(), params);
+    JsonObject result = Json.createObject().set(Constant.KEY_ATTACHMENTS, jsonArray);
+    return result;
+  }
+
   /**
    * 查询一个收藏映射关系的信息
    * 
@@ -170,6 +191,47 @@ public class DBDataProvider {
       return DBOperator.readStarRelation(context, Json.createArray().push(star)).getObject(0);
     }
     return null;
+  }
+
+  /**
+   * 查询N个标签关系映射下的标签及其对应的文件,入学准备用
+   * 
+   * @param context
+   * @param key
+   * @return
+   */
+  public static JsonObject querySubTagsAndAttachments(Context context, JsonObject key) {
+    JsonArray tags = key.getArray(Constant.KEY_TAGS);
+    StringBuilder sqlBuilder = new StringBuilder();
+    sqlBuilder
+        .append("SELECT F.UUID AS UUID,F.FILEPATH AS FILEPATH,R.TAG AS TAG FROM T_FILE F,(SELECT R.KEY,T.* FROM T_RELATION R,(");
+    int len_tags = tags.length();
+    String[] params = new String[2 * len_tags];
+    for (int i = 0; i < len_tags; i++) {
+      String tag = tags.getString(i);
+      sqlBuilder.append("SELECT KEY AS TAG FROM T_RELATION WHERE TAG = ? AND TYPE = 'tag' ");
+      if (i != len_tags - 1) {
+        sqlBuilder.append("INTERSECT ");
+      }
+      params[i] = tag;
+    }
+    sqlBuilder.append(") T,(");
+    for (int i = 0; i < len_tags; i++) {
+      String tag = tags.getString(i);
+      sqlBuilder.append("SELECT KEY FROM T_RELATION WHERE TAG = ? AND TYPE = 'attachment' ");
+      if (i != len_tags - 1) {
+        sqlBuilder.append("INTERSECT ");
+      }
+      params[i + len_tags] = tag;
+    }
+    sqlBuilder
+        .append(") C WHERE R.TAG = T.TAG AND R.TYPE = 'attachment' AND R.KEY = C.KEY) R WHERE F.UUID = R.KEY");
+
+    JsonArray noOrderJsonArray =
+        DBOperator.readSubTagsAndAttachmentsBySql(context, sqlBuilder.toString(), params);
+    JsonObject result = Json.createObject().set(Constant.KEY_COUNT, noOrderJsonArray.length());
+    result.set(Constant.KEY_TAGS, noOrderJsonArray);
+    return result;
   }
 
   /**

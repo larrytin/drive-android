@@ -17,6 +17,7 @@ public interface Constant {
   String ADDR_DB = BusProvider.SID + "db";
   String ADDR_TAG = BusProvider.SID + "tag";
   String ADDR_TAG_CHILDREN = ADDR_TAG + ".children";
+  String ADDR_TAG_CHILDREN_ATTACHMENTS = ADDR_TAG_CHILDREN + ".attachments";
   String ADDR_TAG_STAR = BusProvider.SID + "star";
   String ADDR_TAG_STAR_SEARCH = ADDR_TAG_STAR + ".search";
   String ADDR_TAG_ATTACHMENT = BusProvider.SID + "attachment";

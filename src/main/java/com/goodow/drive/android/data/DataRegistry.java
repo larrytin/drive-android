@@ -9,6 +9,7 @@ import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 public class DataRegistry {
 
@@ -53,11 +54,39 @@ public class DataRegistry {
         }
       }
     });
+    // 查询同时属于N标签的子标签及其文件
+    bus.registerHandler(Constant.ADDR_TAG_CHILDREN_ATTACHMENTS, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(final Message<JsonObject> message) {
+        new AsyncTask<Message<?>, Void, JsonObject>() {
+          @Override
+          protected JsonObject doInBackground(Message<?>... messages) {
+            return DBDataProvider.querySubTagsAndAttachments(context, (JsonObject) messages[0]
+                .body());
+          }
+
+          @Override
+          protected void onPostExecute(JsonObject result) {
+            message.reply(result);// 分页查询接口
+          };
+        }.execute(message);
+      }
+    });
     // 查询同时属于N标签的子标签
     bus.registerHandler(Constant.ADDR_TAG_CHILDREN, new MessageHandler<JsonObject>() {
       @Override
-      public void handle(Message<JsonObject> message) {
-        message.reply(DBDataProvider.querySubTagsInfoBySql(context, message.body()));// 分页查询接口
+      public void handle(final Message<JsonObject> message) {
+        new AsyncTask<Message<?>, Void, JsonObject>() {
+          @Override
+          protected JsonObject doInBackground(Message<?>... messages) {
+            return DBDataProvider.querySubTagsInfoBySql(context, (JsonObject) messages[0].body());
+          }
+
+          @Override
+          protected void onPostExecute(JsonObject result) {
+            message.reply(result);// 分页查询接口
+          };
+        }.execute(message);
       }
     });
     // 收藏的增删改查
@@ -163,9 +192,18 @@ public class DataRegistry {
     // 文件的搜索
     bus.registerHandler(Constant.ADDR_TAG_ATTACHMENT_SEARCH, new MessageHandler<JsonObject>() {
       @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject key = message.body();
-        message.reply(DBDataProvider.searchFilesByKey(context, key));
+      public void handle(final Message<JsonObject> message) {
+        new AsyncTask<Message<?>, Void, JsonObject>() {
+          @Override
+          protected JsonObject doInBackground(Message<?>... messages) {
+            return DBDataProvider.searchFilesByKey(context, (JsonObject) messages[0].body());
+          }
+
+          @Override
+          protected void onPostExecute(JsonObject result) {
+            message.reply(result);// 分页查询接口
+          };
+        }.execute(message);
       }
     });
   }

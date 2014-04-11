@@ -71,7 +71,7 @@ public class PrepareResultView extends RelativeLayout {
   public void setRightEyeEnable(boolean bool) {
     if (bool) {
       iv_prepare_right_eye.setClickable(true);
-      iv_prepare_right_eye.setImageResource(R.drawable.prepare_result_word);
+      iv_prepare_right_eye.setImageResource(R.drawable.prepare_result_ebook);
     } else {
       iv_prepare_right_eye.setClickable(false);
       iv_prepare_right_eye.setImageResource(R.drawable.prepare_result_righteye);
