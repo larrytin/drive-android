@@ -435,13 +435,13 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     if (attachments == null || attachments.length() == 0) {
       this.tv_act_source_search_result_tip.setVisibility(View.VISIBLE);
       this.tv_act_source_tip.setText(Html.fromHtml(this.getString(R.string.string_source_tip1)));
-      return;
+    } else {
+      this.iv_act_source_result_pre.setClickable(true);
+      this.iv_act_source_result_next.setClickable(true);
+      this.gr_act_source_result.setVisibility(View.VISIBLE);
+      this.tv_act_source_search_result_tip.setVisibility(View.INVISIBLE);
+      this.tv_act_source_tip.setText(null);
     }
-    this.iv_act_source_result_pre.setClickable(true);
-    this.iv_act_source_result_next.setClickable(true);
-    this.gr_act_source_result.setVisibility(View.VISIBLE);
-    this.tv_act_source_search_result_tip.setVisibility(View.INVISIBLE);
-    this.tv_act_source_tip.setText(null);
     this.resultAdapter.reset(attachments);
     this.resultAdapter.notifyDataSetChanged();
 
@@ -612,10 +612,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private void onSearchButtonClick(int id) {
     this.totalAttachmentNum = 0;
     this.currentPageNum = 0;
-    if (this.currentContentType == null
-        && this.subTags.size() == 0
-        && (this.et_act_source_tags.getText().toString() == null || this.et_act_source_tags
-            .getText().toString().trim().equals(""))) {
+    if (this.currentContentType == null || this.et_act_source_tags.getText().toString() == null) {
       Toast.makeText(this, this.getString(R.string.string_source_tip0), Toast.LENGTH_SHORT).show();
     } else {
       this.pb_act_source_search_progress.setVisibility(View.VISIBLE);
