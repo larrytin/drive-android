@@ -65,14 +65,7 @@
     <dependency>
       <groupId>com.joanzapata.pdfview</groupId>
       <artifactId>android-pdfview</artifactId>
-      <version>1.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>com.joanzapata.pdfview</groupId>
-      <artifactId>libvudroid</artifactId>
-      <version>1.0.1</version>
-      <type>so</type>
-      <scope>runtime</scope>
+      <version>1.0.0</version>
     </dependency>
     <dependency>
       <groupId>com.baidu.maps.android</groupId>
@@ -81,22 +74,8 @@
     </dependency>
     <dependency>
       <groupId>com.baidu.maps.android</groupId>
-      <artifactId>liblocSDK4</artifactId>
-      <version>4.0</version>
-      <type>so</type>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.baidu.maps.android</groupId>
       <artifactId>maps-sdk-all</artifactId>
       <version>2.4.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.baidu.maps.android</groupId>
-      <artifactId>libBaiduMapSDK_v2_4_0</artifactId>
-      <version>2.4.0</version>
-      <type>so</type>
-      <scope>runtime</scope>
     </dependency>
   </dependencies>
 
