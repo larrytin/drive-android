@@ -15,6 +15,7 @@ import com.goodow.realtime.channel.State;
 import com.goodow.realtime.core.Handler;
 import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.core.Platform;
+import com.goodow.realtime.java.JavaWebSocket;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -24,6 +25,8 @@ import com.baidu.location.LocationClient;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -37,7 +40,9 @@ import android.view.View;
 import android.widget.Toast;
 
 public class HomeActivity extends BaseActivity {
-
+  static {
+    Logger.getLogger(JavaWebSocket.class.getName()).setLevel(Level.ALL);
+  }
   public static final String TAG = HomeActivity.class.getSimpleName();
   private static final String DATABASENAME = "keruixing";
   private static boolean registried;
