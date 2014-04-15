@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -49,50 +48,6 @@ import android.widget.Toast;
  * 
  */
 public class SourceActivity extends BaseActivity implements OnClickListener {
-  /**
-   * 异步加载收藏标记
-   * 
-   * @author dpw
-   * 
-   */
-  class MyAsyncTask extends AsyncTask<String, Void, Boolean> {
-    private View starView = null;
-
-    public MyAsyncTask(View starView) {
-      this.starView = starView;
-    }
-
-    @Override
-    protected Boolean doInBackground(String... params) {
-      JsonObject msg = Json.createObject();
-      msg.set("action", "get");
-      msg.set(Constant.KEY_STAR, Json.createObject().set(Constant.KEY_TYPE, "attachment").set(
-          Constant.KEY_KEY, params[0]));
-      bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
-        @Override
-        public void handle(Message<JsonObject> message) {
-          JsonObject body = message.body();
-          if (body != null) {
-            starView.setVisibility(View.VISIBLE);
-            starView.setBackgroundResource(R.drawable.source_favourited);
-            starView.setTag(status_stared);
-          } else {
-            starView.setVisibility(View.GONE);
-            starView.setTag(null);
-          }
-        }
-      });
-      return false;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean result) {
-      if (result) {
-        starView.setVisibility(View.VISIBLE);
-      }
-      super.onPostExecute(result);
-    }
-  }
 
   /**
    * 二级类别点事件调用
@@ -102,9 +57,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private class OnSubCatagoryClick implements OnClickListener {
     @Override
     public void onClick(View v) {
-      gr_act_source_result.setVisibility(View.INVISIBLE);
-      iv_act_source_result_next.setVisibility(View.INVISIBLE);
-      iv_act_source_result_pre.setVisibility(View.INVISIBLE);
+      cleanSearchResult();
       if (v.isSelected()) {
         v.setSelected(false);
         subTags.remove(((DrawableLeftTextView) v).getText().toString());
@@ -168,14 +121,13 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
           (ImageView) itemView.findViewById(R.id.iv_act_source_search_result_item_icon);
       FileTools.setImageThumbnalilUrl(imageView, attachment.getString(Constant.KEY_URL), attachment
           .getString(Constant.KEY_THUMBNAIL));
-
       TextView textView =
           (TextView) itemView.findViewById(R.id.tv_act_source_search_result_item_filename);
       textView.setText(fileName);
-
       final ImageView imageViewFlag =
           (ImageView) itemView.findViewById(R.id.iv_act_source_search_result_item_flag);
-      new MyAsyncTask(imageViewFlag).execute(attachment.getString(Constant.KEY_ID));// 异步夹在收藏标记
+      imageViewFlag.setVisibility(View.INVISIBLE);
+      sendQuryTagStar(imageViewFlag, attachment.getString(Constant.KEY_ID));
       imageView.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -246,27 +198,28 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   }
 
   private final static String status_unstar = "0";
+
   private final static String status_stared = "1";
   private TextView tv_act_source_tip = null;
   private ImageView iv_act_source_result_pre = null;
   private GridView gr_act_source_result = null;
   private ResultAdapter resultAdapter = null;
   private ImageView iv_act_source_result_next = null;
-
   private int totalAttachmentNum = 0;// 总的数据量
+
   private int currentPageNum = 0;// 当前页码
   private final int numPerPage = 10;// 查询结果每页显示10条数据
-
   private TextView tv_act_source_search_result_tip = null;
 
   private ProgressBar pb_act_source_search_progress = null;
+
   private LinearLayout ll_act_source_catagory0 = null;
   private LinearLayout ll_act_source_catagory1 = null;
   private EditText et_act_source_tags = null;
   private ImageView iv_act_source_search_button = null;
-
   // 当前的contentType对应的ID
   private String currentContentType = null;// 搜索一级标签
+
   private final List<String> subTags = new ArrayList<String>();// 根据一级标签查询得到的二级标签
   private JsonArray queryingTags = null;// 控制台传递的混合标签
   private HandlerRegistration postHandler;
@@ -499,7 +452,10 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     this.iv_act_source_result_pre.setVisibility(View.INVISIBLE);
     this.iv_act_source_result_next.setVisibility(View.INVISIBLE);
     this.et_act_source_tags.setText(null);
-    this.ll_act_source_catagory1.removeAllViews();
+    totalAttachmentNum = 0;
+    currentPageNum = 0;
+    resultAdapter.reset(null);
+    resultAdapter.notifyDataSetChanged();
   }
 
   /**
@@ -559,7 +515,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private void onContentTypeClick(int id) {
     this.subTags.clear();
     this.subTags.add(idTags.get(id));
-    this.gr_act_source_result.setVisibility(View.INVISIBLE);
+    ll_act_source_catagory1.removeAllViews();
     int len = this.ll_act_source_catagory0.getChildCount();
     for (int i = 0; i < len; i++) {
       if (id != this.ll_act_source_catagory0.getChildAt(i).getId()) {
@@ -665,6 +621,33 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         JsonObject body = message.body();
         JsonArray tags = body.getArray(Constant.KEY_TAGS);
         bindSubTagToView(tags);
+      }
+    });
+  }
+
+  /**
+   * 查询文件收藏信息
+   * 
+   * @param starView
+   * @param params
+   */
+  private void sendQuryTagStar(final View starView, String params) {
+    JsonObject msg = Json.createObject();
+    msg.set("action", "get");
+    msg.set(Constant.KEY_STAR, Json.createObject().set(Constant.KEY_TYPE, "attachment").set(
+        Constant.KEY_KEY, params));
+    bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        if (body != null) {
+          starView.setVisibility(View.VISIBLE);
+          starView.setBackgroundResource(R.drawable.source_favourited);
+          starView.setTag(status_stared);
+        } else {
+          starView.setVisibility(View.GONE);
+          starView.setTag(null);
+        }
       }
     });
   }

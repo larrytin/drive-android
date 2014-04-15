@@ -486,54 +486,43 @@ public class DBDataProvider {
       StringBuilder sqlBuilder = new StringBuilder();
       JsonArray tags = key.getArray(Constant.KEY_TAGS);// 取tags的交集
       int len_tags = tags == null ? 0 : tags.length();
-      for (int i = 0; i < len_tags; i++) {
-        sqlBuilder.append("'" + tags.getString(i) + "' , ");
+      String query =
+          key.getString(Constant.KEY_QUERY) == null ? "" : key.getString(Constant.KEY_QUERY);
+      // 符合条件的文件ID
+      sqlBuilder
+          .append("SELECT F.*,R.TAG AS TAG FROM T_RELATION R INNER join T_FILE F ON F.UUID = R.KEY AND R.TAG IN ('素材-活动设计','素材-文学作品','素材-说明文字','素材-背景知识','素材-乐谱','素材-教学图片','素材-动态图','素材-参考图','素材-挂图','素材-轮廓图','素材-头饰','素材-手偶','素材-胸牌','素材-动画','素材-电子书','素材-视频','素材-音频','素材-音效') AND F.UUID IN(SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '");
+      sqlBuilder.append(key.getString(Constant.KEY_CONTENTTYPE));
+      sqlBuilder.append("' AND R.TAG LIKE '%");
+      sqlBuilder.append(query);
+      sqlBuilder.append("%' AND F.UUID IN (");
+      sqlBuilder.append("SELECT KEY FROM T_RELATION WHERE TAG = '");
+      sqlBuilder.append(tags.getString(0)).append("' AND TYPE = 'attachment'");
+      if (len_tags > 1) {// 有二级分类
+        sqlBuilder.append(" INTERSECT SELECT KEY FROM T_RELATION WHERE TAG IN ");
+        String substring = tags.toString().substring(tags.getString(0).length() + 4);
+        sqlBuilder.append("(").append(substring).delete(sqlBuilder.length() - 1,
+            sqlBuilder.length()).append(") AND TYPE = 'attachment'");
       }
-      sqlBuilder.delete(sqlBuilder.lastIndexOf(" , ") >= 0 ? sqlBuilder.lastIndexOf(" , ") : 0,
-          sqlBuilder.length());
-      if ("".equals(sqlBuilder.toString().trim())) {// 二级检索条件是null
-        String query =
-            key.getString(Constant.KEY_QUERY) == null ? "" : key.getString(Constant.KEY_QUERY);
-        // 符合条件的文件ID
-        sql =
-            "SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '"
-                + key.getString(Constant.KEY_CONTENTTYPE)
-                + "' AND R.TAG LIKE '%"
-                + query
-                + "%' GROUP BY F.UUID UNION SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '"
-                + key.getString(Constant.KEY_CONTENTTYPE) + "' AND F.NAME LIKE '%" + query
-                + "%' group by F.UUID";
-        // 查询页码
-        sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE WHERE UUID IN(" + sql + ")";
-        // 分页
-        sql = sql + " LIMIT " + size + " OFFSET " + from;
-
-      } else {
-        String contentType = key.getString(Constant.KEY_CONTENTTYPE);
-        String query =
-            key.getString(Constant.KEY_QUERY) == null ? "" : key.getString(Constant.KEY_QUERY);
-        sql =
-            "SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '"
-                + contentType
-                + "'  AND R.TAG LIKE '%"
-                + query
-                + "%' AND F.UUID IN (SELECT KEY FROM T_RELATION WHERE TAG IN ("
-                + sqlBuilder.toString()
-                + ") AND TYPE = 'attachment')  GROUP BY F.UUID UNION SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '"
-                + contentType + "' AND F.NAME LIKE '%" + query
-                + "%' AND F.UUID IN (SELECT KEY FROM T_RELATION WHERE TAG IN ("
-                + sqlBuilder.toString() + ") AND TYPE = 'attachment')  group by F.UUID ";
-
-        // 查询页码
-        sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM T_FILE WHERE UUID IN(" + sql + ")";
-        // 分页
-        sql = sql + " LIMIT " + size + " OFFSET " + from;
+      sqlBuilder
+          .append(") GROUP BY F.UUID UNION SELECT F.UUID FROM T_FILE F JOIN T_RELATION R ON F.UUID = R.KEY AND F.CONTENTTYPE = '");
+      sqlBuilder.append(key.getString(Constant.KEY_CONTENTTYPE));
+      sqlBuilder.append("' AND F.NAME LIKE '%");
+      sqlBuilder.append(query);
+      sqlBuilder.append("%' AND F.UUID IN (");
+      sqlBuilder.append("SELECT KEY FROM T_RELATION WHERE TAG = '");
+      sqlBuilder.append(tags.getString(0)).append("' AND TYPE = 'attachment'");
+      if (len_tags > 1) {// 有二级分类
+        sqlBuilder.append(" INTERSECT SELECT KEY FROM T_RELATION WHERE TAG IN ");
+        String substring = tags.toString().substring(tags.getString(0).length() + 4);
+        sqlBuilder.append("(").append(substring).delete(sqlBuilder.length() - 1,
+            sqlBuilder.length()).append(") AND TYPE = 'attachment'");
       }
-
-      sql =
-          "SELECT F.*,R.TAG AS TAG FROM T_RELATION R INNER join T_FILE F ON F.UUID = R.KEY AND R.TAG IN ('素材-活动设计','素材-文学作品','素材-说明文字','素材-背景知识','素材-乐谱','素材-教学图片','素材-动态图','素材-参考图','素材-挂图','素材-轮廓图','素材-头饰','素材-手偶','素材-胸牌','素材-动画','素材-电子书','素材-视频','素材-音频','素材-音效') AND F.UUID IN("
-              + sql + ")";
-
+      sqlBuilder.append(") GROUP BY F.UUID");
+      // 查询页码
+      sqlOfCounter = "SELECT COUNT(*) AS TOTAL_NUM FROM (" + sqlBuilder + "))";
+      sqlBuilder.append(" LIMIT ").append(size).append(" OFFSET ").append(from);// 分页
+      sqlBuilder.append(")");
+      sql = sqlBuilder.toString();
     }
     JsonArray noOrderJsonArray = DBOperator.readFilesBySql(context, sql, null);
     for (int i = 0; i < noOrderJsonArray.length(); i++) {
