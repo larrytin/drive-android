@@ -23,8 +23,10 @@
     <dimen name="act_harmony_result_width">850dp</dimen><!-- 查询结果的宽度 -->
 
     <!-- 示范课 720p @author DPW ITEM DEFAULT DPW-->
-    <dimen name="act_case_fun_bar_marginLeft">40dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
-    <dimen name="act_case_fun_bar_marginTop">130dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_case_fun_bar_marginLeft">63dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_case_fun_bar_marginTop">175dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_case_fun_width">66dp</dimen><!-- 后退|收藏|黑屏的宽度 -->
+    <dimen name="act_case_fun_height">65dp</dimen><!-- 后退|收藏|黑屏的高度 -->
     <dimen name="act_case_grade_radio_group_width">350dp</dimen><!-- 年级RadioGroup的宽度 -->
     <dimen name="act_case_grade_radio_group_marginLeft">260dp</dimen><!-- 年级RadioGroup的左边距 -->
     <dimen name="act_case_grade_radio_group_marginTop">20dp</dimen><!-- 年级RadioGroup的上边距 -->

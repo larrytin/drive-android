@@ -51,20 +51,23 @@
         android:layout_marginLeft="@dimen/act_case_fun_bar_marginLeft"
         android:layout_marginTop="@dimen/act_case_fun_bar_marginTop"
         >
-        <include 
-            android:id="@+id/iv_act_case_back"
-            layout="@layout/include_back"/>
+        <ImageView
+          android:id="@+id/iv_act_case_back"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_back"
+          android:clickable="true"
+          />
         <ImageView
           android:id="@+id/iv_act_case_coll"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_coll"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_coll"
           android:layout_below="@+id/iv_act_case_back"
           android:clickable="true"
           />
         <ImageView
           android:id="@+id/iv_act_case_loc"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_loc"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_loc"
           android:layout_below="@+id/iv_act_case_coll"
           android:clickable="true"
           />

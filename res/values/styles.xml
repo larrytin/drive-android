@@ -23,6 +23,12 @@
         <item name="android:layout_marginBottom">@dimen/act_home_fun_margin</item>
     </style>
     
+    <!-- 示范课页面后退,收藏,黑屏按钮 -->
+    <style name="case_sys_fun" parent="index_sys_fun">
+        <item name="android:layout_width">@dimen/act_case_fun_width</item>
+        <item name="android:layout_height">@dimen/act_case_fun_height</item>
+    </style>
+    
     <!-- launcher页面系统功能栏,设置&&关机 -->
     <style name="index_sys_fun2" parent="index_sys_fun">
         <item name="android:layout_width">@dimen/act_home_fun2_width</item>
