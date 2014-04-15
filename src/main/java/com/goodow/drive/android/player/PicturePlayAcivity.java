@@ -30,6 +30,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
@@ -519,9 +520,17 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     // 计算压缩比率
     final int height = options.outHeight;
     final int width = options.outWidth;
-    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-    viewWidth = displayMetrics.widthPixels;
-    viewHeight = displayMetrics.heightPixels;
+    if (android.os.Build.VERSION.SDK_INT < 17) {
+      DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+      viewWidth = displayMetrics.widthPixels;
+      viewHeight = displayMetrics.heightPixels;
+    } else {// api>17用新方式
+      WindowManager wm = this.getWindowManager();
+      DisplayMetrics outMetrics = new DisplayMetrics();
+      wm.getDefaultDisplay().getRealMetrics(outMetrics);
+      viewWidth = outMetrics.widthPixels;
+      viewHeight = outMetrics.heightPixels;
+    }
     float scaleY = height / viewHeight;
     float scaleX = width / viewWidth;
     float scale = Math.max(scaleY, scaleX);

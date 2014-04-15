@@ -4,6 +4,7 @@
     <issue id="DrawAllocation" severity="ignore" />
     <issue id="HandlerLeak" severity="ignore" />
     <issue id="NewApi">
+        <ignore path="src/main/java/com/goodow/drive/android/player/PicturePlayAcivity.java" />
         <ignore path="src/main/java/com/goodow/drive/android/player/VideoActivity.java" />
     </issue>
     <issue id="OldTargetApi" severity="ignore" />
