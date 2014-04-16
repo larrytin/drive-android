@@ -12,15 +12,11 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
-import java.util.Set;
-import java.util.TreeSet;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -88,17 +84,11 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
         public void onClick(View v) {
           bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set(
               "play", 1), null);
-          // acctachment
-          // 此处记录打开的时间
-          Set<String> fileOpenInfo =
-              usagePreferences.getStringSet(attachmentId, new TreeSet<String>());
-          fileOpenInfo.add(System.currentTimeMillis() + "");
           Editor editor = usagePreferences.edit();
-          // 如果存在，移除key
-          if (usagePreferences.contains(attachmentId)) {
-            editor.remove(attachmentId).commit();
-          }
-          editor.putStringSet(attachmentId, fileOpenInfo).commit();
+          editor.putString("tmpFileName", attachmentId);
+          editor.putLong("tmpOpenTime", System.currentTimeMillis());
+          editor.putLong("tmpSystemLast", SystemClock.uptimeMillis());
+          editor.commit();
         }
       });
       return convertView;
@@ -134,9 +124,6 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   private ProgressBar pb_act_result_progress;
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
-
-  public static final String USAGE_STATISTIC = "USAGE_STATISTIC";
-  private SharedPreferences usagePreferences;
 
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
@@ -216,7 +203,6 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
     } else {
       Toast.makeText(this, "数据不完整，请重试", Toast.LENGTH_SHORT).show();
     }
-    usagePreferences = getSharedPreferences(USAGE_STATISTIC, Context.MODE_PRIVATE);
   }
 
   @Override

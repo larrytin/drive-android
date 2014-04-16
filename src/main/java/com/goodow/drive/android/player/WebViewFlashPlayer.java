@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebSettings;
@@ -27,6 +28,14 @@ public class WebViewFlashPlayer extends BaseActivity {
   private WebView flashWebView;
   private ImageView mImageView;
   private LinearLayout mLinearLayout;
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      saveOnDatabases();
+    }
+    return super.onKeyDown(keyCode, event);
+  }
 
   @Override
   public void onPause() {
@@ -55,6 +64,7 @@ public class WebViewFlashPlayer extends BaseActivity {
       public void onClick(View v) {
         System.gc();
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        saveOnDatabases();
       }
     });
     flashWebView = (WebView) findViewById(R.id.flash_webView_player);

@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.data.DBOperator;
 import com.goodow.drive.android.data.DataRegistry;
 import com.goodow.drive.android.player.PlayerRegistry;
 import com.goodow.drive.android.settings.BaiduLocation;
@@ -35,6 +36,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -78,6 +80,8 @@ public class HomeActivity extends BaseActivity {
 
   // TODO:如果为false，不校验，默认不校验
   private boolean openAuth = false;
+
+  private int updateBoot;
 
   public void onClick(View v) {
 
@@ -170,6 +174,14 @@ public class HomeActivity extends BaseActivity {
         }
       }
     });
+    updateBoot = Platform.scheduler().schedulePeriodic(60000, new Handler<Void>() {
+      @Override
+      public void handle(Void event) {
+        DBOperator.updateBoot(HomeActivity.this, "T_BOOT", "LAST_TIME", "CLOSE_TIME", Json
+            .createObject().set("LAST_TIME", SystemClock.uptimeMillis()).set("CLOSE_TIME",
+                System.currentTimeMillis()));
+      }
+    });
     BaiduLocation.INSTANCE.setContext(getApplicationContext());
     mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
     BaiduLocation.INSTANCE.init();
@@ -185,6 +197,7 @@ public class HomeActivity extends BaseActivity {
     super.onDestroy();
     netWorkHandlerReg.unregisterHandler();
     Platform.scheduler().cancelTimer(schedulePeriodic);
+    Platform.scheduler().cancelTimer(updateBoot);
     mLocationClient.stop();
   }
 
@@ -228,7 +241,6 @@ public class HomeActivity extends BaseActivity {
                   bus.send(Bus.LOCAL + BusProvider.SID + "notification", Json.createObject().set(
                       "content", "您无法继续使用，请联网操作"), null);
                 }
-
               }
             });
           }
@@ -365,6 +377,7 @@ public class HomeActivity extends BaseActivity {
     if (State.OPEN == bus.getReadyState()) {
       // 请求将播放信息统计发送到服务器
       bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
+      bus.send(Bus.LOCAL + BusProvider.SID + "systime.analytics.request", null, null);
     } else {
       Log.w("EventBus Status", bus.getReadyState().name());
       BusProvider.reconnect();
@@ -378,6 +391,7 @@ public class HomeActivity extends BaseActivity {
         @Override
         public void handle(Message<JsonObject> message) {
           bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
+          bus.send(Bus.LOCAL + BusProvider.SID + "systime.analytics.request", null, null);
           registeredOnOpen = false;
           openHandlerReg.unregisterHandler();
         }

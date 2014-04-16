@@ -107,6 +107,7 @@ public class MuPDFActivity extends BaseActivity {
           core.onDestroy();
         }
         core = null;
+        saveOnDatabases();
         MuPDFActivity.this.finish();
       }
     });
@@ -242,6 +243,7 @@ public class MuPDFActivity extends BaseActivity {
         core.onDestroy();
       }
       core = null;
+      saveOnDatabases();
     }
     return super.onKeyDown(keyCode, event);
   }

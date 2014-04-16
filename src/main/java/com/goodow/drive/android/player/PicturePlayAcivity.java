@@ -26,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -167,6 +168,14 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
       default:
         break;
     }
+  }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      saveOnDatabases();
+    }
+    return super.onKeyDown(keyCode, event);
   }
 
   @Override
@@ -402,6 +411,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         JsonObject msg = Json.createObject();
         msg.set("return", true);
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+        saveOnDatabases();
       }
     });
     this.ll_include_picture_tools = (LinearLayout) this.findViewById(R.id.ll_include_picture_tools);
@@ -580,5 +590,4 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
     float scale = drawableWidth / currentRect.width();
     setScale(zoom * scale, mImageView.getWidth() / 2, mImageView.getHeight() / 2, false);
   }
-
 }

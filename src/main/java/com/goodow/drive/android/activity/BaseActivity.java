@@ -2,6 +2,7 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.data.DBOperator;
 import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
@@ -9,13 +10,18 @@ import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.channel.State;
 import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.WindowManager;
 
@@ -34,10 +40,13 @@ public class BaseActivity extends Activity {
 
   private HandlerRegistration controlHandler;
   private HandlerRegistration brightnessHandler;
+  public SharedPreferences usagePreferences;
+  public static final String USAGE_STATISTIC = "USAGE_STATISTIC";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     BusProvider.SID = DeviceInformationTools.getLocalMacAddressFromWifiInfo(this) + ".drive.";
+    usagePreferences = getSharedPreferences(USAGE_STATISTIC, Context.MODE_PRIVATE);
     super.onCreate(savedInstanceState);
   }
 
@@ -148,5 +157,18 @@ public class BaseActivity extends Activity {
         }
       }
     });
+  }
+
+  protected void saveOnDatabases() {
+    String fileName = usagePreferences.getString("tmpFileName", "");
+    long openTime = usagePreferences.getLong("tmpOpenTime", -1);
+    // 播放时间，小于5s，忽略
+    long lastTime = SystemClock.uptimeMillis() - usagePreferences.getLong("tmpSystemLast", -1);
+    if (lastTime > 5000 & !TextUtils.isEmpty(fileName)) {
+      // 将播放数据存储到数据库
+      DBOperator.addUserData(this, "T_PLAYER", "FILE_NAME", "OPEN_TIME", "LAST_TIME", Json
+          .createObject().set("FILE_NAME", fileName).set("OPEN_TIME", openTime).set("LAST_TIME",
+              lastTime));
+    }
   }
 }

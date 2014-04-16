@@ -35,6 +35,7 @@ import android.os.Message;
 import android.os.MessageQueue.IdleHandler;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -76,25 +77,26 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   }
 
   private PopupWindow popupBrightness;
+
   private boolean isOnline = false;// 是否在线播放
   private boolean isChangedVideo = false;// 是否改变视频
-
   private final int playedTime = -1;// 已播放时间
 
   private VideoView videoView = null;// 视频视图
   // private final GestureDetector gestureDetector = null;// 手势识别
 
   private View titleView = null;
+
   private PopupWindow titleWindow = null;
   private TextView tv_media_title_name;
-
   private View controlView = null;// 控制器视图
+
   private PopupWindow controlerWindow = null;// 控制器
   private SeekBar sb_media_controler_seekbar = null;// 可拖拽的进度条
   private TextView tv_media_controler_duration = null;// 视频的总时间
   private TextView tv_media_controler_has_played = null;// 播放时间
-
   private View toolView;// 右侧的工具栏
+
   private PopupWindow toolWindow;
   private ImageView iv_act_picture_pen;// 画笔
   private ImageView iv_act_picture_eraser;// 橡皮擦
@@ -105,13 +107,13 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private static int screenWidth = 0;// 屏幕宽度
   private static int screenHeight = 0;// 屏幕高度
   private static int controlHeight = 0;// 控制器高度
-
   private final static int TIME = 7000;// 控制器显示持续时间(毫秒)
 
   private boolean isControllerShow = true;// 是否显示控制器
-  private boolean isFullScreen = false;// 是否全屏
 
+  private boolean isFullScreen = false;// 是否全屏
   private ImageButton ibtn_media_controler_play_pause;
+
   private Button btn_media_controler_sound;
   private Button btn_media_controler_replay;
   private Rect controlRectButtom = null;
@@ -120,10 +122,9 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private TextView brightnessPercent;
   private SeekBar brightnessSeekbar;
   private SeekBar volumeSeekbar;
-
   private final static int PROGRESS_CHANGED = 0;
-  private final static int HIDE_CONTROLER = 1;
 
+  private final static int HIDE_CONTROLER = 1;
   private final Point point = new Point();
 
   private final static int SCREEN_FULL = 0;
@@ -133,8 +134,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private final static int INIT_PASUE = 1000;
 
   private ImageView backImageView = null;
-  private float currentScale = 1;
 
+  private float currentScale = 1;
   private final Handler subHandler = new Handler() {
     @Override
     public void handleMessage(Message msg) {
@@ -176,7 +177,17 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private JsonObject jsonObject;
 
   private Uri uri;
+
   private HandlerRegistration controlHandlerRegistration;
+
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent ev) {
+    if (!isControllerShow) {// 是否显示控制器
+      showController();// 显示控制器
+      hideControllerDelay();// 延迟隐藏
+    }
+    return super.dispatchTouchEvent(ev);
+  }
 
   @Override
   public void onBackPressed() {
@@ -207,6 +218,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       @Override
       public void onClick(View v) {
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        saveOnDatabases();
       }
     });
     this.getScreenSize();// 获得屏幕尺寸大小
@@ -563,17 +575,17 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     // return true;
     // }
     // });
-//    videoView.setOnTouchListener(new OnTouchListener() {
-//
-//      @Override
-//      public boolean onTouch(View v, MotionEvent event) {
-//        if (!isControllerShow) {// 是否显示控制器
-//          showController();// 显示控制器
-//          hideControllerDelay();// 延迟隐藏
-//        }
-//        return true;
-//      }
-//    });
+    // videoView.setOnTouchListener(new OnTouchListener() {
+    //
+    // @Override
+    // public boolean onTouch(View v, MotionEvent event) {
+    // if (!isControllerShow) {// 是否显示控制器
+    // showController();// 显示控制器
+    // hideControllerDelay();// 延迟隐藏
+    // }
+    // return true;
+    // }
+    // });
 
     try {
       jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
@@ -589,6 +601,14 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     } catch (Exception e) {
       Toast.makeText(this, getString(R.string.video_file_no_exist), Toast.LENGTH_SHORT).show();
     }
+  }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      saveOnDatabases();
+    }
+    return super.onKeyDown(keyCode, event);
   }
 
   @Override
@@ -686,6 +706,18 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     });
   }
 
+  // @Override
+  // public boolean onTouchEvent(MotionEvent event) {// 实现该方法来处理触屏事件
+  // boolean result = gestureDetector.onTouchEvent(event);
+  //
+  // if (!result) {
+  // if (event.getAction() == MotionEvent.ACTION_UP) {
+  // }
+  // result = super.onTouchEvent(event);
+  // }
+  // return result;
+  // }
+
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
@@ -707,18 +739,6 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     }
     super.onActivityResult(requestCode, resultCode, data);
   }
-
-  // @Override
-  // public boolean onTouchEvent(MotionEvent event) {// 实现该方法来处理触屏事件
-  // boolean result = gestureDetector.onTouchEvent(event);
-  //
-  // if (!result) {
-  // if (event.getAction() == MotionEvent.ACTION_UP) {
-  // }
-  // result = super.onTouchEvent(event);
-  // }
-  // return result;
-  // }
 
   @Override
   protected void onDestroy() {
@@ -798,10 +818,6 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     this.registerReceiver(soundBroadCastReceiver, mIntentFilter);
   }
 
-  private void cancelDelayHide() {// 取消隐藏延迟
-    subHandler.removeMessages(HIDE_CONTROLER);
-  }
-
   // /*
   // * 获取PopupWindow实例
   // */
@@ -814,6 +830,10 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   // initPopuptBrightness();
   // }
   // }
+
+  private void cancelDelayHide() {// 取消隐藏延迟
+    subHandler.removeMessages(HIDE_CONTROLER);
+  }
 
   private void checkVideoBounds() {
     int top = videoView.getTop();
@@ -1052,14 +1072,5 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       }
     }
     isControllerShow = true;
-  }
-
-  @Override
-  public boolean dispatchTouchEvent(MotionEvent ev) {
-    if (!isControllerShow) {// 是否显示控制器
-      showController();// 显示控制器
-      hideControllerDelay();// 延迟隐藏
-    }
-    return super.dispatchTouchEvent(ev);
   }
 }

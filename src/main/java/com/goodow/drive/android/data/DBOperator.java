@@ -5,6 +5,7 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,6 +18,60 @@ import android.database.sqlite.SQLiteDatabase;
  */
 
 public class DBOperator {
+
+  /**
+   * 添加开机数据
+   * 
+   * @param context
+   * @param tableName
+   * @param openTime
+   * @param lastTime
+   * @param closeTime
+   * @param jsonObject
+   * @return
+   */
+  public static boolean addBootData(Context context, String tableName, String openTime,
+      String lastTime, String closeTime, JsonObject jsonObject) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(openTime, jsonObject.getNumber(openTime));
+    values.put(lastTime, jsonObject.getNumber(lastTime));
+    values.put(closeTime, jsonObject.getNumber(closeTime));
+    long rawid = db.insert(tableName, null, values);
+    db.close();
+    if (rawid > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * 
+   * @param context
+   * @param tableName 表名
+   * @param openTime 字段名
+   * @param lastTime
+   * @param jsonObject
+   * @return
+   */
+  public static boolean addUserData(Context context, String tableName, String fileName,
+      String openTime, String lastTime, JsonObject jsonObject) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(openTime, jsonObject.getNumber(openTime));
+    values.put(lastTime, jsonObject.getNumber(lastTime));
+    values.put(fileName, jsonObject.getString(fileName));
+    long rawid = db.insert(tableName, null, values);
+    db.close();
+    if (rawid > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   /**
    * 创建N个文件
@@ -251,6 +306,67 @@ public class DBOperator {
       db.endTransaction();
       db.close();
     }
+    return result;
+  }
+
+  /**
+   * 删除用户数据
+   * 
+   * @param context
+   * @param tableName
+   * @param id
+   * @return
+   */
+  public static boolean deleteUserData(Context context, String tableName, int id) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    int result = db.delete(tableName, id + "<=?", new String[] {id + ""});
+    db.close();
+    if (result > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * 读取开关机器信息
+   * 
+   * @param context
+   * @param tableName
+   * @param openTime
+   * @param lastTime
+   * @return
+   */
+  public static JsonObject readBootData(Context context, String tableName, String openTime,
+      String lastTime) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    JsonObject result = Json.createObject();
+    JsonArray jsonArray = Json.createArray();
+    String[] strings = new String[2];
+    strings[0] = openTime;
+    strings[1] = lastTime;
+    Cursor cursorId = db.rawQuery("select max(id)  from " + tableName, null);
+    int id = 0;
+    if (cursorId.moveToNext()) {
+      id = cursorId.getInt(0);
+      result.set("id", id);
+    }
+    Cursor cursor = db.query(tableName, strings, "id<" + id, null, null, null, null);
+    while (cursor.moveToNext()) {
+      JsonObject timestamp = Json.createObject();
+      long open = cursor.getLong(cursor.getColumnIndex(openTime));
+      long last = cursor.getLong(cursor.getColumnIndex(lastTime));
+      timestamp.set("openTime", open);
+      timestamp.set("lastTime", last);
+      // 过滤掉小于5分钟的数据
+      // TODO：
+      if (last > 5000) {
+        jsonArray.push(timestamp);
+      }
+    }
+    result.set("timestamp", jsonArray);
     return result;
   }
 
@@ -671,5 +787,87 @@ public class DBOperator {
       db.close();
     }
     return tag;
+  }
+
+  /**
+   * 读取用户播放数据信息
+   * 
+   * @param context
+   * @param tableName
+   * @param fileName
+   * @param openTime
+   * @param lastTime
+   * @return
+   */
+  public static JsonObject readUserPlayerData(Context context, String tableName, String fileName,
+      String openTime, String lastTime) {
+    JsonObject result = Json.createObject();
+    JsonArray jsonArray = Json.createArray();
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    String[] strings = new String[3];
+    strings[0] = fileName;
+    strings[1] = openTime;
+    strings[2] = lastTime;
+    Cursor cursorId = db.rawQuery("select max(id)  from " + tableName, null);
+    if (cursorId.moveToNext()) {
+      result.set("id", cursorId.getInt(0));
+    }
+    Cursor cursor = db.query(tableName, strings, null, null, null, null, null);
+    while (cursor.moveToNext()) {
+      JsonObject timestamp = Json.createObject();
+      String name = cursor.getString(cursor.getColumnIndex(fileName));
+      long open = cursor.getLong(cursor.getColumnIndex(openTime));
+      long last = cursor.getLong(cursor.getColumnIndex(lastTime));
+      timestamp.set("openTime", open);
+      timestamp.set("lastTime", last);
+      boolean tag = false;
+      for (int i = 0; i < jsonArray.length(); i++) {
+        if (jsonArray.getObject(i).getString("attachment").equals(name)) {
+          tag = true;
+          JsonArray tmpArray = jsonArray.getObject(i).getArray("timestamp");
+          tmpArray.push(timestamp);
+          jsonArray.getObject(i).set("timestamp", tmpArray);
+          break;
+        }
+      }
+      if (!tag) {
+        JsonObject jsonObject = Json.createObject();
+        jsonObject.set("attachment", name);
+        jsonObject.set("timestamp", Json.createArray().push(timestamp));
+        jsonArray.push(jsonObject);
+      }
+    }
+    cursor.close();
+    cursorId.close();
+    db.close();
+    result.set("analytics", jsonArray);
+    return result;
+  }
+
+  /**
+   * 更新开机信息
+   * 
+   * @param context
+   * @param tableName
+   * @param lastTime 持续时间
+   * @param closeTime 当前时间
+   * @param jsonObject
+   */
+  public static void updateBoot(Context context, String tableName, String lastTime,
+      String closeTime, JsonObject jsonObject) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    ContentValues values = new ContentValues();
+    values.put(lastTime, jsonObject.getNumber(lastTime));
+    values.put(closeTime, jsonObject.getNumber(closeTime));
+    Cursor cursorId = db.rawQuery("select max(id)  from " + tableName, null);
+    int id = 0;
+    if (cursorId.moveToNext()) {
+      id = cursorId.getInt(0);
+    }
+    db.update(tableName, values, "id=?", new String[] {id + ""});
+    cursorId.close();
+    db.close();
   }
 }

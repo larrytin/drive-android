@@ -2,28 +2,18 @@ package com.goodow.drive.android.player;
 
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.activity.BehaveActivity;
+import com.goodow.drive.android.activity.BaseActivity;
+import com.goodow.drive.android.data.DBOperator;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.json.Json;
-import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
 import com.artifex.mupdf.MuPDFActivity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.widget.Toast;
 
 public class PlayerRegistry {
@@ -34,8 +24,7 @@ public class PlayerRegistry {
   public PlayerRegistry(Bus bus, Context ctx) {
     this.bus = bus;
     this.ctx = ctx;
-    usagePreferences =
-        ctx.getSharedPreferences(BehaveActivity.USAGE_STATISTIC, Context.MODE_PRIVATE);
+    usagePreferences = ctx.getSharedPreferences(BaseActivity.USAGE_STATISTIC, Context.MODE_PRIVATE);
   }
 
   public void subscribe() {
@@ -102,72 +91,56 @@ public class PlayerRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerHandler(Constant.ADDR_PLAYER + ".analytics.request",
+    bus.registerHandler(BusProvider.SID + "systime.analytics.request",
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
-            Map<String, Set<String>> fileOpenInfo =
-                (Map<String, Set<String>>) usagePreferences.getAll();
-            JsonObject msg = Json.createObject();
-            JsonArray analytics = Json.createArray();
-            for (Entry<String, Set<String>> entry : fileOpenInfo.entrySet()) {
-              JsonObject jsonObject = Json.createObject();
-              jsonObject.set("attachment", entry.getKey());
-              JsonArray timeJsonArray = Json.createArray();
-              Set<String> timeStamp = entry.getValue();
-              // 将时间戳转化long
-              List<Long> timeStampList = new ArrayList<Long>();
-              for (String time : timeStamp) {
-                timeStampList.add(Long.parseLong(time));
-              }
-              // 排序
-              Collections.sort(timeStampList);
-              for (Long time : timeStampList) {
-                timeJsonArray.push(time);
-              }
-              jsonObject.set("timestamp", timeJsonArray);
-              analytics.push(jsonObject);
-            }
+            JsonObject analytics = DBOperator.readBootData(ctx, "T_BOOT", "OPEN_TIME", "LAST_TIME");
+            final int id = (int) analytics.getNumber("id");
+            analytics.remove("id");
             // 如果拿到的信息为空，则不发送
-            if (analytics.length() == 0) {
+            if (analytics.getArray("timestamp").length() == 0) {
               return;
             }
-            msg.set("sid", BusProvider.SID.split("[.]")[0]);
-            msg.set("analytics", analytics);
-            // 发送统计信息到服务器
-            bus.send("sid.drive.player.analytics", msg, new MessageHandler<JsonObject>() {
+            analytics.set("sid", BusProvider.SID.split("[.]")[0]);
+            // 发送开机数据到服务器
+            bus.send("sid.drive.systime.analytics", analytics, new MessageHandler<JsonObject>() {
               @Override
               public void handle(Message<JsonObject> message) {
                 JsonObject msg = message.body();
                 // 发送成功后，清除记录
-                if (!("ok".equals(msg.getString("status")) && msg.has("ack"))) {
+                if (!("ok".equals(msg.getString("status")))) {
                   return;
                 }
-                // 得到返回的时间戳
-                long lastTimestamp = (long) msg.getNumber("ack");
-                Map<String, Set<String>> fileOpenInfo =
-                    (Map<String, Set<String>>) usagePreferences.getAll();
-                // 删除比返回时间戳小的记录
-                for (Map.Entry<String, Set<String>> entry : fileOpenInfo.entrySet()) {
-                  String attachmentKey = entry.getKey();
-                  Set<String> timestampValue = entry.getValue();
-                  Set<String> tmpSet = new HashSet<String>();
-                  for (String timestamp : timestampValue) {
-                    if (Long.parseLong(timestamp) <= lastTimestamp) {
-                      tmpSet.add(timestamp);
-                    }
-                  }
-                  if (!timestampValue.removeAll(tmpSet)) {
-                    continue;
-                  }
-                  if (timestampValue.isEmpty()) {
-                    usagePreferences.edit().remove(attachmentKey).commit();
-                  } else {
-                    Editor editor = usagePreferences.edit();
-                    editor.remove(attachmentKey).commit();
-                    editor.putStringSet(attachmentKey, timestampValue).commit();
-                  }
+                DBOperator.deleteUserData(ctx, "T_BOOT", id);
+              }
+            });
+          }
+        });
+    bus.registerHandler(Constant.ADDR_PLAYER + ".analytics.request",
+        new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject analytics =
+                DBOperator.readUserPlayerData(ctx, "T_PLAYER", "FILE_NAME", "OPEN_TIME",
+                    "LAST_TIME");
+            final int id = (int) analytics.getNumber("id");
+            analytics.remove("id");
+            // 如果拿到的信息为空，则不发送
+            if (analytics.getArray("analytics").length() == 0) {
+              return;
+            }
+            analytics.set("sid", BusProvider.SID.split("[.]")[0]);
+            // 发送统计信息到服务器
+            bus.send("sid.drive.player.analytics", analytics, new MessageHandler<JsonObject>() {
+              @Override
+              public void handle(Message<JsonObject> message) {
+                JsonObject msg = message.body();
+                // 发送成功后，清除记录
+                if (!("ok".equals(msg.getString("status")))) {
+                  return;
                 }
+                DBOperator.deleteUserData(ctx, "T_PLAYER", id);
               }
             });
           }

@@ -23,6 +23,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -130,6 +131,14 @@ public class AudioPlayActivity extends BaseActivity {
   private HandlerRegistration controlHandler;
 
   @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      saveOnDatabases();
+    }
+    return super.onKeyDown(keyCode, event);
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     this.setContentView(R.layout.activity_audio_player);
@@ -184,6 +193,7 @@ public class AudioPlayActivity extends BaseActivity {
       @Override
       public void onClick(View v) {
         bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        saveOnDatabases();
       }
     });
     audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
@@ -291,17 +301,16 @@ public class AudioPlayActivity extends BaseActivity {
     this.isVisible = true;
     super.onResume();
 
-    controlHandler =
-        bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject msg = message.body();
-            if (msg.has("path")) {
-              return;
-            }
-            handleControl(msg);
-          }
-        });
+    controlHandler = bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
+        if (msg.has("path")) {
+          return;
+        }
+        handleControl(msg);
+      }
+    });
     IntentFilter mIntentFilter = new IntentFilter();
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
     this.registerReceiver(soundBroadCastReceiver, mIntentFilter);

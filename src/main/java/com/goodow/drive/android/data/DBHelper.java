@@ -57,6 +57,19 @@ public class DBHelper extends SQLiteOpenHelper {
         + "TAG varchar(500) NOT NULL ,USER_ID varchar(80) DEFAULT NULL ,"
         + "CREATETIME varchar(45) DEFAULT NULL ,UPDATETIME varchar(45) DEFAULT NULL, PRIMARY KEY (TYPE,TAG))");
 
+    /**
+     * 创建开机数据统计
+     */
+    db.execSQL("CREATE TABLE T_BOOT(" + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        + "OPEN_TIME long NOT NULL," + "LAST_TIME long NOT NULL," + "CLOSE_TIME long NOT NULL )");
+
+    /*
+     * 创建播放数据统计
+     */
+    db.execSQL("CREATE TABLE T_PLAYER(" + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+        + "FILE_NAME varchar(80) NOT NULL, " + "OPEN_TIME long NOT NULL, "
+        + "LAST_TIME long NOT NULL )");
+
   }
 
   @Override

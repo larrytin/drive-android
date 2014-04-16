@@ -18,13 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,17 +134,11 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
           // 打开文件
           bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
               attachment.getString(Constant.KEY_URL)).set("play", 1), null);
-          // acctachment
-          // 此处记录打开的时间
-          Set<String> fileOpenInfo =
-              usagePreferences.getStringSet(attachmentId, new TreeSet<String>());
-          fileOpenInfo.add(System.currentTimeMillis() + "");
           Editor editor = usagePreferences.edit();
-          // 如果存在，移除key
-          if (usagePreferences.contains(attachmentId)) {
-            editor.remove(attachmentId).commit();
-          }
-          editor.putStringSet(attachmentId, fileOpenInfo).commit();
+          editor.putString("tmpFileName", attachmentId);
+          editor.putLong("tmpOpenTime", System.currentTimeMillis());
+          editor.putLong("tmpSystemLast", SystemClock.uptimeMillis());
+          editor.commit();
         }
       });
 
@@ -298,7 +292,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       // 如果从控制台传递的参数中包含了contentType就查询子集分类
       this.echoContentType(this.currentContentType);
     }
-    usagePreferences = getSharedPreferences(BehaveActivity.USAGE_STATISTIC, Context.MODE_PRIVATE);
   }
 
   @Override
