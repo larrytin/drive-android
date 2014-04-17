@@ -66,21 +66,21 @@
     <dimen name="act_prepare_result_marginTopBottom">40dp</dimen><!-- 查询结果条目上下间距 -->
 
     <!-- 资源 720p -->
-    <dimen name="act_source_fun_bar_marginLeft">40dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
-    <dimen name="act_source_fun_bar_marginTop">130dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
-    <dimen name="act_source_search_tip_marginTop">80dp</dimen><!-- 提示语上边距 -->
-    <dimen name="act_source_search_catagory0_layout_height">150dp</dimen><!-- 一级分类的布局高度 -->
+    <dimen name="act_source_fun_bar_marginLeft">63dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_source_fun_bar_marginTop">175dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_source_search_tip_marginBottom">200dp</dimen><!-- 提示语下边距 -->
+    <dimen name="act_source_search_catagory0_layout_height">64dp</dimen><!-- 一级分类的布局高度 -->
     <dimen name="act_source_search_catagory0_layout_marginBottom">110dp</dimen><!-- 一级分类的布局的下边距 -->
     <dimen name="act_source_search_edit_layout_marginBottom">70dp</dimen><!-- 输入框的布局的下边距 -->
     <dimen name="act_source_search_edit_layout_padding">3dp</dimen><!-- 输入框的布局的内边距 -->
     <dimen name="act_source_search_edit_width">500dp</dimen><!-- 输入框高度 -->
-    <dimen name="act_source_search_root_width">587dp</dimen><!-- 搜索根节点的宽度 -->
-    <dimen name="act_source_search_root_height">46dp</dimen><!-- 搜索根节点的高度 -->
-    <dimen name="act_source_search_edit_textSize">16px</dimen><!-- 搜索输入框中字体的大小 -->
+    <dimen name="act_source_search_root_width">775dp</dimen><!-- 搜索根节点的宽度 -->
+    <dimen name="act_source_search_root_height">43dp</dimen><!-- 搜索根节点的高度 -->
+    <dimen name="act_source_search_edit_textSize">20px</dimen><!-- 搜索输入框中字体的大小 -->
     <dimen name="act_source_search_edit_paddingLeft">40dp</dimen><!-- 搜索输入框左边距 -->
     <dimen name="act_source_catagory0_item_width">110dp</dimen><!-- 一级分类条目的宽度 -->
     <dimen name="act_source_catagory0_item_height">100dp</dimen><!-- 一级分类条目的高度 -->
-    <dimen name="act_source_catagory0_item_margin">20dp</dimen><!-- 一级分类条目之间的间隔 -->
+    <dimen name="act_source_catagory0_item_margin">9dp</dimen><!-- 一级分类条目之间的间隔 -->
     <dimen name="act_source_catagory0_item_all_marginLeft">200dp</dimen><!-- 一级分类第一个条目的左边距 -->
     <dimen name="act_source_catagory0_item_all_marginTop">32dp</dimen><!-- 一级分类第一个条目的上边距 -->
     <dimen name="act_source_catagory0_item_text_marginTop">5dp</dimen><!-- 一级分类第二个条目的上边距 -->
@@ -89,10 +89,10 @@
     <dimen name="act_source_catagory0_item_video_marginTop">3dp</dimen><!-- 一级分类第五个条目的上边距 -->
     <dimen name="act_source_catagory0_item_audio_marginTop">7dp</dimen><!-- 一级分类第六个条目的上边距 -->
     <dimen name="act_source_catagory0_item_ebook_marginTop">27dp</dimen><!-- 一级分类第七个条目的上边距 -->
-    <dimen name="act_source_result_root_width">1040dp</dimen><!-- 查询结果的跟节点的宽度 -->
-    <dimen name="act_source_result_root_height">340dp</dimen><!-- 查询结果的跟节点的高度 -->
-    <dimen name="act_source_result_root_marginTop">160dp</dimen><!-- 查询结果的跟节点的上边距 -->
-    <dimen name="act_source_result_root_marginRight">85dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_source_result_root_width">1000dp</dimen><!-- 查询结果的跟节点的宽度 -->
+    <dimen name="act_source_result_root_height">280dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_source_result_root_marginTop">230dp</dimen><!-- 查询结果的跟节点的上边距 -->
+    <dimen name="act_source_result_root_marginRight">115dp</dimen><!-- 查询结果的跟节点的右边距 -->
     <dimen name="act_source_result_width">850dp</dimen><!-- 查询结果的宽度 -->
     <dimen name="act_source_result_item_width">150dp</dimen><!-- 查询结果条目的宽度 -->
     <dimen name="act_source_result_item_height">-2dp</dimen><!-- 查询结果条目的高度 -->
@@ -109,7 +109,7 @@
     <dimen name="act_source_search_subtag_image_width">22dp</dimen><!-- 二级分类条目宽度 -->
     <dimen name="act_source_search_subtag_image_height">22dp</dimen><!-- 二级分类条目高度 -->
     <dimen name="act_source_search_subtag_margin">10dp</dimen><!-- 二级分类之间的间距 -->
-    <dimen name="act_source_search_subtag_marginBottom">20dp</dimen><!-- 二级分类的下边距 -->
+    <dimen name="act_source_search_subtag_marginTop">20dp</dimen><!-- 二级分类的上边距 -->
     
     <!-- HomeActivity 主页 720p -->
     <dimen name="act_home_fun_width">77dp</dimen><!-- launcher页面系统功能栏,收藏&&黑屏 宽度-->

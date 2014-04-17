@@ -185,8 +185,8 @@
 
     <!-- 资源库一级分类 -->
     <style name="source_catagory0">
-        <item name="android:layout_width">@dimen/act_source_catagory0_item_width</item>
-        <item name="android:layout_height">@dimen/act_source_catagory0_item_height</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:clickable">true</item>
         <item name="android:layout_marginLeft">@dimen/act_source_catagory0_item_margin</item>
     </style>

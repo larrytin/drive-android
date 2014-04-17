@@ -31,6 +31,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
@@ -204,7 +206,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
 
   private int currentPageNum = 0;// 当前页码
   private final int numPerPage = 10;// 查询结果每页显示10条数据
-  private TextView tv_act_source_search_result_tip = null;
 
   private ProgressBar pb_act_source_search_progress = null;
 
@@ -380,13 +381,12 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private void bindDataToView(JsonArray attachments) {
     this.pb_act_source_search_progress.setVisibility(View.INVISIBLE);
     if (attachments == null || attachments.length() == 0) {
-      this.tv_act_source_search_result_tip.setVisibility(View.VISIBLE);
+      this.tv_act_source_tip.setVisibility(View.VISIBLE);
       this.tv_act_source_tip.setText(Html.fromHtml(this.getString(R.string.string_source_tip1)));
     } else {
       this.iv_act_source_result_pre.setClickable(true);
       this.iv_act_source_result_next.setClickable(true);
       this.gr_act_source_result.setVisibility(View.VISIBLE);
-      this.tv_act_source_search_result_tip.setVisibility(View.INVISIBLE);
       this.tv_act_source_tip.setText(null);
     }
     this.resultAdapter.reset(attachments);
@@ -480,8 +480,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     this.iv_act_source_result_next.setOnClickListener(this);
 
     this.tv_act_source_tip = (TextView) this.findViewById(R.id.tv_act_source_tip);
-    this.tv_act_source_search_result_tip =
-        (TextView) this.findViewById(R.id.tv_act_source_search_result_tip);
     this.pb_act_source_search_progress =
         (ProgressBar) this.findViewById(R.id.pb_act_source_search_progress);
     this.ll_act_source_catagory0 = (LinearLayout) this.findViewById(R.id.ll_act_source_catagory0);
@@ -565,8 +563,12 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     this.totalAttachmentNum = 0;
     this.currentPageNum = 0;
     if (this.currentContentType == null || this.et_act_source_tags.getText().toString() == null) {
-      Toast.makeText(this, this.getString(R.string.string_source_tip0), Toast.LENGTH_SHORT).show();
+      Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+      tv_act_source_tip.startAnimation(shake);// 抖动提醒.
+      // Toast.makeText(this, this.getString(R.string.string_source_tip0),
+      // Toast.LENGTH_SHORT).show();
     } else {
+      tv_act_source_tip.setVisibility(View.INVISIBLE);
       this.pb_act_source_search_progress.setVisibility(View.VISIBLE);
       this.sendQueryMessage(this.currentContentType == null ? "全部" : this.currentContentType,
           this.subTags, this.et_act_source_tags.getText().toString().trim());

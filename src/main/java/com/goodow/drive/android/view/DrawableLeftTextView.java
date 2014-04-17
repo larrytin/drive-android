@@ -47,6 +47,8 @@ public class DrawableLeftTextView extends LinearLayout {
   private void initView(Context context) {
     View.inflate(context, R.layout.soruce_item_sub_tag, this);
     mTextView = (TextView) findViewById(R.id.tv_subtag);
+    mTextView.setTextColor(0xff9a150b);
+    mTextView.setTextSize(16);
   }
 
 }
