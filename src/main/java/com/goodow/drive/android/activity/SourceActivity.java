@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -559,6 +560,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * @param id
    */
   private void onSearchButtonClick(int id) {
+    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     this.totalAttachmentNum = 0;
     this.currentPageNum = 0;
     if (this.currentContentType == null || this.et_act_source_tags.getText().toString() == null) {
