@@ -114,11 +114,11 @@
     <!-- HomeActivity 主页 720p -->
     <dimen name="act_home_fun_width">77dp</dimen><!-- launcher页面系统功能栏,收藏&&黑屏 宽度-->
     <dimen name="act_home_fun_height">77dp</dimen><!-- launcher页面系统功能栏,收藏&&黑屏 高度-->
-    <dimen name="act_home_fun2_width">53dp</dimen><!-- launcher页面系统功能栏,设置&&关机 宽度-->
-    <dimen name="act_home_fun2_height">53dp</dimen><!-- launcher页面系统功能栏,设置&&关机 高度-->
+    <dimen name="act_home_fun2_width">51dp</dimen><!-- launcher页面系统功能栏,设置&&关机 宽度-->
+    <dimen name="act_home_fun2_height">58dp</dimen><!-- launcher页面系统功能栏,设置&&关机 高度-->
     <dimen name="act_home_fun_margin">15dp</dimen><!-- 收藏&&黑屏&&设置&&关机之间的间距 -->
-    <dimen name="index_rl_sys_fun_layout_marginLeft">80dp</dimen><!-- 首页四个功能栏 收藏 锁屏  设置  关机的父布局位置 -->
-    <dimen name="index_rl_sys_fun_layout_marginTop">150dp</dimen><!-- 首页四个功能栏 收藏 锁屏  设置  关机的父布局位置 -->
+    <dimen name="index_rl_sys_fun_layout_marginLeft">62dp</dimen><!-- 首页四个功能栏 收藏 锁屏  设置  关机的父布局位置 -->
+    <dimen name="index_rl_sys_fun_layout_marginTop">132dp</dimen><!-- 首页四个功能栏 收藏 锁屏  设置  关机的父布局位置 -->
     <dimen name="act_home_harmany_width">228dp</dimen><!-- 和谐发展的宽 -->
     <dimen name="act_home_harmany_height">74dp</dimen><!-- 和谐发展的高 -->
     <dimen name="act_home_care_width">225dp</dimen><!-- 托班的宽 -->
@@ -128,13 +128,22 @@
     <dimen name="index_rl_har_ship_layout_marginTop">250dp</dimen><!-- 和谐托班位置 -->
     <dimen name="act_home_source_marginRight">130dp</dimen><!-- 课程辅助资源屏幕右侧距离 -->
     <dimen name="act_home_source_marginBottom">80dp</dimen><!-- 课程辅助资源屏幕下方距离 -->
-    <dimen name="act_home_source_width">148dp</dimen><!-- 课程辅助资源宽度 -->
-    <dimen name="act_home_source_height">156dp</dimen><!-- 课程辅助资源高度 -->
     <dimen name="index_rl_tech_layout_marginLeft">290dp</dimen><!-- 示范课程的布局位置 -->
     <dimen name="index_rl_tech_layout_marginTop">510dp</dimen><!-- 示范课程的布局位置 -->
     <dimen name="act_home_pre_edu_read_width">214dp</dimen><!-- 入学准备&安全教育&早期阅读 -->
     <dimen name="act_home_pre_edu_read_height">44dp</dimen><!-- 入学准备&安全教育&早期阅读 -->
-    <dimen name="act_home_pre_edu_read_margin">15dp</dimen><!-- 入学准备&安全教育&早期阅读之间间距 -->
+    <dimen name="act_home_age_margin">15dp</dimen><!-- 年龄之间间距 -->
+    <dimen name="act_home_topic_margin">16dp</dimen><!-- 领域之间间距 -->
+    <dimen name="act_home_source_margin">18dp</dimen><!-- 资源类型之间间距 -->
+    <dimen name="act_home_course_margin">19dp</dimen><!-- 特色课程之间间距 -->
+    <dimen name="act_home_age_width">67dp</dimen><!-- 首页年龄宽度 -->
+    <dimen name="act_home_age_height">32dp</dimen><!-- 首页年龄高度 -->
+    <dimen name="act_home_topic_width">98dp</dimen><!-- 首页领域宽度 -->
+    <dimen name="act_home_topic_height">30dp</dimen><!-- 首页领域高度 -->
+    <dimen name="act_home_source_width">66dp</dimen><!-- 首页资源类型宽度 -->
+    <dimen name="act_home_source_height">27dp</dimen><!-- 首页资源类型高度 -->
+    <dimen name="act_home_course_width">89dp</dimen><!-- 首页特色课程宽度 -->
+    <dimen name="act_home_course_height">34dp</dimen><!-- 首页特色课程高度 -->
     <dimen name="index_rl_pre_smart_ebk_layout_marginTop">373dp</dimen><!-- 入学准备  智能开发  图画书的父布局位置 -->
     <dimen name="index_rl_pre_smart_ebk_layout_marginRight">353dp</dimen><!-- 入学准备  智能开发  图画书的父布局位置 -->
     

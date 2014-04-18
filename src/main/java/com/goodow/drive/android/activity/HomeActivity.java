@@ -75,7 +75,7 @@ public class HomeActivity extends BaseActivity {
 
   private boolean ConnectStatus = true;
   // 1分钟 TODO:
-  private int periodicTime = 60000;
+  private final int periodicTime = 60000;
   private int schPeriodicTime;
 
   // 标记
@@ -85,7 +85,7 @@ public class HomeActivity extends BaseActivity {
   private int number = 1;
 
   // TODO:如果为false，不校验，默认不校验
-  private boolean openAuth = false;
+  private final boolean openAuth = false;
 
   private int updateBoot;
 
@@ -119,42 +119,72 @@ public class HomeActivity extends BaseActivity {
         shutdown.set("shutdown", 0);
         this.bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, shutdown, null);
         break;
-      // 和谐
-      case R.id.iv_act_main_har:
-        this.open("和谐");
+      // 年龄
+      case R.id.iv_act_age_care:// 托班
+        open(Constant.DATAREGISTRY_TYPE_SHIP);
         break;
-      // 托班
-      case R.id.iv_act_main_ship:
-        this.open("托班");
+      case R.id.iv_act_age_small:// 小班
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.LABEL_GRADE_LITTLE);
         break;
-      // 示范课
-      case R.id.iv_act_main_tech:
-        this.open("示范课");
+      case R.id.iv_act_age_middle:// 中班
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.LABEL_GRADE_MID);
         break;
-      // 入学准备
-      case R.id.iv_act_main_pre:
-        this.open("入学准备");
+      case R.id.iv_act_age_large:// 大班
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.LABEL_GRADE_BIG);
         break;
-      // 智能开发
-      case R.id.iv_act_main_edu:
-        this.open("安全教育");
+      case R.id.iv_act_age_pre:// 学前班
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.LABEL_GRADE_PRE);
         break;
-      // 图画书
-      case R.id.iv_act_main_read:
-        this.open("早期阅读");
+      // 领域
+      case R.id.iv_act_topic_health:// 健康
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.DOMIAN_HEALTH);
         break;
-      // 资源库
-      case R.id.iv_act_main_source:
-        if (openAuth) {
-          checkActivate(Json.createObject().set(Constant.KEY_REDIRECTTO, "repository"), Bus.LOCAL
-              + Constant.ADDR_VIEW);
-        } else {
-          bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
-              "repository"), null);
-        }
+      case R.id.iv_act_topic_languge:// 语言
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.DOMIAN_LANGUAGE);
         break;
-
-      default:
+      case R.id.iv_act_topic_community:// 社会
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.DOMIAN_WORLD);
+        break;
+      case R.id.iv_act_topic_science:// 科学
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.DOMIAN_SCIENCE);
+        break;
+      case R.id.iv_act_topic_math:// 数学
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.DOMIAN_MATH);
+        break;
+      case R.id.iv_act_topic_music:// 艺术(音乐)
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.DOMIAN_MUSIC);
+        break;
+      case R.id.iv_act_topic_art:// 艺术(美术)
+        open(Constant.DATAREGISTRY_TYPE_HARMONY, Constant.DOMIAN_ART);
+        break;
+      // 资源类型
+      case R.id.iv_act_source_text:// 文本
+        open(Constant.DATAREGISTRY_TYPE_SOURCE, "活动设计");
+        break;
+      case R.id.iv_act_source_pic:// 图片
+        open(Constant.DATAREGISTRY_TYPE_SOURCE, "图片");
+        break;
+      case R.id.iv_act_source_anim:// 动画
+        open(Constant.DATAREGISTRY_TYPE_SOURCE, "动画");
+        break;
+      case R.id.iv_act_source_video:// 视频
+        open(Constant.DATAREGISTRY_TYPE_SOURCE, "视频");
+        break;
+      case R.id.iv_act_source_music:// 音频
+        open(Constant.DATAREGISTRY_TYPE_SOURCE, "音频");
+        break;
+      case R.id.iv_act_source_ebook:// 电子书
+        open(Constant.DATAREGISTRY_TYPE_SOURCE, "电子书");
+        break;
+      // 特色课程
+      case R.id.iv_act_main_pre:// 入学准备
+        this.open(Constant.DATAREGISTRY_TYPE_PREPARE);
+        break;
+      case R.id.iv_act_main_edu:// 安全教育
+        this.open(Constant.DATAREGISTRY_TYPE_EDUCATION);
+        break;
+      case R.id.iv_act_main_read:// 早期阅读
+        this.open(Constant.DATAREGISTRY_TYPE_READ);
         break;
     }
   }
@@ -411,10 +441,13 @@ public class HomeActivity extends BaseActivity {
    * 
    * @param type
    */
-  private void open(String type) {
+  private void open(String... string) {
     JsonObject msg = Json.createObject();
     msg.set("action", "post");
-    JsonArray tags = Json.createArray().push(type);
+    JsonArray tags = Json.createArray();
+    for (String type : string) {
+      tags.push(type);
+    }
     msg.set(Constant.KEY_TAGS, tags);
     if (openAuth) {
       checkActivate(msg, Bus.LOCAL + Constant.ADDR_TOPIC);

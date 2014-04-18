@@ -286,13 +286,10 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     this.queryingTags = msg.getArray(Constant.KEY_TAGS);
     for (int i = 0; this.queryingTags != null && i < this.queryingTags.length(); i++) {
       String tag = this.queryingTags.getString(i);
-      if (idContentTypes.containsKey(tag)) {
+      if (idTags.containsValue(tag)) {
         this.currentContentType = idContentTypes.get(tag);
+        echoContentType(tag);
       }
-    }
-    if (this.currentContentType != null) {
-      // 如果从控制台传递的参数中包含了contentType就查询子集分类
-      this.echoContentType(this.currentContentType);
     }
   }
 
@@ -457,10 +454,10 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * 
    * @param currentContentType
    */
-  private void echoContentType(String currentContentType) {
-    Set<Entry<Object, String>> entrySet = idContentTypes.entrySet();
+  private void echoContentType(String tag) {
+    Set<Entry<Object, String>> entrySet = idTags.entrySet();
     for (Entry<Object, String> entry : entrySet) {
-      if (entry.getKey() instanceof Integer && entry.getValue().equals(currentContentType)) {
+      if (entry.getKey() instanceof Integer && entry.getValue().equals(tag)) {
         this.onContentTypeClick(Integer.parseInt(entry.getKey().toString()));
         break;
       }

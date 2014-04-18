@@ -35,32 +35,34 @@
         <item name="android:layout_height">@dimen/act_home_fun2_height</item>
     </style>
     
-    <!-- launcher页面和谐 -->
-    <style name="index_sys_harmany" parent="index_sys_fun">
-        <item name="android:layout_width">@dimen/act_home_harmany_width</item>
-        <item name="android:layout_height">@dimen/act_home_harmany_height</item>
-        <item name="android:layout_marginBottom">@dimen/act_home_har_care_margin</item>
-    </style>
-    
-    <!-- launcher页面托班 -->
-    <style name="index_sys_care" parent="index_sys_fun">
-        <item name="android:layout_width">@dimen/act_home_care_width</item>
-        <item name="android:layout_height">@dimen/act_home_care_height</item>
-        <item name="android:layout_marginBottom">@dimen/act_home_har_care_margin</item>
-    </style>
-    
-    <!-- launcher页面入学准备&安全教育&早期阅读 -->
+    <!-- launcher页面特色课程 -->
     <style name="index_sys_pre_edu_read" parent="index_sys_fun">
-        <item name="android:layout_width">@dimen/act_home_pre_edu_read_width</item>
-        <item name="android:layout_height">@dimen/act_home_pre_edu_read_height</item>
-        <item name="android:layout_marginBottom">@dimen/act_home_pre_edu_read_margin</item>
+        <item name="android:layout_width">@dimen/act_home_course_width</item>
+        <item name="android:layout_height">@dimen/act_home_course_height</item>
+        <item name="android:layout_marginBottom">@dimen/act_home_course_margin</item>
     </style>
     
-    <!-- 课程辅助资源 -->
+    <!-- launcher页面资源类型 -->
     <style name="index_sys_source" parent="index_sys_fun">
         <item name="android:layout_width">@dimen/act_home_source_width</item>
         <item name="android:layout_height">@dimen/act_home_source_height</item>
+        <item name="android:layout_marginBottom">@dimen/act_home_source_margin</item>
     </style>
+    
+    <!-- launcher领域 -->
+    <style name="index_sys_topic" parent="index_sys_fun">
+        <item name="android:layout_width">@dimen/act_home_topic_width</item>
+        <item name="android:layout_height">@dimen/act_home_topic_height</item>
+        <item name="android:layout_marginBottom">@dimen/act_home_topic_margin</item>
+    </style>
+    
+    <!-- launcher年龄 -->
+    <style name="index_sys_age" parent="index_sys_fun">
+        <item name="android:layout_width">@dimen/act_home_age_width</item>
+        <item name="android:layout_height">@dimen/act_home_age_height</item>
+        <item name="android:layout_marginBottom">@dimen/act_home_age_margin</item>
+    </style>
+    
     
     <!-- setting页面按钮style -->
     <style name="setting_bt">

@@ -28,7 +28,7 @@ public class ViewRegistry {
 
   public void subscribe() {
     /**
-     * 打开VIEW[主页，收藏，资源库，设置等]
+     * 打开VIEW[主页，收藏，设置等]
      */
     bus.registerHandler(Constant.ADDR_VIEW, new MessageHandler<JsonObject>() {
       @Override
@@ -44,12 +44,6 @@ public class ViewRegistry {
         if ("favorite".equals(redirectto)) {
           // 去收藏
           Intent intent = new Intent(ctx, FavouriteActivity.class);
-          intent.putExtra("msg", body);
-          ctx.startActivity(intent);
-        }
-        if ("repository".equals(redirectto)) {
-          // 去资源库
-          Intent intent = new Intent(ctx, SourceActivity.class);
           intent.putExtra("msg", body);
           ctx.startActivity(intent);
         }
@@ -86,7 +80,7 @@ public class ViewRegistry {
     });
 
     /**
-     * 打开主题[和谐，托班，示范课，入学准备，智能开发，图画书]
+     * 打开主题[和谐,托班,示范课,入学准备,安全教育,早期阅读]
      */
     bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
@@ -123,11 +117,14 @@ public class ViewRegistry {
           // 入学准备
           intent = new Intent(ctx, PrepareActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_EDUCATION.equals(type)) {
-          // 智能开发
+          // 安全教育
           intent = new Intent(ctx, SecurityActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_READ.equals(type)) {
-          // 图画书
+          // 早期阅读
           intent = new Intent(ctx, EarlyReadingActivity.class);
+        } else if (Constant.DATAREGISTRY_TYPE_SOURCE.equals(type)) {
+          // 资源库
+          intent = new Intent(ctx, SourceActivity.class);
         } else {
           return;
         }

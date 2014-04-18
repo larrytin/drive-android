@@ -21,104 +21,191 @@
         >
       <ImageView
           android:id="@+id/iv_act_main_coll"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_coll"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_coll"
           android:tag="收藏"
           />
       <ImageView
           android:id="@+id/iv_act_main_loc"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_loc"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_loc"
           android:layout_below="@+id/iv_act_main_coll"
           />
       <ImageView
           android:id="@+id/iv_act_main_set"
-          style="@style/index_sys_fun2"
-          android:src="@drawable/index_selector_set"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_set"
           android:layout_below="@+id/iv_act_main_loc"
           />
       <ImageView
           android:id="@+id/iv_act_main_clo"
-          style="@style/index_sys_fun2"
-          android:src="@drawable/index_selector_clo"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_clo"
           android:layout_below="@+id/iv_act_main_set"
           />
     </RelativeLayout>
-    
-    
-    <!-- 和谐  托班 -->
-    <RelativeLayout 
+
+    <!-- 年龄 -->
+    <LinearLayout 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:orientation="vertical"
-        android:layout_marginLeft="@dimen/index_rl_har_ship_layout_marginLeft"
-        android:layout_marginTop="@dimen/index_rl_har_ship_layout_marginTop"
-        >
-      <ImageView
-          android:id="@+id/iv_act_main_har"
-          style="@style/index_sys_harmany"
-          android:src="@drawable/index_selector_har"
-          android:tag="和谐"
-          />
-      <ImageView
-          android:id="@+id/iv_act_main_ship"
-          style="@style/index_sys_care"
-          android:src="@drawable/index_selector_ship"
-          android:layout_below="@+id/iv_act_main_har"
-          android:tag="托班"
-          />
-    </RelativeLayout>
-
-    <!-- 示范课程 -->
-    <ImageView 
-        android:id="@+id/iv_act_main_tech"
-        style="@style/index_sys_fun"
-        android:src="@drawable/index_selector_tech"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="@dimen/index_rl_tech_layout_marginLeft"
-        android:layout_marginTop="@dimen/index_rl_tech_layout_marginTop"
-        android:tag="示范课"
-        />
-
-    <!-- 入学准备  智能开发  图画书 -->
-    <RelativeLayout 
+        android:layout_marginLeft="350dp"
+        android:layout_marginTop="358dp">
+        <ImageView
+            android:id="@+id/iv_act_age_care"
+            style="@style/index_sys_age"
+            android:src="@drawable/index_age_care_normal"
+            android:tag="托班"/>
+        <ImageView
+            android:id="@+id/iv_act_age_small"
+            style="@style/index_sys_age"
+            android:src="@drawable/index_age_small_normal"
+            android:tag="小班"/>
+        <ImageView
+            android:id="@+id/iv_act_age_middle"
+            style="@style/index_sys_age"
+            android:src="@drawable/index_age_middle_normal"
+            android:layout_marginLeft="10dp"
+            android:tag="中班"/>
+        <ImageView
+            android:id="@+id/iv_act_age_large"
+            style="@style/index_sys_age"
+            android:src="@drawable/index_age_large_normal"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="12dp"
+            android:tag="大班"/>
+        <ImageView
+            android:id="@+id/iv_act_age_pre"
+            style="@style/index_sys_age"
+            android:src="@drawable/index_age_pre_normal"
+            android:layout_marginLeft="20dp"
+            android:tag="学前班"/>
+    </LinearLayout>
+    
+    <LinearLayout 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/index_rl_pre_smart_ebk_layout_marginTop"
-        android:layout_marginRight="@dimen/index_rl_pre_smart_ebk_layout_marginRight"
-        >
+        android:orientation="vertical"
+        android:layout_marginTop="265dp"
+        android:layout_marginLeft="544dp">
+        <ImageView
+            android:id="@+id/iv_act_topic_health"
+            style="@style/index_sys_topic"
+            android:src="@drawable/index_topic_health_normal"
+            android:layout_marginLeft="6dp"
+            android:tag="健康"/>
+        <ImageView
+            android:id="@+id/iv_act_topic_languge"
+            style="@style/index_sys_topic"
+            android:src="@drawable/index_topic_languge_normal"
+            android:layout_marginLeft="4dp"
+            android:tag="语言"/>
+        <ImageView
+            android:id="@+id/iv_act_topic_community"
+            style="@style/index_sys_topic"
+            android:src="@drawable/index_topic_community_normal"
+            android:layout_marginLeft="14dp"
+            android:tag="社会"/>
+        <ImageView
+            android:id="@+id/iv_act_topic_science"
+            style="@style/index_sys_topic"
+            android:src="@drawable/index_topic_science_normal"
+            android:layout_marginLeft="4dp"
+            android:tag="科学"/>
+        <ImageView
+            android:id="@+id/iv_act_topic_math"
+            style="@style/index_sys_topic"
+            android:src="@drawable/index_topic_math_normal"
+            android:layout_marginLeft="14dp"
+            android:tag="数学"/>
+        <ImageView
+            android:id="@+id/iv_act_topic_music"
+            style="@style/index_sys_topic"
+            android:src="@drawable/index_topic_music_normal"
+            android:tag="艺术(音乐)"/>
+        <ImageView
+            android:id="@+id/iv_act_topic_art"
+            style="@style/index_sys_topic"
+            android:src="@drawable/index_topic_art_normal"
+            android:layout_marginLeft="7dp"
+            android:tag="艺术(美术)"/>
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="291dp"
+        android:layout_marginLeft="727dp">
+        <ImageView 
+            android:id="@+id/iv_act_source_text"
+            style="@style/index_sys_source"
+            android:src="@drawable/index_source_text_normal"
+            android:layout_marginLeft="35dp"
+            android:layout_marginBottom="23dp"
+            android:tag="文本"/>
+        <ImageView 
+            android:id="@+id/iv_act_source_pic"
+            style="@style/index_sys_source"
+            android:src="@drawable/index_source_pic_normal"
+            android:layout_marginLeft="37dp"
+            android:tag="图片"/>
+        <ImageView 
+            android:id="@+id/iv_act_source_anim"
+            style="@style/index_sys_source"
+            android:src="@drawable/index_source_anim_normal"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="20dp"
+            android:tag="动画"/>
+        <ImageView 
+            android:id="@+id/iv_act_source_music"
+            style="@style/index_sys_source"
+            android:src="@drawable/index_source_music_normal"
+            android:layout_marginLeft="20dp"
+            android:tag="音频"/>
+        <ImageView 
+            android:id="@+id/iv_act_source_video"
+            style="@style/index_sys_source"
+            android:src="@drawable/index_source_video_normal"
+            android:layout_marginLeft="7dp"
+            android:layout_marginBottom="20dp"
+            android:tag="视频"/>
+        <ImageView 
+            android:id="@+id/iv_act_source_ebook"
+            style="@style/index_sys_source"
+            android:src="@drawable/index_source_ebook_normal"
+            android:layout_marginLeft="7dp"
+            android:tag="电子书"/>
+    </LinearLayout>
+    
+    <!-- 特色课程 -->
+    <LinearLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="423dp"
+        android:layout_marginLeft="910dp"
+        android:orientation="vertical">
       <ImageView
           android:id="@+id/iv_act_main_pre"
           style="@style/index_sys_pre_edu_read"
           android:src="@drawable/index_selector_pre"
+          android:layout_marginLeft="20dp"
           android:tag="入学准备"
           />
       <ImageView
           android:id="@+id/iv_act_main_edu"
           style="@style/index_sys_pre_edu_read"
           android:src="@drawable/index_selector_edu"
-          android:layout_below="@+id/iv_act_main_pre"
+          android:layout_marginLeft="15dp"
           android:tag="安全教育"
           />
       <ImageView
           android:id="@+id/iv_act_main_read"
           style="@style/index_sys_pre_edu_read"
           android:src="@drawable/index_selector_read"
-          android:layout_below="@+id/iv_act_main_edu"
           android:tag="早期阅读"
           />
-    </RelativeLayout>
+    </LinearLayout>
 
-    <ImageView
-         android:id="@+id/iv_act_main_source"
-          style="@style/index_sys_source"
-          android:src="@drawable/index_source"
-          android:tag="电子书"
-          android:layout_alignParentRight="true"
-          android:layout_alignParentBottom="true"
-          android:layout_marginRight="@dimen/act_home_source_marginRight"
-          android:layout_marginBottom="@dimen/act_home_source_marginBottom"
-        />
 </RelativeLayout>
