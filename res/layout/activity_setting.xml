@@ -79,6 +79,12 @@
                     android:id="@+id/bt_setting_reboot"
                     style="@style/setting_bt"
                     android:text="@string/setting_reboot" />
+
+                <Button
+                    android:id="@+id/bt_setting_reset"
+                    style="@style/setting_bt"
+                    android:visibility="gone"
+                    android:text="@string/setting_reset" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

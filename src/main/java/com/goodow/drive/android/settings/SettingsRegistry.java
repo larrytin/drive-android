@@ -1,12 +1,16 @@
 package com.goodow.drive.android.settings;
 
+import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.HomeActivity;
 import com.goodow.drive.android.activity.NotificationActivity;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
+import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.Handler;
+import com.goodow.realtime.core.Platform;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -17,7 +21,6 @@ import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 import java.io.File;
 
-import android.app.ActivityManager;
 import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Context;
@@ -280,7 +283,6 @@ public class SettingsRegistry {
           Intent intent = new Intent(ctx, NotificationActivity.class);
           intent.putExtra("msg", msg);
           ctx.startActivity(intent);
-
         }
       }
     });
@@ -306,6 +308,7 @@ public class SettingsRegistry {
     bus.registerLocalHandler(Constant.ADDR_AUTH_REQUEST, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
+        final JsonObject messageBody = message.body();
         // 百度地图
         bus.sendLocal(Constant.ADDR_SETTINGS_LOCATION_BAIDU, null,
             new MessageHandler<JsonObject>() {
@@ -328,7 +331,7 @@ public class SettingsRegistry {
                   // 临时的存储latitude,longitude
                   authSp.edit().putFloat("latitudetmp", (float) latitude).putFloat("longitudetmp",
                       (float) longitude).commit();
-                  if (authSp.getFloat("latitude", -1) != -1
+                  if (authSp.getBoolean("register", false) && authSp.getFloat("latitude", -1) != -1
                       && authSp.getFloat("longitude", -1) != -1) {
                     // GeoPoint(int latitudeE6, int longitudeE6)
                     // latitudeE6 - 纬度坐标，单位是微度
@@ -339,7 +342,20 @@ public class SettingsRegistry {
                     GeoPoint p2LL = new GeoPoint((int) (latitude * 1E6), (int) (longitude * 1E6));
                     double distance = DistanceUtil.getDistance(p1LL, p2LL);// 單位：米
                     send.set("distance", distance);
+                  } else if (!authSp.getBoolean("register", false)
+                      && authSp.getFloat("latitude1", -1) != -1
+                      && authSp.getFloat("longitude1", -1) != -1) {
+                    GeoPoint p1LL =
+                        new GeoPoint((int) (authSp.getFloat("latitude1", -1) * 1E6), (int) (authSp
+                            .getFloat("longitude1", -1) * 1E6));
+                    GeoPoint p2LL = new GeoPoint((int) (latitude * 1E6), (int) (longitude * 1E6));
+                    double distance = DistanceUtil.getDistance(p1LL, p2LL);// 單位：米
+                    send.set("distance", distance);
                   }
+                }
+                if (messageBody.has("schoolName")) {
+                  send.set("schoolName", messageBody.getString("schoolName"));
+                  send.set("contacts", messageBody.getString("contacts"));
                 }
                 authInformation(send);
               }
@@ -351,47 +367,89 @@ public class SettingsRegistry {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject msg = message.body();
-            if (!(msg.has("status") || msg.has("content"))) {
+            if (!(msg.has("status") || msg.has("content") || msg.has("lock") || msg.has("reset"))) {
               return;
             }
-            if ("ok".equals(msg.getString("status"))) {
-              // 校验通过
-              Editor mEditor = authSp.edit();
-              mEditor.putFloat("latitude", authSp.getFloat("latitudetmp", -1));
-              mEditor.putFloat("longitude", authSp.getFloat("longitudetmp", -1));
-              mEditor.putBoolean("activate", true);
-              mEditor.commit();
-              Toast.makeText(ctx, "校验通过", Toast.LENGTH_LONG).show();
-            }
-            if ("reject".equals(msg.getString("status"))) {
-              authSp.edit().putBoolean("locked", true).commit();
-              authSp.edit().putBoolean("activate", false).commit();
-              // 当前的栈顶是否为homeActivity
-              ComponentName component =
-                  ((ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE))
-                      .getRunningTasks(1).get(0).topActivity;
-              String topClassName = component.getClassName();
-              // 如果当前界面是HomeActivity
-              if (!"com.goodow.drive.android.activity.HomeActivity".equals(topClassName)
-                  && !"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
-                bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set("redirectTo", "home"),
+            String status = msg.getString("status");
+            String reset = msg.getString("reset");
+            String lock = msg.getString("lock");
+            // 校验通过
+            if ("0".equals(status)) {
+              if (!authSp.getBoolean("register", false)) { // 第一次注册时，存储地理位置
+                Editor mEditor = authSp.edit();
+                mEditor.putFloat("latitude", authSp.getFloat("latitudetmp", -1));
+                mEditor.putFloat("longitude", authSp.getFloat("longitudetmp", -1));
+                mEditor.putBoolean("register", true);
+                mEditor.commit();
+                Toast.makeText(ctx, R.string.string_register_success, Toast.LENGTH_LONG).show();// 提示注册成功
+                authSp.edit().putBoolean("limit", false).putBoolean("normal", true).putLong(
+                    "limitTime", 0l).commit();
+                Platform.scheduler().cancelTimer(HomeActivity.netConnectRegister); // 取消注册
+              } else {
+                authSp.edit().putBoolean("limit", false).putBoolean("normal", true).putLong(
+                    "limitTime", 0l).commit();
+                bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false),
                     null);
+                Platform.scheduler().cancelTimer(HomeActivity.updateLimit); // 取消限制
+                Platform.scheduler().cancelTimer(HomeActivity.autoShutDown); // 取消自动关机
+                Platform.scheduler().cancelTimer(HomeActivity.netConnectCheck);// 取消校验对话框
+                Platform.scheduler().cancelTimer(HomeActivity.mLimiteShutDown);// 取消限制使用关机
               }
-              if (msg.has("content")
-                  && !"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
-                bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set("content",
-                    msg.getString("content")), null);
+              // 对话框消失
+              SimpleProgressDialog.dismiss(ctx);
+              authSp.edit().putInt("FailTime", 0).commit(); // 计数器清0
+              // 发送数据行为数据
+              bus.sendLocal("drive.systime.analytics.request", null, null);
+            } else if ("1".equals(status)) { // 校验
+              if (!authSp.getBoolean("register", false)) {
+                Editor mEditor = authSp.edit();
+                mEditor.putFloat("latitude1", authSp.getFloat("latitudetmp", -1));
+                mEditor.putFloat("longitude1", authSp.getFloat("longitudetmp", -1));
+                mEditor.commit();
               }
+              authSp.edit().putInt("FailTime", authSp.getInt("FailTime", 0) + 1).commit();
+              // 超过三次后，不再发送,校验失败
+              if (authSp.getInt("FailTime", 0) < 4) {
+                // 重新发送数据
+                bus.sendLocal("drive.auth.request", Json.createObject(), null);
+              } else {
+                bus.sendLocal("drive.notification", Json.createObject().set("content", "三分钟后关机"),
+                    null);
+                // 校验失败
+                Platform.scheduler().scheduleDelay(30 * 60 * 1000, new Handler<Void>() {
+                  @Override
+                  public void handle(Void event) {
+                    // 关机
+                    bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 0),
+                        null);
+                  }
+                });
+              }
+            } else if ("2".equals(status)) { // 注册
+              // 清空缓存
+              authSp.edit().remove("latitude1").remove("longitude1").commit();
+              // 重新发送数据
+              bus.sendLocal("drive.auth.request", Json.createObject(), null);
             }
-            if ("unlocked".equals(msg.getString("status"))) {
-              // 非第一次
-              if (authSp.contains("activate")) {
-                Toast.makeText(ctx, "解锁成功", Toast.LENGTH_LONG).show();
-              }
-              // 解锁，清除数据，让其继续校验
-              authSp.edit().clear().commit();
-              // 重新校验
-              bus.sendLocal(Constant.ADDR_AUTH_REQUEST, null, null);
+            // 重置
+            if ("1".equals(reset)) {
+              authSp.edit().putBoolean("reset", true).commit();
+            } else if ("0".equals(reset)) {
+              authSp.edit().putBoolean("reset", false).commit();
+            }
+            // 锁定
+            if ("1".equals(lock)) {
+              authSp.edit().putBoolean("lock", true).commit();
+              android.os.Message androidMsg = android.os.Message.obtain();
+              androidMsg.obj = ctx.getResources().getString(R.string.string_register_prompt_locked);
+              androidMsg.what = 3;
+              // HomeActivity.mHandler.sendMessage(msg);
+            } else if ("0".equals(lock)) {
+              authSp.edit().putBoolean("lock", false).commit();
+            }
+            if (msg.has("content")) {
+              bus.sendLocal("drive.notification", Json.createObject().set("content",
+                  msg.getString("content")), null);
             }
           }
         });

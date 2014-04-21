@@ -341,5 +341,4 @@
     
     <!-- PDF播放器 720p -->
     <dimen name="pdf_player_button_textSize">18sp</dimen><!-- pdf播放器按钮字体大小 -->
-    
 </resources>

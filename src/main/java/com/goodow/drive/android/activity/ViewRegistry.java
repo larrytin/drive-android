@@ -117,8 +117,7 @@ public class ViewRegistry {
     });
 
     /**
-     * <<<<<<< HEAD 打开主题[和谐,托班,示范课,入学准备,安全教育,早期阅读] ======= 打开主题[和谐，托班，托班-电子书，示范课，入学准备，安全教育，早期阅读]
-     * >>>>>>> 增加托班电子书
+     * 
      */
     bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
@@ -178,6 +177,52 @@ public class ViewRegistry {
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, StatusBarActivity.class);
         ctx.startActivity(intent);
+      }
+    });
+
+    /**
+     * 提示使用
+     */
+    bus.registerLocalHandler(Constant.ADDR_VIEW_PROMPT, new MessageHandler<JsonObject>() {
+      private LayoutParams mLayoutParams;
+      private TextView mView;
+      private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
+          .getSystemService(Context.WINDOW_SERVICE);
+      private boolean mSwitch = true;
+
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject msg = message.body();
+        if (msg.has("status")) {
+          if (mView == null && msg.getBoolean("status")) {
+            mView = new TextView(ctx);
+            mView.setText(R.string.string_register_try);
+            if (msg.has("content")) {
+              mView.setText(msg.getString("content"));
+            }
+            mView.setTextSize(18);
+            mLayoutParams = new WindowManager.LayoutParams();
+            mLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;
+            mLayoutParams.format = PixelFormat.RGBA_8888;
+            mLayoutParams.x = 1020;
+            mLayoutParams.y = 45;
+            mLayoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            mLayoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            mLayoutParams.type = LayoutParams.TYPE_SYSTEM_OVERLAY;
+          }
+          if (msg.getBoolean("status")) {
+            if (mSwitch) {
+              mWindowManager.addView(mView, mLayoutParams);
+              mSwitch = false;
+            }
+          } else {
+            if (!mSwitch) {
+              mWindowManager.removeView(mView);
+              mView = null;
+              mSwitch = true;
+            }
+          }
+        }
       }
     });
     // 标注

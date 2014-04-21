@@ -5,6 +5,10 @@ import com.goodow.drive.android.Constant;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.View;
@@ -17,9 +21,11 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
   private Button bt_setting_reboot;
   private Button bt_setting_screen_offset;
   private Button bt_setting_wifi;
+  private Button bt_setting_reset;
   private ImageView iv_common_back;
   private View iv_hidden;
   private final long[] mSetting = new long[5];
+  private SharedPreferences authSp = null;
 
   @Override
   public void onClick(View view) {
@@ -48,6 +54,26 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
       case R.id.bt_setting_reboot:// 重启
         bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);
         break;
+      case R.id.bt_setting_reset:// 重置
+        new AlertDialog.Builder(this).setMessage("您确定重置吗？").setPositiveButton("确定",
+            new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                authSp.edit().clear().commit();
+                // // 跳到首页时，弹出注册界面
+                // authSp.edit().putBoolean("resetkey", true).commit();
+                // bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set("redirectTo",
+                // "home"), null);
+                // 重启
+                bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);
+              }
+            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+          }
+        }).create().show();
+
+        break;
       case R.id.iv_common_back://
         JsonObject msg = Json.createObject();
         msg.set("return", true);
@@ -63,6 +89,10 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     this.setContentView(R.layout.activity_setting);
     initView();
     setListener();
+    authSp = getSharedPreferences(HomeActivity.AUTH, Context.MODE_PRIVATE);
+    if (authSp.getBoolean("reset", false)) {
+      bt_setting_reset.setVisibility(View.VISIBLE);
+    }
   }
 
   private void initView() {
@@ -72,6 +102,7 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     bt_setting_wifi = (Button) findViewById(R.id.bt_setting_wifi);
     iv_common_back = (ImageView) findViewById(R.id.iv_common_back);
     iv_hidden = findViewById(R.id.iv_hidden);
+    bt_setting_reset = (Button) findViewById(R.id.bt_setting_reset);
   }
 
   private void setListener() {
@@ -81,5 +112,6 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     bt_setting_wifi.setOnClickListener(this);
     iv_common_back.setOnClickListener(this);
     iv_hidden.setOnClickListener(this);
+    bt_setting_reset.setOnClickListener(this);
   }
 }

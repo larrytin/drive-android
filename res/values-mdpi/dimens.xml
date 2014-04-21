@@ -328,5 +328,8 @@
     
     <!-- PDF播放器 720p -->
     <dimen name="pdf_player_button_textSize">18px</dimen><!-- pdf播放器按钮字体大小 -->
-    
+    <!-- 注册界面 -->
+    <dimen name="register_login_border_width">643dip</dimen><!-- 底框的宽度 -->
+    <dimen name="register_login_border_height">476dip</dimen><!-- 底框的高度 -->
+
 </resources>

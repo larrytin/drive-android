@@ -10,14 +10,15 @@ import com.goodow.drive.android.data.DataRegistry;
 import com.goodow.drive.android.player.PlayerRegistry;
 import com.goodow.drive.android.settings.BaiduLocation;
 import com.goodow.drive.android.settings.SettingsRegistry;
+import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.drive.android.toolutils.UnzipAsserts;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.channel.State;
 import com.goodow.realtime.core.Handler;
-import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.core.Platform;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -32,30 +33,38 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.SharedPreferences;
+import android.graphics.PixelFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class HomeActivity extends BaseActivity {
   public static final String TAG = HomeActivity.class.getSimpleName();
   private static final String DBFILENAME = "sqlite.dump";
   private static boolean registried;
-  private Registration openHandlerReg;
   private Registration netWorkHandlerReg;
-  private int schedulePeriodic;
   public static final String AUTH = "AuthImformation";
   private SharedPreferences authSp = null;
   // 联网状态为1
   private int flag = 0;
-  // 记录注册OnOpen状态
-  private boolean registeredOnOpen = false;
   // 记录注册网络监听状态
   private boolean registeredNetWork = false;
   private ConnectivityManager mConnectivityManager;
@@ -66,21 +75,61 @@ public class HomeActivity extends BaseActivity {
 
   private Registration openHandlerReg1;
 
-  private boolean ConnectStatus = true;
-  // 1分钟 TODO:
-  private final int periodicTime = 60000;
-  private int schPeriodicTime;
+  // TODO:如果为true，校验
+  private boolean openAuth = true;
 
-  // 标记
-  private boolean unConnect = false;
-
-  // 4天校驗一次 TODO:
-  private int number = 1;
-
-  // TODO:如果为false，不校验，默认不校验
-  private final boolean openAuth = false;
-
+  // 更新开机时间
   private int updateBoot;
+  // 试用
+  private int trialSch;
+  // 限制使用
+  public static int updateLimit;
+  // 定时校验
+  private int authPeriodic;
+  // 自动关机
+  public static int autoShutDown;
+  // 限制使用关机
+  public static int mLimiteShutDown;
+
+  // 弹出框
+  public static int netConnectRegister;
+  public static int netConnectCheck;
+
+  // 周期校验时间间隔
+  private int authPeriodicTime = 3 * 60 * 1000;
+  // 限制使用时间
+  private long limitTime = 3 * 60 * 1000;
+
+  private static final int REG = 1;
+  private static final int PROPMT = 2;
+  private static final int PROPMTWINDOW = 3;
+
+  public boolean prompt = false;// 窗口的状态
+
+  public android.os.Handler mHandler = new android.os.Handler() {
+    @Override
+    public void handleMessage(android.os.Message msg) {
+      switch (msg.what) {
+        case REG:
+          registerDialog(HomeActivity.this, false);
+          break;
+        case PROPMT:
+          Toast.makeText(HomeActivity.this, R.string.string_register_prompt_delaynetwork,
+              Toast.LENGTH_LONG).show();
+          break;
+        case PROPMTWINDOW:
+          if (prompt) {
+            return;
+          }
+          String string = (String) msg.obj;
+          promptWindow(string);
+          prompt = true;
+          break;
+        default:
+          break;
+      }
+    };
+  };
 
   public void onClick(View v) {
 
@@ -178,8 +227,78 @@ public class HomeActivity extends BaseActivity {
         break;
       case R.id.iv_act_main_read:// 早期阅读
         this.open(Constant.DATAREGISTRY_TYPE_READ);
+      default:
         break;
     }
+  }
+
+  /**
+   * 屏蔽返回键
+   */
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      return true;
+    }
+    return super.onKeyDown(keyCode, event);
+  }
+
+  public void promptWindow(String mString) {
+    final WindowManager wm =
+        (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+    final View view = View.inflate(getApplicationContext(), R.layout.register_prompt, null);
+    LayoutParams params = new WindowManager.LayoutParams();
+    params.width = 643;
+    params.height = 476;
+    params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
+    params.y = 200;
+    params.type = LayoutParams.TYPE_PHONE;
+    params.format = PixelFormat.RGBA_8888;
+    wm.addView(view, params);
+    final TextView tv_register_prompt = (TextView) view.findViewById(R.id.tv_register_prompt);
+    final TextView tv_register_reboot = (TextView) view.findViewById(R.id.tv_register_reboot);
+    final TextView tv_register_shutdown = (TextView) view.findViewById(R.id.tv_register_shutdown);
+    tv_register_prompt.setText(mString);
+    tv_register_reboot.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        wm.removeView(view);
+        // 重启
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);
+      }
+    });
+    tv_register_shutdown.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        wm.removeView(view);
+        // 关机
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 0), null);
+      }
+    });
+  }
+
+  /**
+   * 试用十分钟，跳到主页
+   */
+  public void trialTenMinutes() {
+    authSp.edit().putBoolean("trial", true).commit();
+    trialSch = Platform.scheduler().scheduleDelay(60 * 1000, new Handler<Void>() {
+      @Override
+      public void handle(Void event) {
+        bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false), null);
+        authSp.edit().putBoolean("trial", false).commit();
+        ComponentName component =
+            ((ActivityManager) HomeActivity.this.getSystemService(Context.ACTIVITY_SERVICE))
+                .getRunningTasks(1).get(0).topActivity;
+        String topClassName = component.getClassName();
+        if (!"com.goodow.drive.android.activity.HomeActivity".equals(topClassName)) {
+          bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set("redirectTo", "home"), null);
+        }
+        if (!authSp.getBoolean("register", false)) {
+          mHandler.sendEmptyMessage(REG);
+        }
+      }
+    });
   }
 
   @Override
@@ -188,22 +307,16 @@ public class HomeActivity extends BaseActivity {
     this.setContentView(R.layout.activity_home);
     authSp = this.getSharedPreferences(AUTH, Context.MODE_PRIVATE);
     subscribe();
-    sendAnalyticsMessage();
-    // 每隔1天,发送一次数据到服务器 TODO:发布时修改时间为一天
-    schedulePeriodic = Platform.scheduler().schedulePeriodic(1 * 60 * 1000, new Handler<Void>() {
-      @Override
-      public void handle(Void event) {
-        sendAnalyticsMessage();
-        if (openAuth) {
-          number--;
-          if (number == 0) {
-            sendAuth();
-            number = 1;// TODO:修改几天校验一次
-          }
-        }
-      }
-    });
-    updateBoot = Platform.scheduler().schedulePeriodic(60000, new Handler<Void>() {
+    mConnectivityManager =
+        (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+    networkInfo = mConnectivityManager.getActiveNetworkInfo();
+    BaiduLocation.INSTANCE.setContext(getApplicationContext());
+    mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
+    BaiduLocation.INSTANCE.init();
+    if (openAuth) {
+      openRegisterAndAuth();
+    }
+    updateBoot = Platform.scheduler().schedulePeriodic(60 * 1000, new Handler<Void>() {
       @Override
       public void handle(Void event) {
         DBOperator.updateBoot(HomeActivity.this, "T_BOOT", "LAST_TIME", "CLOSE_TIME", Json
@@ -211,13 +324,7 @@ public class HomeActivity extends BaseActivity {
                 System.currentTimeMillis()));
       }
     });
-    BaiduLocation.INSTANCE.setContext(getApplicationContext());
-    mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
-    BaiduLocation.INSTANCE.init();
     copyDataBasesBy();
-    if (openAuth) {
-      checkAuth();
-    }
     new Thread() {
       @Override
       public void run() {
@@ -233,10 +340,17 @@ public class HomeActivity extends BaseActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    netWorkHandlerReg.unregister();
-    Platform.scheduler().cancelTimer(schedulePeriodic);
     Platform.scheduler().cancelTimer(updateBoot);
+    Platform.scheduler().cancelTimer(trialSch);
+    Platform.scheduler().cancelTimer(updateLimit);
+    Platform.scheduler().cancelTimer(authPeriodic);
+    Platform.scheduler().cancelTimer(autoShutDown);
+    Platform.scheduler().cancelTimer(netConnectCheck);
+    Platform.scheduler().cancelTimer(netConnectRegister);
+    Platform.scheduler().cancelTimer(mLimiteShutDown);
+    netWorkHandlerReg.unregister();
     mLocationClient.stop();
+    SimpleProgressDialog.resetByThisContext(HomeActivity.this);
   }
 
   @Override
@@ -246,9 +360,8 @@ public class HomeActivity extends BaseActivity {
       return;
     }
     registeredNetWork = true;
-    // 监听网络变化
     netWorkHandlerReg =
-        bus.registerLocalHandler(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
+        bus.registerHandler(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
@@ -258,34 +371,6 @@ public class HomeActivity extends BaseActivity {
             }
             float netStrength = (float) body.getNumber("strength");
             if (netStrength <= 0.0f) {
-              // 标记
-              if (openAuth && !unConnect) {
-                unConnect = true;
-                // 断网,10分钟后，不让用户使用；
-                schPeriodicTime =
-                    Platform.scheduler().scheduleDelay(periodicTime, new Handler<Void>() {
-                      @Override
-                      public void handle(Void event) {
-                        ConnectStatus = false;
-                        ComponentName component =
-                            ((ActivityManager) HomeActivity.this
-                                .getSystemService(Context.ACTIVITY_SERVICE)).getRunningTasks(1)
-                                .get(0).topActivity;
-                        String topClassName = component.getClassName();
-                        if (!"com.goodow.drive.android.activity.HomeActivity".equals(topClassName)
-                            && !"com.goodow.drive.android.activity.NotificationActivity"
-                                .equals(topClassName)) {
-                          bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set("redirectTo",
-                              "home"), null);
-                        }
-                        if (!"com.goodow.drive.android.activity.NotificationActivity"
-                            .equals(topClassName)) {
-                          bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set(
-                              "content", "您无法继续使用，请联网操作"), null);
-                        }
-                      }
-                    });
-              }
               // 无网络
               flag = -1;
               // 由无网络变为有网络(此处不分3G,WIFI)
@@ -293,15 +378,6 @@ public class HomeActivity extends BaseActivity {
               // 重连
               BusProvider.reconnect();
               flag = 0;
-              if (openAuth) {
-                unConnect = false;
-                Platform.scheduler().cancelTimer(schPeriodicTime);
-                ConnectStatus = true;
-              }
-            } else if (openAuth) {
-              unConnect = false;
-              Platform.scheduler().cancelTimer(schPeriodicTime);
-              ConnectStatus = true;
             }
           }
         });
@@ -309,59 +385,27 @@ public class HomeActivity extends BaseActivity {
   }
 
   private void checkActivate(JsonObject msg, String address) {
-    // 联网且激活时
-    if (authSp.getBoolean("activate", false) && ConnectStatus) {
-      this.bus.send(address, msg, null);
-    } else if (authSp.getBoolean("activate", false) && !ConnectStatus) {
-      Toast.makeText(this, "当前无网络，请联网继续操作...", Toast.LENGTH_LONG).show();
-      // 锁定或未激活
-    } else {
-      if (authSp.getBoolean("locked", false)) {
-        Toast.makeText(this, "当前设备被锁定", Toast.LENGTH_LONG).show();
-      }
+    // 1.试用 2.限制使用 3.正常使用
+    if (authSp.getBoolean("trial", false)
+        || (authSp.getBoolean("register", false) && authSp.getBoolean("limit", false))
+        || (authSp.getBoolean("register", false) && authSp.getBoolean("normal", false))) {
+      this.bus.sendLocal(address, msg, null);
+      // 未注册
+    } else if (!authSp.getBoolean("register", false)) {
+      registerDialog(HomeActivity.this, false);
+    } else if (authSp.getBoolean("lock", false)) {
+      Toast.makeText(HomeActivity.this, R.string.string_register_prompt_locked, Toast.LENGTH_LONG)
+          .show();
+      // 注册，限制使用时间已用完
+    } else if (!authSp.getBoolean("limit", true)) {
+      Toast.makeText(HomeActivity.this, R.string.string_register_prompt_limit_finished,
+          Toast.LENGTH_LONG).show();
       networkInfo = mConnectivityManager.getActiveNetworkInfo();
-      // 无网络
       if (networkInfo == null) {
-        Toast.makeText(this, "当前无网络，请联网...", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.string_register_unnetwork, Toast.LENGTH_LONG).show();
       }
-      // 校驗
-      sendAuth();
+      sendAuth();// 校验
     }
-  }
-
-  private void checkAuth() {
-    mConnectivityManager =
-        (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-    networkInfo = mConnectivityManager.getActiveNetworkInfo();
-    if (networkInfo != null) {
-      ConnectStatus = true;
-    } else {
-      // 未激活之前
-      if (!authSp.contains("activate")) {
-        bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set("content",
-            "激活设备,请关闭wifi,保持3G联网状态"), null);
-      }
-      unConnect = true;// 无网络
-      schPeriodicTime = Platform.scheduler().scheduleDelay(periodicTime, new Handler<Void>() {
-        @Override
-        public void handle(Void event) {
-          ConnectStatus = false;
-          ComponentName component =
-              ((ActivityManager) HomeActivity.this.getSystemService(Context.ACTIVITY_SERVICE))
-                  .getRunningTasks(1).get(0).topActivity;
-          String topClassName = component.getClassName();
-          if (!"com.goodow.drive.android.activity.HomeActivity".equals(topClassName)
-              && !"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
-            bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set("redirectTo", "home"), null);
-          }
-          if (!"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
-            bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set("content",
-                "您无法继续使用，请联网操作"), null);
-          }
-        }
-      });
-    }
-    sendAuth();
   }
 
   /**
@@ -389,7 +433,6 @@ public class HomeActivity extends BaseActivity {
             is.close();
             fos.close();
           } catch (Exception e) {
-            // TODO: handle exception
           }
         }
       }.start();
@@ -440,9 +483,76 @@ public class HomeActivity extends BaseActivity {
   }
 
   /**
+   * 限制使用
+   * 
+   * @return
+   */
+  private int limitUse() {
+    return Platform.scheduler().schedulePeriodic(60 * 1000, new Handler<Void>() {
+      @Override
+      public void handle(Void arg0) {
+        long time = authSp.getLong("limitTime", 0l);
+        authSp.edit().putLong("limitTime", time + SystemClock.uptimeMillis()).commit();
+        if (time >= limitTime) {
+          authSp.edit().putBoolean("limit", false).commit();
+          // 让系统异常，限制使用中消失
+          bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false), null);
+          android.os.Message msg = android.os.Message.obtain();
+          msg.obj = getResources().getString(R.string.string_register_prompt_limit_finished);
+          msg.what = PROPMTWINDOW;
+          mHandler.sendMessage(msg);
+        }
+      }
+    });
+  }
+
+  // /**
+  // * 发送用户行为数据
+  // */
+  // private void sendAnalyticsMessage() {
+  // if (State.OPEN == bus.getReadyState()) {
+  // // 请求将播放信息统计发送到服务器
+  // bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
+  // bus.send(Bus.LOCAL + BusProvider.SID + "systime.analytics.request", null, null);
+  // } else {
+  // Log.w("EventBus Status", bus.getReadyState().name());
+  // BusProvider.reconnect();
+  // // 记录注册状态，如果已注册，不应重复注册
+  // if (registeredOnOpen) {
+  // return;
+  // }
+  // registeredOnOpen = true;// 注册
+  // // 监听网络状况
+  // openHandlerReg = bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
+  // @Override
+  // public void handle(Message<JsonObject> message) {
+  // bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
+  // bus.send(Bus.LOCAL + BusProvider.SID + "systime.analytics.request", null, null);
+  // registeredOnOpen = false;
+  // openHandlerReg.unregister();
+  // }
+  // });
+  // }
+  // }
+
+  private void notNetLimiteMode() {
+    if (authSp.getLong("limitTime", 0l) >= limitTime) {
+      android.os.Message msg = android.os.Message.obtain();
+      msg.obj = getResources().getString(R.string.string_register_prompt_limit_finished);
+      msg.what = PROPMTWINDOW;
+      mHandler.sendMessage(msg);
+      return;
+    }
+    authSp.edit().putBoolean("limit", true).commit();
+    bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", true).set("content",
+        getResources().getString(R.string.string_register_prompt_limit_use)), null);
+    updateLimit = limitUse();
+  }
+
+  /**
    * 打开子级页面
    * 
-   * @param type
+   * @param
    */
   private void open(String... string) {
     JsonObject msg = Json.createObject();
@@ -457,39 +567,155 @@ public class HomeActivity extends BaseActivity {
     } else {
       this.bus.sendLocal(Constant.ADDR_TOPIC, msg, null);
     }
-
   }
 
-  private void sendAnalyticsMessage() {
-    if (State.OPEN == bus.getReadyState()) {
-      // 请求将播放信息统计发送到服务器
-      bus.sendLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST, null, null);
-      bus.sendLocal(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST, null, null);
-    } else {
-      Log.w("EventBus Status", bus.getReadyState().name());
-      BusProvider.reconnect();
-      // 记录注册状态，如果已注册，不应重复注册
-      if (registeredOnOpen) {
-        return;
+  private void openRegisterAndAuth() {
+    authSp.edit().putInt("FailTime", 0).commit(); // 失败次数
+    authSp.edit().putBoolean("normal", false).commit(); // 校验成功标记设置
+    // 注册成功
+    if (authSp.getBoolean("register", false)) {
+      // && State.OPEN == bus.getReadyState()
+      if (networkInfo != null) { // 网络良好，校验
+        bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);
+        SimpleProgressDialog.show(HomeActivity.this, new OnCancelListener() {
+          @Override
+          public void onCancel(DialogInterface dialog) {
+          }
+        });
+        netConnectCheck = Platform.scheduler().scheduleDelay(20 * 1000, new Handler<Void>() {
+          @Override
+          public void handle(Void event) {
+            if (SimpleProgressDialog.isShowing()) {
+              SimpleProgressDialog.dismiss(HomeActivity.this);
+              mHandler.sendEmptyMessage(PROPMT);
+              authSp.edit().putBoolean("limit", true).commit();
+              bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", true).set(
+                  "content", getResources().getString(R.string.string_register_prompt_limit_use)),
+                  null);
+              updateLimit = limitUse();
+            }
+          }
+        });
+      } else if (!authSp.getBoolean("lock", true)) { // 网络不通，且未锁定
+        notNetLimiteMode();
+      } else { // 网络不通，锁定
+        android.os.Message msg = android.os.Message.obtain();
+        msg.obj = getResources().getString(R.string.string_register_prompt_locked);
+        msg.what = PROPMTWINDOW;
+        mHandler.sendMessage(msg);
       }
-      registeredOnOpen = true;// 注册
-      // 监听网络状况
-      openHandlerReg = bus.registerLocalHandler(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
+    } else if (networkInfo == null) {
+      // 试用10分钟
+      bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", true), null);
+      trialTenMinutes();
+    } else {
+      registerDialog(this, true);
+    }
+    if (authSp.getBoolean("limit", false)) {
+      updateLimit = limitUse();
+    }
+    authPeriodic = Platform.scheduler().schedulePeriodic(authPeriodicTime, new Handler<Void>() {
+      @Override
+      public void handle(Void arg0) {
+        // 定期校验
+        // 无网络，进入限制使用
+        networkInfo = mConnectivityManager.getActiveNetworkInfo();
+        if (networkInfo == null && authSp.getBoolean("register", false)) {
+          notNetLimiteMode();
+        }
+        // 有网络，发送数据
+        sendAuth();
+      }
+    });
+  }
+
+  /**
+   * 注册对话框
+   * 
+   * @param bool
+   */
+  private void registerDialog(Context context, boolean bool) {
+    final AlertDialog mAlertDialog = new AlertDialog.Builder(context).create();
+    View mView = View.inflate(context, R.layout.register_login, null);
+    mAlertDialog.setView(mView);
+    mAlertDialog.show();
+    mAlertDialog.setCancelable(false);
+    Window mWindow = mAlertDialog.getWindow();
+    mWindow.setContentView(R.layout.register_login);
+    final EditText schoolname = (EditText) mWindow.findViewById(R.id.et_schoolname);
+    final EditText schoolname1 = (EditText) mWindow.findViewById(R.id.et_schoolname1);
+    final TextView tv_register_submit = (TextView) mWindow.findViewById(R.id.tv_register_submit);
+    final TextView tv_register_close = (TextView) mWindow.findViewById(R.id.tv_register_close);
+    final TextView tv_register_try = (TextView) mWindow.findViewById(R.id.tv_register_try);
+    tv_register_submit.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        networkInfo = mConnectivityManager.getActiveNetworkInfo();
+        if (networkInfo == null || bus.getReadyState() != State.OPEN) {
+          Toast.makeText(HomeActivity.this, R.string.string_register_unnetwork, Toast.LENGTH_LONG)
+              .show();
+          return;
+        }
+        String schName = schoolname.getText().toString().trim();
+        String schName1 = schoolname1.getText().toString().trim();
+        if (!TextUtils.isEmpty(schName) && !TextUtils.isEmpty(schName1)) {
+          mAlertDialog.cancel();
+          // 提交注册信息
+          bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject().set("schoolName", schName)
+              .set("contacts", schName1), null);
+          SimpleProgressDialog.show(HomeActivity.this, new OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+            }
+          });
+          netConnectRegister = Platform.scheduler().scheduleDelay(20 * 1000, new Handler<Void>() {
+            @Override
+            public void handle(Void event) {
+              if (SimpleProgressDialog.isShowing()) {
+                SimpleProgressDialog.dismiss(HomeActivity.this);
+                mHandler.sendEmptyMessage(PROPMT);
+              }
+            }
+          });
+        } else if (TextUtils.isEmpty(schName1) | TextUtils.isEmpty(schName)) {
+          Toast.makeText(getApplicationContext(), R.string.string_register_input_notnull,
+              Toast.LENGTH_LONG).show();
+        }
+      }
+    });
+    if (bool) {
+      tv_register_close.setVisibility(View.GONE);
+      tv_register_try.setVisibility(View.VISIBLE);
+      tv_register_try.setOnClickListener(new OnClickListener() {
         @Override
-        public void handle(Message<JsonObject> message) {
-          bus.sendLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST, null, null);
-          bus.sendLocal(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST, null, null);
-          registeredOnOpen = false;
-          openHandlerReg.unregister();
+        public void onClick(View v) {
+          mAlertDialog.cancel();
+          trialTenMinutes();
+          bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", true), null);
+          authSp.edit().putBoolean("trial", true).commit();
+        }
+      });
+    } else {
+      tv_register_close.setVisibility(View.VISIBLE);
+      tv_register_try.setVisibility(View.GONE);
+      tv_register_close.setOnClickListener(new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          mAlertDialog.cancel();
+          // 关机
+          bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 0), null);
         }
       });
     }
   }
 
+  /**
+   * 发送校验请求
+   */
   private void sendAuth() {
     if (State.OPEN == bus.getReadyState()) {
       // 校验
-      bus.sendLocal(Constant.ADDR_AUTH_REQUEST, null, null);
+      bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);
     } else {
       BusProvider.reconnect();
       // 记录注册状态，如果已注册，不应重复注册
@@ -501,7 +727,7 @@ public class HomeActivity extends BaseActivity {
       openHandlerReg1 = bus.registerLocalHandler(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
         @Override
         public void handle(Message<JsonObject> message) {
-          bus.sendLocal(Constant.ADDR_AUTH_REQUEST, null, null);
+          bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);
           registeredOnOpen1 = false;
           openHandlerReg1.unregister();
         }
@@ -518,5 +744,4 @@ public class HomeActivity extends BaseActivity {
       new DataRegistry(bus, this).subscribe();
     }
   }
-
 }

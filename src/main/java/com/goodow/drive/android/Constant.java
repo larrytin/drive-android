@@ -16,6 +16,8 @@ public interface Constant {
   String ADDR_VIEW_REFRESH = ADDR_VIEW + ".refresh";
   String ADDR_VIEW_STATUS = ADDR_VIEW + ".status";
   String ADDR_VIEW_SCRAWL = ADDR_VIEW + ".scrawl";
+  String ADDR_VIEW_PROMPT = ADDR_VIEW + ".prompt";
+
   String ADDR_SETTINGS = DRIVE + ".settings";
   String ADDR_SETTINGS_AUDIO = ADDR_SETTINGS + ".audio";
   String ADDR_SETTINGS_INFORMATION = ADDR_SETTINGS + ".information";

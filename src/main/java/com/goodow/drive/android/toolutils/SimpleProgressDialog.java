@@ -1,5 +1,7 @@
 package com.goodow.drive.android.toolutils;
 
+import com.goodow.android.drive.R;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -72,7 +74,8 @@ public final class SimpleProgressDialog {
     referenceCounter++;
     if (progressDialog == null) {
       progressDialog = ProgressDialog.show(context, "网络访问中", "请耐心等待...");
-      progressDialog.setCancelable(true);
+      progressDialog.setCancelable(false);
+      progressDialog.getWindow().setContentView(R.layout.register_connect);
       progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
         @Override
         public void onCancel(DialogInterface dialog) {
