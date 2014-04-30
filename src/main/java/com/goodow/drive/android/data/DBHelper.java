@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-  private static final String DBNAME = "keruixing";
+  public static final String DBNAME = "keruixing";
   private static DBHelper dbHelper = null;
 
   public static DBHelper getInstance(Context context) {

@@ -3,12 +3,15 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.data.DBDataProvider;
+import com.goodow.drive.android.data.DBHelper;
 import com.goodow.drive.android.data.DBOperator;
 import com.goodow.drive.android.data.DataRegistry;
 import com.goodow.drive.android.player.PlayerRegistry;
 import com.goodow.drive.android.settings.BaiduLocation;
 import com.goodow.drive.android.settings.NetWorkListener;
 import com.goodow.drive.android.settings.SettingsRegistry;
+import com.goodow.drive.android.toolutils.UnzipAsserts;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -23,9 +26,12 @@ import com.goodow.realtime.json.JsonObject;
 
 import com.baidu.location.LocationClient;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +52,7 @@ public class HomeActivity extends BaseActivity {
     Logger.getLogger(JavaWebSocket.class.getName()).setLevel(Level.ALL);
   }
   public static final String TAG = HomeActivity.class.getSimpleName();
-  private static final String DATABASENAME = "keruixing";
+  private static final String DBFILENAME = "sqlite.dump";
   private static boolean registried;
   private HandlerRegistration openHandlerReg;
   private HandlerRegistration netWorkHandlerReg;
@@ -185,11 +191,22 @@ public class HomeActivity extends BaseActivity {
     BaiduLocation.INSTANCE.setContext(getApplicationContext());
     mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
     BaiduLocation.INSTANCE.init();
-    // 数据库打包，将数据库放到asset目录下即可，数据库名为：keruixing TODO：数据库
-    copyDataBases();
+    // 数据库打包，将数据库放到asset目录下即可，数据库文件名为：sqlite.dump
+    copyDataBasesBySql();// sql语句初始化
+    // copyDataBases();//数据库拷贝
     if (openAuth) {
       checkAuth();
     }
+    new Thread() {
+      @Override
+      public void run() {
+        try {
+          UnzipAsserts.unZip(HomeActivity.this, "attachments.zip", "/mnt/sdcard", false);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      };
+    }.start();
   }
 
   @Override
@@ -328,13 +345,13 @@ public class HomeActivity extends BaseActivity {
    */
   private void copyDataBases() {
     final String dataBaseDir = "data/data/" + HomeActivity.this.getPackageName() + "/databases";
-    final File dbFile = new File(dataBaseDir, DATABASENAME);
+    final File dbFile = new File(dataBaseDir, DBHelper.DBNAME);
     if (!(dbFile.exists() && dbFile.length() > 0)) {
       new Thread() {
         @Override
         public void run() {
           try {
-            InputStream is = HomeActivity.this.getAssets().open(DATABASENAME);
+            InputStream is = HomeActivity.this.getAssets().open(DBFILENAME);
             File filedir = new File(dataBaseDir);
             if (!filedir.exists()) {
               filedir.mkdir();
@@ -348,8 +365,42 @@ public class HomeActivity extends BaseActivity {
             is.close();
             fos.close();
           } catch (Exception e) {
+            // TODO: handle exception
+          }
+        }
+      }.start();
+    }
+  }
+
+  /**
+   * 通过读取sql文件初始化数据库
+   * 
+   * @author:DingPengwei
+   * @date:May 5, 2014 7:03:38 PM
+   */
+  private void copyDataBasesBySql() {
+    final String dataBaseDir = "data/data/" + HomeActivity.this.getPackageName() + "/databases";
+    final File dbFile = new File(dataBaseDir, DBHelper.DBNAME);
+    if (!(dbFile.exists() && dbFile.length() > 0)) {
+      new Thread() {
+        @Override
+        public void run() {
+          JsonArray sqls = Json.createArray();
+          try {
+            InputStream open = HomeActivity.this.getAssets().open("init.sql");
+            InputStreamReader inputStreamReader = new InputStreamReader(open, "utf8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+              sqls.push(line);
+            }
+            open.close();
+            inputStreamReader.close();
+            bufferedReader.close();
+          } catch (Exception e) {
             e.printStackTrace();
           }
+          DBDataProvider.insertFileBySql(HomeActivity.this, sqls);
         };
       }.start();
     }

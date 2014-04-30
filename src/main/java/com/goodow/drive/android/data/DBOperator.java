@@ -108,6 +108,35 @@ public class DBOperator {
     }
     return result;
   }
+  /**
+   * 创建N个文件
+   * 
+   * @param context
+   * @param sqls
+   * @return
+   * @status tested
+   */
+  public static boolean createFileInfoBySql(Context context, JsonArray sqls) {
+    boolean result = false;
+    int len = sqls.length();
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    try {
+      db.beginTransaction();
+      for (int i = 0; i < len; i++) {
+        String sql = sqls.getString(i);
+        db.execSQL(sql);
+      }
+      db.setTransactionSuccessful();
+      result = true;
+    } catch (Exception e) {
+      result = false;
+    } finally {
+      db.endTransaction();
+      db.close();
+    }
+    return result;
+  }
 
   /**
    * 创建N个收藏的映射关系

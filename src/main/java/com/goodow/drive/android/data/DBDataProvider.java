@@ -110,6 +110,21 @@ public class DBDataProvider {
   }
 
   /**
+   * 插入N个文件信息
+   * 
+   * @param context
+   * @param sqls
+   * @return
+   * @status tested
+   */
+  public static boolean insertFileBySql(Context context, JsonArray sqls) {
+    if (sqls == null) {
+      return false;
+    }
+    return DBOperator.createFileInfoBySql(context, sqls);
+  }
+
+  /**
    * 插入一个收藏映射的信息
    * 
    * @param context
