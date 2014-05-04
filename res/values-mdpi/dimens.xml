@@ -279,11 +279,11 @@
     <dimen name="status_image_height">14dp</dimen><!-- 状态栏信号强度图片高度 -->
     
     <!-- Setting 设置 720p -->
-    <dimen name="setting_item_bt_height">68dp</dimen><!-- 按钮高度 -->
+    <dimen name="setting_item_bt_height">60dp</dimen><!-- 按钮高度 -->
     <dimen name="setting_item_bt_text_size">26px</dimen><!-- 按钮字体大小 -->
     <dimen name="setting_item_bt_spacing">20dp</dimen><!-- 按钮间距 -->
-    <dimen name="setting_back_marginLeft">20dp</dimen><!-- 返回键左边距 -->
-    <dimen name="setting_back_marginTop">50dp</dimen><!-- 返回键上边距 -->
+    <dimen name="setting_back_marginLeft">50dp</dimen><!-- 返回键左边距 -->
+    <dimen name="setting_back_marginTop">60dp</dimen><!-- 返回键上边距 -->
     
     <!-- VideoActivity视频播放器 720p -->
     <dimen name="video_back_marginLeft">26dp</dimen><!-- 视频播放器返回键左边距 -->

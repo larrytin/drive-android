@@ -18,17 +18,18 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/setting_back_marginLeft"
             android:layout_marginTop="@dimen/setting_back_marginTop" >
-
-            <include
+            <ImageView
                 android:id="@+id/iv_common_back"
-                layout="@layout/include_back" />
+                style="@style/case_sys_fun"
+                android:src="@drawable/new_common_selector_back"
+                android:clickable="true"
+            />
         </RelativeLayout>
 
         <!-- 状态栏 -->
-
         <com.goodow.drive.android.view.StatusView
-	style="@style/status" 
-    />
+	        style="@style/status" 
+        />
     </RelativeLayout>
 
     <LinearLayout
@@ -37,12 +38,12 @@
         android:layout_weight="8"
         android:gravity="center"
         android:orientation="horizontal"
-        android:weightSum="5" >
+        android:weightSum="7" >
 
         <ScrollView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:scrollbars="none" >
 
             <LinearLayout
