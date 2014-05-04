@@ -7,6 +7,7 @@ import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -18,10 +19,21 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
   private Button bt_setting_screen_offset;
   private Button bt_setting_wifi;
   private ImageView iv_common_back;
+  private View iv_hidden;
+  private final long[] mSetting = new long[5];
 
   @Override
   public void onClick(View view) {
     switch (view.getId()) {
+      case R.id.iv_hidden:// 隐藏的打开全部设置，左上角连点5次
+        System.arraycopy(mSetting, 1, mSetting, 0, mSetting.length - 1);
+        mSetting[mSetting.length - 1] = SystemClock.uptimeMillis();
+        System.out.println(mSetting[mSetting.length - 1]);
+        if (mSetting[0] >= (mSetting[mSetting.length - 1] - 1000)) {
+          bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+              "settings.all"), null);
+        }
+        break;
       case R.id.bt_setting_wifi:// wifi设置
         bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
             "settings.wifi"), null);
@@ -60,6 +72,7 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     bt_setting_screen_offset = (Button) findViewById(R.id.bt_setting_screen_offset);
     bt_setting_wifi = (Button) findViewById(R.id.bt_setting_wifi);
     iv_common_back = (ImageView) findViewById(R.id.iv_common_back);
+    iv_hidden = findViewById(R.id.iv_hidden);
   }
 
   private void setListener() {
@@ -68,5 +81,6 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     bt_setting_screen_offset.setOnClickListener(this);
     bt_setting_wifi.setOnClickListener(this);
     iv_common_back.setOnClickListener(this);
+    iv_hidden.setOnClickListener(this);
   }
 }

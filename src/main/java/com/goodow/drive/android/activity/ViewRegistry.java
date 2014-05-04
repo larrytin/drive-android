@@ -9,6 +9,7 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -51,11 +52,24 @@ public class ViewRegistry {
           Intent intent = new Intent(ctx, SettingActivity.class);
           ctx.startActivity(intent);
         }
-        if ("settings.wifi".equals(redirectto)) {
-          ctx.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+        if ("settings.wifi".equals(redirectto)) {// 打开杰科盒子的wifi设置
+          // ctx.startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+          Intent intent = new Intent();
+          intent.setComponent(new ComponentName("com.giec.settings",
+              "com.giec.settings.WifiSettings"));
+          ctx.startActivity(intent);
         }
-        if ("settings.screenOffset".equals(redirectto)) {
-          Toast.makeText(ctx, "设置屏幕偏移", Toast.LENGTH_LONG).show();
+        if ("settings.all".equals(redirectto)) {// 打开杰科盒子的完整设置
+          Intent intent = new Intent();
+          intent.setComponent(new ComponentName("com.giec.settings",
+              "com.giec.settings.MainSettingsActivity"));
+          ctx.startActivity(intent);
+        }
+        if ("settings.screenOffset".equals(redirectto)) {// 打开杰科盒子的屏幕偏移设置
+          Intent intent = new Intent();
+          intent.setComponent(new ComponentName("com.giec.settings",
+              "com.giec.settings.ScreenScaleSettings"));
+          ctx.startActivity(intent);
         }
         if ("aboutUs".equals(redirectto)) {
           Toast.makeText(ctx, "sid=" + BusProvider.SID.split("[.]")[0], Toast.LENGTH_LONG).show();
