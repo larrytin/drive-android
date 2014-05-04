@@ -14,17 +14,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DBHelper extends SQLiteOpenHelper {
 
   public static final String DBNAME = "keruixing";
-  private static DBHelper dbHelper = null;
 
   public static DBHelper getInstance(Context context) {
-    if (dbHelper == null) {
-      synchronized (DBNAME) {
-        if (dbHelper == null) {
-          dbHelper = new DBHelper(context);
-        }
-      }
-    }
-    return dbHelper;
+    return new DBHelper(context);
   }
 
   private DBHelper(Context context) {

@@ -2,7 +2,6 @@ package com.goodow.drive.android.player;
 
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.data.DBOperator;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -13,18 +12,15 @@ import com.artifex.mupdf.MuPDFActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.widget.Toast;
 
 public class PlayerRegistry {
   private final Context ctx;
   private final Bus bus;
-  private final SharedPreferences usagePreferences;
 
   public PlayerRegistry(Bus bus, Context ctx) {
     this.bus = bus;
     this.ctx = ctx;
-    usagePreferences = ctx.getSharedPreferences(BaseActivity.USAGE_STATISTIC, Context.MODE_PRIVATE);
   }
 
   public void subscribe() {
@@ -125,6 +121,9 @@ public class PlayerRegistry {
                 DBOperator.readUserPlayerData(ctx, "T_PLAYER", "FILE_NAME", "OPEN_TIME",
                     "LAST_TIME");
             final int id = (int) analytics.getNumber("id");
+            if (id == 0) {
+              return;
+            }
             analytics.remove("id");
             // 如果拿到的信息为空，则不发送
             if (analytics.getArray("analytics").length() == 0) {

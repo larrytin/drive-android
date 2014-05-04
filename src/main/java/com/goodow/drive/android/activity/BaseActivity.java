@@ -46,7 +46,7 @@ public class BaseActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     BusProvider.SID = DeviceInformationTools.getLocalMacAddressFromWifiInfo(this) + ".drive.";
-    usagePreferences = getSharedPreferences(USAGE_STATISTIC, Context.MODE_PRIVATE);
+    usagePreferences = getSharedPreferences(USAGE_STATISTIC, Context.MODE_MULTI_PROCESS);
     super.onCreate(savedInstanceState);
   }
 
@@ -169,6 +169,9 @@ public class BaseActivity extends Activity {
       DBOperator.addUserData(this, "T_PLAYER", "FILE_NAME", "OPEN_TIME", "LAST_TIME", Json
           .createObject().set("FILE_NAME", fileName).set("OPEN_TIME", openTime).set("LAST_TIME",
               lastTime));
+      if (bus.getReadyState() == State.OPEN) {
+        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
+      }
     }
   }
 }

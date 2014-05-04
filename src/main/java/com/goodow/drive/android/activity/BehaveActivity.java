@@ -312,7 +312,6 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   private void cleanHistory() {
     this.tv_act_behave_title.setText(null);
     this.iv_act_behave_behaveite.setVisibility(View.INVISIBLE);
-    this.vp_act_behave_result.removeAllViews();
     this.iv_act_behave_result_next.setVisibility(View.INVISIBLE);
     this.iv_act_behave_result_pre.setVisibility(View.INVISIBLE);
     this.totalAttachmentNum = 0;

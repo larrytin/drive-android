@@ -34,12 +34,17 @@ public class DBOperator {
       String lastTime, String closeTime, JsonObject jsonObject) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-    ContentValues values = new ContentValues();
-    values.put(openTime, jsonObject.getNumber(openTime));
-    values.put(lastTime, jsonObject.getNumber(lastTime));
-    values.put(closeTime, jsonObject.getNumber(closeTime));
-    long rawid = db.insert(tableName, null, values);
-    db.close();
+    long rawid = 0;
+    try {
+      ContentValues values = new ContentValues();
+      values.put(openTime, jsonObject.getNumber(openTime));
+      values.put(lastTime, jsonObject.getNumber(lastTime));
+      values.put(closeTime, jsonObject.getNumber(closeTime));
+      rawid = db.insert(tableName, null, values);
+    } catch (Exception e) {
+    } finally {
+      db.close();
+    }
     if (rawid > 0) {
       return true;
     } else {
@@ -60,12 +65,17 @@ public class DBOperator {
       String openTime, String lastTime, JsonObject jsonObject) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-    ContentValues values = new ContentValues();
-    values.put(openTime, jsonObject.getNumber(openTime));
-    values.put(lastTime, jsonObject.getNumber(lastTime));
-    values.put(fileName, jsonObject.getString(fileName));
-    long rawid = db.insert(tableName, null, values);
-    db.close();
+    long rawid = 0;
+    try {
+      ContentValues values = new ContentValues();
+      values.put(openTime, jsonObject.getNumber(openTime));
+      values.put(lastTime, jsonObject.getNumber(lastTime));
+      values.put(fileName, jsonObject.getString(fileName));
+      rawid = db.insert(tableName, null, values);
+    } catch (Exception e) {
+    } finally {
+      db.close();
+    }
     if (rawid > 0) {
       return true;
     } else {
@@ -211,7 +221,7 @@ public class DBOperator {
    * @return
    */
   public static boolean deleteAllTableData(Context context) {
-    String[] tables = {"T_STAR", "T_FILE", "T_RELATION"};
+    String[] tables = {"T_STAR", "T_FILE", "T_RELATION", "T_BOOT", "T_PLAYER"};
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     boolean result = false;
@@ -349,8 +359,13 @@ public class DBOperator {
   public static boolean deleteUserData(Context context, String tableName, int id) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-    int result = db.delete(tableName, id + "<=?", new String[] {id + ""});
-    db.close();
+    int result = 0;
+    try {
+      result = db.delete(tableName, id + "<=?", new String[] {id + ""});
+    } catch (Exception e) {
+    } finally {
+      db.close();
+    }
     if (result > 0) {
       return true;
     } else {
@@ -367,8 +382,8 @@ public class DBOperator {
    * @param lastTime
    * @return
    */
-  public static JsonObject readBootData(Context context, String tableName, String openTime,
-      String lastTime) {
+  public static synchronized JsonObject readBootData(Context context, String tableName,
+      String openTime, String lastTime) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     JsonObject result = Json.createObject();
@@ -376,26 +391,41 @@ public class DBOperator {
     String[] strings = new String[2];
     strings[0] = openTime;
     strings[1] = lastTime;
-    Cursor cursorId = db.rawQuery("select max(id)  from " + tableName, null);
     int id = 0;
-    if (cursorId.moveToNext()) {
-      id = cursorId.getInt(0);
-      result.set("id", id);
-    }
-    Cursor cursor = db.query(tableName, strings, "id<" + id, null, null, null, null);
-    while (cursor.moveToNext()) {
-      JsonObject timestamp = Json.createObject();
-      long open = cursor.getLong(cursor.getColumnIndex(openTime));
-      long last = cursor.getLong(cursor.getColumnIndex(lastTime));
-      timestamp.set("openTime", open);
-      timestamp.set("lastTime", last);
-      // 过滤掉小于5分钟的数据
-      // TODO：
-      if (last > 5000) {
-        jsonArray.push(timestamp);
+    Cursor cursorId = null;
+    Cursor cursor = null;
+    try {
+      cursorId = db.rawQuery("select max(id)  from " + tableName, null);
+      if (cursorId.moveToNext()) {
+        id = cursorId.getInt(0);
       }
+      result.set("id", id - 1); // 发送的数据为id-1;
+      if (id < 2) { // 第一次开机
+        return result.set("timestamp", jsonArray).set("id", 0);
+      }
+      cursor = db.query(tableName, strings, "id<" + id, null, null, null, null);
+      while (cursor.moveToNext()) {
+        JsonObject timestamp = Json.createObject();
+        long open = cursor.getLong(cursor.getColumnIndex(openTime));
+        long last = cursor.getLong(cursor.getColumnIndex(lastTime));
+        timestamp.set("openTime", open);
+        timestamp.set("lastTime", last);
+        // 过滤掉小于5分钟的数据
+        if (last > 300000) {
+          jsonArray.push(timestamp);
+        }
+      }
+      result.set("timestamp", jsonArray);
+    } catch (Exception e) {
+    } finally {
+      if (cursorId != null) {
+        cursorId.close();
+      }
+      if (cursor != null) {
+        cursor.close();
+      }
+      db.close();
     }
-    result.set("timestamp", jsonArray);
     return result;
   }
 
@@ -838,39 +868,52 @@ public class DBOperator {
     strings[0] = fileName;
     strings[1] = openTime;
     strings[2] = lastTime;
-    Cursor cursorId = db.rawQuery("select max(id)  from " + tableName, null);
-    if (cursorId.moveToNext()) {
-      result.set("id", cursorId.getInt(0));
-    }
-    Cursor cursor = db.query(tableName, strings, null, null, null, null, null);
-    while (cursor.moveToNext()) {
-      JsonObject timestamp = Json.createObject();
-      String name = cursor.getString(cursor.getColumnIndex(fileName));
-      long open = cursor.getLong(cursor.getColumnIndex(openTime));
-      long last = cursor.getLong(cursor.getColumnIndex(lastTime));
-      timestamp.set("openTime", open);
-      timestamp.set("lastTime", last);
-      boolean tag = false;
-      for (int i = 0; i < jsonArray.length(); i++) {
-        if (jsonArray.getObject(i).getString("attachment").equals(name)) {
-          tag = true;
-          JsonArray tmpArray = jsonArray.getObject(i).getArray("timestamp");
-          tmpArray.push(timestamp);
-          jsonArray.getObject(i).set("timestamp", tmpArray);
-          break;
+    Cursor cursorId = null;
+    Cursor cursor = null;
+    int id = 0;
+    try {
+      cursorId = db.rawQuery("select max(id)  from " + tableName, null);
+      if (cursorId.moveToNext()) {
+        id = cursorId.getInt(0);
+      }
+      result.set("id", id);
+      cursor = db.query(tableName, strings, null, null, null, null, null);
+      while (cursor.moveToNext()) {
+        JsonObject timestamp = Json.createObject();
+        String name = cursor.getString(cursor.getColumnIndex(fileName)); // 文件名
+        long open = cursor.getLong(cursor.getColumnIndex(openTime));
+        long last = cursor.getLong(cursor.getColumnIndex(lastTime));
+        timestamp.set("openTime", open);
+        timestamp.set("lastTime", last);
+        boolean tag = false;// 编辑是否有同名
+        for (int i = 0; i < jsonArray.length(); i++) {
+          if (jsonArray.getObject(i).getString("attachment").equals(name)) {
+            tag = true;
+            JsonArray tmpArray = jsonArray.getObject(i).getArray("timestamp");
+            tmpArray.push(timestamp);
+            jsonArray.getObject(i).set("timestamp", tmpArray);
+            break;
+          }
+        }
+        if (!tag) {
+          JsonObject jsonObject = Json.createObject();
+          jsonObject.set("attachment", name);
+          jsonObject.set("timestamp", Json.createArray().push(timestamp));
+          jsonArray.push(jsonObject);
         }
       }
-      if (!tag) {
-        JsonObject jsonObject = Json.createObject();
-        jsonObject.set("attachment", name);
-        jsonObject.set("timestamp", Json.createArray().push(timestamp));
-        jsonArray.push(jsonObject);
+      result.set("analytics", jsonArray);
+    } catch (Exception e) {
+      result.set("analytics", jsonArray).set("id", 0);
+    } finally {
+      if (cursor != null) {
+        cursor.close();
       }
+      if (cursorId != null) {
+        cursorId.close();
+      }
+      db.close();
     }
-    cursor.close();
-    cursorId.close();
-    db.close();
-    result.set("analytics", jsonArray);
     return result;
   }
 
@@ -887,16 +930,26 @@ public class DBOperator {
       String closeTime, JsonObject jsonObject) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
-    ContentValues values = new ContentValues();
-    values.put(lastTime, jsonObject.getNumber(lastTime));
-    values.put(closeTime, jsonObject.getNumber(closeTime));
-    Cursor cursorId = db.rawQuery("select max(id)  from " + tableName, null);
-    int id = 0;
-    if (cursorId.moveToNext()) {
-      id = cursorId.getInt(0);
+    Cursor cursorId = null;
+    try {
+      ContentValues values = new ContentValues();
+      values.put(lastTime, jsonObject.getNumber(lastTime));
+      values.put(closeTime, jsonObject.getNumber(closeTime));
+      cursorId = db.rawQuery("select max(id)  from " + tableName, null);
+      int id = 0;
+      if (cursorId.moveToNext()) {
+        id = cursorId.getInt(0);
+      }
+      if (id < 1) {
+        return;
+      }
+      db.update(tableName, values, "id=?", new String[] {id + ""});
+    } catch (Exception e) {
+    } finally {
+      if (cursorId != null) {
+        cursorId.close();
+      }
+      db.close();
     }
-    db.update(tableName, values, "id=?", new String[] {id + ""});
-    cursorId.close();
-    db.close();
   }
 }
