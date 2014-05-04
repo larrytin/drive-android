@@ -150,7 +150,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   private ImageView ftv_act_prepare_class_read_write = null;
   private ImageView ftv_act_prepare_class_quality = null;
 
-  private final int numPerPage = 10;// 查询结果每页显示8条数据
+  private final int numPerPage = 8;// 查询结果每页显示8条数据
   private GridView vp_act_prepare_result = null;
 
   // 翻页按钮
@@ -194,6 +194,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
       // 学期的选中事件
       case R.id.ftv_act_prepare_top:
       case R.id.ftv_act_prepare_bottom:
+        currentPageNum = 0;
         this.onTermViewClick(v.getId());
         break;
       // 类别的选中事件
@@ -201,6 +202,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
       case R.id.ftv_act_prepare_class_thinking:
       case R.id.ftv_act_prepare_class_read_write:
       case R.id.ftv_act_prepare_class_quality:
+        currentPageNum = 0;
         this.topicChooser(v.getId());
         this.onMyClassViewClick(v.getId());
         break;

@@ -69,30 +69,32 @@
 
     <!-- 后退  收藏  锁屏 -->
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_prepare_fun_bar_marginLeft"
         android:layout_marginTop="@dimen/act_prepare_fun_bar_marginTop" >
 
-        <include
-            android:id="@+id/iv_act_prepare_back"
-            layout="@layout/include_back" />
-
         <ImageView
-            android:id="@+id/iv_act_prepare_coll"
-            style="@style/index_sys_fun"
-            android:layout_below="@+id/iv_act_prepare_back"
-            android:clickable="true"
-            android:src="@drawable/common_selector_coll" />
-
+          android:id="@+id/iv_act_prepare_back"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_back"
+          android:clickable="true"
+          />
         <ImageView
-            android:id="@+id/iv_act_prepare_loc"
-            style="@style/index_sys_fun"
-            android:layout_below="@+id/iv_act_prepare_coll"
-            android:clickable="true"
-            android:src="@drawable/common_selector_loc" />
-    </RelativeLayout>
+          android:id="@+id/iv_act_prepare_coll"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_coll"
+          android:clickable="true"
+          />
+        <ImageView
+          android:id="@+id/iv_act_prepare_loc"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_loc"
+          android:clickable="true"
+          />
+    </LinearLayout>
 
     <!-- 状态栏 -->
 
@@ -101,11 +103,11 @@
     <!-- 查询结果 -->
 
     <RelativeLayout
-        android:layout_marginTop="250dp"
         android:id="@+id/rl_act_prepare_result"
         android:layout_width="@dimen/act_prepare_result_root_width"
         android:layout_height="@dimen/act_prepare_result_root_height"
         android:layout_alignParentRight="true"
+        android:layout_marginTop="210dp"
         android:layout_marginRight="@dimen/act_prepare_result_root_marginRight" >
 
         <!-- 查询结果 上一页 -->
@@ -126,13 +128,13 @@
             android:id="@+id/vp_act_prepare_result" 
             android:layout_width="@dimen/act_prepare_result_width"
             android:layout_height="wrap_content"
-            android:numColumns="5"
+            android:numColumns="4"
             android:cacheColorHint="#00000000"
             android:background="#00000000"
             android:listSelector="#00000000"
             android:alwaysDrawnWithCache="true"
             android:scrollbars="none"
-            android:verticalSpacing="65dp" >
+            android:verticalSpacing="50dp" >
         </GridView>
 
         <!-- 查询结果 下一页 -->

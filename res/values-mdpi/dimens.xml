@@ -42,18 +42,18 @@
     <dimen name="act_case_result_width">850dp</dimen><!-- 查询结果的宽度 -->
 
     <!-- 入学准备 720p @author DPW ITEM DEFAULT DPW-->
-    <dimen name="act_prepare_fun_bar_marginLeft">40dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
-    <dimen name="act_prepare_fun_bar_marginTop">130dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
+    <dimen name="act_prepare_fun_bar_marginLeft">63dp</dimen><!-- 后退|收藏|黑屏的左边距 -->
+    <dimen name="act_prepare_fun_bar_marginTop">175dp</dimen><!-- 后退|收藏|黑屏的上边距 -->
     <dimen name="act_prepare_term_radio_group_width">210dp</dimen><!-- 学期RadioGroup的宽度 -->
-    <dimen name="act_prepare_term_radio_group_marginLeft">265dp</dimen><!-- 学期RadioGroup的左边距 -->
-    <dimen name="act_prepare_term_radio_group_marginTop">26dp</dimen><!-- 学期RadioGroup的上边距 -->
+    <dimen name="act_prepare_term_radio_group_marginLeft">240dp</dimen><!-- 学期RadioGroup的左边距 -->
+    <dimen name="act_prepare_term_radio_group_marginTop">27dp</dimen><!-- 学期RadioGroup的上边距 -->
     <dimen name="act_prepare_topic_root_width">730dp</dimen><!-- 主题父节点的宽度 -->
     <dimen name="act_prepare_topic_root_height">300dp</dimen><!-- 主题父节点的高度 -->
     <dimen name="act_prepare_topic_root_marginLeft">450dp</dimen><!-- 主题父节点的左边距 -->
     <dimen name="act_prepare_result_root_width">1100dp</dimen><!-- 查询结果的跟节点的宽度 -->
-    <dimen name="act_prepare_result_root_height">330dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_prepare_result_root_height">360dp</dimen><!-- 查询结果的跟节点的高度 -->
     <dimen name="act_prepare_result_root_marginRight">30dp</dimen><!-- 查询结果的跟节点的右边距 -->
-    <dimen name="act_prepare_result_width">950dp</dimen><!-- 查询结果的宽度 -->
+    <dimen name="act_prepare_result_width">920dp</dimen><!-- 查询结果的宽度 -->
     <dimen name="act_prepare_topic_item_width">204dp</dimen><!-- 主题条目宽度 -->
     <dimen name="act_prepare_topic_item_width_long">300dp</dimen><!-- 主题条目加长型宽度 -->
     <dimen name="act_prepare_topic_item_height">112dp</dimen><!-- 主题条目高度 -->

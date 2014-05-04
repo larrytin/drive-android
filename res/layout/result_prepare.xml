@@ -8,48 +8,45 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" >
 
-        <!-- 蜗牛 -->
+        <!-- 活动板 -->
 
         <ImageView
+            android:layout_marginTop="67dp"
             android:id="@+id/iv_prepare_snail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
             android:src="@drawable/prepare_result_snail" />
 
-        <!-- 蜗牛左眼 -->
+        <!-- 左眼 -->
 
         <ImageView
             android:id="@+id/iv_prepare_left_eye"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
             android:src="@drawable/prepare_result_word" />
 
-        <!-- 蜗牛右眼 -->
+        <!-- 右眼 -->
 
         <ImageView
             android:id="@+id/iv_prepare_right_eye"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="34dp"
+            android:layout_marginLeft="85dp"
             android:src="@drawable/prepare_result_ebook" />
 
         <!-- 蜗牛身上的字 -->
 
-        <TextView
+        <com.goodow.drive.android.view.MarqueeTextView
+            android:layout_centerHorizontal="true"
+            android:maxWidth="120dp"
             android:id="@+id/tv_prepare_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@id/iv_prepare_snail"
-            android:layout_marginTop="15dp"
-            android:layout_toRightOf="@id/iv_prepare_right_eye"
-            android:gravity="center"
-            android:padding="5dp"
-            android:maxLines="2"
-            android:text="测试测试测试"
-            android:textColor="#ffffff"
-            android:textSize="18px" />
+            android:layout_marginTop="88dp"
+            android:gravity="center_horizontal"
+            android:text="测试测试测试测试测试测试"
+            android:textColor="#412106"
+            android:textSize="20px" />
     </RelativeLayout>
 
 </RelativeLayout>
