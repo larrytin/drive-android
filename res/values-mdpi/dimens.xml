@@ -175,10 +175,10 @@
     <dimen name="coomon_result_flag_marginTop">20dp</dimen><!-- 查询结果删除图片上边距 -->
         
     <!-- CareClassesActivity 托班 720p -->
-    <dimen name="act_care_term_marginLeft">549dp</dimen><!-- 托班学期左边距 -->
-    <dimen name="act_care_term_marginTop">34dp</dimen><!-- 托班学期上边距 -->
+    <dimen name="act_care_term_marginLeft">260dp</dimen><!-- 托班学期左边距 -->
+    <dimen name="act_care_term_marginTop">27dp</dimen><!-- 托班学期上边距 -->
     <dimen name="act_care_topic_marginLeft">233dp</dimen><!-- 托班主题左边距 -->
-    <dimen name="act_care_topic_marginTop">90dp</dimen><!-- 托班主题上边距 -->
+    <dimen name="act_care_topic_marginTop">100dp</dimen><!-- 托班主题上边距 -->
     <dimen name="act_care_topic_width">258dp</dimen><!-- 托班主题的宽度 -->
     <dimen name="act_care_topic_item_width">191dp</dimen><!-- 托班主题条目宽度 -->
     <dimen name="act_care_topic_item_width_selected">258dp</dimen><!-- 托班主题条目选中状态宽度 -->
@@ -190,12 +190,12 @@
     <dimen name="act_care_cloud_root_width">690dp</dimen><!-- 云朵根节点宽度 -->
     <dimen name="act_care_cloud_root_height">480dp</dimen><!-- 云朵根节点高度 -->
     <dimen name="act_care_cloud_root_marginLeft">520dp</dimen><!-- 云朵根节点左边距 -->
-    <dimen name="act_care_cloud_root_marginTop">110dp</dimen><!-- 云朵根节点上边距 -->
+    <dimen name="act_care_cloud_root_marginTop">170dp</dimen><!-- 云朵根节点上边距 -->
     <dimen name="act_care_cloud_width">126dp</dimen><!-- 云朵宽度 -->
     <dimen name="act_care_cloud_height">83dp</dimen><!-- 云朵高度 -->
     <dimen name="act_care_cloud_textSize">16px</dimen><!-- 云朵内字体大小 -->
     <dimen name="act_care_cloud_paddingLeftRight">15dp</dimen><!-- 云朵内左右边距 -->
-    <dimen name="act_care_cloud_paddingTop">5dp</dimen><!-- 云朵内上边距 -->
+    <dimen name="act_care_cloud_paddingTop">25dp</dimen><!-- 云朵内上边距 -->
     <dimen name="act_care_cloud_1_marginTop">10dp</dimen><!-- 云朵1上边距 -->
     <dimen name="act_care_cloud_1_marginLeft">50dp</dimen><!-- 云朵1左边距 -->
     <dimen name="act_care_cloud_2_marginTop">110dp</dimen><!-- 云朵2上边距 -->

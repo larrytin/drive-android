@@ -166,7 +166,7 @@
 
     <!-- 托班云朵样式 -->
     <style name="care_classes_cloud">
-        <item name="android:button">@null</item>
+        <item name="android:background">@drawable/cloud_yellow</item>
         <item name="android:textSize">@dimen/act_care_cloud_textSize</item>
         <item name="android:textColor">#cc6600</item>
         <item name="android:layout_width">@dimen/act_care_cloud_width</item>
@@ -175,7 +175,8 @@
         <item name="android:paddingTop">@dimen/act_care_cloud_paddingTop</item>
         <item name="android:paddingRight">@dimen/act_care_cloud_paddingLeftRight</item>
         <item name="android:visibility">gone</item>
-        <item name="android:maxLines">2</item>
+        <item name="android:lines">2</item>
+        <item name="android:gravity">center_horizontal</item>
     </style>
 
     <!-- 托班学期样式 -->

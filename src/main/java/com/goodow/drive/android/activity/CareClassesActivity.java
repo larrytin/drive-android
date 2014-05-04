@@ -20,11 +20,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +33,6 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   private LinearLayout ll_care_classes_topic = null;
   // 学期
   private LinearLayout ll_care_classes_term = null;
-  // 云朵activity
-  private RelativeLayout rl_act_care_result_container = null;
   // 返回键
   private ImageView bt_care_back;
   // 收藏键
@@ -60,6 +57,8 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   private String currenTopic = "";
   private HandlerRegistration postHandler;
   private HandlerRegistration refreshHandler;
+  private LinearLayout ll_act_care_result_container_1;
+  private LinearLayout ll_act_care_result_container_2;
 
   @Override
   public void onClick(View v) {
@@ -234,13 +233,20 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   }
 
   private void bindDataToView(JsonArray tags) {
-    int len = this.rl_act_care_result_container.getChildCount();
-    for (int i = 0; i < len; i++) {
-      this.rl_act_care_result_container.getChildAt(i).setVisibility(View.GONE);
+    for (int i = 0; i < ll_act_care_result_container_1.getChildCount(); i++) {
+      ll_act_care_result_container_1.getChildAt(i).setVisibility(View.GONE);
+    }
+    for (int i = 0; i < ll_act_care_result_container_2.getChildCount(); i++) {
+      ll_act_care_result_container_2.getChildAt(i).setVisibility(View.GONE);
     }
     int len_tags = tags.length();
     for (int i = 0; i < len_tags && i < 10; i++) {
-      Button itemButton = (Button) this.rl_act_care_result_container.getChildAt(i);
+      TextView itemButton;
+      if (i < 5) {
+        itemButton = (TextView) this.ll_act_care_result_container_1.getChildAt(i);
+      } else {
+        itemButton = (TextView) this.ll_act_care_result_container_2.getChildAt(i - 5);
+      }
       itemButton.setOnClickListener(this);
       itemButton.setVisibility(View.VISIBLE);
       itemButton.setText(getSimpleTitle(tags.getString(i)));
@@ -374,11 +380,15 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       topic.setOnClickListener(this);
     }
 
-    this.rl_act_care_result_container =
-        (RelativeLayout) this.findViewById(R.id.rl_act_care_result_container);
-    int len_rl_act_care_result_container = this.rl_act_care_result_container.getChildCount();
-    for (int i = 0; i < len_rl_act_care_result_container; i++) {
-      rl_act_care_result_container.getChildAt(i).setOnClickListener(this);
+    ll_act_care_result_container_1 =
+        (LinearLayout) findViewById(R.id.ll_act_care_result_container_1);
+    ll_act_care_result_container_2 =
+        (LinearLayout) findViewById(R.id.ll_act_care_result_container_2);
+    for (int i = 0; i < ll_act_care_result_container_1.getChildCount(); i++) {
+      ll_act_care_result_container_1.getChildAt(i).setOnClickListener(this);
+    }
+    for (int i = 0; i < ll_act_care_result_container_2.getChildCount(); i++) {
+      ll_act_care_result_container_2.getChildAt(i).setOnClickListener(this);
     }
   }
 

@@ -31,30 +31,33 @@
     </LinearLayout>
     
     <!--  后退  收藏  锁屏  -->
-    <RelativeLayout 
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_harmony_fun_bar_marginLeft"
         android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop"
         >
-        <include 
-            android:id="@+id/bt_care_back"
-            layout="@layout/include_back"/>
+         
+        <ImageView
+          android:id="@+id/bt_care_back"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_back"
+          android:clickable="true"
+          />
         <ImageView
           android:id="@+id/bt_care_coll"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_coll"
-          android:layout_below="@+id/bt_care_back"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_coll"
           android:clickable="true"
           />
         <ImageView
           android:id="@+id/bt_care_loc"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_loc"
-          android:layout_below="@+id/bt_care_coll"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_loc"
           android:clickable="true"
           />
-    </RelativeLayout>
+    </LinearLayout>
 
     <!-- 一堆条目按钮 -->
 
@@ -115,103 +118,86 @@
     <!-- 一堆云朵 MODIFY BY DPW order BY FROM LEFT TO RIGHT | FROM TOP TO BOTTOM-->
     <RelativeLayout
         android:id="@+id/rl_act_care_result_container"
-        android:layout_width="@dimen/act_care_cloud_root_width"
-        android:layout_height="@dimen/act_care_cloud_root_height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_care_cloud_root_marginLeft"
         android:layout_marginTop="@dimen/act_care_cloud_root_marginTop"
         >
-        <!-- 左一 -->
-        <Button
-            android:id="@+id/bt_care_cloud1"
-            style="@style/care_classes_cloud"
-            android:layout_marginLeft="@dimen/act_care_cloud_1_marginLeft"
-            android:layout_marginTop="@dimen/act_care_cloud_1_marginTop"
-            android:background="@drawable/cloud_yellow"
+        <LinearLayout
+            android:id="@+id/ll_act_care_result_container_1" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/bt_care_cloud1"
+                style="@style/care_classes_cloud"
+                android:layout_marginTop="5dp"
             />
-        <!-- 左二 -->
-        <Button
-            android:id="@+id/bt_care_cloud2"
-            style="@style/care_classes_cloud"
-            android:layout_marginLeft="@dimen/act_care_cloud_2_marginLeft"
-            android:layout_marginTop="@dimen/act_care_cloud_2_marginTop"
-            android:background="@drawable/cloud_yellow"
+            <TextView
+                android:id="@+id/bt_care_cloud2"
+                style="@style/care_classes_cloud"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="50dp"
             />
-        <!-- 左三 -->
-        <Button
-            android:id="@+id/bt_care_cloud3"
-            style="@style/care_classes_cloud"
-            android:layout_marginLeft="@dimen/act_care_cloud_3_marginLeft"
-            android:layout_marginTop="@dimen/act_care_cloud_3_marginTop"
-            android:background="@drawable/cloud_blue"
-            android:textColor="#333399"
+            <TextView
+                android:id="@+id/bt_care_cloud3"
+                style="@style/care_classes_cloud"
             />
-        <!-- 左四 -->
-        <Button
-            android:id="@+id/bt_care_cloud4"
-            style="@style/care_classes_cloud"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="@dimen/act_care_cloud_4_marginLeft"
-            android:layout_marginBottom="@dimen/act_care_cloud_4_marginBottom"
-            android:background="@drawable/cloud_yellow"
+            <TextView
+                android:id="@+id/bt_care_cloud4"
+                style="@style/care_classes_cloud"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="55dp"
             />
-        <!-- 左五 -->
-        <Button
-            android:id="@+id/bt_care_cloud5"
-            style="@style/care_classes_cloud"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="@dimen/act_care_cloud_5_marginLeft"
-            android:layout_marginBottom="@dimen/act_care_cloud_5_marginBottom"
-            android:background="@drawable/cloud_blue"
-            android:textColor="#333399"
+            <TextView
+                android:id="@+id/bt_care_cloud5"
+                style="@style/care_classes_cloud"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
             />
-        <!-- 右一 -->
-        <Button
-            android:id="@+id/bt_care_cloud6"
-            style="@style/care_classes_cloud"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/act_care_cloud_6_marginTop"
-            android:layout_marginRight="@dimen/act_care_cloud_6_marginRight"
-            android:background="@drawable/cloud_blue"
-            android:textColor="#333399"
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/ll_act_care_result_container_2"
+            android:layout_marginTop="200dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/bt_care_cloud6"
+                style="@style/care_classes_cloud"
+                android:layout_marginTop="5dp"
             />
-        <!-- 右二 -->
-        <Button
-            android:id="@+id/bt_care_cloud7"
-            style="@style/care_classes_cloud"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/act_care_cloud_7_marginTop"
-            android:layout_marginRight="@dimen/act_care_cloud_7_marginRight"
-            android:background="@drawable/cloud_yellow"
+            <TextView
+                android:id="@+id/bt_care_cloud7"
+                style="@style/care_classes_cloud"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="50dp"
             />
-        <!-- 右三 -->
-        <Button
-            android:id="@+id/bt_care_cloud8"
-            style="@style/care_classes_cloud"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="@dimen/act_care_cloud_8_marginTop"
-            android:layout_marginRight="@dimen/act_care_cloud_8_marginRight"
-            android:background="@drawable/cloud_blue"
-            android:textColor="#333399"
+            <TextView
+                android:id="@+id/bt_care_cloud8"
+                style="@style/care_classes_cloud"
             />
-        <!-- 右四 -->
-        <Button
-            android:id="@+id/bt_care_cloud9"
-            style="@style/care_classes_cloud"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="@dimen/act_care_cloud_9_marginRight"
-            android:layout_marginBottom="@dimen/act_care_cloud_9_marginBottom"
-            android:background="@drawable/cloud_yellow"
+            <TextView
+                android:id="@+id/bt_care_cloud9"
+                style="@style/care_classes_cloud"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="55dp"
             />
-        <Button
-            android:id="@+id/bt_care_cloud10"
-            style="@style/care_classes_cloud"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="@dimen/act_care_cloud_10_marginRight"
-            android:layout_marginBottom="@dimen/act_care_cloud_10_marginBottom"
-            android:background="@drawable/cloud_blue"
-            android:textColor="#333399"
+            <TextView
+                android:id="@+id/bt_care_cloud10"
+                style="@style/care_classes_cloud"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="25dp"
             />
+        </LinearLayout>
     </RelativeLayout>
+    <ImageButton
+        android:id="@+id/ib_care_ebook" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/care_classes_ebook"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="820dp"/>
 </RelativeLayout>
