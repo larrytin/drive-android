@@ -14,12 +14,12 @@
     <dimen name="act_harmony_term_radio_group_width">210dp</dimen><!-- 学期RadioGroup的宽度 -->
     <dimen name="act_harmony_term_radio_group_marginLeft">35dp</dimen><!-- 学期RadioGroup的左边距 -->
     <dimen name="act_harmony_term_radio_group_marginTop">20dp</dimen><!-- 学期RadioGroup的上边距 -->
-    <dimen name="act_harmony_topic_radio_group_width">1000dp</dimen><!-- 主题RadioGroup的宽度 -->
+    <dimen name="act_harmony_topic_radio_group_width">900dp</dimen><!-- 主题RadioGroup的宽度 -->
     <dimen name="act_harmony_topic_radio_group_marginTop">100dp</dimen><!-- 主题RadioGroup的上边距 -->
-    <dimen name="act_harmony_topic_radio_group_paddingLeft">80dp</dimen><!-- 主题RadioGroup的内左边距 -->
+    <dimen name="act_harmony_topic_radio_group_marginLeft">260dp</dimen><!-- 主题RadioGroup的内左边距 -->
     <dimen name="act_harmony_result_root_width">1040dp</dimen><!-- 查询结果的跟节点的宽度 -->
-    <dimen name="act_harmony_result_root_height">360dp</dimen><!-- 查询结果的跟节点的高度 -->
-    <dimen name="act_harmony_result_root_marginRight">85dp</dimen><!-- 查询结果的跟节点的右边距 -->
+    <dimen name="act_harmony_result_root_height">370dp</dimen><!-- 查询结果的跟节点的高度 -->
+    <dimen name="act_harmony_result_root_marginRight">50dp</dimen><!-- 查询结果的跟节点的右边距 -->
     <dimen name="act_harmony_result_width">850dp</dimen><!-- 查询结果的宽度 -->
 
     <!-- 示范课 720p @author DPW ITEM DEFAULT DPW-->
@@ -156,8 +156,8 @@
     <dimen name="common_class_paddingTop">8dp</dimen><!-- 分类item字体下padding -->
     
     <!-- 查询结果黄底矩形的样式 720p -->
-    <dimen name="common_result_yellow_width">127dp</dimen><!-- 查询结果item的宽度 -->
-    <dimen name="common_result_yellow_height">90dp</dimen><!-- 查询结果item的高度 -->
+    <dimen name="common_result_yellow_width">114dp</dimen><!-- 查询结果item的宽度 -->
+    <dimen name="common_result_yellow_height">78dp</dimen><!-- 查询结果item的高度 -->
     <dimen name="common_result_yellow_textSize">18px</dimen><!-- 查询结果item的字体大小 -->
     <dimen name="common_result_dot_width">18dp</dimen><!-- 查询结果分页小圆点的宽度 -->
     <dimen name="common_result_dot_height">18dp</dimen><!-- 查询结果分页小圆点的高度 -->

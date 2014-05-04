@@ -11,6 +11,7 @@
         android:background="@drawable/harm_result_item_bg" />
 
     <TextView
+        android:textColor="#ffffff"
         android:id="@+id/common_result_yellow"
         android:layout_width="@dimen/common_result_yellow_width"
         android:layout_height="wrap_content"
