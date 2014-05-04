@@ -6,9 +6,9 @@
 
     <!-- 状态栏 -->
 
-<!--     <com.goodow.drive.android.view.StatusView
+    <com.goodow.drive.android.view.StatusView
 	style="@style/status" 
-    /> -->
+    />
     <!-- 后退 -->
 
     <RelativeLayout
@@ -17,14 +17,19 @@
         android:layout_marginLeft="@dimen/act_behave_back_marginLeft"
         android:layout_marginTop="@dimen/act_behave_back_marginTop" >
 
-        <include
-            android:id="@+id/iv_act_behave_back"
-            layout="@layout/include_back" />
+        <ImageView
+          android:id="@+id/iv_act_behave_back"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_back"
+          android:clickable="true"
+          />
     </RelativeLayout>
 
     <!-- 标题 -->
 
     <TextView
+        android:textStyle="bold"
+        android:textColor="#ffffff"
         android:id="@+id/tv_act_behave_title"
         android:layout_width="@dimen/act_behave_title_width"
         android:layout_height="@dimen/act_behave_title_height"
@@ -60,6 +65,7 @@
             android:layout_height="@dimen/common_result_pre_next_height"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
+            android:visibility="invisible"
             android:clickable="true"
             android:src="@drawable/common_result_pre" />
 
@@ -89,6 +95,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:clickable="true"
+            android:visibility="invisible"
             android:src="@drawable/common_result_next" />
         
         <!-- 查询进度提示 -->

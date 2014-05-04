@@ -221,19 +221,19 @@
     <dimen name="act_behave_title_width">330dp</dimen><!-- 活动标题宽度 -->
     <dimen name="act_behave_title_height">60dp</dimen><!-- 活动标题高度 -->
     <dimen name="act_behave_title_marginLeft">220dp</dimen><!-- 活动标题左边距 -->
-    <dimen name="act_behave_title_marginTop">50dp</dimen><!-- 活动标题上边距 -->
-    <dimen name="act_behave_title_textSize">22px</dimen><!-- 活动标题字体大小 -->
-    <dimen name="act_behave_coll_width">93dp</dimen><!-- 活动收藏宽度 -->
-    <dimen name="act_behave_coll_height">57dp</dimen><!-- 活动收藏高度 -->
+    <dimen name="act_behave_title_marginTop">55dp</dimen><!-- 活动标题上边距 -->
+    <dimen name="act_behave_title_textSize">25px</dimen><!-- 活动标题字体大小 -->
+    <dimen name="act_behave_coll_width">89dp</dimen><!-- 活动收藏宽度 -->
+    <dimen name="act_behave_coll_height">75dp</dimen><!-- 活动收藏高度 -->
     <dimen name="act_behave_coll_marginTop">46dp</dimen><!-- 活动收藏上边距 -->
     <dimen name="act_behave_result_width">1000dp</dimen><!-- 活动查询结果内容高度 -->
     <dimen name="act_behave_result_height">350dp</dimen><!-- 活动查询结果内容高度 -->
     <dimen name="act_behave_result_root_width">1190dp</dimen><!-- 活动查询结果内容跟节点高度 -->
     <dimen name="act_behave_result_root_height">400dp</dimen><!-- 活动查询结果内容跟节点高度 -->
-    <dimen name="act_behave_result_root_marginLeft">65dp</dimen><!-- 活动查询结果内容跟节点左边距 -->
+    <dimen name="act_behave_result_root_marginLeft">88dp</dimen><!-- 活动查询结果内容跟节点左边距 -->
     <dimen name="act_behave_result_root_marginTop">198dp</dimen><!-- 活动查询结果内容跟节点上边距 -->
-    <dimen name="act_behave_back_marginLeft">30dp</dimen><!-- 活动后退键左边距 -->
-    <dimen name="act_behave_back_marginTop">150dp</dimen><!-- 活动后退键上边距 -->
+    <dimen name="act_behave_back_marginLeft">63dp</dimen><!-- 活动后退键左边距 -->
+    <dimen name="act_behave_back_marginTop">175dp</dimen><!-- 活动后退键上边距 -->
     
     <!-- FavouriteActivity 收藏 720p-->
     <dimen name="act_favourite_back_marginLeft">50dp</dimen><!-- 后退键左边距 -->
