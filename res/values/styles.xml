@@ -124,11 +124,18 @@
         <item name="android:background">@drawable/common_selector_class</item>
     </style>
     
-    <!-- 安全教育班级样式 -->
-    <style name="security_grade">
+    <!-- 安全教育教师用书班级样式 -->
+    <style name="security_teacher_grade">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">52dp</item>
+        <item name="android:layout_marginLeft">50dp</item>
+    </style>
+    
+    <!-- 安全教育幼儿用书班级样式 -->
+    <style name="security_children_grade">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">37dp</item>
     </style>
 
     <!-- 图画书类别样式 -->
