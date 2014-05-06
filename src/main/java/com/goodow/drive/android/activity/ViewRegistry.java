@@ -127,7 +127,7 @@ public class ViewRegistry {
           intent = new Intent(ctx, SecurityActivity.class);
         } else if (Constant.DATAREGISTRY_TYPE_READ.equals(type)) {
           // 图画书
-          intent = new Intent(ctx, EbookActivity.class);
+          intent = new Intent(ctx, EarlyReadingActivity.class);
         } else {
           return;
         }

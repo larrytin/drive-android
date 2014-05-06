@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -25,7 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EbookActivity extends BaseActivity implements OnClickListener {
+public class EarlyReadingActivity extends BaseActivity implements OnClickListener {
   private class ResultAdapter extends BaseAdapter {
     private JsonArray attachments = null;
 
@@ -53,17 +52,20 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
       if (convertView == null) {
-        convertView = View.inflate(EbookActivity.this, R.layout.result_common, null);
+        convertView = View.inflate(EarlyReadingActivity.this, R.layout.result_common, null);
         ResultAdapterHolder holder = new ResultAdapterHolder();
         holder.iv_common_result = (ImageView) convertView.findViewById(R.id.iv_common_result);
+        holder.iv_common_result.getLayoutParams().width = 114;
+        holder.iv_common_result.getLayoutParams().height = 114;
         holder.tv_common_result = (TextView) convertView.findViewById(R.id.tv_common_result);
+        holder.tv_common_result.getLayoutParams().width = 150;
         convertView.setTag(holder);
       }
       final JsonObject attachment = attachments.getObject(position);
       ResultAdapterHolder holder = (ResultAdapterHolder) convertView.getTag();
-      FileTools.setImageThumbnalilUrl(holder.iv_common_result, attachment
-          .getString(Constant.KEY_URL), attachment.getString(Constant.KEY_THUMBNAIL));
-
+      // FileTools.setImageThumbnalilUrl(holder.iv_common_result, attachment
+      // .getString(Constant.KEY_URL), attachment.getString(Constant.KEY_THUMBNAIL));
+      holder.iv_common_result.setBackgroundResource(R.drawable.common_ebook);
       String title = attachment.getString(Constant.KEY_NAME);
       holder.tv_common_result.setText(title);
       convertView.setOnClickListener(new OnClickListener() {
@@ -140,7 +142,7 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_ebook);
+    this.setContentView(R.layout.activity_earlyreading);
     this.initView();
     Bundle extras = this.getIntent().getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
@@ -179,7 +181,7 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
         }
         JsonArray tags = body.getArray(Constant.KEY_TAGS);
         if (tags == null) {
-          Toast.makeText(EbookActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
+          Toast.makeText(EarlyReadingActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
           return;
         }
         for (int i = 0; i < tags.length(); i++) {
@@ -294,7 +296,7 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
         (totalAttachmentNum / numPerPage) + (totalAttachmentNum % numPerPage > 0 ? 1 : 0);
     ll_act_ebook_result_bar.removeAllViews();
     for (int i = 0; i < totalPageNum; i++) {
-      ImageView imageView = new ImageView(EbookActivity.this);
+      ImageView imageView = new ImageView(EarlyReadingActivity.this);
       LayoutParams layoutParams =
           new LinearLayout.LayoutParams(getResources().getDimensionPixelOffset(
               R.dimen.common_result_dot_width), getResources().getDimensionPixelOffset(

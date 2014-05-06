@@ -109,7 +109,7 @@
         </activity>
         <!-- 图画书 -->
         <activity
-            android:name="com.goodow.drive.android.activity.EbookActivity"
+            android:name="com.goodow.drive.android.activity.EarlyReadingActivity"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             android:configChanges="keyboardHidden|orientation|screenSize"

@@ -10,30 +10,33 @@
     />
 
     <!--  后退  收藏  锁屏  -->
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop"
         android:layout_marginLeft="@dimen/act_harmony_fun_bar_marginLeft"
         >
-        <include
-            android:id="@+id/iv_act_ebook_back"
-            layout="@layout/include_back"/>
+
+        <ImageView
+          android:id="@+id/iv_act_ebook_back"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_back"
+          android:clickable="true"
+          />
         <ImageView
           android:id="@+id/iv_act_ebook_coll"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_coll"
-          android:layout_below="@+id/iv_act_ebook_back"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_coll"
           android:clickable="true"
           />
         <ImageView
           android:id="@+id/iv_act_ebook_loc"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_loc"
-          android:layout_below="@+id/iv_act_ebook_coll"
+          style="@style/case_sys_fun"
+          android:src="@drawable/new_common_selector_loc"
           android:clickable="true"
           />
-    </RelativeLayout>
+    </LinearLayout>
 
     <!-- 查询结果 -->
     <RelativeLayout
