@@ -15,9 +15,12 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_favourite_back_marginLeft"
         android:layout_marginTop="@dimen/act_favourite_back_marginTop">
-        <include 
+        <ImageView
             android:id="@+id/iv_act_favour_back"
-            layout="@layout/include_back"/>
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_back"
+            android:clickable="true"
+            />
     </RelativeLayout>
 
     <com.goodow.drive.android.view.FontTextView
