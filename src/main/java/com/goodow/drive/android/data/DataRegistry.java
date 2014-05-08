@@ -141,17 +141,8 @@ public class DataRegistry {
             message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
           }
         } else if ("put".equals(action)) {
-          String tableName = body.getString("table");
-          if ("T_FILE".equals(tableName)) {
-            // 向文件表中插入数据
-            if (DBDataProvider.insertFile(context, body.getArray("data"))) {
-              message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
-            }
-          } else if ("T_RELATION".equals(tableName)) {
-            // 向标签映射表中插入数据
-            if (DBDataProvider.insertTagRelation(context, body.getArray("data"))) {
-              message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
-            }
+          if (DBDataProvider.insertFileInfo(context, body.getArray("datas"))) {
+            message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
           }
         }
       }

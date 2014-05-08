@@ -125,6 +125,86 @@ public class DBDataProvider {
   }
 
   /**
+   * 插入N个文件信息以及其标签对应关系
+   * 
+   * @param context
+   * @param tag
+   * @return
+   * @status tested
+   */
+  public static boolean insertFileInfo(Context context, JsonArray attachments) {
+    if (attachments == null) {
+      return false;
+    }
+    int len = attachments.length();
+    JsonArray attas = Json.createArray();
+    JsonArray tags = Json.createArray();
+    for (int i = 0; i < len; i++) {
+      JsonObject attachment = attachments.getObject(i);
+      String id = attachment.getString("_id");
+      String title = attachment.getString("title");
+      String contentType = attachment.getString("contentType");
+      double contentLength = attachment.getNumber("contentLength");
+      String url = attachment.getString("url");
+      String thumbnail = attachment.getString("thumbnail");
+      // 创建文件
+      JsonObject atta =
+          Json.createObject().set(Constant.KEY_ID, id).set(Constant.KEY_NAME, title).set(
+              Constant.KEY_CONTENTTYPE, contentType).set(Constant.KEY_CONTENTLENGTH, contentLength)
+              .set(Constant.KEY_URL, url).set(Constant.KEY_THUMBNAIL, thumbnail);
+      attas.push(atta);
+
+      JsonArray array = attachment.getArray("tags");
+      // 创建文件和标签的对应
+      for (int j = 0; j < array.length(); j++) {
+        String tag = array.getString(j).trim();
+        if (tag == null) {
+          // 如果当前列是NULL该文件就不和该标签建立任何关系
+          continue;
+        }
+        if (j == 8) {
+          String[] splits = tag.split(",");
+          for (String split : splits) {
+            if (split == null || split.trim().equals("")) {
+              // 忽略无效关键字
+              continue;
+            }
+            tags.push(Json.createObject().set(Constant.KEY_TYPE, "attachment").set(
+                Constant.KEY_KEY, id).set(Constant.KEY_LABEL, split.trim()));
+          }
+        } else {
+          if (tag.matches("^\\d{4}.*")) {
+            tag = tag.substring(4, tag.length());
+          }
+          tags.push(Json.createObject().set(Constant.KEY_TYPE, "attachment").set(Constant.KEY_KEY,
+              id).set(Constant.KEY_LABEL, tag));
+        }
+      }
+
+      // 创建活动标签和主题|班级|学期|领域标签的对应
+      String acitvity = array.getString(5).trim();
+      for (int j = 1; j < 5; j++) {
+        String tag = array.getString(j).trim();
+        if (tag != null) {
+          if (acitvity.matches("^\\d{4}.*")) {
+            acitvity = acitvity.substring(4, acitvity.length());
+          }
+          tags.push(Json.createObject().set(Constant.KEY_TYPE, "tag").set(Constant.KEY_KEY,
+              acitvity).set(Constant.KEY_LABEL, tag));
+        }
+      }
+
+      // 创建搜索标签对应
+      if (array.length() > 6 && array.getString(6) != null && array.getString(7) != null) {
+        tags.push(Json.createObject().set(Constant.KEY_TYPE, "tag").set(Constant.KEY_KEY,
+            array.getString(7).trim()).set(Constant.KEY_LABEL, array.getString(6).trim()));
+      }
+    }
+
+    return DBOperator.createFile(context, attas) && DBOperator.createTagRelation(context, tags);
+  }
+
+  /**
    * 插入一个收藏映射的信息
    * 
    * @param context
