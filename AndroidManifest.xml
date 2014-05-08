@@ -204,6 +204,14 @@
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
+
+        <!-- 托班-电子书 -->
+        <activity
+            android:name="com.goodow.drive.android.activity.EbookActivity"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+            >
+        </activity>
         <!-- 百度定位 -->
         <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">
         </service>

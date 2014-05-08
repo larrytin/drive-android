@@ -315,9 +315,9 @@
     
     <!-- 早期阅读 720p -->
     <dimen name="act_read_result_root_width">960dp</dimen><!-- 早期阅读查询结果根节点宽度 -->
-    <dimen name="act_read_result_root_height">370dp</dimen><!-- 早期阅读查询结果根节点高度 -->
-    <dimen name="act_read_result_root_marginTop">180dp</dimen><!-- 查询结果根节点上边距 -->
-    <dimen name="act_read_result_root_marginRight">110dp</dimen><!-- 查询结果根节点右边距 -->
+    <dimen name="act_read_result_root_height">400dp</dimen><!-- 早期阅读查询结果根节点高度 -->
+    <dimen name="act_read_result_root_marginTop">100dp</dimen><!-- 查询结果根节点上边距 -->
+    <dimen name="act_read_result_root_marginRight">230dp</dimen><!-- 查询结果根节点右边距 -->
     <dimen name="act_read_result_width">800dp</dimen><!-- 查询结果宽度 -->
     <dimen name="act_read_result_item_image_width">120dp</dimen><!-- 查询结果条目图片宽度 -->
     <dimen name="act_read_result_item_image_height">100dp</dimen><!-- 查询结果条目图片高度 -->

@@ -80,7 +80,8 @@ public class ViewRegistry {
     });
 
     /**
-     * 打开主题[和谐,托班,示范课,入学准备,安全教育,早期阅读]
+     * <<<<<<< HEAD 打开主题[和谐,托班,示范课,入学准备,安全教育,早期阅读] ======= 打开主题[和谐，托班，托班-电子书，示范课，入学准备，安全教育，早期阅读]
+     * >>>>>>> 增加托班电子书
      */
     bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
@@ -125,6 +126,9 @@ public class ViewRegistry {
         } else if (Constant.DATAREGISTRY_TYPE_SOURCE.equals(type)) {
           // 资源库
           intent = new Intent(ctx, SourceActivity.class);
+        } else if (Constant.DATAREGISTRY_TYPE_SHIP_EBOOK.equals(type)) {
+          // 托班-电子书
+          intent = new Intent(ctx, EbookActivity.class);
         } else {
           return;
         }

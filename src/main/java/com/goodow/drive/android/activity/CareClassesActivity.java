@@ -59,6 +59,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   private HandlerRegistration refreshHandler;
   private LinearLayout ll_act_care_result_container_1;
   private LinearLayout ll_act_care_result_container_2;
+  private ImageButton ib_care_ebook;
 
   @Override
   public void onClick(View v) {
@@ -101,6 +102,13 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       case R.id.bt_care_cloud9:
       case R.id.bt_care_cloud10:
         this.onCloudClick(v);
+        break;
+      case R.id.ib_care_ebook:
+        JsonObject msg = Json.createObject();
+        msg.set("action", "post");
+        JsonArray tags = Json.createArray().push(Constant.DATAREGISTRY_TYPE_SHIP_EBOOK);
+        msg.set(Constant.KEY_TAGS, tags);
+        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
         break;
 
     }
@@ -352,9 +360,11 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     this.bt_care_back = (ImageView) findViewById(R.id.bt_care_back);
     this.bt_care_coll = (ImageView) findViewById(R.id.bt_care_coll);
     this.bt_care_loc = (ImageView) findViewById(R.id.bt_care_loc);
+    ib_care_ebook = (ImageButton) findViewById(R.id.ib_care_ebook);
     this.bt_care_back.setOnClickListener(this);
     this.bt_care_coll.setOnClickListener(this);
     this.bt_care_loc.setOnClickListener(this);
+    ib_care_ebook.setOnClickListener(this);
 
     this.ll_care_classes_term = (LinearLayout) findViewById(R.id.ll_care_classes_term);
     int len_ll_care_classes_term = this.ll_care_classes_term.getChildCount();
