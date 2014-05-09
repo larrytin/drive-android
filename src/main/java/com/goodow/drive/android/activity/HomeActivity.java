@@ -221,9 +221,7 @@ public class HomeActivity extends BaseActivity {
     BaiduLocation.INSTANCE.setContext(getApplicationContext());
     mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
     BaiduLocation.INSTANCE.init();
-    // 数据库打包，将数据库放到asset目录下即可，数据库文件名为：sqlite.dump
-    copyDataBasesBySql();// sql语句初始化
-    // copyDataBases();//数据库拷贝
+    copyDataBasesBy();
     if (openAuth) {
       checkAuth();
     }
@@ -399,6 +397,15 @@ public class HomeActivity extends BaseActivity {
           }
         }
       }.start();
+    }
+  }
+
+  private void copyDataBasesBy() {
+    try {
+      HomeActivity.this.getAssets().open(DBFILENAME);
+      copyDataBases();// 数据库拷贝
+    } catch (IOException e) {
+      copyDataBasesBySql();// sql语句初始化
     }
   }
 
