@@ -24,11 +24,11 @@ import com.goodow.realtime.json.Json;
  */
 public final class BusProvider {
   public static String SID = "sid.drive.";
-  private static final String HOST = "test.goodow.com:8080";
+  private static final String HOST = "test.goodow.com:1986";
   static {
     AndroidPlatform.register();
   }
-  private static final ReconnectBus BUS = new ReconnectBus("ws://" + HOST + "/eventbus/websocket",
+  private static final ReconnectBus BUS = new ReconnectBus("ws://" + HOST + "/channel/websocket",
       Json.createObject().set("forkLocal", true));
 
   public static Bus get() {
