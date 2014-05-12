@@ -21,7 +21,6 @@ import java.util.Set;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -220,7 +219,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private JsonArray queryingTags = null;// 控制台传递的混合标签
   private HandlerRegistration postHandler;
   private HandlerRegistration controlHandler;
-  private SharedPreferences usagePreferences;
   private static final Map<Object, String> idContentTypes = new HashMap<Object, String>();
   private static final Map<Object, String> idTags = new HashMap<Object, String>();
   static {
