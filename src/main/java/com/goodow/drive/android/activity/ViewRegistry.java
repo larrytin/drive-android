@@ -1,5 +1,6 @@
 package com.goodow.drive.android.activity;
 
+import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
@@ -14,8 +15,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ViewRegistry {
@@ -72,7 +77,26 @@ public class ViewRegistry {
           ctx.startActivity(intent);
         }
         if ("aboutUs".equals(redirectto)) {
-          Toast.makeText(ctx, "sid=" + BusProvider.SID.split("[.]")[0], Toast.LENGTH_LONG).show();
+          final WindowManager wm =
+              (WindowManager) ctx.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+          final View view = View.inflate(ctx.getApplicationContext(), R.layout.about_us, null);
+          LayoutParams params = new WindowManager.LayoutParams();
+          params.width = 643;
+          params.height = 476;
+          params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
+          params.y = 200;
+          params.type = LayoutParams.TYPE_PHONE;
+          params.format = PixelFormat.RGBA_8888;
+          wm.addView(view, params);
+          TextView tv_mac = (TextView) view.findViewById(R.id.tv_mac);
+          tv_mac.setText("MAC地址：" + BusProvider.SID.split("[.]")[0]);
+          Button btn_close = (Button) view.findViewById(R.id.btn_close);
+          btn_close.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              wm.removeView(view);
+            }
+          });
         }
       }
     });

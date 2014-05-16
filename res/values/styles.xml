@@ -207,4 +207,11 @@
         <item name="android:textSize">@dimen/status_text_size</item>
     </style>
 
+    <!-- 关于我们文字条目分格 -->
+    <style name="about_us_text">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
 </resources>

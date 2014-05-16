@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="643dp"
+    android:layout_height="476dp"
+    android:background="@drawable/about_us_bg" >
+
+    <Button
+        android:id="@+id/btn_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="35dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/about_us_close" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_mac"
+            style="@style/about_us_text"
+            android:layout_marginTop="0dp"
+            android:text="MAC地址：00:00:00:00:00" />
+
+        <TextView
+            style="@style/about_us_text"
+            android:text="软件版本：学前教育数字智库V1.0" />
+
+        <TextView
+            style="@style/about_us_text"
+            android:text="公　　司：北京科睿星教育科技有限公司" />
+
+        <TextView
+            style="@style/about_us_text"
+            android:text="客服热线：400-609-6688" />
+
+        <TextView
+            style="@style/about_us_text"
+            android:text="邮　　箱：service@krxkid.com" />
+
+        <TextView
+            style="@style/about_us_text"
+            android:text="网　　址：www.krxkid.com" />
+
+        <TextView
+            style="@style/about_us_text"
+            android:text="地　　址：北京市海淀区中关村鼎好大厦A座7F" />
+    </LinearLayout>
+
+</RelativeLayout>
