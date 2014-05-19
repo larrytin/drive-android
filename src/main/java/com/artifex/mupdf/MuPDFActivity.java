@@ -347,17 +347,18 @@ public class MuPDFActivity extends BaseActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject msg = message.body();
-        if (msg.has("path")) {
-          // 包含path的时候返回,onNewIntent处理
-          return;
-        }
-        handleControlMessage(msg);
-      }
-    });
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject msg = message.body();
+            if (msg.has("path")) {
+              // 包含path的时候返回,onNewIntent处理
+              return;
+            }
+            handleControlMessage(msg);
+          }
+        });
   }
 
   @Override

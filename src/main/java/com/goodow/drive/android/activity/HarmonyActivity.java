@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -135,7 +134,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
               Json.createArray().push(Constant.DATAREGISTRY_TYPE_HARMONY).push(currentGrade).push(
                   currentTerm).push(currenTopic).push(title);
           msg.set(Constant.KEY_TAGS, tags);
-          bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
+          bus.sendLocal(Constant.ADDR_ACTIVITY, msg, null);
         }
       });
       return convertView;
@@ -207,14 +206,14 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
     switch (v.getId()) {
     // 后退 收藏 锁屏
       case R.id.iv_act_harmony_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_harmony_coll:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
-            Constant.KEY_REDIRECTTO, "favorite"), null);
+        this.bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "favorite"), null);
         break;
       case R.id.iv_act_harmony_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         break;
       // 查询结果翻页
       case R.id.rl_act_harmony_result_pre:
@@ -271,7 +270,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -303,27 +302,28 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
       }
     });
     refreshHandler =
-        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             sendQueryMessage(null);
           }
         });
-    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        if (body.has("page")) {
-          JsonObject page = body.getObject("page");
-          if (page.has("goTo")) {
-            currentPageNum = (int) page.getNumber("goTo");
-          } else if (page.has("move")) {
-            currentPageNum = currentPageNum + (int) page.getNumber("move");
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("page")) {
+              JsonObject page = body.getObject("page");
+              if (page.has("goTo")) {
+                currentPageNum = (int) page.getNumber("goTo");
+              } else if (page.has("move")) {
+                currentPageNum = currentPageNum + (int) page.getNumber("move");
+              }
+              sendQueryMessage(null);
+            }
           }
-          sendQueryMessage(null);
-        }
-      }
-    });
+        });
   }
 
   /**
@@ -592,7 +592,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
     } else if (id == R.id.rl_act_harmony_result_next) {
       page.set("move", 1);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+    bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
   }
 
   /**
@@ -633,7 +633,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
           this.currentGrade).push(this.currentTerm).push(this.currenTopic));
     }
     pb_act_result_progress.setVisibility(View.VISIBLE);
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
+    bus.sendLocal(Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();

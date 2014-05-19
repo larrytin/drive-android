@@ -3,7 +3,6 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -116,14 +115,14 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     switch (v.getId()) {
     // 后退 收藏 锁屏
       case R.id.iv_act_smart_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_smart_coll:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
-            Constant.KEY_REDIRECTTO, "favorite"), null);
+        this.bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "favorite"), null);
         break;
       case R.id.iv_act_smart_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         break;
       // 查询结果翻页
       case R.id.rl_act_smart_result_pre:
@@ -210,7 +209,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -239,24 +238,25 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
         saveHistory(Constant.GRADE, currentGrade);
       }
     });
-    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        if (body.has("page")) {
-          JsonObject page = body.getObject("page");
-          if (page.has("goTo")) {
-            vp_act_smart_result.setCurrentItem((int) page.getNumber("goTo"));
-          } else if (page.has("move")) {
-            int currentItem = vp_act_smart_result.getCurrentItem();
-            vp_act_smart_result.setCurrentItem(currentItem + (int) page.getNumber("move"));
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("page")) {
+              JsonObject page = body.getObject("page");
+              if (page.has("goTo")) {
+                vp_act_smart_result.setCurrentItem((int) page.getNumber("goTo"));
+              } else if (page.has("move")) {
+                int currentItem = vp_act_smart_result.getCurrentItem();
+                vp_act_smart_result.setCurrentItem(currentItem + (int) page.getNumber("move"));
+              }
+            }
           }
-        }
-      }
-    });
+        });
 
     refreshHandler =
-        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             sendQueryMessage(null);
@@ -323,7 +323,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
                   Json.createArray().push(Constant.DATAREGISTRY_TYPE_EDUCATION).push(currentGrade)
                       .push(currentTerm).push(title);
               msg.set(Constant.KEY_TAGS, tags);
-              bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
+              bus.sendLocal(Constant.ADDR_ACTIVITY, msg, null);
             }
           });
           innerContainer.addView(textView);
@@ -490,7 +490,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
     } else if (id == R.id.rl_act_smart_result_next) {
       page.set("move", 1);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+    bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
   }
 
   /**
@@ -527,7 +527,7 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
       msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_EDUCATION)
           .push(this.currentGrade).push(this.currentTerm));
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
+    bus.sendLocal(Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonArray tags = (JsonArray) message.body();

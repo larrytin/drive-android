@@ -1,6 +1,5 @@
 package com.goodow.drive.android.settings;
 
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.HomeActivity;
 import com.goodow.drive.android.activity.NotificationActivity;
@@ -43,7 +42,7 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.Toast;
 
 public class SettingsRegistry {
-  public static final String PREFIX = BusProvider.SID + "settings.";
+  public static final String PREFIX = "drive.settings.";
   private final Context ctx;
   private final Bus bus;
   private SharedPreferences authSp = null;
@@ -55,7 +54,7 @@ public class SettingsRegistry {
   }
 
   public void subscribe() {
-    bus.registerHandler(BusProvider.SID + "audio", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler("drive.audio", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -109,7 +108,7 @@ public class SettingsRegistry {
         }
       }
     });
-    bus.registerHandler(PREFIX + "location.baidu", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(PREFIX + "location.baidu", new MessageHandler<JsonObject>() {
       @Override
       public void handle(final Message<JsonObject> message) {
         // 请求位置
@@ -139,7 +138,7 @@ public class SettingsRegistry {
             });
       }
     });
-    bus.registerHandler(PREFIX + "location", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(PREFIX + "location", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = Json.createObject();
@@ -175,7 +174,7 @@ public class SettingsRegistry {
         message.reply(msg);
       }
     });
-    bus.registerHandler(PREFIX + "information", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(PREFIX + "information", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = Json.createObject();
@@ -199,7 +198,7 @@ public class SettingsRegistry {
       }
     });
 
-    bus.registerHandler(PREFIX + "brightness.view", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(PREFIX + "brightness.view", new MessageHandler<JsonObject>() {
       private LayoutParams mLayoutParams;
       private View mView;
       private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
@@ -234,8 +233,8 @@ public class SettingsRegistry {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                   if (MotionEvent.ACTION_DOWN == event.getAction()) {
-                    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set(
-                        "brightness", 1), null);
+                    bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 1),
+                        null);
                   }
                   return true;
                 }
@@ -251,7 +250,7 @@ public class SettingsRegistry {
       }
     });
 
-    bus.registerHandler(BusProvider.SID + "input", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler("drive.input", new MessageHandler<JsonObject>() {
       private final Instrumentation inst = new Instrumentation();
 
       @Override
@@ -274,7 +273,7 @@ public class SettingsRegistry {
       }
     });
 
-    bus.registerHandler(BusProvider.SID + "notification", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler("drive.notification", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
@@ -287,7 +286,7 @@ public class SettingsRegistry {
       }
     });
 
-    bus.registerHandler(BusProvider.SID + "print", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler("drive.print", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
@@ -305,11 +304,11 @@ public class SettingsRegistry {
     });
 
     // 由服务器来处理验证信息
-    bus.registerHandler(BusProvider.SID + "auth.request", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler("drive.auth.request", new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         // 百度地图
-        bus.send(Bus.LOCAL + PREFIX + "location.baidu", null, new MessageHandler<JsonObject>() {
+        bus.sendLocal(PREFIX + "location.baidu", null, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject msg = message.body();
@@ -378,8 +377,8 @@ public class SettingsRegistry {
               }
               if (msg.has("content")
                   && !"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
-                bus.send(Bus.LOCAL + BusProvider.SID + "notification", Json.createObject().set(
-                    "content", msg.getString("content")), null);
+                bus.sendLocal("drive.notification", Json.createObject().set("content",
+                    msg.getString("content")), null);
               }
             }
             if ("unlocked".equals(msg.getString("status"))) {
@@ -390,7 +389,7 @@ public class SettingsRegistry {
               // 解锁，清除数据，让其继续校验
               authSp.edit().clear().commit();
               // 重新校验
-              bus.send(Bus.LOCAL + BusProvider.SID + "auth.request", null, null);
+              bus.sendLocal("drive.auth.request", null, null);
             }
           }
         });

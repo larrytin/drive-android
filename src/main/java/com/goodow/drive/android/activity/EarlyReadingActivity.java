@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -71,7 +70,7 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
       convertView.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+          bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path",
               attachment.getString(Constant.KEY_URL)), null);
         }
       });
@@ -119,14 +118,14 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
     switch (v.getId()) {
     // 后退 收藏 锁屏
       case R.id.iv_act_ebook_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_ebook_coll:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
-            Constant.KEY_REDIRECTTO, "favorite"), null);
+        this.bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "favorite"), null);
         break;
       case R.id.iv_act_ebook_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         break;
       // 查询结果翻页
       case R.id.rl_act_ebook_result_pre:
@@ -170,7 +169,7 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -195,24 +194,25 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
         sendQueryMessage(buildTags(tags));
       }
     });
-    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        if (body.has("page")) {
-          JsonObject page = body.getObject("page");
-          if (page.has("goTo")) {
-            currentPageNum = (int) page.getNumber("goTo");
-          } else if (page.has("move")) {
-            currentPageNum = currentPageNum + (int) page.getNumber("move");
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("page")) {
+              JsonObject page = body.getObject("page");
+              if (page.has("goTo")) {
+                currentPageNum = (int) page.getNumber("goTo");
+              } else if (page.has("move")) {
+                currentPageNum = currentPageNum + (int) page.getNumber("move");
+              }
+              sendQueryMessage(null);
+            }
           }
-          sendQueryMessage(null);
-        }
-      }
-    });
+        });
 
     refreshHandler =
-        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             sendQueryMessage(null);
@@ -325,7 +325,7 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
     } else if (id == R.id.rl_act_ebook_result_next) {
       page.set("move", 1);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+    bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
   }
 
   /**
@@ -341,15 +341,14 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
       msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_READ));
     }
     pb_act_result_progress.setVisibility(View.VISIBLE);
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
-            totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
-            bindDataToView(attachments);
-          }
-        });
+    bus.sendLocal(Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
+        totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
+        bindDataToView(attachments);
+      }
+    });
   }
 }

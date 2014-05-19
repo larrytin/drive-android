@@ -16,20 +16,24 @@ package com.goodow.drive.android;
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.impl.ReconnectBus;
-import com.goodow.realtime.json.Json;
+import com.goodow.realtime.java.JavaWebSocket;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Maintains a singleton instance for obtaining the bus. Ideally this would be replaced with a more
  * efficient means such as through injection directly into interested classes.
  */
 public final class BusProvider {
-  public static String SID = "sid.drive.";
   private static final String HOST = "test.goodow.com:1986";
   static {
     AndroidPlatform.register();
+    // adb shell setprop log.tag.JavaWebSocket DEBUG
+    Logger.getLogger(JavaWebSocket.class.getName()).setLevel(Level.ALL);
   }
   private static final ReconnectBus BUS = new ReconnectBus("ws://" + HOST + "/channel/websocket",
-      Json.createObject().set("forkLocal", true));
+      null);
 
   public static Bus get() {
     return BUS;

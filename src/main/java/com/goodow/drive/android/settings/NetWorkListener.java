@@ -46,7 +46,7 @@ public class NetWorkListener {
         JsonObject info =
             Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
                 getStrength());
-        bus.publish(Bus.LOCAL + ADDR, info);
+        bus.publishLocal(ADDR, info);
       }
     }
   }
@@ -85,7 +85,7 @@ public class NetWorkListener {
 
   private final Bus bus = BusProvider.get();
   // 信息服务地址
-  public static final String ADDR = BusProvider.SID + "connectivity";
+  public static final String ADDR = "drive.connectivity";
 
   private Context context = null;
   private TelephonyManager tel = null;
@@ -106,7 +106,7 @@ public class NetWorkListener {
         JsonObject info =
             Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
                 getStrength());
-        bus.publish(Bus.LOCAL + ADDR, info);
+        bus.publishLocal(ADDR, info);
       }
     }
   };
@@ -128,7 +128,7 @@ public class NetWorkListener {
     this.tel.listen(myListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
     this.context.registerReceiver(netWorkStatusReceiver, intentFilter);
-    getHander = this.bus.registerHandler(ADDR, new MessageHandler<JsonObject>() {
+    getHander = this.bus.registerLocalHandler(ADDR, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         String action = message.body().getString("action");

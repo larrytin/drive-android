@@ -1,11 +1,9 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.player.VideoView.MySizeChangeLinstener;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
 import com.goodow.realtime.json.Json;
@@ -217,7 +215,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     backImageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         saveOnDatabases();
       }
     });
@@ -255,8 +253,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           isDrawing = false;
           v.setSelected(false);
           backImageView.setVisibility(View.VISIBLE);
-          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
-              "annotation", false), null);
+          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
           if (prePlaying) {
             videoView.start();
             ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
@@ -273,8 +270,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           } else {
             prePlaying = false;
           }
-          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
-              "annotation", true), null);
+          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", true), null);
           hideController();
         }
       }
@@ -282,8 +278,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     iv_act_picture_eraser.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject()
-            .set("clear", true), null);
+        bus.sendLocal("drive.view.scrawl", Json.createObject().set("clear", true), null);
       }
     });
     Looper.myQueue().addIdleHandler(new IdleHandler() {
@@ -325,7 +320,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     btn_media_controler_replay.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
         ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
       }
     });
@@ -409,7 +404,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       @Override
       public void onCompletion(MediaPlayer arg0) {
         isOnline = false;
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
         ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
         // videoView.stopPlayback();
         // VideoActivity.this.finish();
@@ -427,7 +422,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
         } else {
           msg.set("play", 2);
         }
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
+        bus.sendLocal(Constant.ADDR_PLAYER, msg, null);
       }
     });
     volumeSeekbar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() // 调音监听器
@@ -435,8 +430,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           @Override
           public void onProgressChanged(SeekBar arg0, int progress, boolean fromUser) {
             if (fromUser) {
-              bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action",
-                  "post").set("volume", (float) progress / volumeSeekbar.getMax()), null);
+              bus.sendLocal("drive.audio", Json.createObject().set("action", "post").set("volume",
+                  (float) progress / volumeSeekbar.getMax()), null);
             }
 
           }
@@ -453,11 +448,11 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       @Override
       public void onClick(View v) {
         volumeSeekbar.setProgress(0);
-        bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "post")
-            .set("volume", 0.0), null);
+        bus.sendLocal("drive.audio", Json.createObject().set("action", "post").set("volume", 0.0),
+            null);
       }
     });
-    bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "get"),
+    bus.sendLocal("drive.audio", Json.createObject().set("action", "get"),
         new MessageHandler<JsonObject>() {
           // 初始化声音
           @Override
@@ -493,7 +488,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           // videoView.seekTo(progress);// 设置播放位置
           JsonObject msg = Json.createObject();
           msg.set("progress", (double) progress / sb_media_controler_seekbar.getMax());
-          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
+          bus.sendLocal(Constant.ADDR_PLAYER, msg, null);
           if (!isOnline) {
 
           }
@@ -802,7 +797,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     // isChangedVideo = false;
 
     controlHandlerRegistration =
-        bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
 
           @Override
           public void handle(com.goodow.realtime.channel.Message<JsonObject> message) {

@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -30,29 +29,29 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
         mSetting[mSetting.length - 1] = SystemClock.uptimeMillis();
         System.out.println(mSetting[mSetting.length - 1]);
         if (mSetting[0] >= (mSetting[mSetting.length - 1] - 1000)) {
-          bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+          bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
               "settings.all"), null);
         }
         break;
       case R.id.bt_setting_wifi:// wifi设置
-        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+        bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
             "settings.wifi"), null);
         break;
       case R.id.bt_setting_screen_offset:// 屏幕偏移
-        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+        bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
             "settings.screenOffset"), null);
         break;
       case R.id.bt_setting_about:// 关于我们
-        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+        bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
             "aboutUs"), null);
         break;
       case R.id.bt_setting_reboot:// 重启
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);
         break;
       case R.id.iv_common_back://
         JsonObject msg = Json.createObject();
         msg.set("return", true);
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+        bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
         break;
 
     }

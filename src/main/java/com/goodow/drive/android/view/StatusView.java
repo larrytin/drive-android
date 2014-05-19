@@ -119,9 +119,8 @@ public class StatusView extends LinearLayout {
     IntentFilter timeTickFilter = new IntentFilter(Intent.ACTION_TIME_TICK);
     this.context.registerReceiver(timeTickreceiver, timeTickFilter);
     this.settingReceiver.registerReceiver();
-    controlhandler = bus.registerHandler(NetWorkListener.ADDR, eventHandler);
-    bus.send(Bus.LOCAL + NetWorkListener.ADDR, Json.createObject().set("action", "get"),
-        eventHandler);
+    controlhandler = bus.registerLocalHandler(NetWorkListener.ADDR, eventHandler);
+    bus.sendLocal(NetWorkListener.ADDR, Json.createObject().set("action", "get"), eventHandler);
   }
 
   @Override

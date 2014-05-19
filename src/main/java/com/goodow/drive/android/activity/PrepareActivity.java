@@ -4,7 +4,6 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DBDataProvider;
 import com.goodow.drive.android.view.PrepareResultView;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -93,8 +92,8 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
             view.setOnLeftEyeClickListener(new OnClickListener() {
               @Override
               public void onClick(View v) {
-                bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject()
-                    .set("path", filePath).set("play", 1), null);
+                bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set(
+                    "play", 1), null);
               }
             });
           }
@@ -103,8 +102,8 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
             view.setOnRightEyeClickListener(new OnClickListener() {
               @Override
               public void onClick(View v) {
-                bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject()
-                    .set("path", filePath).set("play", 1), null);
+                bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set(
+                    "play", 1), null);
               }
             });
           }
@@ -182,14 +181,14 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
     switch (v.getId()) {
     // 后退 收藏 锁屏
       case R.id.iv_act_prepare_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_prepare_coll:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
-            Constant.KEY_REDIRECTTO, "favorite"), null);
+        this.bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "favorite"), null);
         break;
       case R.id.iv_act_prepare_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         break;
       // 学期的选中事件
       case R.id.ftv_act_prepare_top:
@@ -278,7 +277,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -307,24 +306,25 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
         saveHistory(Constant.TERM, currentTerm);
       }
     });
-    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        if (body.has("page")) {
-          JsonObject page = body.getObject("page");
-          if (page.has("goTo")) {
-            currentPageNum = (int) page.getNumber("goTo");
-          } else if (page.has("move")) {
-            currentPageNum = currentPageNum + (int) page.getNumber("move");
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("page")) {
+              JsonObject page = body.getObject("page");
+              if (page.has("goTo")) {
+                currentPageNum = (int) page.getNumber("goTo");
+              } else if (page.has("move")) {
+                currentPageNum = currentPageNum + (int) page.getNumber("move");
+              }
+              bindDataToView();
+            }
           }
-          bindDataToView();
-        }
-      }
-    });
+        });
 
     refreshHandler =
-        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             sendQueryMessage(null);
@@ -364,8 +364,8 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
             view.setOnLeftEyeClickListener(new OnClickListener() {
               @Override
               public void onClick(View v) {
-                bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject()
-                    .set("path", filePath).set("play", 1), null);
+                bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set(
+                    "play", 1), null);
               }
             });
           }
@@ -374,8 +374,8 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
             view.setOnRightEyeClickListener(new OnClickListener() {
               @Override
               public void onClick(View v) {
-                bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject()
-                    .set("path", filePath).set("play", 1), null);
+                bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set(
+                    "play", 1), null);
               }
             });
           }
@@ -633,7 +633,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
     } else if (id == R.id.rl_act_prepare_result_next) {
       page.set("move", 1);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+    bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
   }
 
   /**
@@ -701,17 +701,16 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
           this.currentTerm).push(this.currenTopic));
     }
     pb_act_result_progress.setVisibility(View.VISIBLE);
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN_ATTACHMENTS, msg,
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
-            JsonArray tags = body.getArray(Constant.TAGS);
-            combineTags(tags);
-            bindDataToView();
-          }
-        });
+    bus.sendLocal(Constant.ADDR_TAG_CHILDREN_ATTACHMENTS, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
+        JsonArray tags = body.getArray(Constant.TAGS);
+        combineTags(tags);
+        bindDataToView();
+      }
+    });
   }
 
   private void topicChooser(int id) {

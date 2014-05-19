@@ -4,7 +4,6 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.drive.android.view.DrawableLeftTextView;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -134,7 +133,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         @Override
         public void onClick(View v) {
           // 打开文件
-          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+          bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path",
               attachment.getString(Constant.KEY_URL)).set("play", 1), null);
           Editor editor = usagePreferences.edit();
           editor.putString("tmpFileName", attachmentId);
@@ -169,7 +168,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
             msg.set(Constant.KEY_ACTION, "post");
             msg.set(Constant.KEY_STAR, Json.createObject().set(Constant.KEY_TYPE, "attachment")
                 .set(Constant.KEY_KEY, attachment.getString(Constant.KEY_ID)));
-            bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+            bus.sendLocal(Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
               @Override
               public void handle(Message<JsonObject> message) {
                 JsonObject body = message.body();
@@ -243,14 +242,14 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   public void onClick(View v) {
     switch (v.getId()) {
       case R.id.iv_act_source_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_source_coll:
-        bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+        bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
             "favorite"), null);
         break;
       case R.id.iv_act_source_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         break;
       case R.id.iv_act_source_catagory0_all:
       case R.id.iv_act_source_catagory0_text:
@@ -319,7 +318,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -350,24 +349,25 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         }
       }
     });
-    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        if (body.has("page")) {
-          JsonObject page = body.getObject("page");
-          if (page.has("goTo")) {
-            pb_act_source_search_progress.setVisibility(View.VISIBLE);
-            currentPageNum = (int) page.getNumber("goTo");
-          } else if (page.has("move")) {
-            currentPageNum = currentPageNum + (int) page.getNumber("move");
-          }
-          sendQueryMessage(currentContentType, subTags, et_act_source_tags.getText().toString()
-              .trim());
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("page")) {
+              JsonObject page = body.getObject("page");
+              if (page.has("goTo")) {
+                pb_act_source_search_progress.setVisibility(View.VISIBLE);
+                currentPageNum = (int) page.getNumber("goTo");
+              } else if (page.has("move")) {
+                currentPageNum = currentPageNum + (int) page.getNumber("move");
+              }
+              sendQueryMessage(currentContentType, subTags, et_act_source_tags.getText().toString()
+                  .trim());
 
-        }
-      }
-    });
+            }
+          }
+        });
   }
 
   /**
@@ -588,16 +588,15 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     if (query != null && !query.trim().equals("")) {
       msg.set(Constant.KEY_QUERY, this.et_act_source_tags.getText().toString());
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
-            JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
-            bindDataToView(attachments);
-          }
-        });
+    bus.sendLocal(Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
+        JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
+        bindDataToView(attachments);
+      }
+    });
   }
 
   /**
@@ -608,7 +607,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         Json.createObject().set(Constant.KEY_TAGS, Json.createArray().push(contentType));
     msg.set(Constant.KEY_FROM, 0);
     msg.set(Constant.KEY_SIZE, 20);// 假设每个一级搜索下的标签不多于20
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
+    bus.sendLocal(Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -629,7 +628,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     msg.set("action", "get");
     msg.set(Constant.KEY_STAR, Json.createObject().set(Constant.KEY_TYPE, "attachment").set(
         Constant.KEY_KEY, params));
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+    bus.sendLocal(Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();

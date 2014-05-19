@@ -120,59 +120,60 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
   @Override
   protected void onResume() {
     super.onResume();
-    controlHandler = bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        if (body.has("path")) {
-          return;
-        }
-        currentScale = pdfView.getZoom();
-        if (body.has("zoomTo")) {
-          if (pdfView != null) {
-            currentScale = (float) body.getNumber("zoomTo");
-            pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
-                .getScreenWidth(PdfPlayer.this) / 2, 0));
-            pdfView.loadPages();
-          }
-        }
-        if (body.has("zoomBy")) {
-          if (pdfView != null && (float) body.getNumber("zoomBy") * currentScale < 10
-              && (float) body.getNumber("zoomBy") * currentScale > 0.1) {
-            currentScale = (float) body.getNumber("zoomBy") * currentScale;
-            pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
-                .getScreenWidth(PdfPlayer.this) / 2, 0));
-            pdfView.loadPages();
-          }
-        }
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("path")) {
+              return;
+            }
+            currentScale = pdfView.getZoom();
+            if (body.has("zoomTo")) {
+              if (pdfView != null) {
+                currentScale = (float) body.getNumber("zoomTo");
+                pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
+                    .getScreenWidth(PdfPlayer.this) / 2, 0));
+                pdfView.loadPages();
+              }
+            }
+            if (body.has("zoomBy")) {
+              if (pdfView != null && (float) body.getNumber("zoomBy") * currentScale < 10
+                  && (float) body.getNumber("zoomBy") * currentScale > 0.1) {
+                currentScale = (float) body.getNumber("zoomBy") * currentScale;
+                pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
+                    .getScreenWidth(PdfPlayer.this) / 2, 0));
+                pdfView.loadPages();
+              }
+            }
 
-        if (body.has("page")) {
-          JsonObject pdfControl = body.getObject("page");
-          if (pdfControl.has("goTo")) {
-            /*
-             * goTo 指定页码的移动
-             */
-            if (pdfView != null) {
-              pdfView.jumpTo((int) pdfControl.getNumber("goTo"));
-              pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
-                  .getScreenWidth(PdfPlayer.this) / 2, 0));
-              pdfView.loadPages();
+            if (body.has("page")) {
+              JsonObject pdfControl = body.getObject("page");
+              if (pdfControl.has("goTo")) {
+                /*
+                 * goTo 指定页码的移动
+                 */
+                if (pdfView != null) {
+                  pdfView.jumpTo((int) pdfControl.getNumber("goTo"));
+                  pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
+                      .getScreenWidth(PdfPlayer.this) / 2, 0));
+                  pdfView.loadPages();
+                }
+              }
+              if (pdfControl.has("move")) {
+                /*
+                 * move 相对于当前页码的偏移量移动
+                 */
+                if (pdfView != null) {
+                  pdfView.jumpTo(pdfView.getCurrentPage() + 1 + (int) pdfControl.getNumber("move"));
+                  pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
+                      .getScreenWidth(PdfPlayer.this) / 2, 0));
+                  pdfView.loadPages();
+                }
+              }
             }
           }
-          if (pdfControl.has("move")) {
-            /*
-             * move 相对于当前页码的偏移量移动
-             */
-            if (pdfView != null) {
-              pdfView.jumpTo(pdfView.getCurrentPage() + 1 + (int) pdfControl.getNumber("move"));
-              pdfView.zoomCenteredTo(currentScale, new PointF(DeviceInformationTools
-                  .getScreenWidth(PdfPlayer.this) / 2, 0));
-              pdfView.loadPages();
-            }
-          }
-        }
-      }
-    });
+        });
   }
 
   @Override

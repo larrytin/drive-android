@@ -5,22 +5,22 @@ import java.util.List;
 
 public interface Constant {
 
-  String ADDR_CONTROL = BusProvider.SID + "control";
-  String ADDR_VIEW = BusProvider.SID + "view";
+  String ADDR_CONTROL = "drive.control";
+  String ADDR_VIEW = "drive.view";
   String ADDR_VIEW_REFRESH = ADDR_VIEW + ".refresh";
-  String ADDR_PREFIX_VIEW = BusProvider.SID + "view.";
-  String ADDR_TOPIC = BusProvider.SID + "topic";
-  String ADDR_PLAYER = BusProvider.SID + "player";
-  String ADDR_ACTIVITY = BusProvider.SID + "activity";
-  String ADDR_FILE = BusProvider.SID + "file";
+  String ADDR_PREFIX_VIEW = "drive.view.";
+  String ADDR_TOPIC = "drive.topic";
+  String ADDR_PLAYER = "drive.player";
+  String ADDR_ACTIVITY = "drive.activity";
+  String ADDR_FILE = "drive.file";
 
-  String ADDR_DB = BusProvider.SID + "db";
-  String ADDR_TAG = BusProvider.SID + "tag";
+  String ADDR_DB = "drive.db";
+  String ADDR_TAG = "drive.tag";
   String ADDR_TAG_CHILDREN = ADDR_TAG + ".children";
   String ADDR_TAG_CHILDREN_ATTACHMENTS = ADDR_TAG_CHILDREN + ".attachments";
-  String ADDR_TAG_STAR = BusProvider.SID + "star";
+  String ADDR_TAG_STAR = "drive.star";
   String ADDR_TAG_STAR_SEARCH = ADDR_TAG_STAR + ".search";
-  String ADDR_TAG_ATTACHMENT = BusProvider.SID + "attachment";
+  String ADDR_TAG_ATTACHMENT = "drive.attachment";
   String ADDR_TAG_ATTACHMENT_SEARCH = ADDR_TAG_ATTACHMENT + ".search";
 
   String TYPE = "type"; // 功能模块的KEY

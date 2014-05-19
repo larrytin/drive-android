@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -36,14 +35,14 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
     switch (v.getId()) {
     // 后退 收藏 锁屏
       case R.id.iv_act_security_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_security_coll:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
-            Constant.KEY_REDIRECTTO, "favorite"), null);
+        this.bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "favorite"), null);
         break;
       case R.id.iv_act_security_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         break;
     }
   }
@@ -77,7 +76,7 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -152,16 +151,15 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
       return;
     }
     msg.set(Constant.KEY_TAGS, tags);
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
-            String filePath = attachments.getObject(0).getString(Constant.KEY_URL);
-            bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", filePath)
-                .set("play", 1), null);
-          }
-        });
+    bus.sendLocal(Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
+        String filePath = attachments.getObject(0).getString(Constant.KEY_URL);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path", filePath)
+            .set("play", 1), null);
+      }
+    });
   }
 }

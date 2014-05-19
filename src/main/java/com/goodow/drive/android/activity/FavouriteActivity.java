@@ -6,7 +6,6 @@ import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.drive.android.view.FavouriteAttachmentsView;
 import com.goodow.drive.android.view.FavouriteTagsView;
 import com.goodow.drive.android.view.FontTextView;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -106,7 +105,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
       case R.id.iv_act_favour_back:
         JsonObject msg = Json.createObject();
         msg.set("return", true);
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+        bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
         break;
       //
       case R.id.ft_act_favour_item_activity:
@@ -180,7 +179,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
   protected void onResume() {
     super.onResume();
     registerPostHandler =
-        bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
@@ -207,24 +206,25 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
             echoTopic();
           }
         });
-    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        if (body.has("page")) {
-          JsonObject page = body.getObject("page");
-          if (page.has("goTo")) {
-            currentPageNum = (int) page.getNumber("goTo");
-          } else if (page.has("move")) {
-            currentPageNum = currentPageNum + (int) page.getNumber("move");
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("page")) {
+              JsonObject page = body.getObject("page");
+              if (page.has("goTo")) {
+                currentPageNum = (int) page.getNumber("goTo");
+              } else if (page.has("move")) {
+                currentPageNum = currentPageNum + (int) page.getNumber("move");
+              }
+              sendQueryMessage(currentTopic);
+            }
           }
-          sendQueryMessage(currentTopic);
-        }
-      }
-    });
+        });
 
     refreshHandler =
-        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             sendQueryMessage(currentTopic);
@@ -357,7 +357,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
     } else if (id == R.id.iv_act_favour_result_next) {
       page.set("move", 1);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+    bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
   }
 
   /**
@@ -369,7 +369,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
     msg.set(Constant.KEY_SIZE, numPerPage);
     msg.set(Constant.KEY_TYPE, type);
     pb_act_result_progress.setVisibility(View.VISIBLE);
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR_SEARCH, msg, new MessageHandler<JsonObject>() {
+    bus.sendLocal(Constant.ADDR_TAG_STAR_SEARCH, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -418,7 +418,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
             msg.set(Constant.KEY_ACTION, "post");
             msg.set(Constant.KEY_TITLE, title);
             msg.set(Constant.KEY_TAGS, tags);
-            bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
+            bus.sendLocal(Constant.ADDR_ACTIVITY, msg, null);
           }
         }
       });
@@ -449,7 +449,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
           msg.set(Constant.KEY_STARS, Json.createArray().push(
               Json.createObject().set(Constant.KEY_TYPE, "tag").set(Constant.KEY_KEY,
                   activity.getString(Constant.KEY_TAG))));
-          bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+          bus.sendLocal(Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
             @Override
             public void handle(Message<JsonObject> message) {
               JsonObject body = message.body();
@@ -489,7 +489,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
             }
             isEditMode = false;
           } else {
-            bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path",
+            bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path",
                 attachment.getString(Constant.KEY_URL)).set("play", 1), null);
           }
         }
@@ -521,7 +521,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
           msg.set(Constant.KEY_STARS, Json.createArray().push(
               Json.createObject().set(Constant.KEY_TYPE, "attachment").set(Constant.KEY_KEY,
                   attachment.getString(Constant.KEY_ID))));
-          bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+          bus.sendLocal(Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
             @Override
             public void handle(Message<JsonObject> message) {
               JsonObject body = message.body();

@@ -3,7 +3,6 @@ package com.goodow.drive.android.player;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -63,7 +62,7 @@ public class WebViewFlashPlayer extends BaseActivity {
       @Override
       public void onClick(View v) {
         System.gc();
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         saveOnDatabases();
       }
     });

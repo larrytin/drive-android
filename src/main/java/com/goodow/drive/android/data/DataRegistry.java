@@ -1,6 +1,7 @@
 package com.goodow.drive.android.data;
 
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -22,8 +23,24 @@ public class DataRegistry {
   }
 
   public void subscribe() {
+    bus.registerHandler("drive." + DeviceInformationTools.getLocalMacAddressFromWifiInfo(context),
+        new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(final Message<JsonObject> message) {
+            JsonObject body = message.body();
+            String path = body.getString("path");
+            JsonObject msg = body.getObject("msg");
+            bus.sendLocal(path, msg, new MessageHandler<JsonObject>() {
+              @Override
+              public void handle(Message<JsonObject> messageInner) {
+                JsonObject bodyInner = messageInner.body();
+                message.reply(bodyInner);
+              }
+            });
+          }
+        });
     // 标签映射的增删改查
-    bus.registerHandler(Constant.ADDR_TAG, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_TAG, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -38,7 +55,7 @@ public class DataRegistry {
           if (DBDataProvider.insertTagRelation(context, tag)) {
             msg.set(Constant.KEY_STATUS, "ok");
             // 通知界面刷新
-            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
+            bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
@@ -48,32 +65,33 @@ public class DataRegistry {
           if (DBDataProvider.deleteTagRelation(context, tags)) {
             msg.set(Constant.KEY_STATUS, "ok");
             // 通知界面刷新
-            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
+            bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         }
       }
     });
     // 查询同时属于N标签的子标签及其文件
-    bus.registerHandler(Constant.ADDR_TAG_CHILDREN_ATTACHMENTS, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(final Message<JsonObject> message) {
-        new AsyncTask<Message<?>, Void, JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_TAG_CHILDREN_ATTACHMENTS,
+        new MessageHandler<JsonObject>() {
           @Override
-          protected JsonObject doInBackground(Message<?>... messages) {
-            return DBDataProvider.querySubTagsAndAttachments(context, (JsonObject) messages[0]
-                .body());
-          }
+          public void handle(final Message<JsonObject> message) {
+            new AsyncTask<Message<?>, Void, JsonObject>() {
+              @Override
+              protected JsonObject doInBackground(Message<?>... messages) {
+                return DBDataProvider.querySubTagsAndAttachments(context, (JsonObject) messages[0]
+                    .body());
+              }
 
-          @Override
-          protected void onPostExecute(JsonObject result) {
-            message.reply(result);// 分页查询接口
-          };
-        }.execute(message);
-      }
-    });
+              @Override
+              protected void onPostExecute(JsonObject result) {
+                message.reply(result);// 分页查询接口
+              };
+            }.execute(message);
+          }
+        });
     // 查询同时属于N标签的子标签
-    bus.registerHandler(Constant.ADDR_TAG_CHILDREN, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_TAG_CHILDREN, new MessageHandler<JsonObject>() {
       @Override
       public void handle(final Message<JsonObject> message) {
         new AsyncTask<Message<?>, Void, JsonObject>() {
@@ -90,7 +108,7 @@ public class DataRegistry {
       }
     });
     // 收藏的增删改查
-    bus.registerHandler(Constant.ADDR_TAG_STAR, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_TAG_STAR, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -105,7 +123,7 @@ public class DataRegistry {
           if (DBDataProvider.insertStarRelation(context, star)) {
             msg.set(Constant.KEY_STATUS, "ok");
             // 通知界面刷新
-            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
+            bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
@@ -115,14 +133,14 @@ public class DataRegistry {
           if (DBDataProvider.deleteStarRelation(context, stars)) {
             msg.set(Constant.KEY_STATUS, "ok");
             // 通知界面刷新
-            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
+            bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         }
       }
     });
     // 查询收藏列表
-    bus.registerHandler(Constant.ADDR_TAG_STAR_SEARCH, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_TAG_STAR_SEARCH, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -130,7 +148,7 @@ public class DataRegistry {
       }
     });
     // 数据库批量测试数据
-    bus.registerHandler(Constant.ADDR_DB, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_DB, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -148,7 +166,7 @@ public class DataRegistry {
       }
     });
     // 文件的增删改查询
-    bus.registerHandler(Constant.ADDR_TAG_ATTACHMENT, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_TAG_ATTACHMENT, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -163,7 +181,7 @@ public class DataRegistry {
           if (DBDataProvider.insertFile(context, attachment)) {
             msg.set(Constant.KEY_STATUS, "ok");
             // 通知界面刷新
-            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
+            bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
@@ -173,7 +191,7 @@ public class DataRegistry {
           if (DBDataProvider.deleteFiles(context, ids)) {
             msg.set(Constant.KEY_STATUS, "ok");
             // 通知界面刷新
-            bus.publish(Bus.LOCAL + Constant.ADDR_VIEW_REFRESH, null);
+            bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
           message.reply(msg);
         }
@@ -181,7 +199,7 @@ public class DataRegistry {
     });
 
     // 文件的搜索
-    bus.registerHandler(Constant.ADDR_TAG_ATTACHMENT_SEARCH, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_TAG_ATTACHMENT_SEARCH, new MessageHandler<JsonObject>() {
       @Override
       public void handle(final Message<JsonObject> message) {
         new AsyncTask<Message<?>, Void, JsonObject>() {

@@ -4,7 +4,6 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.drive.android.toolutils.FontUtil;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -82,8 +81,8 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
       convertView.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-          bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set(
-              "play", 1), null);
+          bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set("play",
+              1), null);
           Editor editor = usagePreferences.edit();
           editor.putString("tmpFileName", attachmentId);
           editor.putLong("tmpOpenTime", System.currentTimeMillis());
@@ -134,7 +133,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
     switch (v.getId()) {
     // 后退
       case R.id.iv_act_behave_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
 
       // 收藏
@@ -143,7 +142,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
         msg.set(Constant.KEY_ACTION, "post");
         msg.set(Constant.KEY_STAR, Json.createObject().set(Constant.KEY_TYPE, "tag").set(
             Constant.KEY_KEY, this.currentTags.toJsonString()));
-        bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+        bus.sendLocal(Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
@@ -230,49 +229,51 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        String action = body.getString("action");
-        // 仅仅处理action为null或post动作
-        if (!"post".equalsIgnoreCase(action)) {
-          return;
-        }
-        currentTags = body.getArray(Constant.KEY_TAGS);
-        if (currentTags == null) {
-          Toast.makeText(BehaveActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
-          return;
-        }
-        for (int i = 0; i < currentTags.length(); i++) {
-          if (Constant.LABEL_THEMES.contains(currentTags.getString(i))) {
-            return;
+    postHandler =
+        bus.registerLocalHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            String action = body.getString("action");
+            // 仅仅处理action为null或post动作
+            if (!"post".equalsIgnoreCase(action)) {
+              return;
+            }
+            currentTags = body.getArray(Constant.KEY_TAGS);
+            if (currentTags == null) {
+              Toast.makeText(BehaveActivity.this, "数据不完整，请检查确认后重试", Toast.LENGTH_SHORT).show();
+              return;
+            }
+            for (int i = 0; i < currentTags.length(); i++) {
+              if (Constant.LABEL_THEMES.contains(currentTags.getString(i))) {
+                return;
+              }
+            }
+            if (body.has(Constant.KEY_TITLE) && body.getString(Constant.KEY_TITLE) != null) {
+              title = body.getString(Constant.KEY_TITLE);
+              sendQueryMessage();
+            } else {
+              Toast.makeText(BehaveActivity.this, "数据不完整，请重试", Toast.LENGTH_SHORT).show();
+            }
           }
-        }
-        if (body.has(Constant.KEY_TITLE) && body.getString(Constant.KEY_TITLE) != null) {
-          title = body.getString(Constant.KEY_TITLE);
-          sendQueryMessage();
-        } else {
-          Toast.makeText(BehaveActivity.this, "数据不完整，请重试", Toast.LENGTH_SHORT).show();
-        }
-      }
-    });
+        });
 
-    controlHandler = bus.registerHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject body = message.body();
-        if (body.has("page")) {
-          JsonObject page = body.getObject("page");
-          if (page.has("goTo")) {
-            currentPageNum = (int) page.getNumber("goTo");
-          } else if (page.has("move")) {
-            currentPageNum = currentPageNum + (int) page.getNumber("move");
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject body = message.body();
+            if (body.has("page")) {
+              JsonObject page = body.getObject("page");
+              if (page.has("goTo")) {
+                currentPageNum = (int) page.getNumber("goTo");
+              } else if (page.has("move")) {
+                currentPageNum = currentPageNum + (int) page.getNumber("move");
+              }
+              sendQueryMessage();
+            }
           }
-          sendQueryMessage();
-        }
-      }
-    });
+        });
   }
 
   /**
@@ -356,7 +357,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
     } else if (id == R.id.iv_act_behave_result_next) {
       page.set("move", 1);
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+    bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
   }
 
   /**
@@ -367,7 +368,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
     msg.set("action", "get");
     msg.set(Constant.KEY_STAR, Json.createObject().set(Constant.KEY_TYPE, "tag").set(
         Constant.KEY_KEY, this.currentTags.toJsonString()));
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
+    bus.sendLocal(Constant.ADDR_TAG_STAR, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -391,16 +392,15 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
     msg.set(Constant.KEY_SIZE, numPerPage);
     msg.set(Constant.KEY_TAGS, this.currentTags);
     pb_act_result_progress.setVisibility(View.VISIBLE);
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
-            totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
-            bindDataToView(attachments);
-            sendQueryIsHeadMessage();
-          }
-        });
+    bus.sendLocal(Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
+        totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
+        bindDataToView(attachments);
+        sendQueryIsHeadMessage();
+      }
+    });
   }
 }

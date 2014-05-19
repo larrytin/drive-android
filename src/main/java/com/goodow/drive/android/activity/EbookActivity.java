@@ -3,7 +3,6 @@ package com.goodow.drive.android.activity;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.view.EbookAttachmentsView;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -36,14 +35,14 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
     switch (v.getId()) {
     // 后退 收藏 锁屏
       case R.id.iv_act_ebook_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.iv_act_ebook_coll:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
-            Constant.KEY_REDIRECTTO, "favorite"), null);
+        this.bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "favorite"), null);
         break;
       case R.id.iv_act_ebook_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         break;
     }
   }
@@ -77,7 +76,7 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -130,31 +129,30 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
     if (tags == null || tags.length() != 1) {
       return;
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg,
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject body = message.body();
-            JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
-            for (int i = 0; i < attachments.length(); i++) {
-              JsonObject object = attachments.getObject(i);
-              String name = object.getString(Constant.KEY_NAME);
-              if ("小班上".equals(name)) {
-                setResultInfo(ll_result_1.getChildAt(0), object);
-              } else if ("中班上".equals(name)) {
-                setResultInfo(ll_result_1.getChildAt(1), object);
-              } else if ("大班上".equals(name)) {
-                setResultInfo(ll_result_1.getChildAt(2), object);
-              } else if ("小班下".equals(name)) {
-                setResultInfo(ll_result_2.getChildAt(0), object);
-              } else if ("中班下".equals(name)) {
-                setResultInfo(ll_result_2.getChildAt(1), object);
-              } else if ("大班下".equals(name)) {
-                setResultInfo(ll_result_2.getChildAt(2), object);
-              }
-            }
+    bus.sendLocal(Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
+        for (int i = 0; i < attachments.length(); i++) {
+          JsonObject object = attachments.getObject(i);
+          String name = object.getString(Constant.KEY_NAME);
+          if ("小班上".equals(name)) {
+            setResultInfo(ll_result_1.getChildAt(0), object);
+          } else if ("中班上".equals(name)) {
+            setResultInfo(ll_result_1.getChildAt(1), object);
+          } else if ("大班上".equals(name)) {
+            setResultInfo(ll_result_1.getChildAt(2), object);
+          } else if ("小班下".equals(name)) {
+            setResultInfo(ll_result_2.getChildAt(0), object);
+          } else if ("中班下".equals(name)) {
+            setResultInfo(ll_result_2.getChildAt(1), object);
+          } else if ("大班下".equals(name)) {
+            setResultInfo(ll_result_2.getChildAt(2), object);
           }
-        });
+        }
+      }
+    });
   }
 
   /**
@@ -170,8 +168,8 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
     eView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("path", filePath).set(
-            "play", 1), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("path", filePath)
+            .set("play", 1), null);
       }
     });
     eView.setVisibility(View.VISIBLE);

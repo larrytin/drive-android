@@ -2,7 +2,6 @@ package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -66,14 +65,14 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     switch (v.getId()) {
     // 后退 收藏 锁屏
       case R.id.bt_care_back:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         break;
       case R.id.bt_care_coll:
-        this.bus.send(Bus.LOCAL + Constant.ADDR_VIEW, Json.createObject().set(
-            Constant.KEY_REDIRECTTO, "favorite"), null);
+        this.bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
+            "favorite"), null);
         break;
       case R.id.bt_care_loc:
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
         break;
       case R.id.ftv_term_0:
       case R.id.ftv_term_1:
@@ -108,7 +107,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
         msg.set("action", "post");
         JsonArray tags = Json.createArray().push(Constant.DATAREGISTRY_TYPE_SHIP_EBOOK);
         msg.set(Constant.KEY_TAGS, tags);
-        bus.send(Bus.LOCAL + Constant.ADDR_TOPIC, msg, null);
+        bus.sendLocal(Constant.ADDR_TOPIC, msg, null);
         break;
 
     }
@@ -201,7 +200,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -232,7 +231,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     });
 
     refreshHandler =
-        bus.registerHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             sendQueryMessage(null);
@@ -420,7 +419,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
         Json.createArray().push(Constant.DATAREGISTRY_TYPE_SHIP).push(currentTerm)
             .push(currenTopic).push(title);
     msg.set(Constant.KEY_TAGS, tags);
-    bus.send(Bus.LOCAL + Constant.ADDR_ACTIVITY, msg, null);
+    bus.sendLocal(Constant.ADDR_ACTIVITY, msg, null);
   }
 
   /**
@@ -493,7 +492,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       msg.set(Constant.KEY_TAGS, Json.createArray().push(Constant.DATAREGISTRY_TYPE_SHIP).push(
           this.currentTerm).push(this.currenTopic));
     }
-    bus.send(Bus.LOCAL + Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
+    bus.sendLocal(Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();

@@ -139,8 +139,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     play.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER,
-            Json.createObject().set("play", playing ? 2 : 1), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("play", playing ? 2 : 1), null);
       }
     });
 
@@ -149,7 +148,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     replay.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
       }
     });
     flashViewBroadCastReceiver = new FlashViewBroadCastReceiver();
@@ -165,7 +164,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
           // audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, -2);
           JsonObject msg = Json.createObject();
           msg.set("volume", (float) progress / sound_progress.getMax());
-          bus.send(Bus.LOCAL + SettingsRegistry.PREFIX + "audio", msg, null);
+          bus.sendLocal(SettingsRegistry.PREFIX + "audio", msg, null);
         }
       }
 
@@ -183,7 +182,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     stop.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, Json.createObject().set("play", 0), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("play", 0), null);
       }
     });
     // 实时更新进度
@@ -213,37 +212,38 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
     mContext.registerReceiver(flashViewBroadCastReceiver, mIntentFilter);
 
-    controlHandler = bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject msg = message.body();
-        if (msg.has("path")) {
-          return;
-        }
-        if (msg.has("play")) {
-          switch ((int) msg.getNumber("play")) {
-            case 0:
-              // 停止
-            case 1:
-              // 播放
-              playButton();
-              break;
-            case 2:
-              // 暂停
-              pauseButton();
-              break;
-            case 3:
-              // 重播
-              replay();
-              break;
-            default:
-              Toast.makeText(getContext(), "不支持的播放模式, play=" + msg.getNumber("play"),
-                  Toast.LENGTH_LONG).show();
-              break;
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject msg = message.body();
+            if (msg.has("path")) {
+              return;
+            }
+            if (msg.has("play")) {
+              switch ((int) msg.getNumber("play")) {
+                case 0:
+                  // 停止
+                case 1:
+                  // 播放
+                  playButton();
+                  break;
+                case 2:
+                  // 暂停
+                  pauseButton();
+                  break;
+                case 3:
+                  // 重播
+                  replay();
+                  break;
+                default:
+                  Toast.makeText(getContext(), "不支持的播放模式, play=" + msg.getNumber("play"),
+                      Toast.LENGTH_LONG).show();
+                  break;
+              }
+            }
           }
-        }
-      }
-    });
+        });
   }
 
   @Override

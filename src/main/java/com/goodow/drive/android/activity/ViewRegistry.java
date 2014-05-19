@@ -1,7 +1,6 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
@@ -36,7 +35,7 @@ public class ViewRegistry {
     /**
      * 打开VIEW[主页，收藏，设置等]
      */
-    bus.registerHandler(Constant.ADDR_VIEW, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_VIEW, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -89,7 +88,7 @@ public class ViewRegistry {
           params.format = PixelFormat.RGBA_8888;
           wm.addView(view, params);
           TextView tv_mac = (TextView) view.findViewById(R.id.tv_mac);
-          tv_mac.setText("MAC地址：" + BusProvider.SID.split("[.]")[0]);
+          tv_mac.setText("MAC地址：" + DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx));
           Button btn_close = (Button) view.findViewById(R.id.btn_close);
           btn_close.setOnClickListener(new OnClickListener() {
             @Override
@@ -104,7 +103,7 @@ public class ViewRegistry {
     /**
      * 打开活动详情
      */
-    bus.registerHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
@@ -121,7 +120,7 @@ public class ViewRegistry {
      * <<<<<<< HEAD 打开主题[和谐,托班,示范课,入学准备,安全教育,早期阅读] ======= 打开主题[和谐，托班，托班-电子书，示范课，入学准备，安全教育，早期阅读]
      * >>>>>>> 增加托班电子书
      */
-    bus.registerHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -174,58 +173,60 @@ public class ViewRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "status", new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(ctx, StatusBarActivity.class);
-        ctx.startActivity(intent);
-      }
-    });
+    bus.registerLocalHandler(Constant.ADDR_PREFIX_VIEW + "status",
+        new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            Intent intent = new Intent(ctx, StatusBarActivity.class);
+            ctx.startActivity(intent);
+          }
+        });
     // 标注
-    bus.registerHandler(Constant.ADDR_PREFIX_VIEW + "scrawl", new MessageHandler<JsonObject>() {
-      private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
-          .getSystemService(Context.WINDOW_SERVICE);
-      private LayoutParams mLayoutParams;
-      private DrawView mDrawView;
-      private boolean mSwitch = true;
+    bus.registerLocalHandler(Constant.ADDR_PREFIX_VIEW + "scrawl",
+        new MessageHandler<JsonObject>() {
+          private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
+              .getSystemService(Context.WINDOW_SERVICE);
+          private LayoutParams mLayoutParams;
+          private DrawView mDrawView;
+          private boolean mSwitch = true;
 
-      @Override
-      public void handle(Message<JsonObject> message) {
-        if (mDrawView == null) {
-          mDrawView =
-              new DrawView(ctx, DeviceInformationTools.getScreenWidth(ctx), DeviceInformationTools
-                  .getScreenHeight(ctx));
-          mLayoutParams = new WindowManager.LayoutParams();
-          mLayoutParams.gravity = Gravity.LEFT;
-          mLayoutParams.format = PixelFormat.RGBA_8888;
-          mLayoutParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL;
-          // mLayoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
-          mLayoutParams.x = 0;
-          mLayoutParams.y = 0;
-          mLayoutParams.width = DeviceInformationTools.getScreenWidth(ctx) - 80;
-          mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-          mLayoutParams.type = LayoutParams.TYPE_PHONE;
-        }
-        JsonObject draw = message.body();
-        if (draw.has("annotation")) {
-          if (draw.getBoolean("annotation")) {
-            if (mSwitch) {
-              mWindowManager.addView(mDrawView, mLayoutParams);
-              mSwitch = false;
+          @Override
+          public void handle(Message<JsonObject> message) {
+            if (mDrawView == null) {
+              mDrawView =
+                  new DrawView(ctx, DeviceInformationTools.getScreenWidth(ctx),
+                      DeviceInformationTools.getScreenHeight(ctx));
+              mLayoutParams = new WindowManager.LayoutParams();
+              mLayoutParams.gravity = Gravity.LEFT;
+              mLayoutParams.format = PixelFormat.RGBA_8888;
+              mLayoutParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL;
+              // mLayoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
+              mLayoutParams.x = 0;
+              mLayoutParams.y = 0;
+              mLayoutParams.width = DeviceInformationTools.getScreenWidth(ctx) - 80;
+              mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+              mLayoutParams.type = LayoutParams.TYPE_PHONE;
             }
-          } else {
-            if (!mSwitch) {
-              mWindowManager.removeView(mDrawView);
-              mDrawView = null;
-              mSwitch = true;
+            JsonObject draw = message.body();
+            if (draw.has("annotation")) {
+              if (draw.getBoolean("annotation")) {
+                if (mSwitch) {
+                  mWindowManager.addView(mDrawView, mLayoutParams);
+                  mSwitch = false;
+                }
+              } else {
+                if (!mSwitch) {
+                  mWindowManager.removeView(mDrawView);
+                  mDrawView = null;
+                  mSwitch = true;
+                }
+              }
+            } else if (draw.has("clear")) {
+              if (!mSwitch) {
+                mDrawView.clear();
+              }
             }
           }
-        } else if (draw.has("clear")) {
-          if (!mSwitch) {
-            mDrawView.clear();
-          }
-        }
-      }
-    });
+        });
   }
 }

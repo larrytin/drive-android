@@ -1,10 +1,8 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -98,73 +96,64 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
-              "annotation", false), null);
+          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         }
-        bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomBy", 1.1),
-            null);
+        bus.sendLocal("drive.player", Json.createObject().set("zoomBy", 1.1), null);
         break;
       // 缩小
       case R.id.iv_include_picture_zoom_in:
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
-              "annotation", false), null);
+          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         }
-        bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomBy", 0.9),
-            null);
+        bus.sendLocal("drive.player", Json.createObject().set("zoomBy", 0.9), null);
         break;
       // 1:1
       case R.id.iv_include_picture_full_screen:
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
-              "annotation", false), null);
+          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         }
-        bus.send(Bus.LOCAL + BusProvider.SID + "player", Json.createObject().set("zoomTo", 1), null);
+        bus.sendLocal("drive.player", Json.createObject().set("zoomTo", 1), null);
         break;
       // 画笔的获取与丢弃
       case R.id.iv_include_picture_pen:
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
-              "annotation", false), null);
+          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         } else {
           isDrawing = true;
           iv_common_back.setVisibility(View.INVISIBLE);
-          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
-              "annotation", true), null);
+          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", true), null);
           delayDissmissToolsbarCancle();
           iv_include_picture_pen.setSelected(true);
         }
         break;
       // 橡皮擦
       case R.id.iv_include_picture_eraser:
-        bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject()
-            .set("clear", true), null);
+        bus.sendLocal("drive.view.scrawl", Json.createObject().set("clear", true), null);
         break;
       // 打印
       case R.id.iv_include_picture_print:
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.send(Bus.LOCAL + BusProvider.SID + "view.scrawl", Json.createObject().set(
-              "annotation", false), null);
+          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         }
-        bus.send(Bus.LOCAL + BusProvider.SID + "print", Json.createObject().set("path", path), null);
+        bus.sendLocal("drive.print", Json.createObject().set("path", path), null);
         break;
       default:
         break;
@@ -277,7 +266,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+    postHandler = bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
@@ -411,7 +400,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         System.gc();
         JsonObject msg = Json.createObject();
         msg.set("return", true);
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, msg, null);
+        bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
         saveOnDatabases();
       }
     });

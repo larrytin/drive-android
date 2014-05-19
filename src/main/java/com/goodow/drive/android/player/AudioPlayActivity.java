@@ -1,10 +1,8 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
-import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.HandlerRegistration;
@@ -53,11 +51,11 @@ public class AudioPlayActivity extends BaseActivity {
             sound_Button.setClickable(false);
             sound_Button.setImageResource(R.drawable.common_player_mute);
             progress_sound_SeekBar.setProgress(0);
-            bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action",
-                "post").set("volume", 0.0), null);
+            bus.sendLocal("drive.audio", Json.createObject().set("action", "post").set("volume",
+                0.0), null);
             return;
         }
-        bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
+        bus.sendLocal(Constant.ADDR_PLAYER, msg, null);
       } catch (Exception e) {// 抛出异常
         e.printStackTrace();
       }
@@ -153,8 +151,8 @@ public class AudioPlayActivity extends BaseActivity {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
-          bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "post")
-              .set("volume", (float) progress / progress_sound_SeekBar.getMax()), null);
+          bus.sendLocal("drive.audio", Json.createObject().set("action", "post").set("volume",
+              (float) progress / progress_sound_SeekBar.getMax()), null);
         }
       }
 
@@ -168,7 +166,7 @@ public class AudioPlayActivity extends BaseActivity {
     });
 
     // 发送消息获取音量
-    bus.send(Bus.LOCAL + BusProvider.SID + "audio", Json.createObject().set("action", "get"),
+    bus.sendLocal("drive.audio", Json.createObject().set("action", "get"),
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
@@ -192,7 +190,7 @@ public class AudioPlayActivity extends BaseActivity {
     mImageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.send(Bus.LOCAL + Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("return", true), null);
         saveOnDatabases();
       }
     });
@@ -220,7 +218,7 @@ public class AudioPlayActivity extends BaseActivity {
           if (fromUser) {
             JsonObject msg = Json.createObject();
             msg.set("progress", (double) progress / progressSeekBar.getMax());
-            bus.send(Bus.LOCAL + Constant.ADDR_PLAYER, msg, null);
+            bus.sendLocal(Constant.ADDR_PLAYER, msg, null);
           }
         }
 
@@ -301,16 +299,17 @@ public class AudioPlayActivity extends BaseActivity {
     this.isVisible = true;
     super.onResume();
 
-    controlHandler = bus.registerHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject msg = message.body();
-        if (msg.has("path")) {
-          return;
-        }
-        handleControl(msg);
-      }
-    });
+    controlHandler =
+        bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject msg = message.body();
+            if (msg.has("path")) {
+              return;
+            }
+            handleControl(msg);
+          }
+        });
     IntentFilter mIntentFilter = new IntentFilter();
     mIntentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
     this.registerReceiver(soundBroadCastReceiver, mIntentFilter);

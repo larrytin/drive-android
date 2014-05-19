@@ -24,20 +24,20 @@ public class DataSource {
         new WebSocketBus("ws://data.goodow.com:8080/eventbus/websocket", Json.createObject().set(
             "forkLocal", true));
 
-    bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         handlerEventBusOpened(bus);
       }
     });
-    bus.registerHandler(Bus.LOCAL_ON_CLOSE, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Bus.ON_CLOSE, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         log.info("EventBus closed");
         System.exit(0);
       }
     });
-    bus.registerHandler(Bus.LOCAL_ON_ERROR, new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Bus.ON_ERROR, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         log.log(Level.SEVERE, "EventBus Error");
