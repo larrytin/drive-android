@@ -76,6 +76,7 @@ public class NetWorkListener {
   public static final String TYPE_2G = "cell_2g";
   public static final String TYPE_3G = "cell_3g";
   public static final String TYPE_4G = "cell_4g";
+  public static final String TYPE_CABLE = "有线网络";
 
   public static final String TYPE_NONE = "none";
 
@@ -194,6 +195,11 @@ public class NetWorkListener {
         } else if (type.toLowerCase().equals(LTE) || type.toLowerCase().equals(UMB)
             || type.toLowerCase().equals(HSPA_PLUS)) {
           NetWorkName = TYPE_4G;
+          return NetWorkName;
+        }
+      } else if (info.isConnected()) {
+        if (info.getState() == NetworkInfo.State.CONNECTED) {
+          NetWorkName = TYPE_CABLE;
           return NetWorkName;
         }
       }

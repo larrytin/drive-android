@@ -71,16 +71,20 @@ public class StatusView extends LinearLayout {
         netType = body.getString(Constant.TYPE);
         if (NetWorkListener.WIFI.equalsIgnoreCase(netType)) {
           netType = "WIFI ";
-        } else if (NetWorkListener.TYPE_2G.equals(netType)
-            || NetWorkListener.TYPE_3G.equals(netType) || NetWorkListener.TYPE_4G.equals(netType)) {
+        }
+        if (NetWorkListener.TYPE_2G.equals(netType) || NetWorkListener.TYPE_3G.equals(netType)
+            || NetWorkListener.TYPE_4G.equals(netType)) {
           netType = "3G ";
         }
-        netStrength = (float) body.getNumber("strength");
-        if (netStrength <= 0.0f) {
-          netType = "无网络 ";
+        if (NetWorkListener.TYPE_CABLE.equals(netType)) {
+          netType = "有线网络";
         }
       }
+      netStrength = (float) body.getNumber("strength");
       if (netStrength <= 0.0f) {
+        if (!NetWorkListener.TYPE_CABLE.equals(netType)) {
+          netType = "无网络";
+        }
         currentImageId = R.drawable.status_network_null;
       } else if (netStrength > 0.0f && netStrength <= 0.3f) {
         currentImageId = R.drawable.status_network_mid;
