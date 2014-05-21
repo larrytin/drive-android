@@ -173,60 +173,58 @@ public class ViewRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_PREFIX_VIEW + "status",
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            Intent intent = new Intent(ctx, StatusBarActivity.class);
-            ctx.startActivity(intent);
-          }
-        });
+    bus.registerLocalHandler(Constant.ADDR_VIEW_STATUS, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Intent intent = new Intent(ctx, StatusBarActivity.class);
+        ctx.startActivity(intent);
+      }
+    });
     // 标注
-    bus.registerLocalHandler(Constant.ADDR_PREFIX_VIEW + "scrawl",
-        new MessageHandler<JsonObject>() {
-          private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
-              .getSystemService(Context.WINDOW_SERVICE);
-          private LayoutParams mLayoutParams;
-          private DrawView mDrawView;
-          private boolean mSwitch = true;
+    bus.registerLocalHandler(Constant.ADDR_VIEW_SCRAWL, new MessageHandler<JsonObject>() {
+      private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
+          .getSystemService(Context.WINDOW_SERVICE);
+      private LayoutParams mLayoutParams;
+      private DrawView mDrawView;
+      private boolean mSwitch = true;
 
-          @Override
-          public void handle(Message<JsonObject> message) {
-            if (mDrawView == null) {
-              mDrawView =
-                  new DrawView(ctx, DeviceInformationTools.getScreenWidth(ctx),
-                      DeviceInformationTools.getScreenHeight(ctx));
-              mLayoutParams = new WindowManager.LayoutParams();
-              mLayoutParams.gravity = Gravity.LEFT;
-              mLayoutParams.format = PixelFormat.RGBA_8888;
-              mLayoutParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL;
-              // mLayoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
-              mLayoutParams.x = 0;
-              mLayoutParams.y = 0;
-              mLayoutParams.width = DeviceInformationTools.getScreenWidth(ctx) - 80;
-              mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
-              mLayoutParams.type = LayoutParams.TYPE_PHONE;
+      @Override
+      public void handle(Message<JsonObject> message) {
+        if (mDrawView == null) {
+          mDrawView =
+              new DrawView(ctx, DeviceInformationTools.getScreenWidth(ctx), DeviceInformationTools
+                  .getScreenHeight(ctx));
+          mLayoutParams = new WindowManager.LayoutParams();
+          mLayoutParams.gravity = Gravity.LEFT;
+          mLayoutParams.format = PixelFormat.RGBA_8888;
+          mLayoutParams.flags = LayoutParams.FLAG_NOT_TOUCH_MODAL;
+          // mLayoutParams.width = WindowManager.LayoutParams.FILL_PARENT;
+          mLayoutParams.x = 0;
+          mLayoutParams.y = 0;
+          mLayoutParams.width = DeviceInformationTools.getScreenWidth(ctx) - 80;
+          mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+          mLayoutParams.type = LayoutParams.TYPE_PHONE;
+        }
+        JsonObject draw = message.body();
+        if (draw.has("annotation")) {
+          if (draw.getBoolean("annotation")) {
+            if (mSwitch) {
+              mWindowManager.addView(mDrawView, mLayoutParams);
+              mSwitch = false;
             }
-            JsonObject draw = message.body();
-            if (draw.has("annotation")) {
-              if (draw.getBoolean("annotation")) {
-                if (mSwitch) {
-                  mWindowManager.addView(mDrawView, mLayoutParams);
-                  mSwitch = false;
-                }
-              } else {
-                if (!mSwitch) {
-                  mWindowManager.removeView(mDrawView);
-                  mDrawView = null;
-                  mSwitch = true;
-                }
-              }
-            } else if (draw.has("clear")) {
-              if (!mSwitch) {
-                mDrawView.clear();
-              }
+          } else {
+            if (!mSwitch) {
+              mWindowManager.removeView(mDrawView);
+              mDrawView = null;
+              mSwitch = true;
             }
           }
-        });
+        } else if (draw.has("clear")) {
+          if (!mSwitch) {
+            mDrawView.clear();
+          }
+        }
+      }
+    });
   }
 }

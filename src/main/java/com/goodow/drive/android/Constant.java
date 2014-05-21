@@ -5,23 +5,60 @@ import java.util.List;
 
 public interface Constant {
 
-  String ADDR_CONTROL = "drive.control";
-  String ADDR_VIEW = "drive.view";
-  String ADDR_VIEW_REFRESH = ADDR_VIEW + ".refresh";
-  String ADDR_PREFIX_VIEW = "drive.view.";
-  String ADDR_TOPIC = "drive.topic";
-  String ADDR_PLAYER = "drive.player";
-  String ADDR_ACTIVITY = "drive.activity";
-  String ADDR_FILE = "drive.file";
+  String ADDR_SERVER = "sid.drive";
+  String ADDR_SERVER_SYSTIME_ANALYTICS = ADDR_SERVER + ".systime.analytics";
+  String ADDR_SERVER_PLAYER_ANALYTICS = ADDR_SERVER + ".player.analytics";
+  String ADDR_SERVER_AUTH = ADDR_SERVER + ".auth";
 
-  String ADDR_DB = "drive.db";
-  String ADDR_TAG = "drive.tag";
+  String DRIVE = "drive";
+  String ADDR_CONTROL = DRIVE + ".control";
+  String ADDR_VIEW = DRIVE + ".view";
+  String ADDR_VIEW_REFRESH = ADDR_VIEW + ".refresh";
+  String ADDR_VIEW_STATUS = ADDR_VIEW + ".status";
+  String ADDR_VIEW_SCRAWL = ADDR_VIEW + ".scrawl";
+  String ADDR_SETTINGS = DRIVE + ".settings";
+  String ADDR_SETTINGS_AUDIO = ADDR_SETTINGS + ".audio";
+  String ADDR_SETTINGS_INFORMATION = ADDR_SETTINGS + ".information";
+  String ADDR_SETTINGS_LOCATION = ADDR_SETTINGS + ".location";
+  String ADDR_SETTINGS_LOCATION_BAIDU = ADDR_SETTINGS_LOCATION + ".location.baidu";
+  String ADDR_SETTINGS_BRIGHTNESS_VIEW = ADDR_SETTINGS + ".brightness.view";
+  String ADDR_SETTINGS_BRIGHTNESS_LIGHT = ADDR_SETTINGS + ".brightness.light";
+  String ADDR_NOTIFICATION = DRIVE + ".notification";
+  String ADDR_AUDIO = DRIVE + ".audio";
+  String ADDR_PRINT = DRIVE + ".print";
+  String ADDR_INPUT = DRIVE + ".input";
+  String ADDR_CONNECTIVITY = DRIVE + ".connectivity";
+  String ADDR_TOPIC = DRIVE + ".topic";
+  String ADDR_PLAYER = DRIVE + ".player";
+  String ADDR_PLAYER_PDF_MU = ADDR_PLAYER + ".pdf.mu";
+  String ADDR_PLAYER_PDF_JZ = ADDR_PLAYER + ".pdf.jz";
+  String ADDR_PLAYER_SWF_WEBVIEW = ADDR_PLAYER + ".swf.webview";
+  String ADDR_PLAYER_SWF_BUTTON = ADDR_PLAYER + ".swf.button";
+  String ADDR_PLAYER_ANALYTICS_REQUEST = ADDR_PLAYER + ".analytics.request";
+  String ADDR_SYSTIME_ANALYTICS_REQUEST = DRIVE + ".systime.analytics.request";
+  String ADDR_AUTH_REQUEST = DRIVE + ".auth.request";
+  String ADDR_ACTIVITY = DRIVE + ".activity";
+  String ADDR_FILE = DRIVE + ".file";
+  String ADDR_DB = DRIVE + ".db";
+  String ADDR_TAG = DRIVE + ".tag";
   String ADDR_TAG_CHILDREN = ADDR_TAG + ".children";
   String ADDR_TAG_CHILDREN_ATTACHMENTS = ADDR_TAG_CHILDREN + ".attachments";
-  String ADDR_TAG_STAR = "drive.star";
+  String ADDR_TAG_STAR = DRIVE + ".star";
   String ADDR_TAG_STAR_SEARCH = ADDR_TAG_STAR + ".search";
-  String ADDR_TAG_ATTACHMENT = "drive.attachment";
+  String ADDR_TAG_ATTACHMENT = DRIVE + ".attachment";
   String ADDR_TAG_ATTACHMENT_SEARCH = ADDR_TAG_ATTACHMENT + ".search";
+
+  List<String> ADDRESS_SET = Arrays.asList(new String[] {
+      ADDR_SERVER, ADDR_SERVER_AUTH, ADDR_SERVER_PLAYER_ANALYTICS, ADDR_SERVER_SYSTIME_ANALYTICS,
+      ADDR_CONTROL, ADDR_VIEW, ADDR_VIEW_REFRESH, ADDR_VIEW_SCRAWL, ADDR_VIEW_STATUS,
+      ADDR_SETTINGS, ADDR_SETTINGS_AUDIO, ADDR_SETTINGS_BRIGHTNESS_LIGHT,
+      ADDR_SETTINGS_BRIGHTNESS_VIEW, ADDR_SETTINGS_INFORMATION, ADDR_SETTINGS_LOCATION,
+      ADDR_SETTINGS_LOCATION_BAIDU, ADDR_NOTIFICATION, ADDR_AUDIO, ADDR_PRINT, ADDR_INPUT,
+      ADDR_CONNECTIVITY, ADDR_TOPIC, ADDR_PLAYER, ADDR_PLAYER_PDF_MU, ADDR_PLAYER_PDF_JZ,
+      ADDR_PLAYER_SWF_BUTTON, ADDR_PLAYER_SWF_WEBVIEW, ADDR_PLAYER_ANALYTICS_REQUEST,
+      ADDR_SYSTIME_ANALYTICS_REQUEST, ADDR_AUTH_REQUEST, ADDR_ACTIVITY, ADDR_FILE, ADDR_DB,
+      ADDR_TAG, ADDR_TAG_CHILDREN, ADDR_TAG_CHILDREN_ATTACHMENTS, ADDR_TAG_STAR,
+      ADDR_TAG_STAR_SEARCH, ADDR_TAG_ATTACHMENT, ADDR_TAG_ATTACHMENT_SEARCH});
 
   String TYPE = "type"; // 功能模块的KEY
   String GRADE = "grade"; // 年级的KEY

@@ -3,7 +3,6 @@ package com.goodow.drive.android.activity;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DBOperator;
-import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -34,7 +33,6 @@ import android.view.WindowManager;
  * @version V1.0
  */
 public class BaseActivity extends Activity {
-  private static final String BRIGHTNESS = SettingsRegistry.PREFIX + "brightness.light";
   protected final Bus bus = BusProvider.get();
 
   private HandlerRegistration controlHandler;
@@ -72,7 +70,7 @@ public class BaseActivity extends Activity {
               finish();
               // 屏幕亮度
             } else if (msg.has("brightness")) {
-              bus.sendLocal(SettingsRegistry.PREFIX + "brightness.view", msg, null);
+              bus.sendLocal(Constant.ADDR_SETTINGS_BRIGHTNESS_VIEW, msg, null);
             } else if (msg.has("shutdown")) {
               // // 方案一:应用需要装在system/app下
               // if (msg.getNumber("shutdown") == 0) {
@@ -139,23 +137,25 @@ public class BaseActivity extends Activity {
             }
           }
         });
-    brightnessHandler = bus.registerLocalHandler(BRIGHTNESS, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        JsonObject msg = message.body();
-        if (msg.has("brightness")) {
-          double strength = msg.getNumber("brightness");
-          // 调节亮度,此方法只对平板，手机有效
-          WindowManager.LayoutParams lp = getWindow().getAttributes();
-          if ((0 < strength | strength == 0) && strength <= 1) {
-            android.provider.Settings.System.putInt(getContentResolver(),
-                android.provider.Settings.System.SCREEN_BRIGHTNESS, (int) strength * 255); // 0-255
-            lp.screenBrightness = (float) strength;
-          }
-          getWindow().setAttributes(lp);
-        }
-      }
-    });
+    brightnessHandler =
+        bus.registerLocalHandler(Constant.ADDR_SETTINGS_BRIGHTNESS_LIGHT,
+            new MessageHandler<JsonObject>() {
+              @Override
+              public void handle(Message<JsonObject> message) {
+                JsonObject msg = message.body();
+                if (msg.has("brightness")) {
+                  double strength = msg.getNumber("brightness");
+                  // 调节亮度,此方法只对平板，手机有效
+                  WindowManager.LayoutParams lp = getWindow().getAttributes();
+                  if ((0 < strength | strength == 0) && strength <= 1) {
+                    android.provider.Settings.System.putInt(getContentResolver(),
+                        android.provider.Settings.System.SCREEN_BRIGHTNESS, (int) strength * 255); // 0-255
+                    lp.screenBrightness = (float) strength;
+                  }
+                  getWindow().setAttributes(lp);
+                }
+              }
+            });
   }
 
   protected void saveOnDatabases() {
@@ -169,7 +169,7 @@ public class BaseActivity extends Activity {
           .createObject().set("FILE_NAME", fileName).set("OPEN_TIME", openTime).set("LAST_TIME",
               lastTime));
       if (bus.getReadyState() == State.OPEN) {
-        bus.sendLocal(Constant.ADDR_PLAYER + ".analytics.request", null, null);
+        bus.sendLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST, null, null);
       }
     }
   }

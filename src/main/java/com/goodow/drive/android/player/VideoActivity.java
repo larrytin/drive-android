@@ -253,7 +253,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           isDrawing = false;
           v.setSelected(false);
           backImageView.setVisibility(View.VISIBLE);
-          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
+          bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("annotation", false),
+              null);
           if (prePlaying) {
             videoView.start();
             ibtn_media_controler_play_pause.setBackgroundResource(R.drawable.common_player_pause);
@@ -270,7 +271,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           } else {
             prePlaying = false;
           }
-          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", true), null);
+          bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("annotation", true),
+              null);
           hideController();
         }
       }
@@ -278,7 +280,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     iv_act_picture_eraser.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        bus.sendLocal("drive.view.scrawl", Json.createObject().set("clear", true), null);
+        bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("clear", true), null);
       }
     });
     Looper.myQueue().addIdleHandler(new IdleHandler() {
@@ -430,10 +432,9 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
           @Override
           public void onProgressChanged(SeekBar arg0, int progress, boolean fromUser) {
             if (fromUser) {
-              bus.sendLocal("drive.audio", Json.createObject().set("action", "post").set("volume",
-                  (float) progress / volumeSeekbar.getMax()), null);
+              bus.sendLocal(Constant.ADDR_AUDIO, Json.createObject().set("action", "post").set(
+                  "volume", (float) progress / volumeSeekbar.getMax()), null);
             }
-
           }
 
           @Override
@@ -448,11 +449,11 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       @Override
       public void onClick(View v) {
         volumeSeekbar.setProgress(0);
-        bus.sendLocal("drive.audio", Json.createObject().set("action", "post").set("volume", 0.0),
-            null);
+        bus.sendLocal(Constant.ADDR_AUDIO, Json.createObject().set("action", "post").set("volume",
+            0.0), null);
       }
     });
-    bus.sendLocal("drive.audio", Json.createObject().set("action", "get"),
+    bus.sendLocal(Constant.ADDR_AUDIO, Json.createObject().set("action", "get"),
         new MessageHandler<JsonObject>() {
           // 初始化声音
           @Override

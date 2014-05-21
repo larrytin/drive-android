@@ -34,7 +34,7 @@ public class PlayerRegistry {
         String path = body.getString("path");
         Intent intent = null;
         if (path.endsWith(".pdf")) {
-          bus.sendLocal(Constant.ADDR_PLAYER + ".pdf.mu", message.body(), null);
+          bus.sendLocal(Constant.ADDR_PLAYER_PDF_MU, message.body(), null);
           return;
         } else if (path.endsWith(".mp4")) {
           intent = new Intent(ctx, VideoActivity.class);
@@ -43,7 +43,7 @@ public class PlayerRegistry {
         } else if (path.endsWith(".jpg")) {
           intent = new Intent(ctx, PicturePlayAcivity.class);
         } else if (path.endsWith(".swf")) {
-          bus.sendLocal(Constant.ADDR_PLAYER + ".swf.webview", message.body(), null);
+          bus.sendLocal(Constant.ADDR_PLAYER_SWF_WEBVIEW, message.body(), null);
           return;
         } else {
           Toast.makeText(ctx, "不支持" + path, Toast.LENGTH_LONG).show();
@@ -54,7 +54,7 @@ public class PlayerRegistry {
       }
     });
 
-    bus.registerLocalHandler(Constant.ADDR_PLAYER + ".pdf.jz", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_PLAYER_PDF_JZ, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, PdfPlayer.class);
@@ -62,7 +62,7 @@ public class PlayerRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_PLAYER + ".pdf.mu", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_PLAYER_PDF_MU, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, MuPDFActivity.class);
@@ -71,50 +71,50 @@ public class PlayerRegistry {
       }
     });
 
-    bus.registerLocalHandler(Constant.ADDR_PLAYER + ".swf.button",
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            Intent intent = new Intent(ctx, FlashPlayerActivity.class);
-            intent.putExtra("msg", message.body());
-            ctx.startActivity(intent);
-          }
-        });
-    bus.registerLocalHandler(Constant.ADDR_PLAYER + ".swf.webview",
-        new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            Intent intent = new Intent(ctx, WebViewFlashPlayer.class);
-            intent.putExtra("msg", message.body());
-            ctx.startActivity(intent);
-          }
-        });
-    bus.registerLocalHandler("drive.systime.analytics.request", new MessageHandler<JsonObject>() {
+    bus.registerLocalHandler(Constant.ADDR_PLAYER_SWF_BUTTON, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        JsonObject analytics = DBOperator.readBootData(ctx, "T_BOOT", "OPEN_TIME", "LAST_TIME");
-        final int id = (int) analytics.getNumber("id");
-        analytics.remove("id");
-        // 如果拿到的信息为空，则不发送
-        if (analytics.getArray("timestamp").length() == 0) {
-          return;
-        }
-        analytics.set("sid", DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx));
-        // 发送开机数据到服务器
-        bus.send("sid.drive.systime.analytics", analytics, new MessageHandler<JsonObject>() {
-          @Override
-          public void handle(Message<JsonObject> message) {
-            JsonObject msg = message.body();
-            // 发送成功后，清除记录
-            if (!("ok".equals(msg.getString("status")))) {
-              return;
-            }
-            DBOperator.deleteUserData(ctx, "T_BOOT", id);
-          }
-        });
+        Intent intent = new Intent(ctx, FlashPlayerActivity.class);
+        intent.putExtra("msg", message.body());
+        ctx.startActivity(intent);
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_PLAYER + ".analytics.request",
+    bus.registerLocalHandler(Constant.ADDR_PLAYER_SWF_WEBVIEW, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(Message<JsonObject> message) {
+        Intent intent = new Intent(ctx, WebViewFlashPlayer.class);
+        intent.putExtra("msg", message.body());
+        ctx.startActivity(intent);
+      }
+    });
+    bus.registerLocalHandler(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST,
+        new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            JsonObject analytics = DBOperator.readBootData(ctx, "T_BOOT", "OPEN_TIME", "LAST_TIME");
+            final int id = (int) analytics.getNumber("id");
+            analytics.remove("id");
+            // 如果拿到的信息为空，则不发送
+            if (analytics.getArray("timestamp").length() == 0) {
+              return;
+            }
+            analytics.set("sid", DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx));
+            // 发送开机数据到服务器
+            bus.send(Constant.ADDR_SERVER_SYSTIME_ANALYTICS, analytics,
+                new MessageHandler<JsonObject>() {
+                  @Override
+                  public void handle(Message<JsonObject> message) {
+                    JsonObject msg = message.body();
+                    // 发送成功后，清除记录
+                    if (!("ok".equals(msg.getString("status")))) {
+                      return;
+                    }
+                    DBOperator.deleteUserData(ctx, "T_BOOT", id);
+                  }
+                });
+          }
+        });
+    bus.registerLocalHandler(Constant.ADDR_PLAYER_ANALYTICS_REQUEST,
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
@@ -132,17 +132,18 @@ public class PlayerRegistry {
             }
             analytics.set("sid", DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx));
             // 发送统计信息到服务器
-            bus.send("sid.drive.player.analytics", analytics, new MessageHandler<JsonObject>() {
-              @Override
-              public void handle(Message<JsonObject> message) {
-                JsonObject msg = message.body();
-                // 发送成功后，清除记录
-                if (!("ok".equals(msg.getString("status")))) {
-                  return;
-                }
-                DBOperator.deleteUserData(ctx, "T_PLAYER", id);
-              }
-            });
+            bus.send(Constant.ADDR_SERVER_PLAYER_ANALYTICS, analytics,
+                new MessageHandler<JsonObject>() {
+                  @Override
+                  public void handle(Message<JsonObject> message) {
+                    JsonObject msg = message.body();
+                    // 发送成功后，清除记录
+                    if (!("ok".equals(msg.getString("status")))) {
+                      return;
+                    }
+                    DBOperator.deleteUserData(ctx, "T_PLAYER", id);
+                  }
+                });
           }
         });
   }

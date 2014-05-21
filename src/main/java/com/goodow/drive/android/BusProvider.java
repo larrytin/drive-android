@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  * efficient means such as through injection directly into interested classes.
  */
 public final class BusProvider {
-  private static final String HOST = "test.goodow.com:1986";
+  private static final String HOST = "ldh.goodow.com:1986";
   static {
     AndroidPlatform.register();
     // adb shell setprop log.tag.JavaWebSocket DEBUG

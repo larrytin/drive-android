@@ -11,6 +11,7 @@ import com.goodow.realtime.json.JsonObject;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class DataRegistry {
 
@@ -29,14 +30,18 @@ public class DataRegistry {
           public void handle(final Message<JsonObject> message) {
             JsonObject body = message.body();
             String path = body.getString("path");
-            JsonObject msg = body.getObject("msg");
-            bus.sendLocal(path, msg, new MessageHandler<JsonObject>() {
-              @Override
-              public void handle(Message<JsonObject> messageInner) {
-                JsonObject bodyInner = messageInner.body();
-                message.reply(bodyInner);
-              }
-            });
+            if (path != null && Constant.ADDRESS_SET.contains(path)) {
+              JsonObject msg = body.getObject("msg");
+              bus.sendLocal(path, msg, new MessageHandler<JsonObject>() {
+                @Override
+                public void handle(Message<JsonObject> messageInner) {
+                  JsonObject bodyInner = messageInner.body();
+                  message.reply(bodyInner);
+                }
+              });
+            } else {
+              Toast.makeText(context, "address:" + path + "不存在", Toast.LENGTH_LONG).show();
+            }
           }
         });
     // 标签映射的增删改查

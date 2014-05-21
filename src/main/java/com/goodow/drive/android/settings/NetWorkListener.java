@@ -46,7 +46,7 @@ public class NetWorkListener {
         JsonObject info =
             Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
                 getStrength());
-        bus.publishLocal(ADDR, info);
+        bus.publishLocal(Constant.ADDR_CONNECTIVITY, info);
       }
     }
   }
@@ -85,8 +85,6 @@ public class NetWorkListener {
   private final float MAX_3G_STRENGTH = 31;
 
   private final Bus bus = BusProvider.get();
-  // 信息服务地址
-  public static final String ADDR = "drive.connectivity";
 
   private Context context = null;
   private TelephonyManager tel = null;
@@ -107,7 +105,7 @@ public class NetWorkListener {
         JsonObject info =
             Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
                 getStrength());
-        bus.publishLocal(ADDR, info);
+        bus.publishLocal(Constant.ADDR_CONNECTIVITY, info);
       }
     }
   };
@@ -129,20 +127,21 @@ public class NetWorkListener {
     this.tel.listen(myListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
     this.context.registerReceiver(netWorkStatusReceiver, intentFilter);
-    getHander = this.bus.registerLocalHandler(ADDR, new MessageHandler<JsonObject>() {
-      @Override
-      public void handle(Message<JsonObject> message) {
-        String action = message.body().getString("action");
-        if (!"get".equalsIgnoreCase(action)) {
-          return;
-        }
-        // 信息服务反馈
-        JsonObject info =
-            Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set("strength",
-                getStrength());
-        message.reply(info);
-      }
-    });
+    getHander =
+        this.bus.registerLocalHandler(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
+          @Override
+          public void handle(Message<JsonObject> message) {
+            String action = message.body().getString("action");
+            if (!"get".equalsIgnoreCase(action)) {
+              return;
+            }
+            // 信息服务反馈
+            JsonObject info =
+                Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set(
+                    "strength", getStrength());
+            message.reply(info);
+          }
+        });
   }
 
   // 解除监听器

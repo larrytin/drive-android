@@ -3,7 +3,6 @@ package com.goodow.drive.android.player;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
@@ -164,7 +163,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
           // audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, -2);
           JsonObject msg = Json.createObject();
           msg.set("volume", (float) progress / sound_progress.getMax());
-          bus.sendLocal(SettingsRegistry.PREFIX + "audio", msg, null);
+          bus.sendLocal(Constant.ADDR_SETTINGS_AUDIO, msg, null);
         }
       }
 

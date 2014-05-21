@@ -96,64 +96,70 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
+          bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("annotation", false),
+              null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         }
-        bus.sendLocal("drive.player", Json.createObject().set("zoomBy", 1.1), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("zoomBy", 1.1), null);
         break;
       // 缩小
       case R.id.iv_include_picture_zoom_in:
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
+          bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("annotation", false),
+              null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         }
-        bus.sendLocal("drive.player", Json.createObject().set("zoomBy", 0.9), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("zoomBy", 0.9), null);
         break;
       // 1:1
       case R.id.iv_include_picture_full_screen:
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
+          bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("annotation", false),
+              null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         }
-        bus.sendLocal("drive.player", Json.createObject().set("zoomTo", 1), null);
+        bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("zoomTo", 1), null);
         break;
       // 画笔的获取与丢弃
       case R.id.iv_include_picture_pen:
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
+          bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("annotation", false),
+              null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         } else {
           isDrawing = true;
           iv_common_back.setVisibility(View.INVISIBLE);
-          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", true), null);
+          bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("annotation", true),
+              null);
           delayDissmissToolsbarCancle();
           iv_include_picture_pen.setSelected(true);
         }
         break;
       // 橡皮擦
       case R.id.iv_include_picture_eraser:
-        bus.sendLocal("drive.view.scrawl", Json.createObject().set("clear", true), null);
+        bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("clear", true), null);
         break;
       // 打印
       case R.id.iv_include_picture_print:
         if (isDrawing) {
           isDrawing = false;
           iv_common_back.setVisibility(View.VISIBLE);
-          bus.sendLocal("drive.view.scrawl", Json.createObject().set("annotation", false), null);
+          bus.sendLocal(Constant.ADDR_VIEW_SCRAWL, Json.createObject().set("annotation", false),
+              null);
           delayDissmissToolsbar();
           iv_include_picture_pen.setSelected(false);
         }
-        bus.sendLocal("drive.print", Json.createObject().set("path", path), null);
+        bus.sendLocal(Constant.ADDR_PRINT, Json.createObject().set("path", path), null);
         break;
       default:
         break;

@@ -51,8 +51,8 @@ public class AudioPlayActivity extends BaseActivity {
             sound_Button.setClickable(false);
             sound_Button.setImageResource(R.drawable.common_player_mute);
             progress_sound_SeekBar.setProgress(0);
-            bus.sendLocal("drive.audio", Json.createObject().set("action", "post").set("volume",
-                0.0), null);
+            bus.sendLocal(Constant.ADDR_AUDIO, Json.createObject().set("action", "post").set(
+                "volume", 0.0), null);
             return;
         }
         bus.sendLocal(Constant.ADDR_PLAYER, msg, null);
@@ -151,8 +151,8 @@ public class AudioPlayActivity extends BaseActivity {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
-          bus.sendLocal("drive.audio", Json.createObject().set("action", "post").set("volume",
-              (float) progress / progress_sound_SeekBar.getMax()), null);
+          bus.sendLocal(Constant.ADDR_AUDIO, Json.createObject().set("action", "post").set(
+              "volume", (float) progress / progress_sound_SeekBar.getMax()), null);
         }
       }
 
@@ -166,7 +166,7 @@ public class AudioPlayActivity extends BaseActivity {
     });
 
     // 发送消息获取音量
-    bus.sendLocal("drive.audio", Json.createObject().set("action", "get"),
+    bus.sendLocal(Constant.ADDR_AUDIO, Json.createObject().set("action", "get"),
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {

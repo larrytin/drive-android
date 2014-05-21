@@ -9,7 +9,6 @@ import com.goodow.drive.android.data.DBOperator;
 import com.goodow.drive.android.data.DataRegistry;
 import com.goodow.drive.android.player.PlayerRegistry;
 import com.goodow.drive.android.settings.BaiduLocation;
-import com.goodow.drive.android.settings.NetWorkListener;
 import com.goodow.drive.android.settings.SettingsRegistry;
 import com.goodow.drive.android.toolutils.UnzipAsserts;
 import com.goodow.realtime.channel.Bus;
@@ -249,7 +248,7 @@ public class HomeActivity extends BaseActivity {
     registeredNetWork = true;
     // 监听网络变化
     netWorkHandlerReg =
-        bus.registerLocalHandler(NetWorkListener.ADDR, new MessageHandler<JsonObject>() {
+        bus.registerLocalHandler(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
@@ -281,8 +280,8 @@ public class HomeActivity extends BaseActivity {
                         }
                         if (!"com.goodow.drive.android.activity.NotificationActivity"
                             .equals(topClassName)) {
-                          bus.sendLocal("drive.notification", Json.createObject().set("content",
-                              "您无法继续使用，请联网操作"), null);
+                          bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set(
+                              "content", "您无法继续使用，请联网操作"), null);
                         }
                       }
                     });
@@ -339,7 +338,7 @@ public class HomeActivity extends BaseActivity {
     } else {
       // 未激活之前
       if (!authSp.contains("activate")) {
-        bus.sendLocal("drive.notification", Json.createObject().set("content",
+        bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set("content",
             "激活设备,请关闭wifi,保持3G联网状态"), null);
       }
       unConnect = true;// 无网络
@@ -356,8 +355,8 @@ public class HomeActivity extends BaseActivity {
             bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set("redirectTo", "home"), null);
           }
           if (!"com.goodow.drive.android.activity.NotificationActivity".equals(topClassName)) {
-            bus.sendLocal("drive.notification",
-                Json.createObject().set("content", "您无法继续使用，请联网操作"), null);
+            bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set("content",
+                "您无法继续使用，请联网操作"), null);
           }
         }
       });
@@ -464,8 +463,8 @@ public class HomeActivity extends BaseActivity {
   private void sendAnalyticsMessage() {
     if (State.OPEN == bus.getReadyState()) {
       // 请求将播放信息统计发送到服务器
-      bus.sendLocal(Constant.ADDR_PLAYER + ".analytics.request", null, null);
-      bus.sendLocal("drive.systime.analytics.request", null, null);
+      bus.sendLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST, null, null);
+      bus.sendLocal(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST, null, null);
     } else {
       Log.w("EventBus Status", bus.getReadyState().name());
       BusProvider.reconnect();
@@ -478,8 +477,8 @@ public class HomeActivity extends BaseActivity {
       openHandlerReg = bus.registerLocalHandler(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
         @Override
         public void handle(Message<JsonObject> message) {
-          bus.sendLocal(Constant.ADDR_PLAYER + ".analytics.request", null, null);
-          bus.sendLocal("drive.systime.analytics.request", null, null);
+          bus.sendLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST, null, null);
+          bus.sendLocal(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST, null, null);
           registeredOnOpen = false;
           openHandlerReg.unregisterHandler();
         }
@@ -490,7 +489,7 @@ public class HomeActivity extends BaseActivity {
   private void sendAuth() {
     if (State.OPEN == bus.getReadyState()) {
       // 校验
-      bus.sendLocal("drive.auth.request", null, null);
+      bus.sendLocal(Constant.ADDR_AUTH_REQUEST, null, null);
     } else {
       BusProvider.reconnect();
       // 记录注册状态，如果已注册，不应重复注册
@@ -502,7 +501,7 @@ public class HomeActivity extends BaseActivity {
       openHandlerReg1 = bus.registerLocalHandler(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
         @Override
         public void handle(Message<JsonObject> message) {
-          bus.sendLocal("drive.auth.request", null, null);
+          bus.sendLocal(Constant.ADDR_AUTH_REQUEST, null, null);
           registeredOnOpen1 = false;
           openHandlerReg1.unregisterHandler();
         }
