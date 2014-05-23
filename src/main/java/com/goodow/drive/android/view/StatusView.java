@@ -1,7 +1,6 @@
 package com.goodow.drive.android.view;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.settings.NetWorkListener;
 import com.goodow.realtime.channel.Bus;
@@ -10,6 +9,8 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
+
+import com.google.inject.Inject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,14 +34,15 @@ import android.widget.TextView;
  * 
  */
 public class StatusView extends LinearLayout {
-
-  private final Bus bus = BusProvider.get();
+  @Inject
+  Bus bus;
   private String netType = "";
   private int currentImageId = R.drawable.status_network_null;
   private String currentTime = "";
   private TextView netTypeView = null;
   private ImageView netStatusView = null;
   private TextView currentTimeView = null;
+  @Inject
   private NetWorkListener settingReceiver;
   private Context context = null;
 
@@ -105,7 +107,6 @@ public class StatusView extends LinearLayout {
     super(context, attrs);
     this.context = context;
     View.inflate(context, R.layout.include_status, this);
-    this.settingReceiver = new NetWorkListener(context);
     this.netTypeView = (TextView) findViewById(R.id.tv_status_netTypeView);
     this.netStatusView = (ImageView) findViewById(R.id.iv_status_netStatusView);
     this.currentTimeView = (TextView) findViewById(R.id.tv_status_currentTimeView);

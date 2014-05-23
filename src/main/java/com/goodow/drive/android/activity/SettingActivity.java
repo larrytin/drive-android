@@ -72,14 +72,12 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
           public void onClick(DialogInterface dialog, int which) {
           }
         }).create().show();
-
         break;
       case R.id.iv_common_back://
         JsonObject msg = Json.createObject();
         msg.set("return", true);
         bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
         break;
-
     }
   }
 

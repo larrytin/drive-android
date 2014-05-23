@@ -1,7 +1,6 @@
 package com.goodow.drive.android.activity;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DBDataProvider;
 import com.goodow.drive.android.data.DBHelper;
@@ -376,7 +375,6 @@ public class HomeActivity extends BaseActivity {
               // 由无网络变为有网络(此处不分3G,WIFI)
             } else if (flag == -1) {
               // 重连
-              BusProvider.reconnect();
               flag = 0;
             }
           }
@@ -717,7 +715,6 @@ public class HomeActivity extends BaseActivity {
       // 校验
       bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);
     } else {
-      BusProvider.reconnect();
       // 记录注册状态，如果已注册，不应重复注册
       if (registeredOnOpen1) {
         return;

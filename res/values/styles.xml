@@ -22,48 +22,47 @@
         <item name="android:onClick">onClick</item>
         <item name="android:layout_marginBottom">@dimen/act_home_fun_margin</item>
     </style>
-    
+
     <!-- 示范课页面后退,收藏,黑屏按钮 -->
     <style name="case_sys_fun" parent="index_sys_fun">
         <item name="android:layout_width">@dimen/act_case_fun_width</item>
         <item name="android:layout_height">@dimen/act_case_fun_height</item>
     </style>
-    
+
     <!-- launcher页面系统功能栏,设置&&关机 -->
     <style name="index_sys_fun2" parent="index_sys_fun">
         <item name="android:layout_width">@dimen/act_home_fun2_width</item>
         <item name="android:layout_height">@dimen/act_home_fun2_height</item>
     </style>
-    
+
     <!-- launcher页面特色课程 -->
     <style name="index_sys_pre_edu_read" parent="index_sys_fun">
         <item name="android:layout_width">@dimen/act_home_course_width</item>
         <item name="android:layout_height">@dimen/act_home_course_height</item>
         <item name="android:layout_marginBottom">@dimen/act_home_course_margin</item>
     </style>
-    
+
     <!-- launcher页面资源类型 -->
     <style name="index_sys_source" parent="index_sys_fun">
         <item name="android:layout_width">@dimen/act_home_source_width</item>
         <item name="android:layout_height">@dimen/act_home_source_height</item>
         <item name="android:layout_marginBottom">@dimen/act_home_source_margin</item>
     </style>
-    
+
     <!-- launcher领域 -->
     <style name="index_sys_topic" parent="index_sys_fun">
         <item name="android:layout_width">@dimen/act_home_topic_width</item>
         <item name="android:layout_height">@dimen/act_home_topic_height</item>
         <item name="android:layout_marginBottom">@dimen/act_home_topic_margin</item>
     </style>
-    
+
     <!-- launcher年龄 -->
     <style name="index_sys_age" parent="index_sys_fun">
         <item name="android:layout_width">@dimen/act_home_age_width</item>
         <item name="android:layout_height">@dimen/act_home_age_height</item>
         <item name="android:layout_marginBottom">@dimen/act_home_age_margin</item>
     </style>
-    
-    
+
     <!-- setting页面按钮style -->
     <style name="setting_bt">
         <item name="android:layout_width">match_parent</item>
@@ -86,7 +85,7 @@
         <item name="android:background">@drawable/common_selector_grade</item>
         <item name="android:button">@null</item>
     </style>
-    
+
     <!-- 班级样式(new) -->
     <style name="style_common_grade">
         <item name="android:layout_width">@dimen/common_grade_width</item>
@@ -112,7 +111,7 @@
         <item name="android:button">@null</item>
         <item name="android:background">@drawable/harm_selector_class</item>
     </style>
-    
+
     <!-- 和谐页面类别样式(new) -->
     <style name="style_common_class">
         <item name="android:layout_width">wrap_content</item>
@@ -125,21 +124,21 @@
         <item name="android:paddingTop">10dp</item>
         <item name="android:background">@drawable/common_selector_class</item>
     </style>
-    
+
     <!-- 安全教育教师用书班级样式 -->
     <style name="security_teacher_grade">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">50dp</item>
     </style>
-    
+
     <!-- 安全教育幼儿用书班级样式 -->
     <style name="security_children_grade">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">37dp</item>
     </style>
-    
+
     <!-- 托班页面topic样式 -->
     <style name="care_classes_item">
         <item name="android:gravity">center</item>
@@ -187,7 +186,7 @@
         <item name="android:clickable">true</item>
         <item name="android:layout_marginLeft">@dimen/act_source_catagory0_item_margin</item>
     </style>
-    
+
     <!-- 状态栏位置 -->
     <style name="status">
         <item name="android:layout_width">wrap_content</item>
@@ -197,7 +196,7 @@
         <item name="android:layout_alignParentTop">true</item>
         <item name="android:layout_alignParentRight">true</item>
     </style>
-    
+
     <!-- 状态栏字体风格 -->
     <style name="status_text">
         <item name="android:layout_width">wrap_content</item>
@@ -214,4 +213,9 @@
         <item name="android:textSize">26sp</item>
         <item name="android:layout_marginTop">20dp</item>
     </style>
+
+    <style name="no_title_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>

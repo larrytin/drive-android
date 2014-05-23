@@ -1,6 +1,5 @@
 package com.goodow.drive.android.activity;
 
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DBOperator;
 import com.goodow.realtime.channel.Bus;
@@ -11,10 +10,11 @@ import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import com.google.inject.Inject;
+
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,6 +23,7 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.WindowManager;
+import roboguice.activity.RoboActivity;
 
 /**
  * @title: BaseActivity.java
@@ -33,9 +34,10 @@ import android.view.WindowManager;
  * @updateDate 2013 2013-12-4 上午11:33:07
  * @version V1.0
  */
-public class BaseActivity extends Activity {
-  protected final Bus bus = BusProvider.get();
+public class BaseActivity extends RoboActivity {
 
+  @Inject
+  public Bus bus;
   private Registration controlHandler;
   private Registration brightnessHandler;
   public SharedPreferences usagePreferences;
@@ -60,7 +62,6 @@ public class BaseActivity extends Activity {
     super.onResume();
     if (bus.getReadyState() == State.CLOSED || bus.getReadyState() == State.CLOSING) {
       Log.w("EventBus Status", bus.getReadyState().name());
-      BusProvider.reconnect();
     }
     controlHandler =
         bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {

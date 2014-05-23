@@ -1,6 +1,5 @@
 package com.goodow.drive.android.settings;
 
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -8,6 +7,9 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,7 +23,6 @@ import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 
 public class NetWorkListener {
-
   /**
    * 监听3G信号强度的变化
    */
@@ -50,6 +51,9 @@ public class NetWorkListener {
       }
     }
   }
+
+  @Inject
+  Bus bus;
 
   public static final String WIFI = "wifi";
   // mobile
@@ -84,9 +88,8 @@ public class NetWorkListener {
 
   private final float MAX_3G_STRENGTH = 31;
 
-  private final Bus bus = BusProvider.get();
-
-  private Context context = null;
+  @Inject
+  private Provider<Context> context;
   private TelephonyManager tel = null;
   private MyPhoneStateListener myListener = null;
   private float g3Strength = 0;
@@ -111,10 +114,6 @@ public class NetWorkListener {
   };
   private Registration getHander;
 
-  public NetWorkListener(Context context) {
-    this.context = context;
-  }
-
   // 注册监听器
   public void registerReceiver() {
     IntentFilter intentFilter = new IntentFilter();
@@ -122,11 +121,11 @@ public class NetWorkListener {
     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     intentFilter.addAction(WifiManager.RSSI_CHANGED_ACTION);
 
-    this.tel = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+    this.tel = (TelephonyManager) context.get().getSystemService(Context.TELEPHONY_SERVICE);
     this.myListener = new MyPhoneStateListener();
     this.tel.listen(myListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
-    this.context.registerReceiver(netWorkStatusReceiver, intentFilter);
+    this.context.get().registerReceiver(netWorkStatusReceiver, intentFilter);
     getHander =
         this.bus.registerLocalHandler(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
           @Override
@@ -146,7 +145,7 @@ public class NetWorkListener {
 
   // 解除监听器
   public void unRegisterReceiver() {
-    this.context.unregisterReceiver(netWorkStatusReceiver);
+    this.context.get().unregisterReceiver(netWorkStatusReceiver);
     getHander.unregister();
   }
 
@@ -172,7 +171,7 @@ public class NetWorkListener {
    */
   private String getType() {
     ConnectivityManager connectivityManager =
-        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        (ConnectivityManager) context.get().getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo info = connectivityManager.getActiveNetworkInfo();
     if (info != null) {
       String type = info.getTypeName();
@@ -216,7 +215,7 @@ public class NetWorkListener {
    * @return
    */
   private float getWifiStrength() {
-    WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+    WifiManager wifiManager = (WifiManager) context.get().getSystemService(Context.WIFI_SERVICE);
     int rssi = wifiManager.getConnectionInfo().getRssi();
     int level = WifiManager.calculateSignalLevel(rssi, 10);
     float percentage = (float) (level / 10.0);

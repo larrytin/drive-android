@@ -1,7 +1,6 @@
 package com.goodow.drive.android.player;
 
 import com.goodow.android.drive.R;
-import com.goodow.drive.android.BusProvider;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
@@ -9,6 +8,8 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
+
+import com.google.inject.Inject;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -51,7 +52,8 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     }
   }
 
-  private final Bus bus = BusProvider.get();
+  @Inject
+  Bus bus;
   private String flashPath;
   private WebView flash_view;
   private ProgressBar play_progress;
