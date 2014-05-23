@@ -12,6 +12,8 @@ import com.goodow.realtime.json.JsonObject;
 import com.google.inject.Inject;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import android.content.BroadcastReceiver;
@@ -385,7 +387,15 @@ public class AudioPlayActivity extends BaseActivity {
 
     mediaPlayer.setVolume(100, 100);
     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    mediaPlayer.setDataSource(audioFilePath);
+
+    // mediaPlayer.setDataSource(audioFilePath);
+    File file = new File(audioFilePath);
+    if (file.exists()) {
+      FileInputStream is = new FileInputStream(file);
+      FileDescriptor fd = is.getFD();
+      mediaPlayer.setDataSource(fd);
+      is.close();
+    }
     mediaPlayer.prepare();
 
     handler.post(updatesb);

@@ -1,5 +1,8 @@
 package com.goodow.drive.android.player;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import android.content.Context;
@@ -546,7 +549,18 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
       mIsPrepared = false;
       mDuration = -1;
       mCurrentBufferPercentage = 0;
-      mMediaPlayer.setDataSource(mContext, mUri);
+
+      // mMediaPlayer.setDataSource(mContext, mUri);
+      String scheme = mUri.getScheme();
+      if (scheme == null || scheme.equals("file")) {
+        File file = new File(mUri.getPath());
+        if (file.exists()) {
+          FileInputStream is = new FileInputStream(file);
+          FileDescriptor fd = is.getFD();
+          mMediaPlayer.setDataSource(fd);
+          is.close();
+        }
+      }
       mMediaPlayer.setDisplay(mSurfaceHolder);
       mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
       mMediaPlayer.setScreenOnWhilePlaying(true);
