@@ -4,7 +4,7 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -103,11 +103,11 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
   // 页码状态
   private LinearLayout ll_act_ebook_result_bar = null;
 
-  private HandlerRegistration postHandler;
+  private Registration postHandler;
 
-  private HandlerRegistration controlHandler;
+  private Registration controlHandler;
 
-  private HandlerRegistration refreshHandler;
+  private Registration refreshHandler;
 
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
@@ -161,9 +161,9 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
-    controlHandler.unregisterHandler();
-    refreshHandler.unregisterHandler();
+    postHandler.unregister();
+    controlHandler.unregister();
+    refreshHandler.unregister();
   }
 
   @Override

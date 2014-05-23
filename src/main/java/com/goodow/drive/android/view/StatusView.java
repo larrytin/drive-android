@@ -7,7 +7,7 @@ import com.goodow.drive.android.settings.NetWorkListener;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -94,7 +94,7 @@ public class StatusView extends LinearLayout {
       update();
     }
   };
-  private HandlerRegistration controlhandler;
+  private Registration controlhandler;
 
   public StatusView(Context context) {
     super(context);
@@ -133,7 +133,7 @@ public class StatusView extends LinearLayout {
     super.onDetachedFromWindow();
     this.settingReceiver.unRegisterReceiver();
     this.context.unregisterReceiver(timeTickreceiver);
-    controlhandler.unregisterHandler();
+    controlhandler.unregister();
   }
 
   /**

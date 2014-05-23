@@ -6,7 +6,7 @@ import com.goodow.drive.android.data.DBDataProvider;
 import com.goodow.drive.android.view.PrepareResultView;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -164,9 +164,9 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
 
   private SharedPreferences sharedPreferences = null;
 
-  private HandlerRegistration postHandler;
-  private HandlerRegistration controlHandler;
-  private HandlerRegistration refreshHandler;
+  private Registration postHandler;
+  private Registration controlHandler;
+  private Registration refreshHandler;
 
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
@@ -269,9 +269,9 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
-    controlHandler.unregisterHandler();
-    refreshHandler.unregisterHandler();
+    postHandler.unregister();
+    controlHandler.unregister();
+    refreshHandler.unregister();
   }
 
   @Override

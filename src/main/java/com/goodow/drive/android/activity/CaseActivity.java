@@ -5,7 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -187,10 +187,10 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
 
   private final static String SHAREDNAME = "caseHistory";// 配置文件的名称
   private SharedPreferences sharedPreferences = null;
-  private HandlerRegistration postHandler;;
-  private HandlerRegistration controlHandler;
+  private Registration postHandler;;
+  private Registration controlHandler;
 
-  private HandlerRegistration refreshHandler;
+  private Registration refreshHandler;
 
   private LayoutInflater inflater = null;
 
@@ -260,9 +260,9 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
-    controlHandler.unregisterHandler();
-    refreshHandler.unregisterHandler();
+    postHandler.unregister();
+    controlHandler.unregister();
+    refreshHandler.unregister();
   }
 
   @Override

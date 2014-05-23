@@ -6,7 +6,7 @@ import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.JsonObject;
 
 import com.joanzapata.pdfview.PDFView;
@@ -40,7 +40,7 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
   private PDFView pdfView = null;
   private float currentScale = 2.4f;
   private int currentPage = 0;
-  private HandlerRegistration controlHandler;
+  private Registration controlHandler;
 
   /*
    * override PDFVIEW LIB invoke when page load complete
@@ -100,7 +100,7 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
   @Override
   protected void onPause() {
     super.onPause();
-    controlHandler.unregisterHandler();
+    controlHandler.unregister();
   }
 
   @Override

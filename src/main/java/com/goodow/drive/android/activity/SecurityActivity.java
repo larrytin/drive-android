@@ -4,7 +4,7 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -24,7 +24,7 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
   private ImageView iv_act_security_coll;
   private ImageView iv_act_security_loc;
 
-  private HandlerRegistration postHandler;
+  private Registration postHandler;
 
   // 教师用书 幼儿用书
   private LinearLayout ll_act_security_teacher;
@@ -70,7 +70,7 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
+    postHandler.unregister();
   }
 
   @Override

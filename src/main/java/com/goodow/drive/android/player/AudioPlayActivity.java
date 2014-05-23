@@ -5,7 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -126,7 +126,7 @@ public class AudioPlayActivity extends BaseActivity {
   };
 
   private ImageView mImageView;
-  private HandlerRegistration controlHandler;
+  private Registration controlHandler;
 
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -290,7 +290,7 @@ public class AudioPlayActivity extends BaseActivity {
     }
 
     // Always unregister when an handler no longer should be on the bus.
-    controlHandler.unregisterHandler();
+    controlHandler.unregister();
     this.unregisterReceiver(soundBroadCastReceiver);
   }
 

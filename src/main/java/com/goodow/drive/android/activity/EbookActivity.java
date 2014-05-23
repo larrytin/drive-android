@@ -5,7 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.view.EbookAttachmentsView;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -28,7 +28,7 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
   private LinearLayout ll_result_1;
   private LinearLayout ll_result_2;
 
-  private HandlerRegistration postHandler;
+  private Registration postHandler;
 
   @Override
   public void onClick(View v) {
@@ -70,7 +70,7 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
+    postHandler.unregister();
   }
 
   @Override

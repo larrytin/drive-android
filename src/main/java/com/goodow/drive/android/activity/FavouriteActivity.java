@@ -8,7 +8,7 @@ import com.goodow.drive.android.view.FavouriteTagsView;
 import com.goodow.drive.android.view.FontTextView;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -85,10 +85,10 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
 
   private final int numPerPage = 10; // 查询结果每页显示10条数据
 
-  private HandlerRegistration registerPostHandler;
-  private HandlerRegistration controlHandler;
+  private Registration registerPostHandler;
+  private Registration controlHandler;
 
-  private HandlerRegistration refreshHandler;
+  private Registration refreshHandler;
 
   private boolean isEditMode;// 是否处于编辑模式
 
@@ -170,9 +170,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onPause() {
     super.onPause();
-    registerPostHandler.unregisterHandler();
-    controlHandler.unregisterHandler();
-    refreshHandler.unregisterHandler();
+    registerPostHandler.unregister();
+    controlHandler.unregister();
+    refreshHandler.unregister();
   }
 
   @Override

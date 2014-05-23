@@ -5,7 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.player.VideoView.MySizeChangeLinstener;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -176,7 +176,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
 
   private Uri uri;
 
-  private HandlerRegistration controlHandlerRegistration;
+  private Registration controlRegistration;
 
   @Override
   public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -783,7 +783,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     // }
     // Always unregister when an handler no longer should be on the bus.
     this.unregisterReceiver(soundBroadCastReceiver);
-    controlHandlerRegistration.unregisterHandler();
+    controlRegistration.unregister();
   }
 
   @Override
@@ -797,7 +797,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     // }
     // isChangedVideo = false;
 
-    controlHandlerRegistration =
+    controlRegistration =
         bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
 
           @Override

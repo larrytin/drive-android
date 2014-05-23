@@ -6,7 +6,7 @@ import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.drive.android.toolutils.FontUtil;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -121,8 +121,8 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   private LinearLayout ll_act_behave_result_bar = null;
   // 查询进度
   private ProgressBar pb_act_result_progress;
-  private HandlerRegistration postHandler;
-  private HandlerRegistration controlHandler;
+  private Registration postHandler;
+  private Registration controlHandler;
 
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
@@ -222,8 +222,8 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
-    controlHandler.unregisterHandler();
+    postHandler.unregister();
+    controlHandler.unregister();
   }
 
   @Override

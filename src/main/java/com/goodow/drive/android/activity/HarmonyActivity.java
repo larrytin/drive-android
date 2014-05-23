@@ -4,7 +4,7 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -191,9 +191,9 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   // 数据集
   private final static String SHAREDNAME = "harmonyHistory";// 配置文件的名称
   private SharedPreferences sharedPreferences = null;
-  private HandlerRegistration postHandler;
-  private HandlerRegistration controlHandler;
-  private HandlerRegistration refreshHandler;
+  private Registration postHandler;
+  private Registration controlHandler;
+  private Registration refreshHandler;
 
   private LayoutInflater inflater = null;
 
@@ -262,9 +262,9 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
-    controlHandler.unregisterHandler();
-    refreshHandler.unregisterHandler();
+    postHandler.unregister();
+    controlHandler.unregister();
+    refreshHandler.unregister();
   }
 
   @Override

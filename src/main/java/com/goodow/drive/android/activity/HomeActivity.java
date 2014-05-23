@@ -16,7 +16,7 @@ import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.channel.State;
 import com.goodow.realtime.core.Handler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.core.Platform;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
@@ -47,8 +47,8 @@ public class HomeActivity extends BaseActivity {
   public static final String TAG = HomeActivity.class.getSimpleName();
   private static final String DBFILENAME = "sqlite.dump";
   private static boolean registried;
-  private HandlerRegistration openHandlerReg;
-  private HandlerRegistration netWorkHandlerReg;
+  private Registration openHandlerReg;
+  private Registration netWorkHandlerReg;
   private int schedulePeriodic;
   public static final String AUTH = "AuthImformation";
   private SharedPreferences authSp = null;
@@ -64,7 +64,7 @@ public class HomeActivity extends BaseActivity {
 
   private boolean registeredOnOpen1 = false;
 
-  private HandlerRegistration openHandlerReg1;
+  private Registration openHandlerReg1;
 
   private boolean ConnectStatus = true;
   // 1分钟 TODO:
@@ -233,7 +233,7 @@ public class HomeActivity extends BaseActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    netWorkHandlerReg.unregisterHandler();
+    netWorkHandlerReg.unregister();
     Platform.scheduler().cancelTimer(schedulePeriodic);
     Platform.scheduler().cancelTimer(updateBoot);
     mLocationClient.stop();
@@ -480,7 +480,7 @@ public class HomeActivity extends BaseActivity {
           bus.sendLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST, null, null);
           bus.sendLocal(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST, null, null);
           registeredOnOpen = false;
-          openHandlerReg.unregisterHandler();
+          openHandlerReg.unregister();
         }
       });
     }
@@ -503,7 +503,7 @@ public class HomeActivity extends BaseActivity {
         public void handle(Message<JsonObject> message) {
           bus.sendLocal(Constant.ADDR_AUTH_REQUEST, null, null);
           registeredOnOpen1 = false;
-          openHandlerReg1.unregisterHandler();
+          openHandlerReg1.unregister();
         }
       });
     }

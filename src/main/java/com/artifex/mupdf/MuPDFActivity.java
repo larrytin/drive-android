@@ -5,7 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.JsonObject;
 
 import java.io.File;
@@ -60,7 +60,7 @@ public class MuPDFActivity extends BaseActivity {
 
   private RelativeLayout layout = null;
   private ImageView mImageView;
-  private HandlerRegistration controlHandler;
+  private Registration controlHandler;
   private String path;
 
   public void createUI(Bundle savedInstanceState) {
@@ -341,7 +341,7 @@ public class MuPDFActivity extends BaseActivity {
       edit.putInt("page" + mFileName, mDocView.getDisplayedViewIndex());
       edit.commit();
     }
-    controlHandler.unregisterHandler();
+    controlHandler.unregister();
   }
 
   @Override

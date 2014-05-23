@@ -7,7 +7,7 @@ import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.channel.State;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -35,8 +35,8 @@ import android.view.WindowManager;
 public class BaseActivity extends Activity {
   protected final Bus bus = BusProvider.get();
 
-  private HandlerRegistration controlHandler;
-  private HandlerRegistration brightnessHandler;
+  private Registration controlHandler;
+  private Registration brightnessHandler;
   public SharedPreferences usagePreferences;
   public static final String USAGE_STATISTIC = "USAGE_STATISTIC";
 
@@ -50,8 +50,8 @@ public class BaseActivity extends Activity {
   protected void onPause() {
     super.onPause();
     // Always unregister when an handler no longer should be on the bus.
-    controlHandler.unregisterHandler();
-    brightnessHandler.unregisterHandler();
+    controlHandler.unregister();
+    brightnessHandler.unregister();
   }
 
   @Override

@@ -6,7 +6,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -82,7 +82,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
       handler.postDelayed(update_progress, 1000);
     }
   };
-  private HandlerRegistration controlHandler;
+  private Registration controlHandler;
 
   // 构造方法
   public FlashView(Context context) {
@@ -200,7 +200,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     pause();
     mContext.unregisterReceiver(flashViewBroadCastReceiver);
 
-    controlHandler.unregisterHandler();
+    controlHandler.unregister();
   }
 
   /**

@@ -5,7 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.adapter.CommonPageAdapter;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -105,9 +105,9 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   private final static String SHAREDNAME = "smartHistory";// 配置文件的名称
   private SharedPreferences sharedPreferences = null;
 
-  private HandlerRegistration postHandler;
-  private HandlerRegistration controlHandler;
-  private HandlerRegistration refreshHandler;
+  private Registration postHandler;
+  private Registration controlHandler;
+  private Registration refreshHandler;
   private LayoutInflater inflater = null;
 
   @Override
@@ -201,9 +201,9 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
-    controlHandler.unregisterHandler();
-    refreshHandler.unregisterHandler();
+    postHandler.unregister();
+    controlHandler.unregister();
+    refreshHandler.unregister();
   }
 
   @Override

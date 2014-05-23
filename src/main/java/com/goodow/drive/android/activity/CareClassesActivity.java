@@ -4,7 +4,7 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -54,8 +54,8 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   // 当前选中状态
   private String currentTerm = Constant.LABEL_TERM_SEMESTER0;
   private String currenTopic = "";
-  private HandlerRegistration postHandler;
-  private HandlerRegistration refreshHandler;
+  private Registration postHandler;
+  private Registration refreshHandler;
   private LinearLayout ll_act_care_result_container_1;
   private LinearLayout ll_act_care_result_container_2;
   private ImageButton ib_care_ebook;
@@ -193,8 +193,8 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
-    refreshHandler.unregisterHandler();
+    postHandler.unregister();
+    refreshHandler.unregister();
   }
 
   @Override

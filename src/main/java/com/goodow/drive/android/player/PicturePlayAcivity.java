@@ -5,7 +5,7 @@ import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
@@ -76,7 +76,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
       }
     };
   };
-  private HandlerRegistration postHandler;
+  private Registration postHandler;
   private Rect controlRectRight;
 
   @Override
@@ -266,7 +266,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   protected void onPause() {
     super.onPause();
     // Always unregister when an handler no longer should be on the bus.
-    postHandler.unregisterHandler();
+    postHandler.unregister();
   }
 
   @Override

@@ -6,7 +6,7 @@ import com.goodow.drive.android.toolutils.FileTools;
 import com.goodow.drive.android.view.DrawableLeftTextView;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.HandlerRegistration;
+import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -216,8 +216,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
 
   private final List<String> subTags = new ArrayList<String>();// 根据一级标签查询得到的二级标签
   private JsonArray queryingTags = null;// 控制台传递的混合标签
-  private HandlerRegistration postHandler;
-  private HandlerRegistration controlHandler;
+  private Registration postHandler;
+  private Registration controlHandler;
   private static final Map<Object, String> idContentTypes = new HashMap<Object, String>();
   private static final Map<Object, String> idTags = new HashMap<Object, String>();
   static {
@@ -311,8 +311,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onPause() {
     super.onPause();
-    postHandler.unregisterHandler();
-    controlHandler.unregisterHandler();
+    postHandler.unregister();
+    controlHandler.unregister();
   }
 
   @Override
