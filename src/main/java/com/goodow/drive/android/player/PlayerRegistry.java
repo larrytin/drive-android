@@ -91,7 +91,9 @@ public class PlayerRegistry {
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
-            JsonObject analytics = DBOperator.readBootData(ctx, "T_BOOT", "OPEN_TIME", "LAST_TIME");
+            JsonObject analytics =
+                DBOperator.readBootData(ctx, "T_BOOT", "OPEN_TIME", "LAST_TIME", "LATITUDE",
+                    "LONGITUDE", "RADIUS", "ADDRESS");
             final int id = (int) analytics.getNumber("id");
             analytics.remove("id");
             // 如果拿到的信息为空，则不发送

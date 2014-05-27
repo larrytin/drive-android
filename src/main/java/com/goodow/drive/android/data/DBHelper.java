@@ -53,7 +53,8 @@ public class DBHelper extends SQLiteOpenHelper {
      * 创建开机数据统计
      */
     db.execSQL("CREATE TABLE T_BOOT(" + "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
-        + "OPEN_TIME long NOT NULL," + "LAST_TIME long NOT NULL," + "CLOSE_TIME long NOT NULL )");
+        + "OPEN_TIME long NOT NULL," + "LAST_TIME long NOT NULL," + "CLOSE_TIME long NOT NULL,"
+        + "LATITUDE  long, " + "LONGITUDE long," + "RADIUS long, " + "ADDRESS vachar(45))");
 
     /*
      * 创建播放数据统计

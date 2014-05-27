@@ -118,6 +118,7 @@ public class DBOperator {
     }
     return result;
   }
+
   /**
    * 创建N个文件
    * 
@@ -383,14 +384,19 @@ public class DBOperator {
    * @return
    */
   public static synchronized JsonObject readBootData(Context context, String tableName,
-      String openTime, String lastTime) {
+      String openTime, String lastTime, String latitude, String longitude, String radius,
+      String address) {
     DBHelper dbOpenHelper = DBHelper.getInstance(context);
     SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
     JsonObject result = Json.createObject();
     JsonArray jsonArray = Json.createArray();
-    String[] strings = new String[2];
+    String[] strings = new String[6];
     strings[0] = openTime;
     strings[1] = lastTime;
+    strings[2] = latitude;
+    strings[3] = longitude;
+    strings[4] = radius;
+    strings[5] = address;
     int id = 0;
     Cursor cursorId = null;
     Cursor cursor = null;
@@ -409,7 +415,14 @@ public class DBOperator {
         long open = cursor.getLong(cursor.getColumnIndex(openTime));
         long last = cursor.getLong(cursor.getColumnIndex(lastTime));
         timestamp.set("openTime", open);
-        timestamp.set("lastTime", last);
+        timestamp.set("duration", last / 1000);
+        if (cursor.getString(cursor.getColumnIndex(address)) != null) {
+          timestamp.set("address", cursor.getString(cursor.getColumnIndex(address)));
+          timestamp.set("coordinates", Json.createArray().push(
+              cursor.getDouble(cursor.getColumnIndex(longitude))).push(
+              cursor.getDouble(cursor.getColumnIndex(latitude))));
+          timestamp.set("radius", cursor.getDouble(cursor.getColumnIndex(radius)));
+        }
         // 过滤掉小于5分钟的数据
         if (last > 300000) {
           jsonArray.push(timestamp);
@@ -884,8 +897,8 @@ public class DBOperator {
         long open = cursor.getLong(cursor.getColumnIndex(openTime));
         long last = cursor.getLong(cursor.getColumnIndex(lastTime));
         timestamp.set("openTime", open);
-        timestamp.set("lastTime", last);
-        boolean tag = false;// 编辑是否有同名
+        timestamp.set("duration", last / 1000);
+        boolean tag = false;// 标记是否有同名
         for (int i = 0; i < jsonArray.length(); i++) {
           if (jsonArray.getObject(i).getString("attachment").equals(name)) {
             tag = true;
@@ -935,6 +948,46 @@ public class DBOperator {
       ContentValues values = new ContentValues();
       values.put(lastTime, jsonObject.getNumber(lastTime));
       values.put(closeTime, jsonObject.getNumber(closeTime));
+      cursorId = db.rawQuery("select max(id)  from " + tableName, null);
+      int id = 0;
+      if (cursorId.moveToNext()) {
+        id = cursorId.getInt(0);
+      }
+      if (id < 1) {
+        return;
+      }
+      db.update(tableName, values, "id=?", new String[] {id + ""});
+    } catch (Exception e) {
+    } finally {
+      if (cursorId != null) {
+        cursorId.close();
+      }
+      db.close();
+    }
+  }
+
+  /**
+   * 更新经纬度
+   * 
+   * @param context
+   * @param tableName
+   * @param latitude
+   * @param longitude
+   * @param radius
+   * @param address
+   * @param jsonObject
+   */
+  public static void updateBootAddress(Context context, String tableName, String latitude,
+      String longitude, String radius, String address, JsonObject jsonObject) {
+    DBHelper dbOpenHelper = DBHelper.getInstance(context);
+    SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+    Cursor cursorId = null;
+    try {
+      ContentValues values = new ContentValues();
+      values.put(latitude, jsonObject.getNumber(latitude));
+      values.put(longitude, jsonObject.getNumber(longitude));
+      values.put(radius, jsonObject.getNumber(radius));
+      values.put(address, jsonObject.getString(address));
       cursorId = db.rawQuery("select max(id)  from " + tableName, null);
       int id = 0;
       if (cursorId.moveToNext()) {

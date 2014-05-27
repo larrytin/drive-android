@@ -4,6 +4,7 @@ import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.HomeActivity;
 import com.goodow.drive.android.activity.NotificationActivity;
+import com.goodow.drive.android.data.DBOperator;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.drive.android.toolutils.SimpleProgressDialog;
 import com.goodow.realtime.channel.Bus;
@@ -330,7 +331,8 @@ public class SettingsRegistry {
                   send.set("address", msg.getString("address"));
                   // 临时的存储latitude,longitude
                   authSp.edit().putFloat("latitudetmp", (float) latitude).putFloat("longitudetmp",
-                      (float) longitude).commit();
+                      (float) longitude).putFloat("radius", (float) msg.getNumber("radius"))
+                      .putString("address", msg.getString("address")).commit();
                   if (authSp.getBoolean("register", false) && authSp.getFloat("latitude", -1) != -1
                       && authSp.getFloat("longitude", -1) != -1) {
                     // GeoPoint(int latitudeE6, int longitudeE6)
@@ -370,11 +372,11 @@ public class SettingsRegistry {
             if (!(msg.has("status") || msg.has("content") || msg.has("lock") || msg.has("reset"))) {
               return;
             }
-            String status = msg.getString("status");
-            String reset = msg.getString("reset");
-            String lock = msg.getString("lock");
+            double status = msg.getNumber("status");
+            boolean reset = msg.getBoolean("reset");
+            boolean lock = msg.getBoolean("lock");
             // 校验通过
-            if ("0".equals(status)) {
+            if (status == 0.0) {
               if (!authSp.getBoolean("register", false)) { // 第一次注册时，存储地理位置
                 Editor mEditor = authSp.edit();
                 mEditor.putFloat("latitude", authSp.getFloat("latitudetmp", -1));
@@ -398,9 +400,15 @@ public class SettingsRegistry {
               // 对话框消失
               SimpleProgressDialog.dismiss(ctx);
               authSp.edit().putInt("FailTime", 0).commit(); // 计数器清0
+              DBOperator.updateBootAddress(ctx, "T_BOOT", "LATITUDE", "LONGITUDE", "RADIUS",
+                  "ADDRESS", Json.createObject()
+                      .set("LATITUDE", authSp.getFloat("latitudetmp", -1)).set("LONGITUDE",
+                          authSp.getFloat("longitudetmp", -1)).set("RADIUS",
+                          authSp.getFloat("radius", -1)).set("ADDRESS",
+                          authSp.getString("address", "")));
               // 发送数据行为数据
-              bus.sendLocal("drive.systime.analytics.request", null, null);
-            } else if ("1".equals(status)) { // 校验
+              bus.sendLocal(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST, null, null);
+            } else if (status == 1.0) { // 校验
               if (!authSp.getBoolean("register", false)) {
                 Editor mEditor = authSp.edit();
                 mEditor.putFloat("latitude1", authSp.getFloat("latitudetmp", -1));
@@ -411,10 +419,10 @@ public class SettingsRegistry {
               // 超过三次后，不再发送,校验失败
               if (authSp.getInt("FailTime", 0) < 4) {
                 // 重新发送数据
-                bus.sendLocal("drive.auth.request", Json.createObject(), null);
+                bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);
               } else {
-                bus.sendLocal("drive.notification", Json.createObject().set("content", "三分钟后关机"),
-                    null);
+                bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set("content",
+                    "三分钟后关机"), null);
                 // 校验失败
                 Platform.scheduler().scheduleDelay(30 * 60 * 1000, new Handler<Void>() {
                   @Override
@@ -425,30 +433,18 @@ public class SettingsRegistry {
                   }
                 });
               }
-            } else if ("2".equals(status)) { // 注册
+            } else if (status == 2.0) { // 注册
               // 清空缓存
               authSp.edit().remove("latitude1").remove("longitude1").commit();
               // 重新发送数据
-              bus.sendLocal("drive.auth.request", Json.createObject(), null);
+              bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);
             }
             // 重置
-            if ("1".equals(reset)) {
-              authSp.edit().putBoolean("reset", true).commit();
-            } else if ("0".equals(reset)) {
-              authSp.edit().putBoolean("reset", false).commit();
-            }
+            authSp.edit().putBoolean("reset", reset).commit();
             // 锁定
-            if ("1".equals(lock)) {
-              authSp.edit().putBoolean("lock", true).commit();
-              android.os.Message androidMsg = android.os.Message.obtain();
-              androidMsg.obj = ctx.getResources().getString(R.string.string_register_prompt_locked);
-              androidMsg.what = 3;
-              // HomeActivity.mHandler.sendMessage(msg);
-            } else if ("0".equals(lock)) {
-              authSp.edit().putBoolean("lock", false).commit();
-            }
+            authSp.edit().putBoolean("lock", lock).commit();
             if (msg.has("content")) {
-              bus.sendLocal("drive.notification", Json.createObject().set("content",
+              bus.sendLocal(Constant.ADDR_NOTIFICATION, Json.createObject().set("content",
                   msg.getString("content")), null);
             }
           }
