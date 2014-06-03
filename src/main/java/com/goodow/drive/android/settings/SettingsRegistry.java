@@ -37,11 +37,14 @@ import android.net.Uri;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class SettingsRegistry {
@@ -438,6 +441,45 @@ public class SettingsRegistry {
               authSp.edit().remove("latitude1").remove("longitude1").commit();
               // 重新发送数据
               bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);
+            }
+            if (reset) {
+              final WindowManager wm =
+                  (WindowManager) ctx.getApplicationContext().getSystemService(
+                      Context.WINDOW_SERVICE);
+              final View view =
+                  View.inflate(ctx.getApplicationContext(), R.layout.register_prompt, null);
+              LayoutParams params = new WindowManager.LayoutParams();
+              params.width = 643;
+              params.height = 476;
+              params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
+              params.y = 200;
+              params.type = LayoutParams.TYPE_PHONE;
+              params.format = PixelFormat.RGBA_8888;
+              wm.addView(view, params);
+              final TextView tv_register_prompt =
+                  (TextView) view.findViewById(R.id.tv_register_prompt);
+              final TextView tv_register_reboot =
+                  (TextView) view.findViewById(R.id.tv_register_reboot);
+              final TextView tv_register_shutdown =
+                  (TextView) view.findViewById(R.id.tv_register_shutdown);
+              tv_register_prompt.setText(ctx.getResources().getString(
+                  R.string.string_register_prompt_locked));
+              tv_register_reboot.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                  wm.removeView(view);
+                  // 重启
+                  bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);
+                }
+              });
+              tv_register_shutdown.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                  wm.removeView(view);
+                  // 关机
+                  bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 0), null);
+                }
+              });
             }
             // 重置
             authSp.edit().putBoolean("reset", reset).commit();

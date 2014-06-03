@@ -73,6 +73,7 @@ public class HomeActivity extends BaseActivity {
   private boolean registeredOnOpen1 = false;
 
   private Registration openHandlerReg1;
+  private Registration openHandlerReg;
 
   // TODO:如果为true，校验
   private boolean openAuth = true;
@@ -102,6 +103,7 @@ public class HomeActivity extends BaseActivity {
   private static final int REG = 1;
   private static final int PROPMT = 2;
   private static final int PROPMTWINDOW = 3;
+  private static final int PROPMTWINDOW_LOCK = 4;
 
   public boolean prompt = false;// 窗口的状态
 
@@ -120,8 +122,14 @@ public class HomeActivity extends BaseActivity {
           if (prompt) {
             return;
           }
-          String string = (String) msg.obj;
-          promptWindow(string);
+          promptWindow((String) msg.obj, true);
+          prompt = true;
+          break;
+        case PROPMTWINDOW_LOCK:
+          if (prompt) {
+            return;
+          }
+          promptWindow((String) msg.obj, false);
           prompt = true;
           break;
         default:
@@ -242,7 +250,12 @@ public class HomeActivity extends BaseActivity {
     return super.onKeyDown(keyCode, event);
   }
 
-  public void promptWindow(String mString) {
+  /**
+   * 
+   * @param mString 显示的字样
+   * @param flag 对话框是否消失
+   */
+  public void promptWindow(String mString, boolean flag) {
     final WindowManager wm =
         (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
     final View view = View.inflate(getApplicationContext(), R.layout.register_prompt, null);
@@ -258,6 +271,17 @@ public class HomeActivity extends BaseActivity {
     final TextView tv_register_reboot = (TextView) view.findViewById(R.id.tv_register_reboot);
     final TextView tv_register_shutdown = (TextView) view.findViewById(R.id.tv_register_shutdown);
     tv_register_prompt.setText(mString);
+    if (flag) {
+      openHandlerReg = bus.registerLocalHandler(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
+        @Override
+        public void handle(Message<JsonObject> message) {
+          wm.removeView(view);
+          sendAuth();
+          prompt = false;
+          openHandlerReg.unregister();
+        }
+      });
+    }
     tv_register_reboot.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -599,7 +623,7 @@ public class HomeActivity extends BaseActivity {
       } else { // 网络不通，锁定
         android.os.Message msg = android.os.Message.obtain();
         msg.obj = getResources().getString(R.string.string_register_prompt_locked);
-        msg.what = PROPMTWINDOW;
+        msg.what = PROPMTWINDOW_LOCK;
         mHandler.sendMessage(msg);
       }
     } else if (networkInfo == null) {
@@ -615,6 +639,10 @@ public class HomeActivity extends BaseActivity {
     authPeriodic = Platform.scheduler().schedulePeriodic(authPeriodicTime, new Handler<Void>() {
       @Override
       public void handle(Void arg0) {
+        // 排除未注册情况
+        if (!authSp.getBoolean("register", false)) {
+          return;
+        }
         // 定期校验
         // 无网络，进入限制使用
         networkInfo = mConnectivityManager.getActiveNetworkInfo();
