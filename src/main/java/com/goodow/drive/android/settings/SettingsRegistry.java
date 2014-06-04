@@ -77,7 +77,7 @@ public class SettingsRegistry {
             mAudioManager.setStreamMute(AudioManager.STREAM_MUSIC, true);
           }
           msg.set("mute", mute).set("volume", volume);
-          message.reply(msg);
+          message.reply(msg,null);
           return;
         }
         if (action == null || "post".equalsIgnoreCase(action)) {
@@ -132,7 +132,7 @@ public class SettingsRegistry {
                     if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
                       msg.set("address", location.getAddrStr());
                     }
-                    message.reply(msg);
+                    message.reply(msg,null);
                   }
 
                   @Override
@@ -174,7 +174,7 @@ public class SettingsRegistry {
             msg.set("Longitude", cdmaLocation.getBaseStationLongitude());
           }
         }
-        message.reply(msg);
+        message.reply(msg,null);
       }
     });
     bus.registerLocalHandler(Constant.ADDR_SETTINGS_INFORMATION, new MessageHandler<JsonObject>() {
@@ -197,7 +197,7 @@ public class SettingsRegistry {
         softwareMsg.set("Model", DeviceInformationTools.getOsModel());
         softwareMsg.set("Version", DeviceInformationTools.getOsVersion());
         softwareMsg.set("SDK", DeviceInformationTools.getSDK());
-        message.reply(msg);
+        message.reply(msg,null);
       }
     });
 

@@ -139,7 +139,7 @@ public class NetWorkListener {
             JsonObject info =
                 Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set(
                     "strength", getStrength());
-            message.reply(info);
+            message.reply(info,null);
           }
         });
   }

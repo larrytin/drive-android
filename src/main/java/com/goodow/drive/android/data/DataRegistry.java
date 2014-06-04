@@ -36,7 +36,7 @@ public class DataRegistry {
                 @Override
                 public void handle(Message<JsonObject> messageInner) {
                   JsonObject bodyInner = messageInner.body();
-                  message.reply(bodyInner);
+                  message.reply(bodyInner,null);
                 }
               });
             } else {
@@ -62,7 +62,7 @@ public class DataRegistry {
             // 通知界面刷新
             bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
-          message.reply(msg);
+          message.reply(msg,null);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
           // 删除
           JsonArray tags = body.getArray(Constant.KEY_TAGS);
@@ -72,7 +72,7 @@ public class DataRegistry {
             // 通知界面刷新
             bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
-          message.reply(msg);
+          message.reply(msg,null);
         }
       }
     });
@@ -90,7 +90,7 @@ public class DataRegistry {
 
               @Override
               protected void onPostExecute(JsonObject result) {
-                message.reply(result);// 分页查询接口
+                message.reply(result,null);// 分页查询接口
               };
             }.execute(message);
           }
@@ -107,7 +107,7 @@ public class DataRegistry {
 
           @Override
           protected void onPostExecute(JsonObject result) {
-            message.reply(result);// 分页查询接口
+            message.reply(result,null);// 分页查询接口
           };
         }.execute(message);
       }
@@ -120,7 +120,7 @@ public class DataRegistry {
         if ("get".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
           // 查询收藏明细
           JsonObject star = body.getObject(Constant.KEY_STAR);
-          message.reply(DBDataProvider.queryStarInfo(context, star));
+          message.reply(DBDataProvider.queryStarInfo(context, star),null);
         } else if ("post".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
           // 添加戓修改
           JsonObject star = body.getObject(Constant.KEY_STAR);
@@ -130,7 +130,7 @@ public class DataRegistry {
             // 通知界面刷新
             bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
-          message.reply(msg);
+          message.reply(msg,null);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
           // 删除收藏
           JsonArray stars = body.getArray(Constant.KEY_STARS);
@@ -140,7 +140,7 @@ public class DataRegistry {
             // 通知界面刷新
             bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
-          message.reply(msg);
+          message.reply(msg,null);
         }
       }
     });
@@ -149,7 +149,7 @@ public class DataRegistry {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
-        message.reply(DBDataProvider.readStarByTypeByKey(context, body));// 分页查询接口
+        message.reply(DBDataProvider.readStarByTypeByKey(context, body),null);// 分页查询接口
       }
     });
     // 数据库批量测试数据
@@ -161,11 +161,11 @@ public class DataRegistry {
         if ("delete".equals(action)) {
           // 清空数据库数据
           if (DBDataProvider.deleteAllData(context)) {
-            message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
+            message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"),null);
           }
         } else if ("put".equals(action)) {
           if (DBDataProvider.insertFileInfo(context, body.getArray("datas"))) {
-            message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"));
+            message.reply(Json.createObject().set(Constant.KEY_STATUS, "ok"),null);
           }
         }
       }
@@ -178,7 +178,7 @@ public class DataRegistry {
         if ("get".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
           // 查询收藏明细
           String id = body.getString(Constant.KEY_ID);
-          message.reply(DBDataProvider.queryFileById(context, id));
+          message.reply(DBDataProvider.queryFileById(context, id),null);
         } else if ("post".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
           // 添加戓修改
           JsonObject attachment = body.getObject(Constant.KEY_ATTACHMENT);
@@ -188,7 +188,7 @@ public class DataRegistry {
             // 通知界面刷新
             bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
-          message.reply(msg);
+          message.reply(msg,null);
         } else if ("delete".equalsIgnoreCase(body.getString(Constant.KEY_ACTION))) {
           // 删除文件
           JsonArray ids = body.getArray(Constant.KEY_IDS);
@@ -198,7 +198,7 @@ public class DataRegistry {
             // 通知界面刷新
             bus.publishLocal(Constant.ADDR_VIEW_REFRESH, null);
           }
-          message.reply(msg);
+          message.reply(msg,null);
         }
       }
     });
@@ -215,7 +215,7 @@ public class DataRegistry {
 
           @Override
           protected void onPostExecute(JsonObject result) {
-            message.reply(result);// 分页查询接口
+            message.reply(result,null);// 分页查询接口
           };
         }.execute(message);
       }
