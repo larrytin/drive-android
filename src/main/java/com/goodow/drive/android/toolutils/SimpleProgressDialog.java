@@ -1,10 +1,12 @@
 package com.goodow.drive.android.toolutils;
 
 import com.goodow.android.drive.R;
+import com.goodow.drive.android.activity.HomeActivity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.view.KeyEvent;
 
 /**
  * 对 ProgressDialog 的简单封装 特点 : 1.调用者必须保证 show() 和 dismiss()的成对调用; 2.包含引用计数器机制,
@@ -60,7 +62,7 @@ public final class SimpleProgressDialog {
    * 
    * @param context
    */
-  public static synchronized void show(Context context,
+  public static synchronized void show(final Context context,
       final DialogInterface.OnCancelListener dialogCancelDelegate) {
     if (context == null) {
       return;
@@ -76,6 +78,15 @@ public final class SimpleProgressDialog {
       progressDialog = ProgressDialog.show(context, "网络访问中", "请耐心等待...");
       progressDialog.setCancelable(false);
       progressDialog.getWindow().setContentView(R.layout.register_connect);
+      progressDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+        @Override
+        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+          if(context instanceof HomeActivity) {
+            ((HomeActivity) context).dispatchKeyEvent(event);
+          }
+          return false;
+        }
+      });
       progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
         @Override
         public void onCancel(DialogInterface dialog) {

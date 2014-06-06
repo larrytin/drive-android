@@ -1,7 +1,41 @@
 package com.goodow.drive.android.activity;
 
-import android.view.*;
-import android.widget.*;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
+import android.widget.AbsListView;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.baidu.location.LocationClient;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DBDataProvider;
@@ -27,10 +61,7 @@ import com.goodow.realtime.store.CollaborativeMap;
 import com.goodow.realtime.store.Document;
 import com.goodow.realtime.store.Model;
 import com.goodow.realtime.store.Store;
-
 import com.google.inject.Inject;
-
-import com.baidu.location.LocationClient;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,22 +69,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.SharedPreferences;
-import android.graphics.PixelFormat;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.text.TextUtils;
-import android.view.View.OnClickListener;
-import android.view.WindowManager.LayoutParams;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 
@@ -86,7 +104,7 @@ public class HomeActivity extends BaseActivity {
   private Registration openHandlerReg;
 
   // TODO:如果为true，校验
-  private boolean openAuth = true;
+  private final boolean openAuth = true;
 
   // 更新开机时间
   private int updateBoot;
@@ -102,11 +120,11 @@ public class HomeActivity extends BaseActivity {
   public static int netConnectCheck;
 
   // 周期校验时间间隔
-  private int authPeriodicTime = 3 * 60 * 1000;
+  private final int authPeriodicTime = 3000;
   // 限制使用时间
-  private long limitTotalTime = 3 * 60 * 1000;
+  private final long limitTotalTime = 3 * 60 * 1000;
   // 试用时间
-  private int trailTime = 10 * 60 * 1000;
+  private final int trailTime = 10 * 60 * 1000;
 
   private static final int REG = 1;
   private static final int PROPMT = 2;
@@ -117,6 +135,10 @@ public class HomeActivity extends BaseActivity {
 
   // 限制使用状态,如果为true，限制使用中
   public static boolean limitStatus = false;
+  private final long[] mSetting = new long[5];
+
+  private boolean isWmShowing;// 限制使用窗口是否显示
+  private boolean isHidenWmShowing;// 彩蛋窗口是否显示
 
   @Inject
   private Store store;
@@ -133,7 +155,7 @@ public class HomeActivity extends BaseActivity {
 
   public static boolean prompt = false;// 窗口的状态
 
-  private android.os.Handler mHandler = new android.os.Handler() {
+  private final android.os.Handler mHandler = new android.os.Handler() {
     @Override
     public void handleMessage(android.os.Message msg) {
       switch (msg.what) {
@@ -169,6 +191,100 @@ public class HomeActivity extends BaseActivity {
       }
     };
   };
+
+  @Override
+  public boolean dispatchKeyEvent(KeyEvent event) {
+    if (event.getKeyCode() == KeyEvent.KEYCODE_S) {
+      System.arraycopy(mSetting, 1, mSetting, 0, mSetting.length - 1);
+      mSetting[mSetting.length - 1] = SystemClock.uptimeMillis();
+      if (!isHidenWmShowing && mSetting[0] >= (mSetting[mSetting.length - 1] - 1000)) {
+        LayoutParams params = new LayoutParams();
+        params.type = LayoutParams.TYPE_SYSTEM_ALERT;
+        params.flags = LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+        params.width = 400;
+        params.height = 500;
+        final WindowManager wm =
+            (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        final ListView listView = new ListView(this);
+        listView.setBackgroundColor(Color.WHITE);
+        final PackageManager pm = this.getPackageManager();
+        final List<PackageInfo> appInfos = pm.getInstalledPackages(0);
+        final List<ResolveInfo> canOpenList = new ArrayList<ResolveInfo>();
+        for (PackageInfo appInfo : appInfos) {
+          String packName = appInfo.packageName;
+          Intent resolveIntent = new Intent();
+          resolveIntent.setAction(Intent.ACTION_MAIN);
+          resolveIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+          resolveIntent.setPackage(packName);
+          List<ResolveInfo> activities = pm.queryIntentActivities(resolveIntent, 0);
+          if (activities != null && activities.size() != 0) {
+            canOpenList.add(activities.get(0));
+          } else {
+            resolveIntent.removeCategory(Intent.CATEGORY_LAUNCHER);
+            resolveIntent.addCategory(Intent.CATEGORY_HOME);
+            List<ResolveInfo> activities2 = pm.queryIntentActivities(resolveIntent, 0);
+            if (activities2 != null && activities2.size() != 0) {
+              canOpenList.add(activities2.get(0));
+            }
+          }
+        }
+        BaseAdapter adapter = new BaseAdapter() {
+
+          @Override
+          public int getCount() {
+            return canOpenList.size();
+          }
+
+          @Override
+          public Object getItem(int position) {
+            return null;
+          }
+
+          @Override
+          public long getItemId(int position) {
+            return 0;
+          }
+
+          @Override
+          public View getView(final int position, View convertView, ViewGroup parent) {
+            TextView textview = new TextView(HomeActivity.this);
+            AbsListView.LayoutParams params =
+                new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
+                    AbsListView.LayoutParams.WRAP_CONTENT);
+            textview.setPadding(5, 5, 0, 5);
+            textview.setTextSize(18);
+            textview.setLayoutParams(params);
+            textview.setText(canOpenList.get(position).activityInfo.loadLabel(pm).toString());
+            textview.setOnClickListener(new OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                ResolveInfo info = canOpenList.get(position);
+                String activityName = info.activityInfo.name;
+                Intent intent = new Intent();
+                intent.setClassName(info.activityInfo.packageName, activityName);
+                wm.removeView(listView);
+                isHidenWmShowing = false;
+                startActivity(intent);
+              }
+            });
+            return textview;
+          }
+        };
+        listView.setAdapter(adapter);
+        wm.addView(listView, params);
+        isHidenWmShowing = true;
+      }
+    }
+    return super.dispatchKeyEvent(event);
+  }
+
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent ev) {
+    if (isWmShowing || progressBar.getVisibility() == View.VISIBLE) {
+      return true;
+    }
+    return super.dispatchTouchEvent(ev);
+  }
 
   public void onClick(View v) {
 
@@ -271,14 +387,6 @@ public class HomeActivity extends BaseActivity {
     }
   }
 
-  @Override
-  public boolean dispatchTouchEvent(MotionEvent ev) {
-    if (progressBar.getVisibility()==View.VISIBLE){
-      return true;
-    }
-    return super.dispatchTouchEvent(ev);
-  }
-
   /**
    * 屏蔽返回键
    */
@@ -296,17 +404,25 @@ public class HomeActivity extends BaseActivity {
    * @param flag 对话框是否消失
    */
   public void promptWindow(String mString, boolean flag) {
-    final WindowManager wm =
-        (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+    final WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
     final View view = View.inflate(getApplicationContext(), R.layout.register_prompt, null);
+    view.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+        dispatchKeyEvent(event);
+        return false;
+      }
+    });
     LayoutParams params = new WindowManager.LayoutParams();
     params.width = 643;
     params.height = 476;
     params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
     params.y = 200;
     params.type = LayoutParams.TYPE_PHONE;
+    params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
     params.format = PixelFormat.RGBA_8888;
     wm.addView(view, params);
+    isWmShowing = true;
     final TextView tv_register_prompt = (TextView) view.findViewById(R.id.tv_register_prompt);
     final TextView tv_register_reboot = (TextView) view.findViewById(R.id.tv_register_reboot);
     final TextView tv_register_shutdown = (TextView) view.findViewById(R.id.tv_register_shutdown);
@@ -316,6 +432,7 @@ public class HomeActivity extends BaseActivity {
         @Override
         public void handle(Message<JsonObject> message) {
           wm.removeView(view);
+          isWmShowing = false;
           sendAuth();
           prompt = false;
           Platform.scheduler().cancelTimer(updateLimit); // 取消限制使用
@@ -327,6 +444,7 @@ public class HomeActivity extends BaseActivity {
       @Override
       public void onClick(View v) {
         wm.removeView(view);
+        isWmShowing = false;
         // 重启
         bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 1), null);
       }
@@ -335,6 +453,7 @@ public class HomeActivity extends BaseActivity {
       @Override
       public void onClick(View v) {
         wm.removeView(view);
+        isWmShowing = false;
         // 关机
         bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("shutdown", 0), null);
       }
@@ -759,6 +878,13 @@ public class HomeActivity extends BaseActivity {
   private void registerDialog(Context context, boolean bool) {
     final AlertDialog mAlertDialog = new AlertDialog.Builder(context).create();
     View mView = View.inflate(context, R.layout.register_login, null);
+    mAlertDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+      @Override
+      public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+        dispatchKeyEvent(event);
+        return false;
+      }
+    });
     mAlertDialog.setView(mView);
     mAlertDialog.show();
     mAlertDialog.setCancelable(false);

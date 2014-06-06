@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -35,23 +34,11 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
   private Button bt_setting_register;
   @InjectView(R.id.iv_common_back)
   private ImageView iv_common_back;
-  private final long[] mSetting = new long[5];
-  private SharedPreferences authSp;
-  @InjectView(R.id.iv_hidden)
-  private View iv_hidden;
+  private SharedPreferences authSp = null;
 
   @Override
   public void onClick(View view) {
     switch (view.getId()) {
-      case R.id.iv_hidden:// 隐藏的打开全部设置，左上角连点5次
-        System.arraycopy(mSetting, 1, mSetting, 0, mSetting.length - 1);
-        mSetting[mSetting.length - 1] = SystemClock.uptimeMillis();
-        System.out.println(mSetting[mSetting.length - 1]);
-        if (mSetting[0] >= (mSetting[mSetting.length - 1] - 1000)) {
-          bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
-              "settings.all"), null);
-        }
-        break;
       case R.id.bt_setting_wifi:// wifi设置
         bus.sendLocal(Constant.ADDR_VIEW, Json.createObject().set(Constant.KEY_REDIRECTTO,
             "settings.wifi"), null);
@@ -120,6 +107,5 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     iv_common_back.setOnClickListener(this);
     bt_setting_reset.setOnClickListener(this);
     bt_setting_register.setOnClickListener(this);
-    iv_hidden.setOnClickListener(this);
   }
 }

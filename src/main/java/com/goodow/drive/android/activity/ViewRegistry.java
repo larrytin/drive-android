@@ -64,12 +64,6 @@ public class ViewRegistry {
               "com.giec.settings.WifiSettings"));
           ctx.startActivity(intent);
         }
-        if ("settings.all".equals(redirectto)) {// 打开杰科盒子的完整设置
-          Intent intent = new Intent();
-          intent.setComponent(new ComponentName("com.giec.settings",
-              "com.giec.settings.MainSettingsActivity"));
-          ctx.startActivity(intent);
-        }
         if ("settings.screenOffset".equals(redirectto)) {// 打开杰科盒子的屏幕偏移设置
           Intent intent = new Intent();
           intent.setComponent(new ComponentName("com.giec.settings",
