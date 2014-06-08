@@ -78,13 +78,13 @@
     <string name="string_register_schoolname1">请输入联系方式</string>
     <string name="string_register_register">注册</string>
     <string name="string_register_tryten">试用十分钟</string>
-    <string name="string_register_shutdown">  关机</string>
+    <string name="string_register_shutdown"> 关机</string>
     <string name="string_register_unnetwork">当前网络异常，请检查网络</string>
     <string name="string_register_prompt_limit_finished">限制使用结束，请检查网络设备</string>
-    <string name="string_register_prompt_locked">本设备被锁定服务，请联系客服...</string>
+    <string name="string_register_prompt_locked">本设备被锁定服务，请联系客服。\n客服热线：400-609-6688</string>
     <string name="string_register_prompt_limit_use">系统异常，限制使用中</string>
     <string name="string_register_prompt_delaynetwork">网络延时，请稍后重试...</string>
     <string name="string_register_input_notnull">您的输入不能为空!</string>
     <string name="string_register_success">注册成功</string>
-    <string name="string_register_try">试用中</string>
+    <string name="string_register_try">　　　　试用中</string>
 </resources>

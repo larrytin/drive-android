@@ -9,7 +9,7 @@
     android:orientation="vertical"  >
     <com.goodow.drive.android.view.FontTextView
         android:id="@+id/tv_register_prompt"
-        android:paddingTop="20dip"
+        android:paddingTop="100dip"
         android:layout_marginTop="20dip"
         android:ems="10"
         android:textSize="30sp"

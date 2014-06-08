@@ -3,6 +3,10 @@ package com.goodow.drive.android;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.Bus;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.impl.ReconnectBus;
+import com.goodow.realtime.channel.impl.ReliableSubscribeBus;
+import com.goodow.realtime.core.Handler;
 import com.goodow.realtime.java.JavaWebSocket;
 import com.goodow.realtime.store.Store;
 import com.goodow.realtime.store.impl.DefaultStore;
@@ -19,6 +23,7 @@ import android.content.Context;
 
 public class DriveAndroidModule extends AbstractModule {
   private static final String SERVER = "ldh.goodow.com:1986";
+  private static final String URL = "ws://" + SERVER + "/channel/websocket";
 
   static {
     AndroidPlatform.register();
@@ -33,13 +38,21 @@ public class DriveAndroidModule extends AbstractModule {
   @Provides
   @Singleton
   Bus provideBus(Store store) {
-    return store.getBus();
+    ReliableSubscribeBus bus = (ReliableSubscribeBus) store.getBus();
+    final ReconnectBus reconnectBus = (ReconnectBus) bus.getDelegate();
+    bus.registerLocalHandler("Bus_Reconnet", new Handler<Message>() {
+      @Override
+      public void handle(Message event) {
+        reconnectBus.connect(URL, null);
+      }
+    });
+    return bus;
   }
 
   @Provides
   @Singleton
   Store provideStore(Provider<Context> contextProvider) {
-    return new DefaultStore("ws://" + SERVER + "/channel/websocket", null).authorize(
-        DeviceInformationTools.getLocalMacAddressFromWifiInfo(contextProvider.get()), "");
+    return new DefaultStore(URL, null).authorize(DeviceInformationTools
+        .getLocalMacAddressFromWifiInfo(contextProvider.get()), "");
   }
 }

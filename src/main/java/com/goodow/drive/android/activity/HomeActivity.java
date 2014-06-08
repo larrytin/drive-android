@@ -21,6 +21,12 @@ import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
+import com.goodow.realtime.store.CollaborativeMap;
+import com.goodow.realtime.store.Document;
+import com.goodow.realtime.store.Model;
+import com.goodow.realtime.store.Store;
+
+import com.google.inject.Inject;
 
 import com.baidu.location.LocationClient;
 
@@ -59,7 +65,11 @@ public class HomeActivity extends BaseActivity {
   public static final String TAG = HomeActivity.class.getSimpleName();
   private static final String DBFILENAME = "sqlite.dump";
   private static boolean registried;
+  private static final String ID = "drive_android/time";
+  private static final String DRIVE_ANDROID = "drive_android";
+
   private Registration netWorkHandlerReg;
+
   public static final String AUTH = "AuthImformation";
   private SharedPreferences authSp = null;
   // 联网状态为1
@@ -86,10 +96,6 @@ public class HomeActivity extends BaseActivity {
   public static int updateLimit;
   // 定时校验
   private int authPeriodic;
-  // 自动关机
-  public static int autoShutDown;
-  // 限制使用关机
-  public static int mLimiteShutDown;
 
   // 弹出框
   public static int netConnectRegister;
@@ -98,16 +104,24 @@ public class HomeActivity extends BaseActivity {
   // 周期校验时间间隔
   private int authPeriodicTime = 3 * 60 * 1000;
   // 限制使用时间
-  private long limitTime = 3 * 60 * 1000;
+  private long limitTotalTime = 3 * 60 * 1000;
+  // 试用时间
+  private int trailTime = 10 * 60 * 1000;
 
   private static final int REG = 1;
   private static final int PROPMT = 2;
   private static final int PROPMTWINDOW = 3;
   private static final int PROPMTWINDOW_LOCK = 4;
 
-  public boolean prompt = false;// 窗口的状态
+  // 限制使用状态,如果为true，限制使用中
+  public static boolean limitStatus = false;
 
-  public android.os.Handler mHandler = new android.os.Handler() {
+  @Inject
+  private Store store;
+
+  public static boolean prompt = false;// 窗口的状态
+
+  private android.os.Handler mHandler = new android.os.Handler() {
     @Override
     public void handleMessage(android.os.Message msg) {
       switch (msg.what) {
@@ -278,6 +292,7 @@ public class HomeActivity extends BaseActivity {
           wm.removeView(view);
           sendAuth();
           prompt = false;
+          Platform.scheduler().cancelTimer(updateLimit); // 取消限制使用
           openHandlerReg.unregister();
         }
       });
@@ -305,7 +320,7 @@ public class HomeActivity extends BaseActivity {
    */
   public void trialTenMinutes() {
     authSp.edit().putBoolean("trial", true).commit();
-    trialSch = Platform.scheduler().scheduleDelay(60 * 1000, new Handler<Void>() {
+    trialSch = Platform.scheduler().scheduleDelay(trailTime, new Handler<Void>() {
       @Override
       public void handle(Void event) {
         bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false), null);
@@ -339,6 +354,7 @@ public class HomeActivity extends BaseActivity {
     if (openAuth) {
       openRegisterAndAuth();
     }
+    // 每隔一分钟更新一次开机时间数据
     updateBoot = Platform.scheduler().schedulePeriodic(60 * 1000, new Handler<Void>() {
       @Override
       public void handle(Void event) {
@@ -367,13 +383,22 @@ public class HomeActivity extends BaseActivity {
     Platform.scheduler().cancelTimer(trialSch);
     Platform.scheduler().cancelTimer(updateLimit);
     Platform.scheduler().cancelTimer(authPeriodic);
-    Platform.scheduler().cancelTimer(autoShutDown);
     Platform.scheduler().cancelTimer(netConnectCheck);
     Platform.scheduler().cancelTimer(netConnectRegister);
-    Platform.scheduler().cancelTimer(mLimiteShutDown);
     netWorkHandlerReg.unregister();
     mLocationClient.stop();
     SimpleProgressDialog.resetByThisContext(HomeActivity.this);
+  }
+
+  @Override
+  protected void onNewIntent(android.content.Intent intent) {
+    Bundle extras = intent.getExtras();
+    if (extras.getBoolean("register")) {
+      Platform.scheduler().cancelTimer(trialSch);// 取消试用十分钟
+      authSp.edit().putBoolean("trial", false).commit();
+      bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false), null);
+      registerDialog(HomeActivity.this, false);
+    }
   }
 
   @Override
@@ -399,11 +424,33 @@ public class HomeActivity extends BaseActivity {
               // 由无网络变为有网络(此处不分3G,WIFI)
             } else if (flag == -1) {
               // 重连
+              bus.sendLocal("Bus_Reconnet", null, null);
               flag = 0;
             }
           }
         });
     mLocationClient.start();
+    Handler<Document> onLoaded = new Handler<Document>() {
+      @Override
+      public void handle(Document document) {
+        CollaborativeMap root = document.getModel().getRoot().get(DRIVE_ANDROID);
+        authSp.edit()
+            .putInt("authPeriodicTime", ((Double) root.get("authPeriodicTime")).intValue())
+            .putLong("limitTotalTime", ((Double) root.get("limitTotalTime")).longValue()).putInt(
+                "trailTime", ((Double) root.get("trailTime")).intValue()).commit();
+      }
+    };
+    Handler<Model> opt_initializer = new Handler<Model>() {
+      @Override
+      public void handle(Model model) {
+        CollaborativeMap map = model.createMap(null);
+        map.set("authPeriodicTime", authPeriodicTime);
+        map.set("limitTotalTime", limitTotalTime);
+        map.set("trailTime", trailTime);
+        model.getRoot().set(DRIVE_ANDROID, map);
+      }
+    };
+    store.load(ID, onLoaded, opt_initializer, null);
   }
 
   private void checkActivate(JsonObject msg, String address) {
@@ -504,28 +551,20 @@ public class HomeActivity extends BaseActivity {
     }
   }
 
-  /**
-   * 限制使用
-   * 
-   * @return
-   */
-  private int limitUse() {
-    return Platform.scheduler().schedulePeriodic(60 * 1000, new Handler<Void>() {
-      @Override
-      public void handle(Void arg0) {
-        long time = authSp.getLong("limitTime", 0l);
-        authSp.edit().putLong("limitTime", time + SystemClock.uptimeMillis()).commit();
-        if (time >= limitTime) {
-          authSp.edit().putBoolean("limit", false).commit();
-          // 让系统异常，限制使用中消失
-          bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false), null);
-          android.os.Message msg = android.os.Message.obtain();
-          msg.obj = getResources().getString(R.string.string_register_prompt_limit_finished);
-          msg.what = PROPMTWINDOW;
-          mHandler.sendMessage(msg);
-        }
-      }
-    });
+  private void limitUse() {
+    long time = authSp.getLong("limitTime", 0l);
+    // 更新限制使用时间
+    authSp.edit().putLong("limitTime",
+        time + SystemClock.uptimeMillis() - authSp.getLong("startLimit", 0l)).commit();
+    if (authSp.getLong("limitTime", 0l) >= authSp.getLong("limitTotalTime", limitTotalTime)) {
+      authSp.edit().putBoolean("limit", false).commit();
+      // 让系统异常，限制使用中消失
+      bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false), null);
+      android.os.Message msg = android.os.Message.obtain();
+      msg.obj = getResources().getString(R.string.string_register_prompt_limit_finished);
+      msg.what = PROPMTWINDOW;
+      mHandler.sendMessage(msg);
+    }
   }
 
   // /**
@@ -558,7 +597,10 @@ public class HomeActivity extends BaseActivity {
   // }
 
   private void notNetLimiteMode() {
-    if (authSp.getLong("limitTime", 0l) >= limitTime) {
+    // 记录开始限制使用的时间
+    authSp.edit().putLong("startLimit", SystemClock.uptimeMillis()).commit();
+    limitStatus = true;
+    if (authSp.getLong("limitTime", 0l) >= authSp.getLong("limitTotalTime", limitTotalTime)) {
       android.os.Message msg = android.os.Message.obtain();
       msg.obj = getResources().getString(R.string.string_register_prompt_limit_finished);
       msg.what = PROPMTWINDOW;
@@ -568,7 +610,12 @@ public class HomeActivity extends BaseActivity {
     authSp.edit().putBoolean("limit", true).commit();
     bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", true).set("content",
         getResources().getString(R.string.string_register_prompt_limit_use)), null);
-    updateLimit = limitUse();
+    updateLimit = Platform.scheduler().schedulePeriodic(60 * 1000, new Handler<Void>() {
+      @Override
+      public void handle(Void arg0) {
+        limitUse();
+      }
+    });
   }
 
   /**
@@ -607,18 +654,24 @@ public class HomeActivity extends BaseActivity {
         netConnectCheck = Platform.scheduler().scheduleDelay(20 * 1000, new Handler<Void>() {
           @Override
           public void handle(Void event) {
-            if (SimpleProgressDialog.isShowing()) {
-              SimpleProgressDialog.dismiss(HomeActivity.this);
-              mHandler.sendEmptyMessage(PROPMT);
-              authSp.edit().putBoolean("limit", true).commit();
-              bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", true).set(
-                  "content", getResources().getString(R.string.string_register_prompt_limit_use)),
-                  null);
-              updateLimit = limitUse();
-            }
+            SimpleProgressDialog.dismiss(HomeActivity.this);
+            mHandler.sendEmptyMessage(PROPMT);
+            authSp.edit().putBoolean("limit", true).commit();
+            bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", true).set(
+                "content", getResources().getString(R.string.string_register_prompt_limit_use)),
+                null);
+            limitStatus = true;
+            // 记录开始限制使用的时间
+            authSp.edit().putLong("startLimit", SystemClock.uptimeMillis()).commit();
+            updateLimit = Platform.scheduler().schedulePeriodic(60 * 1000, new Handler<Void>() {
+              @Override
+              public void handle(Void arg0) {
+                limitUse();
+              }
+            });;
           }
         });
-      } else if (!authSp.getBoolean("lock", true)) { // 网络不通，且未锁定
+      } else if (!authSp.getBoolean("lock", false)) { // 网络不通，且未锁定
         notNetLimiteMode();
       } else { // 网络不通，锁定
         android.os.Message msg = android.os.Message.obtain();
@@ -633,26 +686,41 @@ public class HomeActivity extends BaseActivity {
     } else {
       registerDialog(this, true);
     }
-    if (authSp.getBoolean("limit", false)) {
-      updateLimit = limitUse();
+    if (authSp.getBoolean("limit", false) && !limitStatus) {
+      limitStatus = true;// 限制使用中
+      // 记录开始限制使用的时间
+      authSp.edit().putLong("startLimit", SystemClock.uptimeMillis()).commit();
+      updateLimit = Platform.scheduler().schedulePeriodic(60 * 1000, new Handler<Void>() {
+        @Override
+        public void handle(Void arg0) {
+          limitUse();
+        }
+      });
     }
-    authPeriodic = Platform.scheduler().schedulePeriodic(authPeriodicTime, new Handler<Void>() {
-      @Override
-      public void handle(Void arg0) {
-        // 排除未注册情况
-        if (!authSp.getBoolean("register", false)) {
-          return;
-        }
-        // 定期校验
-        // 无网络，进入限制使用
-        networkInfo = mConnectivityManager.getActiveNetworkInfo();
-        if (networkInfo == null && authSp.getBoolean("register", false)) {
-          notNetLimiteMode();
-        }
-        // 有网络，发送数据
-        sendAuth();
-      }
-    });
+    authPeriodic =
+        Platform.scheduler().schedulePeriodic(authSp.getInt("authPeriodicTime", authPeriodicTime),
+            new Handler<Void>() {
+              @Override
+              public void handle(Void arg0) {
+                // 排除未注册情况
+                if (!authSp.getBoolean("register", false)) {
+                  return;
+                }
+                // 定期校验
+                // 无网络，进入限制使用
+                networkInfo = mConnectivityManager.getActiveNetworkInfo();
+                if (networkInfo == null && authSp.getBoolean("register", false)) {
+                  if (prompt) {
+                    return; // 如果已经弹出提示框
+                  }
+                  if (!limitStatus) {
+                    notNetLimiteMode();
+                  }
+                }
+                // 有网络，发送数据
+                sendAuth();
+              }
+            });
   }
 
   /**

@@ -22,6 +22,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/register_input"
             android:gravity="center"
+            android:textColor="#fefeff"
             android:singleLine="true"
             android:hint="@string/string_register_schoolname"
             android:textSize="30sp" />

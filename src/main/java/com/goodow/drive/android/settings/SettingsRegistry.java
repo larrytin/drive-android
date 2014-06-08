@@ -395,14 +395,13 @@ public class SettingsRegistry {
                     "limitTime", 0l).commit();
                 bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false),
                     null);
-                Platform.scheduler().cancelTimer(HomeActivity.updateLimit); // 取消限制
-                Platform.scheduler().cancelTimer(HomeActivity.autoShutDown); // 取消自动关机
+                Platform.scheduler().cancelTimer(HomeActivity.updateLimit); // 取消限制使用
                 Platform.scheduler().cancelTimer(HomeActivity.netConnectCheck);// 取消校验对话框
-                Platform.scheduler().cancelTimer(HomeActivity.mLimiteShutDown);// 取消限制使用关机
               }
               // 对话框消失
               SimpleProgressDialog.dismiss(ctx);
               authSp.edit().putInt("FailTime", 0).commit(); // 计数器清0
+              HomeActivity.limitStatus = false;
               DBOperator.updateBootAddress(ctx, "T_BOOT", "LATITUDE", "LONGITUDE", "RADIUS",
                   "ADDRESS", Json.createObject()
                       .set("LATITUDE", authSp.getFloat("latitudetmp", -1)).set("LONGITUDE",
@@ -411,6 +410,7 @@ public class SettingsRegistry {
                           authSp.getString("address", "")));
               // 发送数据行为数据
               bus.sendLocal(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST, null, null);
+              bus.sendLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST, null, null);
             } else if (status == 1.0) { // 校验
               if (!authSp.getBoolean("register", false)) {
                 Editor mEditor = authSp.edit();
@@ -442,7 +442,8 @@ public class SettingsRegistry {
               // 重新发送数据
               bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);
             }
-            if (lock) {
+            if (lock && !HomeActivity.prompt) {
+              HomeActivity.prompt = true;
               final WindowManager wm =
                   (WindowManager) ctx.getApplicationContext().getSystemService(
                       Context.WINDOW_SERVICE);

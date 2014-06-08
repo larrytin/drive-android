@@ -8,6 +8,7 @@ import com.goodow.realtime.json.JsonObject;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -22,6 +23,7 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
   private Button bt_setting_screen_offset;
   private Button bt_setting_wifi;
   private Button bt_setting_reset;
+  private Button bt_setting_register;
   private ImageView iv_common_back;
   private View iv_hidden;
   private final long[] mSetting = new long[5];
@@ -78,6 +80,11 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
         msg.set("return", true);
         bus.sendLocal(Constant.ADDR_CONTROL, msg, null);
         break;
+      case R.id.bt_setting_register:
+        Intent mIntent = new Intent(this, HomeActivity.class);
+        mIntent.putExtra("register", true);
+        startActivity(mIntent);
+        break;
     }
   }
 
@@ -91,6 +98,9 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     if (authSp.getBoolean("reset", false)) {
       bt_setting_reset.setVisibility(View.VISIBLE);
     }
+    if (!authSp.getBoolean("register", false)) {
+      bt_setting_register.setVisibility(View.VISIBLE);
+    }
   }
 
   private void initView() {
@@ -101,6 +111,7 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     iv_common_back = (ImageView) findViewById(R.id.iv_common_back);
     iv_hidden = findViewById(R.id.iv_hidden);
     bt_setting_reset = (Button) findViewById(R.id.bt_setting_reset);
+    bt_setting_register = (Button) findViewById(R.id.bt_setting_register);
   }
 
   private void setListener() {
@@ -111,5 +122,6 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     iv_common_back.setOnClickListener(this);
     iv_hidden.setOnClickListener(this);
     bt_setting_reset.setOnClickListener(this);
+    bt_setting_register.setOnClickListener(this);
   }
 }

@@ -12,7 +12,9 @@ import com.goodow.realtime.json.JsonObject;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -197,6 +199,8 @@ public class ViewRegistry {
           if (mView == null && msg.getBoolean("status")) {
             mView = new TextView(ctx);
             mView.setText(R.string.string_register_try);
+            mView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+            mView.setTextColor(Color.parseColor("#666666"));
             if (msg.has("content")) {
               mView.setText(msg.getString("content"));
             }

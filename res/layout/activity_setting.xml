@@ -85,7 +85,13 @@
                     style="@style/setting_bt"
                     android:visibility="gone"
                     android:text="@string/setting_reset" />
-            </LinearLayout>
+
+                <Button
+                    android:id="@+id/bt_setting_register"
+                    style="@style/setting_bt"
+                    android:visibility="gone"
+                    android:text="@string/string_register_register"/>
+                </LinearLayout>
         </ScrollView>
     </LinearLayout>
 
