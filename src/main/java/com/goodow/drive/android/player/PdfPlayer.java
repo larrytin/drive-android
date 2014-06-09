@@ -25,6 +25,8 @@ import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
 /**
  * @title: SamplePDF.java
@@ -35,8 +37,10 @@ import android.widget.Toast;
  * @updateDate 2013 2013-12-4 上午10:48:34
  * @version V1.0
  */
+@ContentView(R.layout.activity_pdf)
 public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCompleteListener,
     OnPageChangeListener, OnDrawListener {
+  @InjectView(R.id.pdfView)
   private PDFView pdfView = null;
   private float currentScale = 2.4f;
   private int currentPage = 0;
@@ -86,8 +90,6 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_pdf);
-    this.pdfView = (PDFView) this.findViewById(R.id.pdfView);
     this.buildPdfView(this.getIntent());
   }
 

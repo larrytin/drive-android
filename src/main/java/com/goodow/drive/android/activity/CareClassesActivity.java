@@ -25,22 +25,33 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_careclass)
 public class CareClassesActivity extends BaseActivity implements OnClickListener,
     OnFocusChangeListener {
   // 条目topic
-  private LinearLayout ll_care_classes_topic = null;
+  @InjectView(R.id.ll_care_classes_topic)
+  private LinearLayout ll_care_classes_topic;
   // 学期
-  private LinearLayout ll_care_classes_term = null;
+  @InjectView(R.id.ll_care_classes_term)
+  private LinearLayout ll_care_classes_term;
   // 返回键
+  @InjectView(R.id.bt_care_back)
   private ImageView bt_care_back;
   // 收藏键
+  @InjectView(R.id.bt_care_coll)
   private ImageView bt_care_coll;
   // 黑屏
+  @InjectView(R.id.bt_care_loc)
   private ImageView bt_care_loc;
-  // sp
-  private SharedPreferences sharedPreferences = null;
+  private SharedPreferences sharedPreferences;
   private final static String SHAREDNAME = "careClassesHistory";
+
+  @InjectExtra(value = "msg", optional = true)
+  private JsonObject msg;
 
   private final String[] termNames = {Constant.LABEL_TERM_SEMESTER0, Constant.LABEL_TERM_SEMESTER1};
   // 活动topic
@@ -56,8 +67,11 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   private String currenTopic = "";
   private Registration postHandler;
   private Registration refreshHandler;
+  @InjectView(R.id.ll_act_care_result_container_1)
   private LinearLayout ll_act_care_result_container_1;
+  @InjectView(R.id.ll_act_care_result_container_2)
   private LinearLayout ll_act_care_result_container_2;
+  @InjectView(R.id.ib_care_ebook)
   private ImageButton ib_care_ebook;
 
   @Override
@@ -164,11 +178,8 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_careclass);
     this.readHistoryData();
     this.initView();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
     this.echoTerm();
@@ -180,8 +191,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
-    Bundle extras = intent.getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
+    this.setIntent(intent);
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
     this.echoTerm();
@@ -356,16 +366,10 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   }
 
   private void initView() {
-    this.bt_care_back = (ImageView) findViewById(R.id.bt_care_back);
-    this.bt_care_coll = (ImageView) findViewById(R.id.bt_care_coll);
-    this.bt_care_loc = (ImageView) findViewById(R.id.bt_care_loc);
-    ib_care_ebook = (ImageButton) findViewById(R.id.ib_care_ebook);
     this.bt_care_back.setOnClickListener(this);
     this.bt_care_coll.setOnClickListener(this);
     this.bt_care_loc.setOnClickListener(this);
     ib_care_ebook.setOnClickListener(this);
-
-    this.ll_care_classes_term = (LinearLayout) findViewById(R.id.ll_care_classes_term);
     int len_ll_care_classes_term = this.ll_care_classes_term.getChildCount();
     for (int i = 0; i < len_ll_care_classes_term; i++) {
       TextView term = (TextView) ll_care_classes_term.getChildAt(i);
@@ -375,8 +379,6 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       }
       term.setOnClickListener(this);
     }
-
-    this.ll_care_classes_topic = (LinearLayout) findViewById(R.id.ll_care_classes_topic);
     int len_ll_care_classes_topic = this.ll_care_classes_topic.getChildCount();
     topic = topic_1;
     for (int i = 0; i < len_ll_care_classes_topic; i++) {
@@ -388,11 +390,6 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
       }
       topic.setOnClickListener(this);
     }
-
-    ll_act_care_result_container_1 =
-        (LinearLayout) findViewById(R.id.ll_act_care_result_container_1);
-    ll_act_care_result_container_2 =
-        (LinearLayout) findViewById(R.id.ll_act_care_result_container_2);
     for (int i = 0; i < ll_act_care_result_container_1.getChildCount(); i++) {
       ll_act_care_result_container_1.getChildAt(i).setOnClickListener(this);
     }
@@ -402,9 +399,8 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
   }
 
   /**
-   * 打开活动详情
    * 
-   * @param title
+   * @param view
    */
   private void onCloudClick(View view) {
     String title = view.getTag().toString();

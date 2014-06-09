@@ -8,10 +8,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import roboguice.inject.InjectView;
 
 public class EbookAttachmentsView extends RelativeLayout {
-
+  @InjectView(R.id.tv_ebook_text)
   private TextView tv_ebook_text;
+  @InjectView(R.id.iv_ebook_image)
   private ImageView iv_ebook_image;
 
   public EbookAttachmentsView(Context context) {
@@ -43,7 +45,5 @@ public class EbookAttachmentsView extends RelativeLayout {
 
   private void initVIew(Context context) {
     View.inflate(context, R.layout.result_ebook, this);
-    tv_ebook_text = (TextView) findViewById(R.id.tv_ebook_text);
-    iv_ebook_image = (ImageView) findViewById(R.id.iv_ebook_image);
   }
 }

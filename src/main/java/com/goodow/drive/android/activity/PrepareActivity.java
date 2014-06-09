@@ -38,7 +38,10 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_prepare)
 public class PrepareActivity extends BaseActivity implements OnClickListener {
 
   private class ResultAdapter extends BaseAdapter {
@@ -133,36 +136,50 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   private String currenTopic = Constant.DOMIAN_LANGUAGE;
 
   // 后退收藏锁屏
-  private ImageView iv_act_prepare_back = null;
-  private ImageView iv_act_prepare_coll = null;
-  private ImageView iv_act_prepare_loc = null;
+  @InjectView(R.id.iv_act_prepare_back)
+  private ImageView iv_act_prepare_back;
+  @InjectView(R.id.iv_act_prepare_coll)
+  private ImageView iv_act_prepare_coll;
+  @InjectView(R.id.iv_act_prepare_loc)
+  private ImageView iv_act_prepare_loc;
 
   // 学期
-  private LinearLayout ll_act_prepare_term = null;
-  private TextView ftv_act_prepare_top = null;
-  private TextView ftv_act_prepare_bottom = null;
+  @InjectView(R.id.ll_act_prepare_term)
+  private LinearLayout ll_act_prepare_term;
+  @InjectView(R.id.ftv_act_prepare_top)
+  private TextView ftv_act_prepare_top;
+  @InjectView(R.id.ftv_act_prepare_bottom)
+  private TextView ftv_act_prepare_bottom;
 
   // 分类
   private ImageView[] topicRadioButtons = null;
-  private ImageView ftv_act_prepare_class_language = null;
-  private ImageView ftv_act_prepare_class_thinking = null;
-  private ImageView ftv_act_prepare_class_read_write = null;
-  private ImageView ftv_act_prepare_class_quality = null;
+  @InjectView(R.id.ftv_act_prepare_class_language)
+  private ImageView ftv_act_prepare_class_language;
+  @InjectView(R.id.ftv_act_prepare_class_thinking)
+  private ImageView ftv_act_prepare_class_thinking;
+  @InjectView(R.id.ftv_act_prepare_class_read_write)
+  private ImageView ftv_act_prepare_class_read_write;
+  @InjectView(R.id.ftv_act_prepare_class_quality)
+  private ImageView ftv_act_prepare_class_quality;
 
   private final int numPerPage = 8;// 查询结果每页显示8条数据
-  private GridView vp_act_prepare_result = null;
+  @InjectView(R.id.vp_act_prepare_result)
+  private GridView vp_act_prepare_result;
 
   // 翻页按钮
-  private ImageView rl_act_prepare_result_pre = null;
-  private ImageView rl_act_prepare_result_next = null;
+  @InjectView(R.id.rl_act_prepare_result_pre)
+  private ImageView rl_act_prepare_result_pre;
+  @InjectView(R.id.rl_act_prepare_result_next)
+  private ImageView rl_act_prepare_result_next;
   // 页码状态
-  private LinearLayout ll_act_prepare_result_bar = null;
+  @InjectView(R.id.ll_act_prepare_result_bar)
+  private LinearLayout ll_act_prepare_result_bar;
   // 查询进度
+  @InjectView(R.id.pb_act_result_progress)
   private ProgressBar pb_act_result_progress;
 
   private final static String SHAREDNAME = "prepareHistory";// 配置文件的名称
-
-  private SharedPreferences sharedPreferences = null;
+  private SharedPreferences sharedPreferences;
 
   private Registration postHandler;
   private Registration controlHandler;
@@ -239,7 +256,6 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_prepare);
     this.readHistoryData();
     this.initView();
     // newCachedThreadPool = Executors.newCachedThreadPool();
@@ -528,17 +544,9 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
    */
   private void initView() {
     // 后退 收藏 所屏
-    this.iv_act_prepare_back = (ImageView) this.findViewById(R.id.iv_act_prepare_back);
-    this.iv_act_prepare_coll = (ImageView) this.findViewById(R.id.iv_act_prepare_coll);
-    this.iv_act_prepare_loc = (ImageView) this.findViewById(R.id.iv_act_prepare_loc);
     this.iv_act_prepare_back.setOnClickListener(this);
     this.iv_act_prepare_coll.setOnClickListener(this);
     this.iv_act_prepare_loc.setOnClickListener(this);
-
-    // 初始化学期
-    this.ll_act_prepare_term = (LinearLayout) this.findViewById(R.id.ll_act_prepare_term);
-    this.ftv_act_prepare_top = (TextView) this.findViewById(R.id.ftv_act_prepare_top);
-    this.ftv_act_prepare_bottom = (TextView) this.findViewById(R.id.ftv_act_prepare_bottom);
 
     int termChildren = this.ll_act_prepare_term.getChildCount();
     for (int i = 0; i < termChildren; i++) {
@@ -551,15 +559,6 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
     }
 
     // 初始化分类
-    this.ftv_act_prepare_class_language =
-        (ImageView) this.findViewById(R.id.ftv_act_prepare_class_language);
-    this.ftv_act_prepare_class_thinking =
-        (ImageView) this.findViewById(R.id.ftv_act_prepare_class_thinking);
-    this.ftv_act_prepare_class_read_write =
-        (ImageView) this.findViewById(R.id.ftv_act_prepare_class_read_write);
-    this.ftv_act_prepare_class_quality =
-        (ImageView) this.findViewById(R.id.ftv_act_prepare_class_quality);
-
     this.topicRadioButtons =
         new ImageView[] {
             this.ftv_act_prepare_class_language, this.ftv_act_prepare_class_thinking,
@@ -574,29 +573,19 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
     }
 
     // 初始化查询结果视图
-    this.vp_act_prepare_result = (GridView) this.findViewById(R.id.vp_act_prepare_result);
     resultAdapter = new ResultAdapter();
     vp_act_prepare_result.setAdapter(resultAdapter);
 
     // 初始化查询结果控制
-    this.rl_act_prepare_result_pre = (ImageView) this.findViewById(R.id.rl_act_prepare_result_pre);
-    this.rl_act_prepare_result_next =
-        (ImageView) this.findViewById(R.id.rl_act_prepare_result_next);
     this.rl_act_prepare_result_pre.setOnClickListener(this);
     this.rl_act_prepare_result_next.setOnClickListener(this);
 
-    // 初始化结果数量视图
-    this.ll_act_prepare_result_bar =
-        (LinearLayout) this.findViewById(R.id.ll_act_prepare_result_bar);
-
-    // 查询进度
-    pb_act_result_progress = (ProgressBar) findViewById(R.id.pb_act_result_progress);
   }
 
   /**
    * 处理类别的点击事件
    * 
-   * @param i
+   * @param id
    */
   private void onMyClassViewClick(int id) {
     switch (id) {
@@ -639,7 +628,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   /**
    * 处理学期的点击事件
    * 
-   * @param i
+   * @param id
    */
   private void onTermViewClick(int id) {
     switch (id) {

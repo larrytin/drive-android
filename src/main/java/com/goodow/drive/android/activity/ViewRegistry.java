@@ -9,6 +9,8 @@ import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
 
+import com.google.inject.Inject;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -25,13 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ViewRegistry {
-  private final Context ctx;
-  private final Bus bus;
-
-  public ViewRegistry(Bus bus, Context ctx) {
-    this.bus = bus;
-    this.ctx = ctx;
-  }
+  @Inject
+  private Context ctx;
+  @Inject
+  private Bus bus;
 
   public void subscribe() {
     /**

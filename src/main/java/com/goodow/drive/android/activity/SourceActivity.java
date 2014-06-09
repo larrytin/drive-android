@@ -10,6 +10,7 @@ import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
+import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,18 +43,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
+
 /**
  * 资源库
  * 
  * @author dpw
  * 
  */
+@ContentView(R.layout.activity_source)
 public class SourceActivity extends BaseActivity implements OnClickListener {
 
   /**
    * 二级类别点事件调用
    * 
-   * @param id
    */
   private class OnSubCatagoryClick implements OnClickListener {
     @Override
@@ -107,7 +111,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-      View itemView = null;
+      View itemView;
       if (convertView != null) {
         itemView = convertView;
       } else {
@@ -195,22 +199,31 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private final static String status_unstar = "0";
 
   private final static String status_stared = "1";
-  private TextView tv_act_source_tip = null;
-  private ImageView iv_act_source_result_pre = null;
-  private GridView gr_act_source_result = null;
-  private ResultAdapter resultAdapter = null;
-  private ImageView iv_act_source_result_next = null;
+  @InjectView(R.id.tv_act_source_tip)
+  private TextView tv_act_source_tip;
+  @InjectView(R.id.iv_act_source_result_pre)
+  private ImageView iv_act_source_result_pre;
+  @InjectView(R.id.gr_act_source_result)
+  private GridView gr_act_source_result;
+  private ResultAdapter resultAdapter;
+  @InjectView(R.id.iv_act_source_result_next)
+  private ImageView iv_act_source_result_next;
   private int totalAttachmentNum = 0;// 总的数据量
 
   private int currentPageNum = 0;// 当前页码
   private final int numPerPage = 10;// 查询结果每页显示10条数据
 
-  private ProgressBar pb_act_source_search_progress = null;
+  @InjectView(R.id.pb_act_source_search_progress)
+  private ProgressBar pb_act_source_search_progress;
 
-  private LinearLayout ll_act_source_catagory0 = null;
-  private LinearLayout ll_act_source_catagory1 = null;
-  private EditText et_act_source_tags = null;
-  private ImageView iv_act_source_search_button = null;
+  @InjectView(R.id.ll_act_source_catagory0)
+  private LinearLayout ll_act_source_catagory0;
+  @InjectView(R.id.ll_act_source_catagory1)
+  private LinearLayout ll_act_source_catagory1;
+  @InjectView(R.id.et_act_source_tags)
+  private EditText et_act_source_tags;
+  @InjectView(R.id.iv_act_source_search_button)
+  private ImageView iv_act_source_search_button;
   // 当前的contentType对应的ID
   private String currentContentType = null;// 搜索一级标签
 
@@ -218,6 +231,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private JsonArray queryingTags = null;// 控制台传递的混合标签
   private Registration postHandler;
   private Registration controlHandler;
+  @Inject
+  private InputMethodManager imm;
   private static final Map<Object, String> idContentTypes = new HashMap<Object, String>();
   private static final Map<Object, String> idTags = new HashMap<Object, String>();
   static {
@@ -276,7 +291,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_source);
     this.initView();
     Bundle extras = this.getIntent().getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
@@ -450,7 +464,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   /**
    * 回显contentType
    * 
-   * @param currentContentType
+   * @param tag
    */
   private void echoContentType(String tag) {
     Set<Entry<Object, String>> entrySet = idTags.entrySet();
@@ -466,30 +480,19 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * 初始化View对象 设置点击事件 设置光标事件监听
    */
   private void initView() {
-    this.iv_act_source_result_pre = (ImageView) this.findViewById(R.id.iv_act_source_result_pre);
+    resultAdapter = new ResultAdapter(this);
     this.iv_act_source_result_pre.setOnClickListener(this);
-    this.gr_act_source_result = (GridView) this.findViewById(R.id.gr_act_source_result);
-    this.resultAdapter = new ResultAdapter(this);
     this.gr_act_source_result.setAdapter(this.resultAdapter);
-    this.iv_act_source_result_next = (ImageView) this.findViewById(R.id.iv_act_source_result_next);
     this.iv_act_source_result_next.setOnClickListener(this);
 
-    this.tv_act_source_tip = (TextView) this.findViewById(R.id.tv_act_source_tip);
-    this.pb_act_source_search_progress =
-        (ProgressBar) this.findViewById(R.id.pb_act_source_search_progress);
-    this.ll_act_source_catagory0 = (LinearLayout) this.findViewById(R.id.ll_act_source_catagory0);
     int len_catagory0 = this.ll_act_source_catagory0.getChildCount();
     for (int i = 0; i < len_catagory0; i++) {
       this.ll_act_source_catagory0.getChildAt(i).setOnClickListener(this);
     }
-    this.ll_act_source_catagory1 = (LinearLayout) this.findViewById(R.id.ll_act_source_catagory1);
     int len_catagory1 = this.ll_act_source_catagory1.getChildCount();
     for (int i = 0; i < len_catagory1; i++) {
       this.ll_act_source_catagory1.getChildAt(i).setOnClickListener(this);
     }
-    this.et_act_source_tags = (EditText) this.findViewById(R.id.et_act_source_tags);
-    this.iv_act_source_search_button =
-        (ImageView) this.findViewById(R.id.iv_act_source_search_button);
     this.iv_act_source_search_button.setOnClickListener(this);
 
   }
@@ -553,7 +556,6 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * @param id
    */
   private void onSearchButtonClick(int id) {
-    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     this.totalAttachmentNum = 0;
     this.currentPageNum = 0;

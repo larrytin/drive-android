@@ -17,18 +17,29 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_ebook)
 public class EbookActivity extends BaseActivity implements OnClickListener {
 
   // 后退收藏锁屏
+  @InjectView(R.id.iv_act_ebook_back)
   private ImageView iv_act_ebook_back;
+  @InjectView(R.id.iv_act_ebook_coll)
   private ImageView iv_act_ebook_coll;
+  @InjectView(R.id.iv_act_ebook_loc)
   private ImageView iv_act_ebook_loc;
 
+  @InjectView(R.id.ll_result_1)
   private LinearLayout ll_result_1;
+  @InjectView(R.id.ll_result_2)
   private LinearLayout ll_result_2;
 
   private Registration postHandler;
+  @InjectExtra(value = "msg", optional = true)
+  private JsonObject msg;
 
   @Override
   public void onClick(View v) {
@@ -50,10 +61,7 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_ebook);
     this.initView();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(tags);
   }
@@ -61,8 +69,7 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
-    Bundle extras = intent.getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
+    setIntent(intent);
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(tags);
   }
@@ -108,15 +115,9 @@ public class EbookActivity extends BaseActivity implements OnClickListener {
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
-    // 后退 收藏 所屏
-    iv_act_ebook_back = (ImageView) findViewById(R.id.iv_act_ebook_back);
-    iv_act_ebook_coll = (ImageView) findViewById(R.id.iv_act_ebook_coll);
-    iv_act_ebook_loc = (ImageView) findViewById(R.id.iv_act_ebook_loc);
     iv_act_ebook_back.setOnClickListener(this);
     iv_act_ebook_coll.setOnClickListener(this);
     iv_act_ebook_loc.setOnClickListener(this);
-    ll_result_1 = (LinearLayout) findViewById(R.id.ll_result_1);
-    ll_result_2 = (LinearLayout) findViewById(R.id.ll_result_2);
   }
 
   /**

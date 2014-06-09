@@ -12,15 +12,17 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_flash)
 public class FlashPlayerActivity extends BaseActivity {
+  @InjectView(R.id.flash)
   private FlashView flash;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_flash);
-    flash = (FlashView) findViewById(R.id.flash);
     // 检测flash插件是否存在
     if (checkinstallornotadobeflashapk()) {
       flashPlay(getIntent());

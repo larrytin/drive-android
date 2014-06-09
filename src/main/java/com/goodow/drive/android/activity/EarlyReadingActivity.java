@@ -22,7 +22,11 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_earlyreading)
 public class EarlyReadingActivity extends BaseActivity implements OnClickListener {
   private class ResultAdapter extends BaseAdapter {
     private JsonArray attachments = null;
@@ -87,21 +91,28 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
   }
 
   // 后退收藏锁屏
-  private ImageView iv_act_ebook_back = null;
-
-  private ImageView iv_act_ebook_coll = null;
-  private ImageView iv_act_ebook_loc = null;
+  @InjectView(R.id.iv_act_ebook_back)
+  private ImageView iv_act_ebook_back;
+  @InjectView(R.id.iv_act_ebook_coll)
+  private ImageView iv_act_ebook_coll;
+  @InjectView(R.id.iv_act_ebook_loc)
+  private ImageView iv_act_ebook_loc;
 
   private final int numPerPage = 8;// 查询结果每页显示8条数据
-  private GridView vp_act_ebook_result = null;
+  @InjectView(R.id.vp_act_ebook_result)
+  private GridView vp_act_ebook_result;
   // 翻页按钮
-  private ImageView rl_act_ebook_result_pre = null;
-  private ImageView rl_act_ebook_result_next = null;
+  @InjectView(R.id.rl_act_ebook_result_pre)
+  private ImageView rl_act_ebook_result_pre;
+  @InjectView(R.id.rl_act_ebook_result_next)
+  private ImageView rl_act_ebook_result_next;
   // 查询进度
+  @InjectView(R.id.pb_act_result_progress)
   private ProgressBar pb_act_result_progress;
 
   // 页码状态
-  private LinearLayout ll_act_ebook_result_bar = null;
+  @InjectView(R.id.ll_act_ebook_result_bar)
+  private LinearLayout ll_act_ebook_result_bar;
 
   private Registration postHandler;
 
@@ -112,6 +123,9 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
   private int totalAttachmentNum;// 结果总数
+
+  @InjectExtra(value = "msg", optional = true)
+  private JsonObject msg;
 
   @Override
   public void onClick(View v) {
@@ -141,10 +155,7 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_earlyreading);
     this.initView();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
   }
@@ -152,8 +163,7 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
-    Bundle extras = intent.getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
+    setIntent(intent);
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
   }
@@ -265,30 +275,13 @@ public class EarlyReadingActivity extends BaseActivity implements OnClickListene
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
-    // 后退 收藏 所屏
-    this.iv_act_ebook_back = (ImageView) this.findViewById(R.id.iv_act_ebook_back);
-    this.iv_act_ebook_coll = (ImageView) this.findViewById(R.id.iv_act_ebook_coll);
-    this.iv_act_ebook_loc = (ImageView) this.findViewById(R.id.iv_act_ebook_loc);
     this.iv_act_ebook_back.setOnClickListener(this);
     this.iv_act_ebook_coll.setOnClickListener(this);
     this.iv_act_ebook_loc.setOnClickListener(this);
-
-    // 初始化查询结果视图
-    this.vp_act_ebook_result = (GridView) this.findViewById(R.id.vp_act_ebook_result);
     resultAdapter = new ResultAdapter();
     this.vp_act_ebook_result.setAdapter(resultAdapter);
-
-    // 初始化查询结果控制
-    this.rl_act_ebook_result_pre = (ImageView) this.findViewById(R.id.rl_act_ebook_result_pre);
-    this.rl_act_ebook_result_next = (ImageView) this.findViewById(R.id.rl_act_ebook_result_next);
     this.rl_act_ebook_result_pre.setOnClickListener(this);
     this.rl_act_ebook_result_next.setOnClickListener(this);
-
-    // 初始化结果数量视图
-    this.ll_act_ebook_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_ebook_result_bar);
-
-    // 查询进度
-    pb_act_result_progress = (ProgressBar) findViewById(R.id.pb_act_result_progress);
   }
 
   private void onPageSelected(int position) {

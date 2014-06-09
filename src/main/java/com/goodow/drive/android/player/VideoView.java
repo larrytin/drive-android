@@ -31,7 +31,7 @@ class VideoView extends SurfaceView implements MediaPlayerControl {
 
   private int mDuration;// 持续时间
   private SurfaceHolder mSurfaceHolder = null;//
-  private MediaPlayer mMediaPlayer = null;// 媒体播放器
+  private MediaPlayer mMediaPlayer;// 媒体播放器
   private boolean mIsPrepared;// 是否候缓好的
   private int mVideoWidth;// 视频宽度
   private int mVideoHeight;// 视频高度

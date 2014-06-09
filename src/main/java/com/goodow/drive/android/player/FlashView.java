@@ -36,6 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Toast;
+import roboguice.inject.InjectView;
 
 @SuppressLint("JavascriptInterface")
 class FlashView extends RelativeLayout implements OnTouchListener {
@@ -55,26 +56,32 @@ class FlashView extends RelativeLayout implements OnTouchListener {
   @Inject
   Bus bus;
   private String flashPath;
+  @InjectView(R.id.flash_web_view)
   private WebView flash_view;
+  @InjectView(R.id.flash_play_progress)
   private ProgressBar play_progress;
+  @InjectView(R.id.flash_sound_progress)
   private SeekBar sound_progress;
+  @InjectView(R.id.flash_button_play)
   private ImageButton play;
-
+  @InjectView(R.id.flash_button_stop)
   private ImageButton stop;
+  @InjectView(R.id.flash_button_replay)
   private ImageButton replay;
   private int width;
 
   private int height;
   private boolean playing;
-
+  @Inject
   private Handler handler;
-
+  @Inject
   private AudioManager audioManager;
-
+  @InjectView(R.id.flash_back_layout)
   private LinearLayout mControlLinearLayout;
   private float startY;
 
   private final Context mContext;
+  @Inject
   private FlashViewBroadCastReceiver flashViewBroadCastReceiver;
 
   Runnable update_progress = new Runnable() {
@@ -113,13 +120,11 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     LayoutInflater inflater =
         (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     inflater.inflate(R.layout.flash_view, FlashView.this);
-    mControlLinearLayout = (LinearLayout) findViewById(R.id.flash_back_layout);
     // 获取屏幕的宽和高
     width = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getWidth();
     height = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getHeight();
     // bottom_height = BitmapFactory.decodeResource(getResources(), R.drawable.play).getHeight();
     // 加载播放flash控件
-    flash_view = (WebView) findViewById(R.id.flash_web_view);
     flash_view.getSettings().setJavaScriptEnabled(true);
     flash_view.getSettings().setPluginState(PluginState.ON);
     flash_view.setWebChromeClient(new WebChromeClient());
@@ -133,10 +138,8 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     flash_view.setOnTouchListener(this);
 
     // 加载播放进度条
-    play_progress = (ProgressBar) findViewById(R.id.flash_play_progress);
     play_progress.getLayoutParams().width = width / 4;
     // 加载播放按钮
-    play = (ImageButton) findViewById(R.id.flash_button_play);
     play.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -144,7 +147,6 @@ class FlashView extends RelativeLayout implements OnTouchListener {
       }
     });
 
-    replay = (ImageButton) findViewById(R.id.flash_button_replay);
     // 重新播放
     replay.setOnClickListener(new OnClickListener() {
       @Override
@@ -152,10 +154,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
         bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("play", 3), null);
       }
     });
-    flashViewBroadCastReceiver = new FlashViewBroadCastReceiver();
     // 加载声音进度条
-    sound_progress = (SeekBar) findViewById(R.id.flash_sound_progress);
-    audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
     sound_progress.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
     sound_progress.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
     sound_progress.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -179,15 +178,12 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     });
 
     // 加载停止按钮
-    stop = (ImageButton) findViewById(R.id.flash_button_stop);
     stop.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         bus.sendLocal(Constant.ADDR_PLAYER, Json.createObject().set("play", 0), null);
       }
     });
-    // 实时更新进度
-    handler = new Handler();
   }
 
   public void onDestory() {

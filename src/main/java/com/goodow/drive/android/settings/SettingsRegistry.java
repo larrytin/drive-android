@@ -15,6 +15,8 @@ import com.goodow.realtime.core.Platform;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import com.google.inject.Inject;
+
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.mapapi.utils.DistanceUtil;
@@ -48,17 +50,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class SettingsRegistry {
-  private final Context ctx;
-  private final Bus bus;
-  private SharedPreferences authSp = null;
-
-  public SettingsRegistry(Bus bus, Context ctx) {
-    this.bus = bus;
-    this.ctx = ctx;
-    authSp = ctx.getSharedPreferences(HomeActivity.AUTH, Context.MODE_PRIVATE);
-  }
+  @Inject
+  private Context ctx;
+  @Inject
+  private Bus bus;
+  private SharedPreferences authSp;
 
   public void subscribe() {
+    authSp = ctx.getSharedPreferences(HomeActivity.AUTH, Context.MODE_PRIVATE);
     bus.registerLocalHandler(Constant.ADDR_AUDIO, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
@@ -286,6 +285,7 @@ public class SettingsRegistry {
         if (msg.has("content")) {
           Intent intent = new Intent(ctx, NotificationActivity.class);
           intent.putExtra("msg", msg);
+
           ctx.startActivity(intent);
         }
       }

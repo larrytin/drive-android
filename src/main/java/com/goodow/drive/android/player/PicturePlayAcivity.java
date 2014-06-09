@@ -33,8 +33,12 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_picture)
 public class PicturePlayAcivity extends BaseActivity implements OnTouchListener {
+  @InjectView(R.id.actvity_picture)
   private ImageView mImageView;
   private Bitmap mBitmap;
   private Matrix translateMatrix;
@@ -47,14 +51,17 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   float mLastTouchX;
   float mLastTouchY;
   private String path;
-
+  @InjectView(R.id.iv_common_back)
   private ImageView iv_common_back = null;
 
   // 工具箱
+  @InjectView(R.id.ll_include_picture_tools)
   private LinearLayout ll_include_picture_tools = null;
   private boolean isDrawing = false;
   private static final int MESSAGE_CODE_DISSMISS_BAR = 0;
+  @InjectView(R.id.iv_include_picture_pen)
   private ImageView iv_include_picture_pen = null;
+  @InjectView(R.id.iv_include_picture_print)
   private ImageView iv_include_picture_print;
   // 延迟时间
   private final static int DELAYTIME = 7 * 1000;
@@ -212,7 +219,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_picture);
     JsonObject jsonObject = (JsonObject) getIntent().getExtras().getSerializable("msg");
     path = jsonObject.getString("path");
     initView();
@@ -391,9 +397,6 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   }
 
   private void initView() {
-
-    mImageView = (ImageView) this.findViewById(R.id.actvity_picture);
-    iv_common_back = (ImageView) findViewById(R.id.iv_common_back);
     mImageView.setOnTouchListener(this);
     // 返回键
     iv_common_back.setOnClickListener(new View.OnClickListener() {
@@ -410,11 +413,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
         saveOnDatabases();
       }
     });
-    this.ll_include_picture_tools = (LinearLayout) this.findViewById(R.id.ll_include_picture_tools);
-    this.iv_include_picture_pen =
-        (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_pen);
-    iv_include_picture_print =
-        (ImageView) this.ll_include_picture_tools.findViewById(R.id.iv_include_picture_print);
+
     PackageInfo packageInfo;
     try {
       packageInfo = this.getPackageManager().getPackageInfo("com.dynamixsoftware.printhand", 0);

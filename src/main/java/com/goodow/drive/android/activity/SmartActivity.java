@@ -9,6 +9,7 @@ import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
+import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,10 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
+
+@ContentView(R.layout.activity_smart)
 public class SmartActivity extends BaseActivity implements OnClickListener, OnPageChangeListener {
 
   /**
@@ -79,36 +84,46 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   private String currentTerm = Constant.LABEL_TERM_SEMESTER0;
 
   // 后退收藏锁屏
-  private ImageView iv_act_smart_back = null;
-  private ImageView iv_act_smart_coll = null;
-  private ImageView iv_act_smart_loc = null;
+  @InjectView(R.id.iv_act_smart_back)
+  private ImageView iv_act_smart_back;
+  @InjectView(R.id.iv_act_smart_coll)
+  private ImageView iv_act_smart_coll;
+  @InjectView(R.id.iv_act_smart_loc)
+  private ImageView iv_act_smart_loc;
 
   // 年级
-  private LinearLayout ll_act_smart_grade = null;
+  @InjectView(R.id.ll_act_smart_grade)
+  private LinearLayout ll_act_smart_grade;
   // 学期
-  private LinearLayout ll_act_smart_term = null;
+  @InjectView(R.id.ll_act_smart_term)
+  private LinearLayout ll_act_smart_term;
 
   private final int numPerPage = 10;// 查询结果每页显示10条数据
   private final int numPerLine = 5;// 每条显示5个数据
 
-  private ViewPager vp_act_smart_result = null;
+  @InjectView(R.id.vp_act_smart_result)
+  private ViewPager vp_act_smart_result;
   private CommonPageAdapter myPageAdapter = null;
   // 翻页按钮
-  private ImageView rl_act_smart_result_pre = null;
-  private ImageView rl_act_smart_result_next = null;
+  @InjectView(R.id.rl_act_smart_result_pre)
+  private ImageView rl_act_smart_result_pre;
+  @InjectView(R.id.rl_act_smart_result_next)
+  private ImageView rl_act_smart_result_next;
   // 页码状态
-  private LinearLayout ll_act_smart_result_bar = null;
+  @InjectView(R.id.ll_act_smart_result_bar)
+  private LinearLayout ll_act_smart_result_bar;
   private int totalPageNum = 0;
 
   // 数据集
   private final ArrayList<View> nameViews = new ArrayList<View>();
   private final static String SHAREDNAME = "smartHistory";// 配置文件的名称
-  private SharedPreferences sharedPreferences = null;
+  private SharedPreferences sharedPreferences;
 
   private Registration postHandler;
   private Registration controlHandler;
   private Registration refreshHandler;
-  private LayoutInflater inflater = null;
+  @Inject
+  private LayoutInflater inflater;
 
   @Override
   public void onClick(View v) {
@@ -172,7 +187,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_smart);
     this.readHistoryData();
     this.initView();
     Bundle extras = this.getIntent().getExtras();
@@ -426,17 +440,12 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
-    this.inflater = this.getLayoutInflater();
     // 后退 收藏 所屏
-    this.iv_act_smart_back = (ImageView) this.findViewById(R.id.iv_act_smart_back);
-    this.iv_act_smart_coll = (ImageView) this.findViewById(R.id.iv_act_smart_coll);
-    this.iv_act_smart_loc = (ImageView) this.findViewById(R.id.iv_act_smart_loc);
     this.iv_act_smart_back.setOnClickListener(this);
     this.iv_act_smart_coll.setOnClickListener(this);
     this.iv_act_smart_loc.setOnClickListener(this);
 
     // 初始化年级
-    this.ll_act_smart_grade = (LinearLayout) this.findViewById(R.id.ll_act_smart_grade);
     int gradeChildren = this.gradeNames.length;
     for (int i = 0; i < gradeChildren; i++) {
       TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
@@ -449,7 +458,6 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
       this.ll_act_smart_grade.addView(child);
     }
     // 初始化学期
-    this.ll_act_smart_term = (LinearLayout) this.findViewById(R.id.ll_act_smart_term);
     int termChildren = this.termNames.length;
     for (int i = 0; i < termChildren; i++) {
       TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
@@ -462,17 +470,13 @@ public class SmartActivity extends BaseActivity implements OnClickListener, OnPa
       this.ll_act_smart_term.addView(child);
     }
     // 初始化查询结果视图
-    this.vp_act_smart_result = (ViewPager) this.findViewById(R.id.vp_act_smart_result);
     this.vp_act_smart_result.setOnPageChangeListener(this);
 
     // 初始化查询结果控制
-    this.rl_act_smart_result_pre = (ImageView) this.findViewById(R.id.rl_act_smart_result_pre);
-    this.rl_act_smart_result_next = (ImageView) this.findViewById(R.id.rl_act_smart_result_next);
     this.rl_act_smart_result_pre.setOnClickListener(this);
     this.rl_act_smart_result_next.setOnClickListener(this);
 
     // 初始化结果数量视图
-    this.ll_act_smart_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_smart_result_bar);
 
   }
 

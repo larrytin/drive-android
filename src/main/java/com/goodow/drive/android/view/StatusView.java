@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import roboguice.inject.InjectView;
 
 /**
  * 定义状态栏
@@ -39,8 +40,11 @@ public class StatusView extends LinearLayout {
   private String netType = "";
   private int currentImageId = R.drawable.status_network_null;
   private String currentTime = "";
+  @InjectView(R.id.tv_status_netTypeView)
   private TextView netTypeView = null;
+  @InjectView(R.id.iv_status_netStatusView)
   private ImageView netStatusView = null;
+  @InjectView(R.id.tv_status_currentTimeView)
   private TextView currentTimeView = null;
   @Inject
   private NetWorkListener settingReceiver;
@@ -107,9 +111,6 @@ public class StatusView extends LinearLayout {
     super(context, attrs);
     this.context = context;
     View.inflate(context, R.layout.include_status, this);
-    this.netTypeView = (TextView) findViewById(R.id.tv_status_netTypeView);
-    this.netStatusView = (ImageView) findViewById(R.id.iv_status_netStatusView);
-    this.currentTimeView = (TextView) findViewById(R.id.tv_status_currentTimeView);
     this.currentTime = this.getSystemTime();
     update();
   }

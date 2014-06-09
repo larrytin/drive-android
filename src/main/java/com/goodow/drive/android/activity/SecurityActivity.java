@@ -17,17 +17,25 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
+@ContentView(R.layout.activity_security)
 public class SecurityActivity extends BaseActivity implements OnClickListener {
 
   // 后退收藏锁屏
+  @InjectView(R.id.iv_act_security_back)
   private ImageView iv_act_security_back;
+  @InjectView(R.id.iv_act_security_coll)
   private ImageView iv_act_security_coll;
+  @InjectView(R.id.iv_act_security_loc)
   private ImageView iv_act_security_loc;
 
   private Registration postHandler;
 
   // 教师用书 幼儿用书
+  @InjectView(R.id.ll_act_security_teacher)
   private LinearLayout ll_act_security_teacher;
+  @InjectView(R.id.ll_act_security_children)
   private LinearLayout ll_act_security_children;
 
   @Override
@@ -50,7 +58,6 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_security);
     this.initView();
     Bundle extras = this.getIntent().getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
@@ -109,15 +116,10 @@ public class SecurityActivity extends BaseActivity implements OnClickListener {
    */
   private void initView() {
     // 后退 收藏 所屏
-    iv_act_security_back = (ImageView) findViewById(R.id.iv_act_security_back);
-    iv_act_security_coll = (ImageView) findViewById(R.id.iv_act_security_coll);
-    iv_act_security_loc = (ImageView) findViewById(R.id.iv_act_security_loc);
     iv_act_security_back.setOnClickListener(this);
     iv_act_security_coll.setOnClickListener(this);
     iv_act_security_loc.setOnClickListener(this);
     // 教师用书 幼儿用书
-    ll_act_security_teacher = (LinearLayout) findViewById(R.id.ll_act_security_teacher);
-    ll_act_security_children = (LinearLayout) findViewById(R.id.ll_act_security_children);
     for (int i = 0; i < ll_act_security_teacher.getChildCount(); i++) {
       ll_act_security_teacher.getChildAt(i).setOnClickListener(new OnClickListener() {
         @Override

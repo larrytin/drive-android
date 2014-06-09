@@ -9,6 +9,8 @@ import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import com.google.inject.Inject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -48,6 +50,8 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
 /**
  * @title: VideoActivity.java
@@ -58,6 +62,7 @@ import android.widget.Toast;
  * @updateDate 2013 2013-12-4 上午11:32:28
  * @version V1.0
  */
+@ContentView(R.layout.video_activity_media)
 public class VideoActivity extends BaseActivity implements OnTouchListener {
   private class SoundBroadCastReceiver extends BroadcastReceiver {
     @Override
@@ -100,6 +105,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   private ImageView iv_act_picture_eraser;// 橡皮擦
   private boolean isDrawing = false;
   private boolean prePlaying;// 进入画笔状态前是否正在播放
+  @Inject
   private AudioManager mAudioManager;
   private SoundBroadCastReceiver soundBroadCastReceiver;
   private static int screenWidth = 0;// 屏幕宽度
@@ -131,7 +137,8 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
 
   private final static int INIT_PASUE = 1000;
 
-  private ImageView backImageView = null;
+  @InjectView(R.id.iv_act_favour_back)
+  private ImageView backImageView;
 
   private float currentScale = 1;
   private final Handler subHandler = new Handler() {
@@ -210,8 +217,6 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.video_activity_media);
-    backImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
     backImageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -220,7 +225,6 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
       }
     });
     this.getScreenSize();// 获得屏幕尺寸大小
-    mAudioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
     soundBroadCastReceiver = new SoundBroadCastReceiver();
     this.controlView = getLayoutInflater().inflate(R.layout.video_media_controler, null);
     this.controlerWindow = new PopupWindow(this.controlView);

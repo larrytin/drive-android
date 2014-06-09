@@ -24,7 +24,9 @@ public class NotificationActivity extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    contentTextView.setText(mJsonObject.getString("content"));
+    if(mJsonObject != null) {
+      contentTextView.setText(mJsonObject.getString("content"));
+    }
     chooseButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {

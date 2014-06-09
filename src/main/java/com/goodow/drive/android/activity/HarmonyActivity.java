@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -30,7 +31,11 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_harmony)
 public class HarmonyActivity extends BaseActivity implements OnClickListener {
 
   /**
@@ -170,27 +175,38 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   private String currentTerm = Constant.LABEL_TERM_SEMESTER0;
   private String currenTopic = Constant.DOMIAN_HEALTH;
   // 后退收藏锁屏
-  private ImageView iv_act_harmony_back = null;
-  private ImageView iv_act_harmony_coll = null;
-  private ImageView iv_act_harmony_loc = null;
+  @InjectView(R.id.iv_act_harmony_back)
+  private ImageView iv_act_harmony_back;
+  @InjectView(R.id.iv_act_harmony_coll)
+  private ImageView iv_act_harmony_coll;
+  @InjectView(R.id.iv_act_harmony_loc)
+  private ImageView iv_act_harmony_loc;
   // 年级
-  private LinearLayout ll_act_harmony_grade = null;
+  @InjectView(R.id.ll_act_harmony_grade)
+  private LinearLayout ll_act_harmony_grade;
   // 学期
-  private LinearLayout ll_act_harmony_term = null;
+  @InjectView(R.id.ll_act_harmony_term)
+  private LinearLayout ll_act_harmony_term;
   // 分类
-  private LinearLayout ll_act_harmony_class = null;
+  @InjectView(R.id.ll_act_harmony_class)
+  private LinearLayout ll_act_harmony_class;
   private final int numPerPage = 18;// 查询结果每页显示18条数据
-  private GridView vp_act_harmony_result = null;
+  @InjectView(R.id.vp_act_harmony_result)
+  private GridView vp_act_harmony_result;
   // 翻页按钮
-  private ImageView rl_act_harmony_result_pre = null;
-  private ImageView rl_act_harmony_result_next = null;
+  @InjectView(R.id.rl_act_harmony_result_pre)
+  private ImageView rl_act_harmony_result_pre;
+  @InjectView(R.id.rl_act_harmony_result_next)
+  private ImageView rl_act_harmony_result_next;
   // 页码状态
-  private LinearLayout ll_act_harmony_result_bar = null;
+  @InjectView(R.id.ll_act_harmony_result_bar)
+  private LinearLayout ll_act_harmony_result_bar;
   // 查询进度
+  @InjectView(R.id.pb_act_result_progress)
   private ProgressBar pb_act_result_progress;
   // 数据集
   private final static String SHAREDNAME = "harmonyHistory";// 配置文件的名称
-  private SharedPreferences sharedPreferences = null;
+  private SharedPreferences sharedPreferences;
   private Registration postHandler;
   private Registration controlHandler;
   private Registration refreshHandler;
@@ -200,6 +216,9 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
   private int totalAttachmentNum;// 结果总数
+
+  @InjectExtra(value = "msg", optional = true)
+  private JsonObject msg;
 
   @Override
   public void onClick(View v) {
@@ -229,11 +248,8 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_harmony);
     this.readHistoryData();
     this.initView();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
     this.echoGrade();
@@ -247,8 +263,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
-    Bundle extras = intent.getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
+    setIntent(intent);
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
     this.echoGrade();
@@ -450,15 +465,9 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   private void initView() {
     this.inflater = this.getLayoutInflater();
     // 后退 收藏 所屏
-    this.iv_act_harmony_back = (ImageView) this.findViewById(R.id.iv_act_harmony_back);
-    this.iv_act_harmony_coll = (ImageView) this.findViewById(R.id.iv_act_harmony_coll);
-    this.iv_act_harmony_loc = (ImageView) this.findViewById(R.id.iv_act_harmony_loc);
     this.iv_act_harmony_back.setOnClickListener(this);
     this.iv_act_harmony_coll.setOnClickListener(this);
     this.iv_act_harmony_loc.setOnClickListener(this);
-
-    // 初始化年级
-    this.ll_act_harmony_grade = (LinearLayout) this.findViewById(R.id.ll_act_harmony_grade);
     int gradeChildren = this.gradeNames.length;
     LayoutParams longWidthParams =
         new LayoutParams(getResources().getDimensionPixelSize(R.dimen.commen_grade_width_long),
@@ -482,9 +491,6 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
       child.setText(this.gradeNames[i]);
       this.ll_act_harmony_grade.addView(child);
     }
-
-    // 初始化学期
-    this.ll_act_harmony_term = (LinearLayout) this.findViewById(R.id.ll_act_harmony_term);
     int termChildren = this.termNames.length;
     for (int i = 0; i < termChildren; i++) {
       TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
@@ -498,8 +504,6 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
       this.ll_act_harmony_term.addView(child);
     }
 
-    // 初始化分类
-    this.ll_act_harmony_class = (LinearLayout) this.findViewById(R.id.ll_act_harmony_class);
     int topicChildren = this.topicNames.length;
     longWidthParams =
         new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width_long),
@@ -538,24 +542,10 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
       child.setText(this.topicNames[i]);
       this.ll_act_harmony_class.addView(child);
     }
-
-    // 初始化查询结果视图
-    this.vp_act_harmony_result = (GridView) this.findViewById(R.id.vp_act_harmony_result);
     resultAdapter = new ResultAdapter();
     this.vp_act_harmony_result.setAdapter(resultAdapter);
-    // 初始化查询结果控制
-    this.rl_act_harmony_result_pre = (ImageView) this.findViewById(R.id.rl_act_harmony_result_pre);
-    this.rl_act_harmony_result_next =
-        (ImageView) this.findViewById(R.id.rl_act_harmony_result_next);
     this.rl_act_harmony_result_pre.setOnClickListener(this);
     this.rl_act_harmony_result_next.setOnClickListener(this);
-
-    // 初始化结果数量视图
-    this.ll_act_harmony_result_bar =
-        (LinearLayout) this.findViewById(R.id.ll_act_harmony_result_bar);
-    // 查询进度
-    pb_act_result_progress = (ProgressBar) findViewById(R.id.pb_act_result_progress);
-
   }
 
   private void onPageSelected(int position) {
@@ -599,7 +589,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
    * 查询历史数据
    */
   private void readHistoryData() {
-    this.sharedPreferences = this.getSharedPreferences(SHAREDNAME, MODE_PRIVATE);
+    sharedPreferences = getSharedPreferences(SHAREDNAME, Context.MODE_PRIVATE);
     this.currentGrade = this.sharedPreferences.getString(Constant.GRADE, this.currentGrade);
     this.currentTerm = this.sharedPreferences.getString(Constant.TERM, this.currentTerm);
     this.currenTopic = this.sharedPreferences.getString(Constant.TOPIC, this.currenTopic);

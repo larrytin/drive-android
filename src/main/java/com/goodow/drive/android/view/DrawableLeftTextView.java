@@ -7,9 +7,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import roboguice.inject.InjectView;
 
 public class DrawableLeftTextView extends LinearLayout {
-
+  @InjectView(R.id.tv_subtag)
   private TextView mTextView;
 
   public DrawableLeftTextView(Context context) {
@@ -46,7 +47,6 @@ public class DrawableLeftTextView extends LinearLayout {
 
   private void initView(Context context) {
     View.inflate(context, R.layout.soruce_item_sub_tag, this);
-    mTextView = (TextView) findViewById(R.id.tv_subtag);
     mTextView.setTextColor(0xff9a150b);
     mTextView.setTextSize(16);
   }

@@ -16,18 +16,29 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_setting)
 public class SettingActivity extends BaseActivity implements OnClickListener {
+  @InjectView(R.id.bt_setting_about)
   private Button bt_setting_about;
+  @InjectView(R.id.bt_setting_reboot)
   private Button bt_setting_reboot;
+  @InjectView(R.id.bt_setting_screen_offset)
   private Button bt_setting_screen_offset;
+  @InjectView(R.id.bt_setting_wifi)
   private Button bt_setting_wifi;
+  @InjectView(R.id.bt_setting_reset)
   private Button bt_setting_reset;
+  @InjectView(R.id.bt_setting_register)
   private Button bt_setting_register;
+  @InjectView(R.id.iv_common_back)
   private ImageView iv_common_back;
-  private View iv_hidden;
   private final long[] mSetting = new long[5];
-  private SharedPreferences authSp = null;
+  private SharedPreferences authSp;
+  @InjectView(R.id.iv_hidden)
+  private View iv_hidden;
 
   @Override
   public void onClick(View view) {
@@ -91,8 +102,6 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_setting);
-    initView();
     setListener();
     authSp = getSharedPreferences(HomeActivity.AUTH, Context.MODE_PRIVATE);
     if (authSp.getBoolean("reset", false)) {
@@ -103,25 +112,14 @@ public class SettingActivity extends BaseActivity implements OnClickListener {
     }
   }
 
-  private void initView() {
-    bt_setting_about = (Button) findViewById(R.id.bt_setting_about);
-    bt_setting_reboot = (Button) findViewById(R.id.bt_setting_reboot);
-    bt_setting_screen_offset = (Button) findViewById(R.id.bt_setting_screen_offset);
-    bt_setting_wifi = (Button) findViewById(R.id.bt_setting_wifi);
-    iv_common_back = (ImageView) findViewById(R.id.iv_common_back);
-    iv_hidden = findViewById(R.id.iv_hidden);
-    bt_setting_reset = (Button) findViewById(R.id.bt_setting_reset);
-    bt_setting_register = (Button) findViewById(R.id.bt_setting_register);
-  }
-
   private void setListener() {
     bt_setting_about.setOnClickListener(this);
     bt_setting_reboot.setOnClickListener(this);
     bt_setting_screen_offset.setOnClickListener(this);
     bt_setting_wifi.setOnClickListener(this);
     iv_common_back.setOnClickListener(this);
-    iv_hidden.setOnClickListener(this);
     bt_setting_reset.setOnClickListener(this);
     bt_setting_register.setOnClickListener(this);
+    iv_hidden.setOnClickListener(this);
   }
 }

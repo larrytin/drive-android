@@ -90,6 +90,7 @@ public class NetWorkListener {
 
   @Inject
   private Provider<Context> context;
+  @Inject
   private TelephonyManager tel = null;
   private MyPhoneStateListener myListener = null;
   private float g3Strength = 0;
@@ -120,8 +121,6 @@ public class NetWorkListener {
     intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
     intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     intentFilter.addAction(WifiManager.RSSI_CHANGED_ACTION);
-
-    this.tel = (TelephonyManager) context.get().getSystemService(Context.TELEPHONY_SERVICE);
     this.myListener = new MyPhoneStateListener();
     this.tel.listen(myListener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
 
@@ -138,7 +137,7 @@ public class NetWorkListener {
             JsonObject info =
                 Json.createObject().set("action", "post").set(Constant.TYPE, getType()).set(
                     "strength", getStrength());
-            message.reply(info,null);
+            message.reply(info, null);
           }
         });
   }

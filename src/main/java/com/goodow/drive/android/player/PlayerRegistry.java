@@ -8,6 +8,8 @@ import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.JsonObject;
 
+import com.google.inject.Inject;
+
 import com.artifex.mupdf.MuPDFActivity;
 
 import android.content.Context;
@@ -15,13 +17,10 @@ import android.content.Intent;
 import android.widget.Toast;
 
 public class PlayerRegistry {
-  private final Context ctx;
-  private final Bus bus;
-
-  public PlayerRegistry(Bus bus, Context ctx) {
-    this.bus = bus;
-    this.ctx = ctx;
-  }
+  @Inject
+  private Context ctx;
+  @Inject
+  private Bus bus;
 
   public void subscribe() {
     bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {

@@ -42,6 +42,8 @@ public class BaseActivity extends RoboActivity {
   private Registration brightnessHandler;
   public SharedPreferences usagePreferences;
   public static final String USAGE_STATISTIC = "USAGE_STATISTIC";
+  @Inject
+  PowerManager pm;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -137,8 +139,6 @@ public class BaseActivity extends RoboActivity {
                 }
 
               } else if (msg.getNumber("shutdown") == 2) { // 待机
-                PowerManager pm =
-                    (PowerManager) BaseActivity.this.getSystemService(Context.POWER_SERVICE);
                 pm.goToSleep(SystemClock.uptimeMillis());
                 // final Instrumentation instrumentation = new Instrumentation();
                 // new Thread(new Runnable() {

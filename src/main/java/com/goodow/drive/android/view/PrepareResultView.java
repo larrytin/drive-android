@@ -8,11 +8,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import roboguice.inject.InjectView;
 
 public class PrepareResultView extends RelativeLayout {
-
+  @InjectView(R.id.iv_prepare_left_eye)
   private ImageView iv_prepare_left_eye;
+  @InjectView(R.id.iv_prepare_right_eye)
   private ImageView iv_prepare_right_eye;
+  @InjectView(R.id.tv_prepare_tag)
   private TextView tv_prepare_tag;
 
   public PrepareResultView(Context context) {
@@ -89,9 +92,6 @@ public class PrepareResultView extends RelativeLayout {
 
   private void initView(Context context) {
     View.inflate(context, R.layout.result_prepare, this);
-    iv_prepare_left_eye = (ImageView) findViewById(R.id.iv_prepare_left_eye);
-    iv_prepare_right_eye = (ImageView) findViewById(R.id.iv_prepare_right_eye);
-    tv_prepare_tag = (TextView) findViewById(R.id.tv_prepare_tag);
   }
 
 }

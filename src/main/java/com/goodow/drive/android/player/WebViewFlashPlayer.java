@@ -22,10 +22,16 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
+import com.google.inject.Inject;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
+@ContentView(R.layout.actvity_flash_webview)
 public class WebViewFlashPlayer extends BaseActivity {
+  @InjectView(R.id.flash_webView_player)
   private WebView flashWebView;
+  @InjectView(R.id.iv_act_favour_back)
   private ImageView mImageView;
+  @InjectView(R.id.ll_act_flash_webview)
   private LinearLayout mLinearLayout;
 
   @Override
@@ -56,8 +62,6 @@ public class WebViewFlashPlayer extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.actvity_flash_webview);
-    mImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
     mImageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -66,8 +70,6 @@ public class WebViewFlashPlayer extends BaseActivity {
         saveOnDatabases();
       }
     });
-    flashWebView = (WebView) findViewById(R.id.flash_webView_player);
-    mLinearLayout = (LinearLayout) this.findViewById(R.id.ll_act_flash_webview);
     WebSettings mWebSettings = flashWebView.getSettings();
     mWebSettings.setPluginState(PluginState.ON);
     // 检测flash插件是否存在

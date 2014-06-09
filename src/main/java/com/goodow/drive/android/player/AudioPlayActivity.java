@@ -9,6 +9,8 @@ import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonObject;
 
+import com.google.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -29,7 +31,10 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_audio_player)
 public class AudioPlayActivity extends BaseActivity {
   private final class ButtonClickListener implements View.OnClickListener {
     @Override
@@ -76,23 +81,31 @@ public class AudioPlayActivity extends BaseActivity {
     }
   }
 
+  @Inject
   private AudioManager mAudioManager;
   private SoundBroadCastReceiver soundBroadCastReceiver;
-
   private ButtonClickListener listener;
+  @InjectView(R.id.play_Button)
   private ImageView playButton;
+  @InjectView(R.id.stop_Button)
   private ImageView stopButton;
   // 声音/静音
+  @InjectView(R.id.sound_Button)
   private ImageView sound_Button;
+  @InjectView(R.id.progress_sound_SeekBar)
   private SeekBar progress_sound_SeekBar;
-  private final MediaPlayer mediaPlayer = new MediaPlayer();
+  @Inject
+  private MediaPlayer mediaPlayer;
   private String audioFilePath;
   // 进度拖条
+  @InjectView(R.id.progress_rate_SeekBar)
   private SeekBar progressSeekBar = null;
   // 当前时间和总时间
+  @InjectView(R.id.curtime_and_total_time_TextView)
   private TextView curtimeAndTotalTime = null;
 
   // 音频文件的名字
+  @InjectView(R.id.audio_file_name_textView)
   private TextView audioFileNameTextView;
   private boolean isVisible = false;
   private final Handler handler = new Handler();
@@ -125,6 +138,7 @@ public class AudioPlayActivity extends BaseActivity {
     }
   };
 
+  @InjectView(R.id.iv_act_favour_back)
   private ImageView mImageView;
   private Registration controlHandler;
 
@@ -139,15 +153,10 @@ public class AudioPlayActivity extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_audio_player);
-    this.sound_Button = (ImageView) this.findViewById(R.id.sound_Button);
-    mAudioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
     soundBroadCastReceiver = new SoundBroadCastReceiver();
-    this.progress_sound_SeekBar = (SeekBar) this.findViewById(R.id.progress_sound_SeekBar);
     this.progress_sound_SeekBar.setMax(mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
     // 设置声音拖动事件
     this.progress_sound_SeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser) {
@@ -186,7 +195,6 @@ public class AudioPlayActivity extends BaseActivity {
           }
         });
 
-    mImageView = (ImageView) this.findViewById(R.id.iv_act_favour_back);
     mImageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -194,7 +202,6 @@ public class AudioPlayActivity extends BaseActivity {
         saveOnDatabases();
       }
     });
-    audioFileNameTextView = (TextView) this.findViewById(R.id.audio_file_name_textView);
     JsonObject msg = (JsonObject) getIntent().getExtras().getSerializable("msg");
     audioFilePath = msg.getString("path");
     File mFile = new File(audioFilePath);
@@ -202,15 +209,9 @@ public class AudioPlayActivity extends BaseActivity {
       String mp3Name = audioFilePath.substring(audioFilePath.lastIndexOf("/") + 1);
       audioFileNameTextView.setMaxEms(10);
       audioFileNameTextView.setText(mp3Name);
-
       listener = new ButtonClickListener();
-      playButton = (ImageView) this.findViewById(R.id.play_Button);
-      stopButton = (ImageView) this.findViewById(R.id.stop_Button);
       playButton.setOnClickListener(listener);
       stopButton.setOnClickListener(listener);
-
-      progressSeekBar = (SeekBar) findViewById(R.id.progress_rate_SeekBar);
-      curtimeAndTotalTime = (TextView) findViewById(R.id.curtime_and_total_time_TextView);
       progressSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

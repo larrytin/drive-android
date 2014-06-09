@@ -30,7 +30,11 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_favourite)
 public class FavouriteActivity extends BaseActivity implements OnClickListener {
 
   private class ResultAdapter extends BaseAdapter {
@@ -75,13 +79,20 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
     LABEL_RELATION.put("文件", LABEL_ATTACHMENT);
   }
   private String currentTopic = LABEL_TAG;
-  private ImageView iv_act_favour_back = null;
-  private FontTextView ft_act_favour_item_activity = null;
-  private FontTextView ft_act_favour_item_file = null;
-  private ImageView iv_act_favour_result_pre = null;
-  private ImageView iv_act_favour_result_next = null;
-  private GridView vp_act_favour_result = null;
-  private LinearLayout ll_act_favour_result_bar = null;
+  @InjectView(R.id.iv_act_favour_back)
+  private ImageView iv_act_favour_back;
+  @InjectView(R.id.ft_act_favour_item_activity)
+  private FontTextView ft_act_favour_item_activity;
+  @InjectView(R.id.ft_act_favour_item_file)
+  private FontTextView ft_act_favour_item_file;
+  @InjectView(R.id.iv_act_favour_result_pre)
+  private ImageView iv_act_favour_result_pre;
+  @InjectView(R.id.iv_act_favour_result_next)
+  private ImageView iv_act_favour_result_next;
+  @InjectView(R.id.vp_act_favour_result)
+  private GridView vp_act_favour_result;
+  @InjectView(R.id.ll_act_favour_result_bar)
+  private LinearLayout ll_act_favour_result_bar;
 
   private final int numPerPage = 10; // 查询结果每页显示10条数据
 
@@ -96,7 +107,11 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
   private int currentPageNum;// 当前结果页数
   private int totalAttachmentNum;// 结果总数
   // 查询进度
+  @InjectView(R.id.pb_act_result_progress)
   private ProgressBar pb_act_result_progress;
+
+  @InjectExtra(value = "msg", optional = true)
+  private JsonObject msg;
 
   @Override
   public void onClick(View v) {
@@ -146,10 +161,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_favourite);
     this.initView();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.buildTags(tags);
     this.sendQueryMessage(this.currentTopic);
@@ -159,8 +171,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
-    Bundle extras = intent.getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
+    setIntent(intent);
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.buildTags(tags);
     this.sendQueryMessage(this.currentTopic);
@@ -308,24 +319,14 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
    * 初始化View
    */
   private void initView() {
-    this.iv_act_favour_back = (ImageView) this.findViewById(R.id.iv_act_favour_back);
     this.iv_act_favour_back.setOnClickListener(this);
-    this.ft_act_favour_item_activity =
-        (FontTextView) this.findViewById(R.id.ft_act_favour_item_activity);
     this.ft_act_favour_item_activity.setOnClickListener(this);
     this.ft_act_favour_item_activity.setSelected(true);
-    this.ft_act_favour_item_file = (FontTextView) this.findViewById(R.id.ft_act_favour_item_file);
     this.ft_act_favour_item_file.setOnClickListener(this);
-    this.iv_act_favour_result_pre = (ImageView) this.findViewById(R.id.iv_act_favour_result_pre);
     this.iv_act_favour_result_pre.setOnClickListener(this);
-    this.iv_act_favour_result_next = (ImageView) this.findViewById(R.id.iv_act_favour_result_next);
     this.iv_act_favour_result_next.setOnClickListener(this);
-    this.vp_act_favour_result = (GridView) this.findViewById(R.id.vp_act_favour_result);
     resultAdapter = new ResultAdapter();
     this.vp_act_favour_result.setAdapter(resultAdapter);
-    this.ll_act_favour_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_favour_result_bar);
-    // 查询进度
-    pb_act_result_progress = (ProgressBar) findViewById(R.id.pb_act_result_progress);
   }
 
   /**

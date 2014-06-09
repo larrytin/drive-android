@@ -31,7 +31,11 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectView;
 
+@ContentView(R.layout.activity_case)
 public class CaseActivity extends BaseActivity implements OnClickListener {
 
   /**
@@ -163,30 +167,44 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
   private String currenTopic = Constant.DOMIAN_HEALTH;
 
   // 后退收藏锁屏
-  private ImageView iv_act_case_back = null;
-  private ImageView iv_act_case_coll = null;
-  private ImageView iv_act_case_loc = null;
+  @InjectView(R.id.iv_act_case_back)
+  private ImageView iv_act_case_back;
+  @InjectView(R.id.iv_act_case_coll)
+  private ImageView iv_act_case_coll;
+  @InjectView(R.id.iv_act_case_loc)
+  private ImageView iv_act_case_loc;
   // 年级
-  private LinearLayout ll_act_case_grade = null;
+  @InjectView(R.id.ll_act_case_grade)
+  private LinearLayout ll_act_case_grade;
   // 学期
-  private LinearLayout ll_act_case_term = null;
+  @InjectView(R.id.ll_act_case_term)
+  private LinearLayout ll_act_case_term;
 
   // 分类
-  private LinearLayout ll_act_case_class = null;
+  @InjectView(R.id.ll_act_case_class)
+  private LinearLayout ll_act_case_class;
   private final int numPerPage = 10;// 查询结果每页显示10条数据
-  private GridView vp_act_case_result = null;
+  @InjectView(R.id.vp_act_case_result)
+  private GridView vp_act_case_result;
 
   // 翻页按钮
-  private ImageView rl_act_case_result_pre = null;
-  private ImageView rl_act_case_result_next = null;
+  @InjectView(R.id.rl_act_case_result_pre)
+  private ImageView rl_act_case_result_pre;
+  @InjectView(R.id.rl_act_case_result_next)
+  private ImageView rl_act_case_result_next;
 
   // 页码状态
-  private LinearLayout ll_act_case_result_bar = null;
+  @InjectView(R.id.ll_act_case_result_bar)
+  private LinearLayout ll_act_case_result_bar;
   // 查询进度
+  @InjectView(R.id.pb_act_result_progress)
   private ProgressBar pb_act_result_progress;
 
   private final static String SHAREDNAME = "caseHistory";// 配置文件的名称
-  private SharedPreferences sharedPreferences = null;
+
+  private SharedPreferences sharedPreferences;
+  @InjectExtra(value = "msg", optional = true)
+  private JsonObject msg;
   private Registration postHandler;;
   private Registration controlHandler;
 
@@ -227,11 +245,8 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_case);
     this.readHistoryData();
     this.initView();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
     this.echoGrade();
@@ -245,8 +260,7 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
-    Bundle extras = intent.getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
+    setIntent(intent);
     JsonArray tags = msg.getArray(Constant.KEY_TAGS);
     this.sendQueryMessage(this.buildTags(tags));
     this.echoGrade();
@@ -447,17 +461,11 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
    */
   private void initView() {
     this.inflater = this.getLayoutInflater();
-    // 后退 收藏 所屏
-    this.iv_act_case_back = (ImageView) this.findViewById(R.id.iv_act_case_back);
-    this.iv_act_case_coll = (ImageView) this.findViewById(R.id.iv_act_case_coll);
-    this.iv_act_case_loc = (ImageView) this.findViewById(R.id.iv_act_case_loc);
     this.iv_act_case_back.setOnClickListener(this);
     this.iv_act_case_coll.setOnClickListener(this);
     this.iv_act_case_loc.setOnClickListener(this);
-
-    // 初始化年级
-    this.ll_act_case_grade = (LinearLayout) this.findViewById(R.id.ll_act_case_grade);
     int gradeChildren = this.gradeNames.length;
+
     LayoutParams longWidthParams =
         new LayoutParams(getResources().getDimensionPixelSize(R.dimen.commen_grade_width_long),
             getResources().getDimensionPixelSize(R.dimen.common_grade_height));
@@ -480,8 +488,6 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
       child.setText(this.gradeNames[i]);
       this.ll_act_case_grade.addView(child);
     }
-    // 初始化学期
-    this.ll_act_case_term = (LinearLayout) this.findViewById(R.id.ll_act_case_term);
     int termChildren = this.termNames.length;
     for (int i = 0; i < termChildren; i++) {
       TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
@@ -494,8 +500,6 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
       child.setText(this.termNames[i]);
       this.ll_act_case_term.addView(child);
     }
-    // 初始化分类
-    this.ll_act_case_class = (LinearLayout) this.findViewById(R.id.ll_act_case_class);
     int topicChildren = this.topicNames.length;
     longWidthParams =
         new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width_long),
@@ -534,24 +538,10 @@ public class CaseActivity extends BaseActivity implements OnClickListener {
       child.setText(this.topicNames[i]);
       this.ll_act_case_class.addView(child);
     }
-
-    // 初始化查询结果视图
-    this.vp_act_case_result = (GridView) this.findViewById(R.id.vp_act_case_result);
     resultAdapter = new ResultAdapter();
     this.vp_act_case_result.setAdapter(resultAdapter);
-
-    // 初始化查询结果控制
-    this.rl_act_case_result_pre = (ImageView) this.findViewById(R.id.rl_act_case_result_pre);
-    this.rl_act_case_result_next = (ImageView) this.findViewById(R.id.rl_act_case_result_next);
     this.rl_act_case_result_pre.setOnClickListener(this);
     this.rl_act_case_result_next.setOnClickListener(this);
-
-    // 初始化结果数量视图
-    this.ll_act_case_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_case_result_bar);
-
-    // 查询进度
-    pb_act_result_progress = (ProgressBar) findViewById(R.id.pb_act_result_progress);
-
   }
 
   private void onPageSelected(int position) {

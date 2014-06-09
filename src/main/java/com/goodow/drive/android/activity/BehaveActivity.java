@@ -27,6 +27,9 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
+import roboguice.inject.InjectExtra;
+import roboguice.inject.InjectView;
 
 /**
  * 活动详情
@@ -34,6 +37,7 @@ import android.widget.Toast;
  * @author dpw
  * 
  */
+@ContentView(R.layout.activity_behave)
 public class BehaveActivity extends BaseActivity implements OnClickListener {
 
   private class ResultAdapter extends BaseAdapter {
@@ -102,9 +106,12 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
     private TextView tv_common_result;
   }
 
-  private ImageView iv_act_behave_behaveite = null;
-  private ImageView iv_act_behave_back = null;
-  private TextView tv_act_behave_title = null;
+  @InjectView(R.id.iv_act_behave_behaveite)
+  private ImageView iv_act_behave_behaveite;
+  @InjectView(R.id.iv_act_behave_back)
+  private ImageView iv_act_behave_back;
+  @InjectView(R.id.tv_act_behave_title)
+  private TextView tv_act_behave_title;
 
   private String title = null;
 
@@ -112,14 +119,19 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   private JsonArray currentTags = null;
 
   private final int numPerPage = 14;// 查询结果每页显示12条数据
-  private GridView vp_act_behave_result = null;
+  @InjectView(R.id.vp_act_behave_result)
+  private GridView vp_act_behave_result;
   // 翻页按钮
-  private ImageView iv_act_behave_result_pre = null;
-  private ImageView iv_act_behave_result_next = null;
+  @InjectView(R.id.iv_act_behave_result_pre)
+  private ImageView iv_act_behave_result_pre;
+  @InjectView(R.id.iv_act_behave_result_next)
+  private ImageView iv_act_behave_result_next;
 
   // 页码状态
-  private LinearLayout ll_act_behave_result_bar = null;
+  @InjectView(R.id.ll_act_behave_result_bar)
+  private LinearLayout ll_act_behave_result_bar;
   // 查询进度
+  @InjectView(R.id.pb_act_result_progress)
   private ProgressBar pb_act_result_progress;
   private Registration postHandler;
   private Registration controlHandler;
@@ -127,6 +139,9 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
   private int totalAttachmentNum;// 结果总数
+
+  @InjectExtra(value = "msg", optional = true)
+  private JsonObject msg;
 
   @Override
   public void onClick(View v) {
@@ -191,10 +206,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_behave);
     this.initView();
-    Bundle extras = this.getIntent().getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
     if (msg.has(Constant.KEY_TITLE) && msg.getString(Constant.KEY_TITLE) != null) {
       this.title = msg.getString(Constant.KEY_TITLE);
       this.currentTags = msg.getArray(Constant.KEY_TAGS);
@@ -208,8 +220,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     this.cleanHistory();
-    Bundle extras = intent.getExtras();
-    JsonObject msg = (JsonObject) extras.get("msg");
+    setIntent(intent);
     if (msg.has(Constant.KEY_TITLE) && msg.getString(Constant.KEY_TITLE) != null) {
       this.title = msg.getString(Constant.KEY_TITLE);
       this.currentTags = msg.getArray(Constant.KEY_TAGS);
@@ -322,25 +333,13 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
    * 初始化View对象 设置点击事件 设置光标事件监听 添加到对应集合
    */
   private void initView() {
-    this.iv_act_behave_behaveite = (ImageView) this.findViewById(R.id.iv_act_behave_behaveite);
     this.iv_act_behave_behaveite.setOnClickListener(this);
-    this.iv_act_behave_back = (ImageView) this.findViewById(R.id.iv_act_behave_back);
     this.iv_act_behave_back.setOnClickListener(this);
-    this.tv_act_behave_title = (TextView) this.findViewById(R.id.tv_act_behave_title);
     this.tv_act_behave_title.setTypeface(FontUtil.getInstance(this).getTypeFace());
-
-    this.iv_act_behave_result_pre = (ImageView) this.findViewById(R.id.iv_act_behave_result_pre);
     this.iv_act_behave_result_pre.setOnClickListener(this);
-    this.iv_act_behave_result_next = (ImageView) this.findViewById(R.id.iv_act_behave_result_next);
     this.iv_act_behave_result_next.setOnClickListener(this);
-    this.vp_act_behave_result = (GridView) this.findViewById(R.id.vp_act_behave_result);
     resultAdapter = new ResultAdapter();
     vp_act_behave_result.setAdapter(resultAdapter);
-    this.ll_act_behave_result_bar = (LinearLayout) this.findViewById(R.id.ll_act_behave_result_bar);
-
-    // 查询进度
-    pb_act_result_progress = (ProgressBar) findViewById(R.id.pb_act_result_progress);
-
   }
 
   /**

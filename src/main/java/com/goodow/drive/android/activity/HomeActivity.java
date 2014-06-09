@@ -60,7 +60,9 @@ import android.view.WindowManager.LayoutParams;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import roboguice.inject.ContentView;
 
+@ContentView(R.layout.activity_home)
 public class HomeActivity extends BaseActivity {
   public static final String TAG = HomeActivity.class.getSimpleName();
   private static final String DBFILENAME = "sqlite.dump";
@@ -71,11 +73,12 @@ public class HomeActivity extends BaseActivity {
   private Registration netWorkHandlerReg;
 
   public static final String AUTH = "AuthImformation";
-  private SharedPreferences authSp = null;
+  private SharedPreferences authSp;
   // 联网状态为1
   private int flag = 0;
   // 记录注册网络监听状态
   private boolean registeredNetWork = false;
+  @Inject
   private ConnectivityManager mConnectivityManager;
   private NetworkInfo networkInfo;
   private LocationClient mLocationClient;
@@ -118,6 +121,14 @@ public class HomeActivity extends BaseActivity {
 
   @Inject
   private Store store;
+  @Inject
+  private ViewRegistry viewRegistry;
+  @Inject
+  private PlayerRegistry playerRegistry;
+  @Inject
+  private SettingsRegistry settingsRegistry;
+  @Inject
+  private DataRegistry dataRegistry;
 
   public static boolean prompt = false;// 窗口的状态
 
@@ -342,11 +353,8 @@ public class HomeActivity extends BaseActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    this.setContentView(R.layout.activity_home);
     authSp = this.getSharedPreferences(AUTH, Context.MODE_PRIVATE);
     subscribe();
-    mConnectivityManager =
-        (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
     networkInfo = mConnectivityManager.getActiveNetworkInfo();
     BaiduLocation.INSTANCE.setContext(getApplicationContext());
     mLocationClient = BaiduLocation.INSTANCE.getLocationClient();
@@ -831,10 +839,10 @@ public class HomeActivity extends BaseActivity {
   private void subscribe() {
     if (!registried) {
       registried = true;
-      new ViewRegistry(bus, this).subscribe();
-      new PlayerRegistry(bus, this).subscribe();
-      new SettingsRegistry(bus, this).subscribe();
-      new DataRegistry(bus, this).subscribe();
+      viewRegistry.subscribe();
+      playerRegistry.subscribe();
+      settingsRegistry.subscribe();
+      dataRegistry.subscribe();
     }
   }
 }
