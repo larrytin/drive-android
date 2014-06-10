@@ -103,7 +103,7 @@ public class BaseActivity extends RoboActivity {
               // pm.reboot(null);
               // }
               // 方案二:应用需要申请root权限,有一定延迟时间
-              if (msg.getNumber("shutdown") == 0) {
+              if (msg.getNumber("shutdown") == 0) { // 关机
                 ProcessBuilder pb = new ProcessBuilder("/system/bin/sh");
                 pb.redirectErrorStream(true);
                 try {
@@ -119,25 +119,34 @@ public class BaseActivity extends RoboActivity {
                 } catch (Exception e) {
                   e.printStackTrace();
                 }
-              } else if (msg.getNumber("shutdown") == 1) {
-                // ProcessBuilder pb = new ProcessBuilder("/system/bin/sh");
-                // pb.redirectErrorStream(true);
-                // try {
-                // Process process = pb.start();
-                // PrintWriter pw =
-                // new PrintWriter(new OutputStreamWriter(process.getOutputStream()), true);
-                // pw.println("su");
-                // Thread.sleep(300);
-                // pw.println("reboot");
-                // pw.println("exit");
-                // pw.close();
-                // process.destroy();
-                // } catch (Exception e) {
-                // e.printStackTrace();
-                // }
+              } else if (msg.getNumber("shutdown") == 1) { // 重启
+                ProcessBuilder pb = new ProcessBuilder("/system/bin/sh");
+                pb.redirectErrorStream(true);
+                try {
+                  Process process = pb.start();
+                  PrintWriter pw =
+                      new PrintWriter(new OutputStreamWriter(process.getOutputStream()), true);
+                  pw.println("su");
+                  Thread.sleep(300);
+                  pw.println("reboot");
+                  pw.println("exit");
+                  pw.close();
+                  process.destroy();
+                } catch (Exception e) {
+                  e.printStackTrace();
+                }
+
+              } else if (msg.getNumber("shutdown") == 2) { // 待机
                 PowerManager pm =
                     (PowerManager) BaseActivity.this.getSystemService(Context.POWER_SERVICE);
-                pm.goToSleep(SystemClock.uptimeMillis()); // 改为待机，关机的话飞鼠无法唤醒
+                pm.goToSleep(SystemClock.uptimeMillis());
+                // final Instrumentation instrumentation = new Instrumentation();
+                // new Thread(new Runnable() {
+                // @Override
+                // public void run() {
+                // instrumentation.sendKeyDownUpSync(KeyEvent.KEYCODE_TV_POWER);
+                // }
+                // }).start();
               }
             }
           }
