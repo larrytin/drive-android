@@ -1,0 +1,45 @@
+--- # T_FILE 文件表
+UUID: dfadfasdkjfadfjasdfjadjf # 文件的唯一编号 varchar(80) primary key NOT NULL
+NAME: 小蝌蚪找妈妈 # 文件显示名称 varchar(200) NOT NULL
+CONTENTTYPE: video/mp3 # 文件类型 varchar(300) DEFAULT NULL
+SIZE: 123456789 # 文件长度(bit) int(11) NOT NULL
+FILEPATH: /mnt/sdcard/goodow/drive/.../xxx.png # 文件路径 varchar(500) NOT NULL
+THUMBNAILS: /mnt/sdcard/goodow/drive/.../xxx.png # 缩略图路径 varchar(500) DEFAULT NULL
+CREATETIME: 2014-05-12 17:17:17 # 创建日期 varchar(45) DEFAULT NULL
+UPDATETIME: 2014-05-12 17:17:17 # 修改日期 varchar(45) DEFAULT NULL
+...
+
+--- # T_RELATION 标签映射表 PRIMARY KEY (TYPE,KEY,TAG)
+TYPE: tag # 关系类型 [tag:标签 | attachment:文件] varchar(80) NOT NULL
+KEY: 小班 # 关系名称 varchar(80) NOT NULL
+TAG: 和谐 # 标签名称 varchar(80) NOT NULL
+CREATETIME: 2014-05-12 17:17:17 # 创建日期 varchar(45) DEFAULT NULL
+UPDATETIME: 2014-05-12 17:17:17 # 修改日期 varchar(45) DEFAULT NULL
+...
+
+--- # T_STAR 收藏表 PRIMARY KEY (TYPE,TAG)
+TYPE: tag # 收藏类型 [tag:标签 | attachment:文件] varchar(80) NOT NULL
+TAG: json字符串 # 文件的标签或标签的标签构成的JSON字符串 varchar(500) NOT NULL
+USER_ID: 未使用 # varchar(80) DEFAULT NULL
+CREATETIME: 2014-05-12 17:17:17 # 创建日期 varchar(45) DEFAULT NULL
+UPDATETIME: 2014-05-12 17:17:17 # 修改日期 varchar(45) DEFAULT NULL
+...
+
+--- # T_BOOT 开机数据统计
+ID: ID # INTEGER PRIMARY KEY AUTOINCREMENT
+OPEN_TIME: 123456789 # 开机时间戳 long NOT NULL
+LAST_TIME: 123456789 # 开机持续时间 long NOT NULL
+CLOSE_TIME: 123456789 # 关机时间 long NOT NULL
+LATITUDE: 123456789 # 经度 long
+LONGITUDE: 123456789 # 纬度 long
+RADIUS: 123456789 # 径度 long
+ADDRESS: 北京市海淀中关村12号 # 地址 vachar(45)
+...
+
+--- # T_PLAYER 播放统计
+ID: ID # INTEGER PRIMARY KEY AUTOINCREMENT
+FILE_NAME: 123456789 # 文件ID varchar(80) NOT NULL
+OPEN_TIME: 123456789 # 打开文件的时间戳 long NOT NULL
+LAST_TIME: 123456789 # 打开文件的持续时长 long NOT NULL
+...
+
