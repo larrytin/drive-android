@@ -139,6 +139,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   private ResultAdapter resultAdapter;// 结果gridview适配器
   private int currentPageNum;// 当前结果页数
   private int totalAttachmentNum;// 结果总数
+  private JsonArray attachments;
 
   @InjectExtra(value = "msg", optional = true)
   private JsonObject msg;
@@ -262,7 +263,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
             }
             if (body.has(Constant.KEY_TITLE) && body.getString(Constant.KEY_TITLE) != null) {
               title = body.getString(Constant.KEY_TITLE);
-              sendQueryMessage();
+              bindDataToView(attachments);
             } else {
               Toast.makeText(BehaveActivity.this, "数据不完整，请重试", Toast.LENGTH_SHORT).show();
             }
@@ -281,7 +282,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
               } else if (page.has("move")) {
                 currentPageNum = currentPageNum + (int) page.getNumber("move");
               }
-              sendQueryMessage();
+              bindDataToView(attachments);
             }
           }
         });
@@ -314,7 +315,13 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
     } else {
       this.iv_act_behave_result_next.setVisibility(View.INVISIBLE);
     }
-    resultAdapter.reset(attachments);
+    JsonArray array = Json.createArray();
+    for(int i=0; i<attachments.length(); i++){
+      if(i>=currentPageNum*numPerPage && i<(currentPageNum+1)*numPerPage){
+        array.push(attachments.get(i));
+      }
+    }
+    resultAdapter.reset(array);
     resultAdapter.notifyDataSetChanged();
   }
 
@@ -387,15 +394,15 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
    */
   private void sendQueryMessage() {
     JsonObject msg = Json.createObject();
-    msg.set(Constant.KEY_FROM, numPerPage * currentPageNum);
-    msg.set(Constant.KEY_SIZE, numPerPage);
+    msg.set(Constant.KEY_FROM, 0);
+    msg.set(Constant.KEY_SIZE, 100);
     msg.set(Constant.KEY_TAGS, this.currentTags);
     pb_act_result_progress.setVisibility(View.VISIBLE);
     bus.sendLocal(Constant.ADDR_TAG_ATTACHMENT_SEARCH, msg, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
-        JsonArray attachments = body.getArray(Constant.KEY_ATTACHMENTS);
+        attachments = body.getArray(Constant.KEY_ATTACHMENTS);
         totalAttachmentNum = (int) body.getNumber(Constant.KEY_COUNT);
         bindDataToView(attachments);
         sendQueryIsHeadMessage();
