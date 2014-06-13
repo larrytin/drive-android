@@ -245,7 +245,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     idContentTypes.put(R.id.iv_act_source_catagory0_ebook, "application/x-shockwave-flash");
 
     idTags.put(R.id.iv_act_source_catagory0_all, "全部");
-    idTags.put(R.id.iv_act_source_catagory0_text, "活动设计");
+    idTags.put(R.id.iv_act_source_catagory0_text, "文本");
     idTags.put(R.id.iv_act_source_catagory0_image, "图片");
     idTags.put(R.id.iv_act_source_catagory0_animation, "动画");
     idTags.put(R.id.iv_act_source_catagory0_video, "视频");

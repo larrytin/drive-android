@@ -233,7 +233,7 @@ public class HomeActivity extends BaseActivity {
         break;
       // 资源类型
       case R.id.iv_act_source_text:// 文本
-        open(Constant.DATAREGISTRY_TYPE_SOURCE, "活动设计");
+        open(Constant.DATAREGISTRY_TYPE_SOURCE, "文本");
         break;
       case R.id.iv_act_source_pic:// 图片
         open(Constant.DATAREGISTRY_TYPE_SOURCE, "图片");
