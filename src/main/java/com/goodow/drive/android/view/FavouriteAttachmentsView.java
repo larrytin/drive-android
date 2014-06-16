@@ -8,14 +8,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import roboguice.inject.InjectView;
 
 public class FavouriteAttachmentsView extends RelativeLayout {
-  @InjectView(R.id.tv_favourite_attachments)
+
   private TextView tv_favourite_attachments;
-  @InjectView(R.id.iv_favourite_attachments_del)
   private ImageView iv_favourite_attachments_del;
-  @InjectView(R.id.iv_favourite_attachments)
   private ImageView iv_favourite_attachments;
   private boolean isDeleteState;
 
@@ -62,5 +59,8 @@ public class FavouriteAttachmentsView extends RelativeLayout {
 
   private void initVIew(Context context) {
     View.inflate(context, R.layout.result_favourite_attachments, this);
+    tv_favourite_attachments = (TextView) findViewById(R.id.tv_favourite_attachments);
+    iv_favourite_attachments_del = (ImageView) findViewById(R.id.iv_favourite_attachments_del);
+    iv_favourite_attachments = (ImageView) findViewById(R.id.iv_favourite_attachments);
   }
 }

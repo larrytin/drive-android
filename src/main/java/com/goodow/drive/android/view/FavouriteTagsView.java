@@ -9,14 +9,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import roboguice.inject.InjectView;
 
 public class FavouriteTagsView extends LinearLayout {
-  @InjectView(R.id.iv_favourite_tags)
+
   private ImageView iv_favourite_tags;
-  @InjectView(R.id.iv_favourite_tags_del)
   private FrameLayout iv_favourite_tags_del;
-  @InjectView(R.id.tv_favourite_tags)
   private TextView tv_favourite_tags;
   private boolean isDeleteState;
 
@@ -62,6 +59,9 @@ public class FavouriteTagsView extends LinearLayout {
 
   private void initView(Context context) {
     View.inflate(context, R.layout.result_favourite_tags, this);
+    iv_favourite_tags = (ImageView) findViewById(R.id.iv_favourite_tags);
+    iv_favourite_tags_del = (FrameLayout) findViewById(R.id.iv_favourite_tags_del);
+    tv_favourite_tags = (TextView) findViewById(R.id.tv_favourite_tags);
   }
 
 }
