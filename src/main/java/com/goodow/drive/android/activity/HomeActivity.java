@@ -1,5 +1,7 @@
 package com.goodow.drive.android.activity;
 
+import android.view.*;
+import android.widget.*;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DBDataProvider;
@@ -50,22 +52,17 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 import roboguice.inject.ContentView;
+import roboguice.inject.InjectView;
 
 @ContentView(R.layout.activity_home)
 public class HomeActivity extends BaseActivity {
   public static final String TAG = HomeActivity.class.getSimpleName();
   private static final String DBFILENAME = "sqlite.dump";
+
+
   private static boolean registried;
   private static final String ID = "drive_android/time";
   private static final String DRIVE_ANDROID = "drive_android";
@@ -115,6 +112,8 @@ public class HomeActivity extends BaseActivity {
   private static final int PROPMT = 2;
   private static final int PROPMTWINDOW = 3;
   private static final int PROPMTWINDOW_LOCK = 4;
+  private static final int BARVIR = 5;
+  private static final int BARGONE = 6;
 
   // 限制使用状态,如果为true，限制使用中
   public static boolean limitStatus = false;
@@ -129,6 +128,8 @@ public class HomeActivity extends BaseActivity {
   private SettingsRegistry settingsRegistry;
   @Inject
   private DataRegistry dataRegistry;
+  @InjectView(R.id.activity_home_progressbar)
+  private ProgressBar progressBar;
 
   public static boolean prompt = false;// 窗口的状态
 
@@ -156,6 +157,12 @@ public class HomeActivity extends BaseActivity {
           }
           promptWindow((String) msg.obj, false);
           prompt = true;
+          break;
+        case BARVIR:
+          progressBar.setVisibility(View.VISIBLE);
+          break;
+        case BARGONE:
+          progressBar.setVisibility(View.GONE);
           break;
         default:
           break;
@@ -262,6 +269,14 @@ public class HomeActivity extends BaseActivity {
       default:
         break;
     }
+  }
+
+  @Override
+  public boolean dispatchTouchEvent(MotionEvent ev) {
+    if (progressBar.getVisibility()==View.VISIBLE){
+      return true;
+    }
+    return super.dispatchTouchEvent(ev);
   }
 
   /**
@@ -492,6 +507,7 @@ public class HomeActivity extends BaseActivity {
     final String dataBaseDir = "data/data/" + HomeActivity.this.getPackageName() + "/databases";
     final File dbFile = new File(dataBaseDir, DBHelper.DBNAME);
     if (!(dbFile.exists() && dbFile.length() > 0)) {
+      mHandler.sendEmptyMessage(BARVIR);
       new Thread() {
         @Override
         public void run() {
@@ -509,7 +525,9 @@ public class HomeActivity extends BaseActivity {
             }
             is.close();
             fos.close();
+            mHandler.sendEmptyMessage(BARGONE);
           } catch (Exception e) {
+            mHandler.sendEmptyMessage(BARGONE);
           }
         }
       }.start();
@@ -535,6 +553,7 @@ public class HomeActivity extends BaseActivity {
     final String dataBaseDir = "data/data/" + HomeActivity.this.getPackageName() + "/databases";
     final File dbFile = new File(dataBaseDir, DBHelper.DBNAME);
     if (!(dbFile.exists() && dbFile.length() > 0)) {
+      mHandler.sendEmptyMessage(BARVIR);
       new Thread() {
         @Override
         public void run() {
@@ -554,6 +573,7 @@ public class HomeActivity extends BaseActivity {
             e.printStackTrace();
           }
           DBDataProvider.insertFileBySql(HomeActivity.this, sqls);
+          mHandler.sendEmptyMessage(BARGONE);
         };
       }.start();
     }
