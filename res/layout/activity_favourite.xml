@@ -35,6 +35,7 @@
         android:layout_marginTop="@dimen/act_favourite_item_marginTop"
         android:gravity="center"
         android:clickable="true"
+        android:textStyle="bold"
         />
     <com.goodow.drive.android.view.FontTextView
         android:id="@+id/ft_act_favour_item_file"
@@ -48,6 +49,7 @@
         android:layout_marginTop="@dimen/act_favourite_item_marginTop"
         android:gravity="center"
         android:clickable="true"
+        android:textStyle="bold"
         />
 
     <!-- 内容 -->
@@ -83,7 +85,7 @@
             android:listSelector="#00000000"
             android:alwaysDrawnWithCache="true"
             android:scrollbars="none"
-            android:verticalSpacing="25dp" >
+            android:verticalSpacing="10dp" >
         </GridView>
 
         <!-- 下一页 -->

@@ -162,12 +162,12 @@
     <dimen name="common_class_marginRight">5dp</dimen><!-- 分类item右margin -->
     <dimen name="common_class_marginBottom">0dp</dimen><!-- 分类item下margin -->
     <dimen name="common_class_textSize">20px</dimen><!-- 分类item字体大小 -->
-    <dimen name="common_class_paddingTop">8dp</dimen><!-- 分类item字体下padding -->
+    <dimen name="common_class_paddingTop">0dp</dimen><!-- 分类item字体下padding -->
     
     <!-- 查询结果黄底矩形的样式 720p -->
     <dimen name="common_result_yellow_width">114dp</dimen><!-- 查询结果item的宽度 -->
     <dimen name="common_result_yellow_height">78dp</dimen><!-- 查询结果item的高度 -->
-    <dimen name="common_result_yellow_textSize">18px</dimen><!-- 查询结果item的字体大小 -->
+    <dimen name="common_result_yellow_textSize">20px</dimen><!-- 查询结果item的字体大小 -->
     <dimen name="common_result_dot_width">18dp</dimen><!-- 查询结果分页小圆点的宽度 -->
     <dimen name="common_result_dot_height">18dp</dimen><!-- 查询结果分页小圆点的高度 -->
     <dimen name="common_result_pre_next_width">65dp</dimen><!-- 查询结果上下页宽度 -->
@@ -177,10 +177,10 @@
     <dimen name="common_result_yellow_padding">15dp</dimen><!-- 查询结果文字内边距 -->
     
     <!-- 查询结果上图下字样式 720p -->
-    <dimen name="common_result_textSize">18px</dimen><!-- 查询结果字体大小 -->
+    <dimen name="common_result_textSize">20px</dimen><!-- 查询结果字体大小 -->
     <dimen name="common_result_text_width">130dp</dimen><!-- 查询结果字体宽度 -->
-    <dimen name="common_result_image_width">95dp</dimen><!-- 查询结果图片宽度 -->
-    <dimen name="common_result_image_height">95dp</dimen><!-- 查询结果图片高度 -->
+    <dimen name="common_result_image_width">122px</dimen><!-- 查询结果图片宽度 -->
+    <dimen name="common_result_image_height">110px</dimen><!-- 查询结果图片高度 -->
     <dimen name="coomon_result_flag_marginTop">20dp</dimen><!-- 查询结果删除图片上边距 -->
         
     <!-- CareClassesActivity 托班 720p -->
@@ -240,7 +240,7 @@
     <dimen name="act_behave_result_root_width">1190dp</dimen><!-- 活动查询结果内容跟节点高度 -->
     <dimen name="act_behave_result_root_height">400dp</dimen><!-- 活动查询结果内容跟节点高度 -->
     <dimen name="act_behave_result_root_marginLeft">88dp</dimen><!-- 活动查询结果内容跟节点左边距 -->
-    <dimen name="act_behave_result_root_marginTop">198dp</dimen><!-- 活动查询结果内容跟节点上边距 -->
+    <dimen name="act_behave_result_root_marginTop">190dp</dimen><!-- 活动查询结果内容跟节点上边距 -->
     <dimen name="act_behave_back_marginLeft">63dp</dimen><!-- 活动后退键左边距 -->
     <dimen name="act_behave_back_marginTop">175dp</dimen><!-- 活动后退键上边距 -->
     
@@ -254,10 +254,10 @@
     <dimen name="act_favourite_file_marginLeft">450dp</dimen><!-- 文件左边距 -->
     <dimen name="act_favourite_textSize">20px</dimen><!-- 活动和文件的文字大小 -->
     <dimen name="act_favourite_result_root_width">1050dp</dimen><!-- 查询结果根节点宽度 -->
-    <dimen name="act_favourite_result_root_height">310dp</dimen><!-- 查询结果根节点高度 -->
-    <dimen name="act_favourite_result_root_marginBottom">120dp</dimen><!-- 查询结果根节点下边距 -->
+    <dimen name="act_favourite_result_root_height">360dp</dimen><!-- 查询结果根节点高度 -->
+    <dimen name="act_favourite_result_root_marginBottom">80dp</dimen><!-- 查询结果根节点下边距 -->
     <dimen name="act_favourite_result_root_marginRight">30dp</dimen><!-- 查询结果根节点右边距 -->
-    <dimen name="act_favourite_result_width">850dp</dimen><!-- 查询结果的宽度 -->
+    <dimen name="act_favourite_result_width">900dp</dimen><!-- 查询结果的宽度 -->
     <dimen name="act_favourite_result_height">300dp</dimen><!-- 查询结果的高度 -->
     <dimen name="act_favourite_result_actitem_marginLeftRight">10dp</dimen><!-- 查询活动结果条目的左右间距 -->
     <dimen name="act_favourite_result_actitem_marginTop">35dp</dimen><!-- 查询活动结果条目的上边距 -->

@@ -519,6 +519,7 @@ public class PrepareActivity extends BaseActivity implements OnClickListener {
   private void echoTerm() {
     for (int i = 0; i < termNames.length; i++) {
       TextView child = (TextView) ll_act_prepare_term.getChildAt(i);
+      child.setTextSize(24);
       child.setSelected(false);
       if (currentTerm.equals(termMap.get(termNames[i]))) {
         child.setSelected(true);

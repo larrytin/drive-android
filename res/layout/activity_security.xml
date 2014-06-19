@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginLeft="300dp"
-        android:layout_marginTop="220dp">
+        android:layout_marginTop="200dp">
         <ImageView
             android:tag="小班上"
             style="@style/security_teacher_grade"
@@ -71,7 +71,7 @@
     <LinearLayout
         android:id="@+id/ll_act_security_children"
         android:gravity="center_vertical"
-        android:layout_marginTop="430dp"
+        android:layout_marginTop="410dp"
         android:layout_marginLeft="300dp" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

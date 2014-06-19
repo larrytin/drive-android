@@ -124,6 +124,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
       }
       ResultAdapterHolder holder = (ResultAdapterHolder) convertView.getTag();
       final String title = attachments.getString(position);
+      holder.common_result_yellow.setTextSize(20);
       if (title.matches("^\\d{4}.*")) {
         holder.common_result_yellow.setText(title.substring(4, title.length()));
       } else {
@@ -426,6 +427,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   private void echoGrade() {
     for (int i = 0; i < gradeNames.length; i++) {
       TextView child = (TextView) ll_act_harmony_grade.getChildAt(i);
+      child.setTextSize(24);
       child.setSelected(false);
       if (currentGrade.equals(gradeNames[i])) {
         child.setSelected(true);
@@ -439,6 +441,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   private void echoTerm() {
     for (int i = 0; i < termNames.length; i++) {
       TextView child = (TextView) ll_act_harmony_term.getChildAt(i);
+      child.setTextSize(24);
       child.setSelected(false);
       if (currentTerm.equals(termMap.get(termNames[i]))) {
         child.setSelected(true);
@@ -452,6 +455,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
   private void echoTopic() {
     for (int i = 0; i < topicNames.length; i++) {
       TextView child = (TextView) ll_act_harmony_class.getChildAt(i);
+      child.setTextSize(24);
       child.setSelected(false);
       if (currenTopic.equals(topicNames[i])) {
         child.setSelected(true);
@@ -469,12 +473,8 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
     this.iv_act_harmony_coll.setOnClickListener(this);
     this.iv_act_harmony_loc.setOnClickListener(this);
     int gradeChildren = this.gradeNames.length;
-    LayoutParams longWidthParams =
-        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.commen_grade_width_long),
-            getResources().getDimensionPixelSize(R.dimen.common_grade_height));
-    LayoutParams commonWidthParams =
-        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_grade_width),
-            getResources().getDimensionPixelSize(R.dimen.common_grade_height));
+    LayoutParams longWidthParams = new LayoutParams(getResources().getDimensionPixelSize(R.dimen.commen_grade_width_long),getResources().getDimensionPixelSize(R.dimen.common_grade_height));
+    LayoutParams commonWidthParams = new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_grade_width), getResources().getDimensionPixelSize(R.dimen.common_grade_height));
     for (int i = 0; i < gradeChildren; i++) {
       int layoutId = R.layout.common_item_grade_short;
       TextView child = (TextView) this.inflater.inflate(layoutId, null);
@@ -489,6 +489,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
       }
       child.setOnClickListener(new OnGradeClickListener());
       child.setText(this.gradeNames[i]);
+      child.setTextSize(24);
       this.ll_act_harmony_grade.addView(child);
     }
     int termChildren = this.termNames.length;
@@ -496,6 +497,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
       TextView child = (TextView) this.inflater.inflate(R.layout.common_item_grade_short, null);
       child.setLayoutParams(commonWidthParams);
       child.setSelected(false);
+      child.setTextSize(24);
       if (this.currentTerm.equals(termMap.get(this.termNames[i]))) {
         child.setSelected(true);
       }
@@ -505,16 +507,12 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
     }
 
     int topicChildren = this.topicNames.length;
-    longWidthParams =
-        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width_long),
-            getResources().getDimensionPixelSize(R.dimen.common_class_height));
+    longWidthParams = new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width_long), getResources().getDimensionPixelSize(R.dimen.common_class_height));
     longWidthParams.setMargins(getResources()
         .getDimensionPixelSize(R.dimen.common_class_marginLeft), getResources()
         .getDimensionPixelSize(R.dimen.common_class_marginTop), getResources()
         .getDimensionPixelSize(R.dimen.common_class_marginRight), 0);
-    commonWidthParams =
-        new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width),
-            getResources().getDimensionPixelSize(R.dimen.common_class_height));
+    commonWidthParams = new LayoutParams(getResources().getDimensionPixelSize(R.dimen.common_class_width), getResources().getDimensionPixelSize(R.dimen.common_class_height));
     commonWidthParams.setMargins(getResources().getDimensionPixelSize(
         R.dimen.common_class_marginLeft), getResources().getDimensionPixelSize(
         R.dimen.common_class_marginTop), getResources().getDimensionPixelSize(
@@ -532,8 +530,7 @@ public class HarmonyActivity extends BaseActivity implements OnClickListener {
         child.setLayoutParams(commonWidthParams);
       }
       child.setTextSize(getResources().getDimensionPixelSize(R.dimen.common_class_textSize));
-      child.setPadding(0, getResources().getDimensionPixelSize(R.dimen.common_class_paddingTop), 0,
-          0);
+      child.setPadding(0, getResources().getDimensionPixelSize(R.dimen.common_class_paddingTop), 0, 0);
       child.setSelected(false);
       if (this.currenTopic.equals(this.topicNames[i])) {
         child.setSelected(true);

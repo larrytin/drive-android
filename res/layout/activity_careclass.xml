@@ -22,11 +22,13 @@
             android:id="@+id/ftv_term_0"
             style="@style/care_classes_term"
             android:checked="true"
+            android:textSize="24dp"
             android:text="上" />
 
         <com.goodow.drive.android.view.FontTextView
             android:id="@+id/ftv_term_1"
             style="@style/care_classes_term"
+            android:textSize="24dp"
             android:text="下" />
     </LinearLayout>
     

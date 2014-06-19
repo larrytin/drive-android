@@ -322,6 +322,7 @@ public class CareClassesActivity extends BaseActivity implements OnClickListener
     int len = this.ll_care_classes_term.getChildCount();
     for (int i = 0; i < len; i++) {
       TextView child = (TextView) this.ll_care_classes_term.getChildAt(i);
+      child.setTextSize(24);
       child.setSelected(false);
       if (termNames[i].equals(this.currentTerm)) {
         if (i == 0) {

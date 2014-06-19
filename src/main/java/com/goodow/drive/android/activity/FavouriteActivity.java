@@ -94,7 +94,9 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
   @InjectView(R.id.ll_act_favour_result_bar)
   private LinearLayout ll_act_favour_result_bar;
 
-  private final int numPerPage = 10; // 查询结果每页显示10条数据
+  private final int numPerPageActivity = 15; // 查询结果每页显示数据条数
+  private final int numPerPageAttachment = 10; // 查询结果每页显示数据条数
+  private int numPerPage = numPerPageActivity; // 查询结果每页显示数据条数
 
   private Registration registerPostHandler;
   private Registration controlHandler;
@@ -337,8 +339,10 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
   private void onLabelChange(int id) {
     if (id == R.id.ft_act_favour_item_activity) {
       this.currentTopic = LABEL_TAG;
+      this.numPerPage = this.numPerPageActivity;
     } else if (id == R.id.ft_act_favour_item_file) {
       this.currentTopic = LABEL_ATTACHMENT;
+        this.numPerPage = this.numPerPageAttachment;
     }
     this.echoTopic();
     this.sendQueryMessage(this.currentTopic);

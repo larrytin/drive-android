@@ -104,7 +104,7 @@ public class HomeActivity extends BaseActivity {
   private Registration openHandlerReg;
 
   // TODO:如果为true，校验
-  private final boolean openAuth = true;
+  private final boolean openAuth = false;
 
   // 更新开机时间
   private int updateBoot;

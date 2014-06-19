@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="90dp"
     android:gravity="center" >
 
     <RelativeLayout
@@ -12,8 +12,8 @@
 
         <ImageView
             android:id="@+id/iv_favourite_tags"
-            android:layout_width="@dimen/common_result_yellow_width"
-            android:layout_height="@dimen/common_result_yellow_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/favour_item_bg" />
 
         <TextView

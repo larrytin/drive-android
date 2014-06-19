@@ -80,9 +80,9 @@
             android:background="#00000000"
             android:cacheColorHint="#00000000"
             android:listSelector="#00000000"
-            android:numColumns="7"
+            android:numColumns="6"
             android:scrollbars="none"
-            android:verticalSpacing="75dp" >
+            android:verticalSpacing="60dp" >
 
         </GridView>
 
