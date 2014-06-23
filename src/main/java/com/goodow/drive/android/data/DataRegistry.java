@@ -23,7 +23,7 @@ public class DataRegistry {
   private Bus bus;
 
   public void subscribe() {
-    bus.subscribe("drive." + DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx),
+    bus.subscribe("drive/" + DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx),
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(final Message<JsonObject> message) {

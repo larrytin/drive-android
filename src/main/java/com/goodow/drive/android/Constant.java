@@ -5,10 +5,10 @@ import java.util.List;
 
 public interface Constant {
 
-  String ADDR_SERVER = "sid.drive";
-  String ADDR_SERVER_SYSTIME_ANALYTICS = ADDR_SERVER + ".systime.analytics";
-  String ADDR_SERVER_PLAYER_ANALYTICS = ADDR_SERVER + ".player.analytics";
-  String ADDR_SERVER_AUTH = ADDR_SERVER + ".auth";
+  String ADDR_SERVER = "drive";
+  String ADDR_SERVER_SYSTIME_ANALYTICS = ADDR_SERVER + "/systime/analytics";
+  String ADDR_SERVER_PLAYER_ANALYTICS = ADDR_SERVER + "/player/analytics";
+  String ADDR_SERVER_AUTH = ADDR_SERVER + "/auth";
 
   String DRIVE = "drive";
   String ADDR_CONTROL = DRIVE + ".control";
