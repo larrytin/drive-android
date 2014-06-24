@@ -2,39 +2,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/security_bg" >
+    android:background="@drawable/security_bg">
 
     <!-- 状态栏 -->
-    <com.goodow.drive.android.view.StatusView style="@style/status" />
-    
+    <com.goodow.drive.android.view.StatusView style="@style/status"/>
+
     <!-- 后退  收藏  锁屏 -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_harmony_fun_bar_marginLeft"
-        android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop" >
-        
+        android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop">
+
         <ImageView
-          android:id="@+id/iv_act_security_back"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_back"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_security_back"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_back"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_security_coll"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_coll"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_security_coll"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_coll"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_security_loc"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_loc"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_security_loc"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_loc"
+            android:clickable="true"
+            />
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/ll_act_security_teacher"
         android:gravity="center_vertical"
@@ -72,7 +72,7 @@
         android:id="@+id/ll_act_security_children"
         android:gravity="center_vertical"
         android:layout_marginTop="410dp"
-        android:layout_marginLeft="300dp" 
+        android:layout_marginLeft="300dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -101,7 +101,6 @@
             style="@style/security_children_grade"
             android:src="@drawable/security_large_1"/>
     </LinearLayout>
-    
-    
+
 
 </RelativeLayout>

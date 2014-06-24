@@ -4,4 +4,4 @@
     style="@style/style_common_grade"
     android:layout_width="@dimen/commen_grade_width_long"
     android:background="@drawable/common_selector_grade_long"
-/>
+    />

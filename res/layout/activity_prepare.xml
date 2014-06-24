@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/prepare_bg" >
+    android:background="@drawable/prepare_bg">
 
     <!-- 上下学期 -->
 
@@ -12,25 +12,25 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_prepare_term_radio_group_marginLeft"
         android:layout_marginTop="@dimen/act_prepare_term_radio_group_marginTop"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <com.goodow.drive.android.view.FontTextView
             android:id="@+id/ftv_act_prepare_top"
             style="@style/style_common_grade"
             android:checked="true"
-            android:text="@string/string_text_term_semester0" />
+            android:text="@string/string_text_term_semester0"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:id="@+id/ftv_act_prepare_bottom"
             style="@style/style_common_grade"
-            android:text="@string/string_text_term_semester1" />
+            android:text="@string/string_text_term_semester1"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="@dimen/act_prepare_topic_root_width"
         android:layout_height="@dimen/act_prepare_topic_root_height"
         android:layout_marginLeft="@dimen/act_prepare_topic_root_marginLeft"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <!-- 语言 -->
 
@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/prepare_selector_topic_language"
-            android:tag="语言" />
+            android:tag="语言"/>
         <!-- 思维 -->
 
         <ImageView
@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/prepare_selector_topic_thinking"
-            android:tag="思维" />
+            android:tag="思维"/>
         <!-- 阅读与书写 -->
 
         <ImageView
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/prepare_selector_topic_read"
-            android:tag="阅读与书写" />
+            android:tag="阅读与书写"/>
         <!-- 习惯与学习品质 -->
 
         <ImageView
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:background="@drawable/prepare_selector_topic_habit"
-            android:tag="习惯与学习品质" />
+            android:tag="习惯与学习品质"/>
     </LinearLayout>
 
     <!-- 后退  收藏  锁屏 -->
@@ -74,31 +74,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_prepare_fun_bar_marginLeft"
-        android:layout_marginTop="@dimen/act_prepare_fun_bar_marginTop" >
+        android:layout_marginTop="@dimen/act_prepare_fun_bar_marginTop">
 
         <ImageView
-          android:id="@+id/iv_act_prepare_back"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_back"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_prepare_back"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_back"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_prepare_coll"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_coll"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_prepare_coll"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_coll"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_prepare_loc"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_loc"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_prepare_loc"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_loc"
+            android:clickable="true"
+            />
     </LinearLayout>
 
     <!-- 状态栏 -->
 
-    <com.goodow.drive.android.view.StatusView style="@style/status" />
+    <com.goodow.drive.android.view.StatusView style="@style/status"/>
 
     <!-- 查询结果 -->
 
@@ -108,7 +108,7 @@
         android:layout_height="@dimen/act_prepare_result_root_height"
         android:layout_alignParentRight="true"
         android:layout_marginTop="210dp"
-        android:layout_marginRight="@dimen/act_prepare_result_root_marginRight" >
+        android:layout_marginRight="@dimen/act_prepare_result_root_marginRight">
 
         <!-- 查询结果 上一页 -->
 
@@ -120,12 +120,12 @@
             android:layout_centerVertical="true"
             android:clickable="true"
             android:src="@drawable/common_result_pre"
-            android:visibility="invisible" />
-        
+            android:visibility="invisible"/>
+
         <!-- 查询结果 -->
         <GridView
             android:layout_centerHorizontal="true"
-            android:id="@+id/vp_act_prepare_result" 
+            android:id="@+id/vp_act_prepare_result"
             android:layout_width="@dimen/act_prepare_result_width"
             android:layout_height="wrap_content"
             android:numColumns="4"
@@ -134,7 +134,7 @@
             android:listSelector="#00000000"
             android:alwaysDrawnWithCache="true"
             android:scrollbars="none"
-            android:verticalSpacing="50dp" >
+            android:verticalSpacing="50dp">
         </GridView>
 
         <!-- 查询结果 下一页 -->
@@ -147,14 +147,14 @@
             android:layout_centerVertical="true"
             android:clickable="true"
             android:src="@drawable/common_result_next"
-            android:visibility="invisible" />
-        
+            android:visibility="invisible"/>
+
         <!-- 查询进度提示 -->
         <ProgressBar
             android:id="@+id/pb_act_result_progress"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="@dimen/act_source_search_progress_width"
-            android:layout_height="wrap_content" 
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="gone"
             />
@@ -165,7 +165,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
         </LinearLayout>
     </RelativeLayout>
 

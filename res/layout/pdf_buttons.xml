@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <ViewSwitcher
         android:id="@+id/switcher"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true">
 
         <RelativeLayout
             android:id="@+id/topBar"
@@ -18,7 +18,7 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:paddingTop="0dp"
-            android:background="@color/pdf_bar" >
+            android:background="@color/pdf_bar">
 
             <ImageButton
                 android:id="@+id/searchButton"
@@ -27,7 +27,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/pdf_search_document"
-                android:src="@drawable/pdf_magnifying_glass" />
+                android:src="@drawable/pdf_magnifying_glass"/>
 
             <ImageButton
                 android:id="@+id/outlineButton"
@@ -36,17 +36,17 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/searchButton"
                 android:contentDescription="@string/pdf_search_document"
-                android:src="@drawable/pdf_list" />
-<!--
-            <ImageButton
-                android:id="@+id/linkButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/outlineButton"
-                android:contentDescription="@string/link_control"
-                android:src="@drawable/ic_link" />
--->
+                android:src="@drawable/pdf_list"/>
+            <!--
+                        <ImageButton
+                            android:id="@+id/linkButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/outlineButton"
+                            android:contentDescription="@string/link_control"
+                            android:src="@drawable/ic_link" />
+            -->
             <TextView
                 android:id="@+id/docNameText"
                 android:layout_width="wrap_content"
@@ -56,7 +56,7 @@
                 android:layout_toLeftOf="@+id/outlineButton"
                 android:paddingLeft="15dp"
                 android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -67,7 +67,7 @@
             android:paddingLeft="0dp"
             android:paddingRight="0dp"
             android:paddingTop="0dp"
-            android:background="@color/pdf_bar" >
+            android:background="@color/pdf_bar">
 
             <ImageButton
                 android:id="@+id/cancel"
@@ -76,7 +76,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/pdf_cancel"
-                android:src="@drawable/pdf_cancel" />
+                android:src="@drawable/pdf_cancel"/>
 
             <EditText
                 android:id="@+id/searchText"
@@ -88,7 +88,7 @@
                 android:layout_toRightOf="@+id/cancel"
                 android:inputType="text"
                 android:hint="Search"
-                android:singleLine="true" />
+                android:singleLine="true"/>
 
             <ImageButton
                 android:id="@+id/searchBack"
@@ -97,7 +97,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/searchForward"
                 android:contentDescription="@string/pdf_search_backwards"
-                android:src="@drawable/pdf_arrow_left" />
+                android:src="@drawable/pdf_arrow_left"/>
 
             <ImageButton
                 android:id="@+id/searchForward"
@@ -106,7 +106,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:contentDescription="@string/pdf_search_forwards"
-                android:src="@drawable/pdf_arrow_right" />
+                android:src="@drawable/pdf_arrow_right"/>
         </RelativeLayout>
     </ViewSwitcher>
 
@@ -115,7 +115,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" >
+        android:layout_centerHorizontal="true">
 
         <SeekBar
             android:id="@+id/pageSlider"
@@ -124,7 +124,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_margin="0dp"
-            android:background="@drawable/pdf_shape_slider" />
+            android:background="@drawable/pdf_shape_slider"/>
 
         <TextView
             android:id="@+id/pageNumber"
@@ -134,7 +134,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:background="@drawable/pdf_shape_page_num"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
     </RelativeLayout>
 
 </RelativeLayout>

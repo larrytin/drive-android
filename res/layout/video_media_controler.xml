@@ -4,25 +4,25 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="#aa000000"
-    android:gravity="center_vertical" >
+    android:gravity="center_vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <!-- 开始暂停按钮 -->
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="5" >
+            android:layout_weight="5">
 
             <ImageButton
                 android:id="@+id/ibtn_media_controler_play_pause"
                 android:layout_width="@dimen/video_play_width"
                 android:layout_height="@dimen/video_play_height"
-                android:layout_centerInParent="true" />
+                android:layout_centerInParent="true"/>
         </RelativeLayout>
         <!-- 进度条和时间 -->
 
@@ -31,7 +31,7 @@
             android:layout_height="match_parent"
             android:layout_weight="22"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <com.goodow.drive.android.view.ThumbSeekbar
                 android:id="@+id/sb_media_controler_seekbar"
@@ -52,7 +52,7 @@
                 android:layout_marginLeft="5dp"
                 android:text="00:00"
                 android:textColor="@color/video_white"
-                android:textSize="@dimen/video_textSize" />
+                android:textSize="@dimen/video_textSize"/>
 
             <TextView
                 android:id="@+id/tv_media_controler_divider"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:text="/"
                 android:textColor="@color/video_white"
-                android:textSize="@dimen/video_textSize" />
+                android:textSize="@dimen/video_textSize"/>
 
             <TextView
                 android:id="@+id/tv_media_controler_duration"
@@ -68,21 +68,21 @@
                 android:layout_height="wrap_content"
                 android:text="00:00"
                 android:textColor="@color/video_white"
-                android:textSize="@dimen/video_textSize" />
+                android:textSize="@dimen/video_textSize"/>
         </LinearLayout>
         <!-- 重播按钮 -->
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="10" >
+            android:layout_weight="10">
 
             <Button
                 android:id="@+id/btn_media_controler_replay"
                 android:layout_width="@dimen/video_replay_width"
                 android:layout_height="@dimen/video_replay_height"
                 android:layout_centerInParent="true"
-                android:background="@drawable/common_player_replay" />
+                android:background="@drawable/common_player_replay"/>
         </RelativeLayout>
         <!-- 音量 -->
 
@@ -91,13 +91,13 @@
             android:layout_height="match_parent"
             android:layout_weight="10"
             android:gravity="center"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btn_media_controler_sound"
                 android:layout_width="@dimen/video_sound_width"
                 android:layout_height="@dimen/video_sound_height"
-                android:background="@drawable/common_player_sound" />
+                android:background="@drawable/common_player_sound"/>
 
             <com.goodow.drive.android.view.ThumbSeekbar
                 android:id="@+id/sb_media_controler_sound_seekbar"
@@ -109,13 +109,13 @@
                 goodow:thumb_width="@dimen/video_thumb_width"
                 goodow:thumb_height="@dimen/video_thumb_height"
                 android:progressDrawable="@drawable/common_player_seekbar_bg"
-                android:thumb="@drawable/common_player_seekbar_thumb" />
+                android:thumb="@drawable/common_player_seekbar_thumb"/>
         </LinearLayout>
 
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2" >
+            android:layout_weight="2">
         </RelativeLayout>
     </LinearLayout>
 

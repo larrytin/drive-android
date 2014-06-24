@@ -9,31 +9,31 @@
     android:paddingTop="10dp"
     android:paddingRight="50dp"
     android:paddingBottom="10dp"
-    android:background="#AA333333" >
+    android:background="#AA333333">
 
     <!-- 播放/暂停 -->
     <ImageView
-      android:id="@+id/play_Button"
-      android:layout_width="@dimen/video_play_width"
-      android:layout_height="@dimen/video_play_height"
-      android:layout_weight="1"
-      android:textSize="20sp"
-      android:clickable="true"
-      android:src="@drawable/common_player_pause" />
+        android:id="@+id/play_Button"
+        android:layout_width="@dimen/video_play_width"
+        android:layout_height="@dimen/video_play_height"
+        android:layout_weight="1"
+        android:textSize="20sp"
+        android:clickable="true"
+        android:src="@drawable/common_player_pause"/>
 
     <!-- 进度 -->
     <com.goodow.drive.android.view.ThumbSeekbar
-      android:id="@+id/progress_rate_SeekBar"
-      android:layout_width="wrap_content"
-      android:layout_height="@dimen/video_play_height"
-      android:maxHeight="@dimen/video_seekbar_height"
-      android:max="100"
-      android:layout_weight="5"
-      android:progressDrawable="@drawable/common_player_seekbar_bg"
-      android:thumb="@drawable/common_player_seekbar_thumb"
-      goodow:thumb_width="@dimen/video_thumb_width"
-      goodow:thumb_height="@dimen/video_thumb_height"
-      android:progress="0"/>
+        android:id="@+id/progress_rate_SeekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/video_play_height"
+        android:maxHeight="@dimen/video_seekbar_height"
+        android:max="100"
+        android:layout_weight="5"
+        android:progressDrawable="@drawable/common_player_seekbar_bg"
+        android:thumb="@drawable/common_player_seekbar_thumb"
+        goodow:thumb_width="@dimen/video_thumb_width"
+        goodow:thumb_height="@dimen/video_thumb_height"
+        android:progress="0"/>
 
     <!-- 时间 -->
     <TextView
@@ -43,36 +43,36 @@
         android:gravity="center"
         android:textColor="#FFFFFF"
         android:layout_marginLeft="5dp"
-        android:textSize="12sp" />
+        android:textSize="12sp"/>
 
     <!-- 重播 -->
     <ImageView
-      android:id="@+id/stop_Button"
-      android:layout_width="@dimen/video_replay_width"
-      android:layout_height="@dimen/video_replay_height"
-      android:layout_weight="1"
-      android:layout_gravity="left"
-      android:src="@drawable/common_player_replay"/>
+        android:id="@+id/stop_Button"
+        android:layout_width="@dimen/video_replay_width"
+        android:layout_height="@dimen/video_replay_height"
+        android:layout_weight="1"
+        android:layout_gravity="left"
+        android:src="@drawable/common_player_replay"/>
 
     <!-- 静音 -->
     <ImageView
-      android:id="@+id/sound_Button"
-      android:layout_width="@dimen/video_sound_width"
-      android:layout_height="@dimen/video_sound_height"
-      android:src="@drawable/common_player_sound" />
+        android:id="@+id/sound_Button"
+        android:layout_width="@dimen/video_sound_width"
+        android:layout_height="@dimen/video_sound_height"
+        android:src="@drawable/common_player_sound"/>
 
     <!-- 声音 -->
     <com.goodow.drive.android.view.ThumbSeekbar
-      android:id="@+id/progress_sound_SeekBar"
-      android:layout_width="wrap_content"
-      android:layout_height="@dimen/video_play_height"
-      android:maxHeight="@dimen/video_seekbar_height"
-      goodow:thumb_width="@dimen/video_thumb_width"
-      goodow:thumb_height="@dimen/video_thumb_height"
-      android:max="100"
-      android:progressDrawable="@drawable/common_player_seekbar_bg"
-      android:thumb="@drawable/common_player_seekbar_thumb"
-      android:layout_weight="3"
-      android:progress="0"/>
+        android:id="@+id/progress_sound_SeekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/video_play_height"
+        android:maxHeight="@dimen/video_seekbar_height"
+        goodow:thumb_width="@dimen/video_thumb_width"
+        goodow:thumb_height="@dimen/video_thumb_height"
+        android:max="100"
+        android:progressDrawable="@drawable/common_player_seekbar_bg"
+        android:thumb="@drawable/common_player_seekbar_thumb"
+        android:layout_weight="3"
+        android:progress="0"/>
 
 </LinearLayout>

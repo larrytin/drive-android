@@ -2,19 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="90dp"
-    android:gravity="center" >
+    android:gravity="center">
 
     <RelativeLayout
         android:id="@+id/rl_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true" >
+        android:layout_centerVertical="true">
 
         <ImageView
             android:id="@+id/iv_favourite_tags"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/favour_item_bg" />
+            android:background="@drawable/favour_item_bg"/>
 
         <TextView
             android:id="@+id/tv_favourite_tags"
@@ -25,7 +25,7 @@
             android:maxLines="2"
             android:minLines="2"
             android:padding="@dimen/common_result_yellow_padding"
-            android:textSize="@dimen/common_result_yellow_textSize" />
+            android:textSize="@dimen/common_result_yellow_textSize"/>
     </RelativeLayout>
 
     <FrameLayout
@@ -34,17 +34,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="-8dp" >
+        android:layout_marginLeft="-8dp">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/favour_del_bg" />
+            android:background="@drawable/favour_del_bg"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/favour_del" />
+            android:background="@drawable/favour_del"/>
     </FrameLayout>
 
 </RelativeLayout>

@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/index_status_bg"
     android:gravity="center_vertical"
-    android:orientation="horizontal" >
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tv_status_netTypeView"
@@ -14,7 +14,7 @@
         android:id="@+id/iv_status_netStatusView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/status_network_all" />
+        android:src="@drawable/status_network_all"/>
 
     <TextView
         android:id="@+id/tv_status_currentTimeView"

@@ -2,15 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/favour_bg" >
-    
+    android:background="@drawable/favour_bg">
+
     <!--  状态栏  -->
     <com.goodow.drive.android.view.StatusView
-	style="@style/status" 
-    />
+        style="@style/status"
+        />
 
     <!--  后退  -->
-    <RelativeLayout 
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_favourite_back_marginLeft"
@@ -71,12 +71,12 @@
             android:layout_centerVertical="true"
             android:clickable="true"
             android:visibility="invisible"
-            android:src="@drawable/common_result_pre" />
+            android:src="@drawable/common_result_pre"/>
 
         <!-- 查询结果 -->
         <GridView
             android:layout_centerHorizontal="true"
-            android:id="@+id/vp_act_favour_result" 
+            android:id="@+id/vp_act_favour_result"
             android:layout_width="@dimen/act_favourite_result_width"
             android:layout_height="wrap_content"
             android:numColumns="5"
@@ -85,7 +85,7 @@
             android:listSelector="#00000000"
             android:alwaysDrawnWithCache="true"
             android:scrollbars="none"
-            android:verticalSpacing="10dp" >
+            android:verticalSpacing="10dp">
         </GridView>
 
         <!-- 下一页 -->
@@ -97,14 +97,14 @@
             android:layout_centerVertical="true"
             android:clickable="true"
             android:visibility="invisible"
-            android:src="@drawable/common_result_next" />
-        
+            android:src="@drawable/common_result_next"/>
+
         <!-- 查询进度提示 -->
         <ProgressBar
             android:id="@+id/pb_act_result_progress"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="@dimen/act_source_search_progress_width"
-            android:layout_height="wrap_content" 
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="gone"
             />
@@ -117,7 +117,7 @@
             android:layout_centerInParent="true"
             android:orientation="horizontal"
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="10dp" >
+            android:layout_marginTop="10dp">
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

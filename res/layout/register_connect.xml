@@ -6,13 +6,13 @@
     android:layout_marginBottom="45dip"
     android:layout_marginRight="20dip"
     android:gravity="center"
-    android:orientation="vertical"  >
+    android:orientation="vertical">
 
     <ProgressBar
         android:layout_marginRight="10dip"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <com.goodow.drive.android.view.FontTextView
         android:gravity="center"

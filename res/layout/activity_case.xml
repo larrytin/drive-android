@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/case_bg" >
+    android:background="@drawable/case_bg">
 
     <!--  状态栏  -->
     <com.goodow.drive.android.view.StatusView
-	style="@style/status" 
-    />
+        style="@style/status"
+        />
 
     <!-- 大小班级 -->
     <LinearLayout
@@ -52,25 +52,25 @@
         android:layout_marginTop="@dimen/act_case_fun_bar_marginTop"
         >
         <ImageView
-          android:id="@+id/iv_act_case_back"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_back"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_case_back"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_back"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_case_coll"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_coll"
-          android:layout_below="@+id/iv_act_case_back"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_case_coll"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_coll"
+            android:layout_below="@+id/iv_act_case_back"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_case_loc"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_loc"
-          android:layout_below="@+id/iv_act_case_coll"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_case_loc"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_loc"
+            android:layout_below="@+id/iv_act_case_coll"
+            android:clickable="true"
+            />
     </RelativeLayout>
 
     <!-- 查询结果 -->
@@ -94,11 +94,11 @@
             android:clickable="true"
             android:visibility="invisible"
             />
-        
+
         <!-- 查询结果 -->
         <GridView
             android:layout_centerHorizontal="true"
-            android:id="@+id/vp_act_case_result" 
+            android:id="@+id/vp_act_case_result"
             android:layout_width="@dimen/act_case_result_width"
             android:layout_height="wrap_content"
             android:numColumns="5"
@@ -107,7 +107,7 @@
             android:listSelector="#00000000"
             android:alwaysDrawnWithCache="true"
             android:scrollbars="none"
-            android:verticalSpacing="25dp" >
+            android:verticalSpacing="25dp">
         </GridView>
 
         <!-- 查询结果 下一页-->
@@ -121,17 +121,17 @@
             android:clickable="true"
             android:visibility="invisible"
             />
-        
+
         <!-- 查询进度提示 -->
         <ProgressBar
             android:id="@+id/pb_act_result_progress"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="@dimen/act_source_search_progress_width"
-            android:layout_height="wrap_content" 
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="gone"
             />
-        
+
         <!-- 查询结果 页码数量-->
         <LinearLayout
             android:id="@+id/ll_act_case_result_bar"

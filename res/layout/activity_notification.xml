@@ -2,27 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-    <TextView 
+    android:orientation="vertical">
+    <TextView
         android:id="@+id/tv_act_not_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="温馨提示"
         android:textSize="20sp"
         />
-     <TextView 
+    <TextView
         android:ems="20"
         android:minLines="5"
         android:id="@+id/tv_act_not_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         />
-     <Button 
-         android:id="@+id/bt_act_not_choose"
+    <Button
+        android:id="@+id/bt_act_not_choose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:textSize="20sp"
         android:text="确定"
-         />
+        />
 </LinearLayout>

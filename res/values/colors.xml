@@ -12,6 +12,10 @@
 
 	<!-- 和谐 自体颜色值 -->
 	<color name="harmony_grade_term_pressed">#000000</color> 
-	<color name="harmony_grade_term_normal">#FFFFFF</color> 
+	<color name="harmony_grade_term_normal">#FFFFFF</color>
+
+	<!-- 搜索 最后一级 自体颜色值 -->
+	<color name="search_last_term_pressed">#e41e10</color>
+	<color name="search_last_term_normal">#563a07</color>
   
 </resources>

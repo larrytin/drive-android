@@ -2,11 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ebook_bg" >
+    android:background="@drawable/ebook_bg">
 
     <!-- 状态栏 -->
 
-    <com.goodow.drive.android.view.StatusView style="@style/status" />
+    <com.goodow.drive.android.view.StatusView style="@style/status"/>
 
     <!-- 后退  收藏  锁屏 -->
 
@@ -15,25 +15,25 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_harmony_fun_bar_marginLeft"
         android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/iv_act_ebook_back"
             style="@style/case_sys_fun"
             android:clickable="true"
-            android:src="@drawable/new_common_selector_back" />
+            android:src="@drawable/new_common_selector_back"/>
 
         <ImageView
             android:id="@+id/iv_act_ebook_coll"
             style="@style/case_sys_fun"
             android:clickable="true"
-            android:src="@drawable/new_common_selector_coll" />
+            android:src="@drawable/new_common_selector_coll"/>
 
         <ImageView
             android:id="@+id/iv_act_ebook_loc"
             style="@style/case_sys_fun"
             android:clickable="true"
-            android:src="@drawable/new_common_selector_loc" />
+            android:src="@drawable/new_common_selector_loc"/>
     </LinearLayout>
 
     <!-- 查询结果 -->
@@ -46,56 +46,56 @@
         android:layout_marginRight="@dimen/act_read_result_root_marginRight"
         android:layout_marginTop="@dimen/act_read_result_root_marginTop"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/ll_result_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <com.goodow.drive.android.view.EbookAttachmentsView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tag="小班上"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <com.goodow.drive.android.view.EbookAttachmentsView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tag="中班上"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <com.goodow.drive.android.view.EbookAttachmentsView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tag="大班上"
-                android:visibility="gone" />
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_result_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal">
 
             <com.goodow.drive.android.view.EbookAttachmentsView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tag="小班下"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <com.goodow.drive.android.view.EbookAttachmentsView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tag="中班下"
-                android:visibility="gone" />
+                android:visibility="gone"/>
 
             <com.goodow.drive.android.view.EbookAttachmentsView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tag="大班下"
-                android:visibility="gone" />
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 

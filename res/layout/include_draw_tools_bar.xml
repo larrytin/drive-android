@@ -62,5 +62,5 @@
         android:onClick="onBarClick"
         android:layout_marginTop="@dimen/video_toobar_item_margin"
         />
-    
+
 </LinearLayout>

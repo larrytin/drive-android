@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/smart_bg" >
+    android:background="@drawable/smart_bg">
 
     <!--  状态栏  -->
     <com.goodow.drive.android.view.StatusView
-	style="@style/status" 
-    />
+        style="@style/status"
+        />
 
     <!-- 大小班级 -->
     <LinearLayout
@@ -43,19 +43,19 @@
             android:id="@+id/iv_act_smart_back"
             layout="@layout/include_back"/>
         <ImageView
-          android:id="@+id/iv_act_smart_coll"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_coll"
-          android:layout_below="@+id/iv_act_smart_back"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_smart_coll"
+            style="@style/index_sys_fun"
+            android:src="@drawable/common_selector_coll"
+            android:layout_below="@+id/iv_act_smart_back"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_smart_loc"
-          style="@style/index_sys_fun"
-          android:src="@drawable/common_selector_loc"
-          android:layout_below="@+id/iv_act_smart_coll"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_smart_loc"
+            style="@style/index_sys_fun"
+            android:src="@drawable/common_selector_loc"
+            android:layout_below="@+id/iv_act_smart_coll"
+            android:clickable="true"
+            />
     </RelativeLayout>
 
     <!-- 查询结果 -->
@@ -79,11 +79,11 @@
             />
         <!-- 查询结果 -->
         <android.support.v4.view.ViewPager
-          android:id="@+id/vp_act_smart_result"
-          android:layout_width="730dp"
-          android:layout_height="fill_parent"
-          android:layout_centerHorizontal="true"
-          />
+            android:id="@+id/vp_act_smart_result"
+            android:layout_width="730dp"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            />
         <!-- 查询结果 下一页-->
         <ImageView
             android:id="@+id/rl_act_smart_result_next"

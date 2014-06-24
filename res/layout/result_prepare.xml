@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" >
+        android:layout_centerInParent="true">
 
         <!-- 活动板 -->
 
@@ -15,7 +15,7 @@
             android:id="@+id/iv_prepare_snail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/prepare_result_snail" />
+            android:src="@drawable/prepare_result_snail"/>
 
         <!-- 左眼 -->
 
@@ -23,7 +23,7 @@
             android:id="@+id/iv_prepare_left_eye"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/prepare_result_word" />
+            android:src="@drawable/prepare_result_word"/>
 
         <!-- 右眼 -->
 
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="85dp"
-            android:src="@drawable/prepare_result_ebook" />
+            android:src="@drawable/prepare_result_ebook"/>
 
         <!-- 蜗牛身上的字 -->
 
@@ -46,7 +46,7 @@
             android:gravity="center_horizontal"
             android:text="测试测试测试测试测试测试"
             android:textColor="#412106"
-            android:textSize="20px" />
+            android:textSize="20px"/>
     </RelativeLayout>
 
 </RelativeLayout>

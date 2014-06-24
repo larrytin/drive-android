@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent">
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/video_background"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <com.goodow.drive.android.player.VideoView
             android:id="@+id/vv"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_height="fill_parent"/>
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/video_back_marginLeft"
-        android:layout_marginTop="@dimen/video_back_marginTop" >
+        android:layout_marginTop="@dimen/video_back_marginTop">
 
         <include
             android:id="@+id/iv_act_favour_back"
-            layout="@layout/include_back" />
+            layout="@layout/include_back"/>
     </RelativeLayout>
 
 </FrameLayout>

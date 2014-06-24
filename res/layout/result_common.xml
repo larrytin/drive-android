@@ -3,18 +3,18 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <ImageView
         android:id="@+id/iv_common_result"
         android:layout_width="@dimen/common_result_image_width"
-        android:layout_height="@dimen/common_result_image_height" />
+        android:layout_height="@dimen/common_result_image_height"/>
 
     <com.goodow.drive.android.view.MarqueeTextView
         android:textSize="@dimen/common_result_textSize"
         android:id="@+id/tv_common_result"
         android:layout_width="@dimen/common_result_text_width"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal" />
+        android:gravity="center_horizontal"/>
 
 </LinearLayout>

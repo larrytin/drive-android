@@ -1,24 +1,5 @@
 package com.goodow.drive.android.activity;
 
-import com.goodow.android.drive.R;
-import com.goodow.drive.android.Constant;
-import com.goodow.drive.android.toolutils.FileTools;
-import com.goodow.drive.android.view.DrawableLeftTextView;
-import com.goodow.realtime.channel.Message;
-import com.goodow.realtime.channel.MessageHandler;
-import com.goodow.realtime.core.Registration;
-import com.goodow.realtime.json.Json;
-import com.goodow.realtime.json.JsonArray;
-import com.goodow.realtime.json.JsonObject;
-import com.google.inject.Inject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
@@ -33,18 +14,21 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.*;
 import android.widget.LinearLayout.LayoutParams;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.goodow.android.drive.R;
+import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.toolutils.FileTools;
+import com.goodow.drive.android.view.FlowRadioGroup;
+import com.goodow.realtime.channel.Message;
+import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.core.Registration;
+import com.goodow.realtime.json.Json;
+import com.goodow.realtime.json.JsonArray;
+import com.goodow.realtime.json.JsonObject;
 
-import roboguice.inject.ContentView;
-import roboguice.inject.InjectView;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * 资源库
@@ -52,25 +36,59 @@ import roboguice.inject.InjectView;
  * @author dpw
  * 
  */
-@ContentView(R.layout.activity_source)
 public class SourceActivity extends BaseActivity implements OnClickListener {
 
   /**
    * 二级类别点事件调用
    * 
+   * @param
    */
   private class OnSubCatagoryClick implements OnClickListener {
     @Override
     public void onClick(View v) {
       cleanSearchResult();
+      int tagIndex = Integer.parseInt(v.getTag(R.id.tag_first).toString());
+      boolean isLast = Boolean.parseBoolean(v.getTag(R.id.tag_second).toString());
+      int selfIndex = Integer.parseInt(v.getTag(R.id.tag_third).toString());
+      int parentStartY = Integer.parseInt(v.getTag(R.id.tag_fourth).toString());
+        for(int i=tagIndex;i<subTags.size();i++){
+          subTags.remove(i);
+          i--;
+      }
+      boolean isCancle = false;
       if (v.isSelected()) {
-        v.setSelected(false);
-        subTags.remove(((DrawableLeftTextView) v).getText().toString());
+          RadioGroup parent = (RadioGroup)v.getParent();
+          int childCount = parent.getChildCount();
+          for(int i=0;i<childCount;i++){
+              parent.getChildAt(i).setSelected(false);
+          }
+          v.setSelected(false);
+          isCancle = true;
       } else {
-        v.setSelected(true);
-        subTags.add(((DrawableLeftTextView) v).getText().toString());
+          RadioGroup parent = (RadioGroup)v.getParent();
+          int childCount = parent.getChildCount();
+          for(int i=0;i<childCount;i++){
+              parent.getChildAt(i).setSelected(false);
+          }
+          v.setSelected(true);
+          subTags.add(((RadioButton) v).getText().toString());
+      }
+      setKeyList();
+      currentindex = tagIndex;
+      if(!isLast){
+          bindSubTagToView(currentindex,parentStartY,selfIndex,isCancle);
       }
     }
+  }
+
+  private TextView tv_act_source_keys_list = null;
+  public void setKeyList(){
+      StringBuffer buffer = new StringBuffer();
+      for(String string:subTags){
+          buffer.append(string + " + ");
+      }
+      buffer.deleteCharAt(buffer.lastIndexOf("+"));
+      this.tv_act_source_keys_list.setText(buffer.toString());
   }
 
   /**
@@ -111,7 +129,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-      View itemView;
+      View itemView = null;
       if (convertView != null) {
         itemView = convertView;
       } else {
@@ -199,31 +217,22 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private final static String status_unstar = "0";
 
   private final static String status_stared = "1";
-  @InjectView(R.id.tv_act_source_tip)
-  private TextView tv_act_source_tip;
-  @InjectView(R.id.iv_act_source_result_pre)
-  private ImageView iv_act_source_result_pre;
-  @InjectView(R.id.gr_act_source_result)
-  private GridView gr_act_source_result;
-  private ResultAdapter resultAdapter;
-  @InjectView(R.id.iv_act_source_result_next)
-  private ImageView iv_act_source_result_next;
+  private TextView tv_act_source_tip = null;
+  private ImageView iv_act_source_result_pre = null;
+  private GridView gr_act_source_result = null;
+  private ResultAdapter resultAdapter = null;
+  private ImageView iv_act_source_result_next = null;
   private int totalAttachmentNum = 0;// 总的数据量
 
   private int currentPageNum = 0;// 当前页码
   private final int numPerPage = 10;// 查询结果每页显示10条数据
 
-  @InjectView(R.id.pb_act_source_search_progress)
-  private ProgressBar pb_act_source_search_progress;
+  private ProgressBar pb_act_source_search_progress = null;
 
-  @InjectView(R.id.ll_act_source_catagory0)
-  private LinearLayout ll_act_source_catagory0;
-  @InjectView(R.id.ll_act_source_catagory1)
-  private LinearLayout ll_act_source_catagory1;
-  @InjectView(R.id.et_act_source_tags)
-  private EditText et_act_source_tags;
-  @InjectView(R.id.iv_act_source_search_button)
-  private ImageView iv_act_source_search_button;
+  private LinearLayout ll_act_source_catagory0 = null;
+  private LinearLayout ll_act_source_catagory1 = null;
+  private EditText et_act_source_tags = null;
+  private ImageView iv_act_source_search_button = null;
   // 当前的contentType对应的ID
   private String currentContentType = null;// 搜索一级标签
 
@@ -231,10 +240,25 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private JsonArray queryingTags = null;// 控制台传递的混合标签
   private Registration postHandler;
   private Registration controlHandler;
-  @Inject
-  private InputMethodManager imm;
   private static final Map<Object, String> idContentTypes = new HashMap<Object, String>();
   private static final Map<Object, String> idTags = new HashMap<Object, String>();
+
+  private LinearLayout ll_act_source_sub_catagorys = null;
+
+  private final static String CATAGORY0_ALL = "全部";
+  private final static String CATAGORY0_TEXT = "文本";
+  private final static String CATAGORY0_PIC = "图片";
+  private final static String CATAGORY0_ANIM = "动画";
+  private final static String CATAGORY0_VIDEO = "视频";
+  private final static String CATAGORY0_AUDIO = "音频";
+  private final static String CATAGORY0_EBOOK = "电子书";
+  private static JsonObject root = null;
+  private CheckBox cb_act_source_subcat_status0 = null;
+  private CheckBox cb_act_source_subcat_status1 = null;
+
+  private int currentindex = 0;
+  private int preItemHeight = 25;
+  private Stack<JsonArray> subCatagoryStack = new Stack<JsonArray>();
   static {
     idContentTypes.put(R.id.iv_act_source_catagory0_all, "全部");
     idContentTypes.put(R.id.iv_act_source_catagory0_text, "application/pdf");
@@ -244,16 +268,35 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     idContentTypes.put(R.id.iv_act_source_catagory0_audio, "audio/mpeg");
     idContentTypes.put(R.id.iv_act_source_catagory0_ebook, "application/x-shockwave-flash");
 
-    idTags.put(R.id.iv_act_source_catagory0_all, "全部");
-    idTags.put(R.id.iv_act_source_catagory0_text, "文本");
-    idTags.put(R.id.iv_act_source_catagory0_image, "图片");
-    idTags.put(R.id.iv_act_source_catagory0_animation, "动画");
-    idTags.put(R.id.iv_act_source_catagory0_video, "视频");
-    idTags.put(R.id.iv_act_source_catagory0_audio, "音频");
-    idTags.put(R.id.iv_act_source_catagory0_ebook, "电子书");
+    idTags.put(R.id.iv_act_source_catagory0_all, CATAGORY0_ALL);
+    idTags.put(R.id.iv_act_source_catagory0_text, CATAGORY0_TEXT);
+    idTags.put(R.id.iv_act_source_catagory0_image, CATAGORY0_PIC);
+    idTags.put(R.id.iv_act_source_catagory0_animation, CATAGORY0_ANIM);
+    idTags.put(R.id.iv_act_source_catagory0_video, CATAGORY0_VIDEO);
+    idTags.put(R.id.iv_act_source_catagory0_audio, CATAGORY0_AUDIO);
+    idTags.put(R.id.iv_act_source_catagory0_ebook, CATAGORY0_EBOOK);
+
+
+    JsonArray grades = Json.createArray().push("托班").push("小班").push("中班").push("大班").push("学前班");
+    JsonObject topic = Json.createObject().set("健康", grades).set("语言", grades).set("社会", grades).set("科学", grades).set("数学", grades).set("艺术(音乐)",grades).set("艺术(美术)",grades);
+    JsonArray topic_of_pic_sub1 = Json.createArray().push("文学艺术").push("人物").push("动物").push("植物").push("物品").push("食品").push("交通工具").push("风景名胜").push("公共设施")
+            .push("节庆及活动").push("科学技术").push("自然现象").push("数学操作材料").push("其他");
+    JsonArray topic_of_pic_sub23 = Json.createArray().push("健康").push("语言").push("社会").push("科学").push("数学").push("艺术(音乐)").push("艺术(美术)");
+    JsonArray topic_of_pic_sub4_array = Json.createArray().push("动物").push("植物").push("人物").push("其他");
+    JsonObject TEXT_SUB = Json.createObject().set("活动设计", topic).set("文学作品", null).set("乐谱",null);
+    JsonObject PIC_SUB = Json.createObject().set("实物图与绘制图", topic_of_pic_sub1).set("挂图", topic_of_pic_sub23).set("参考图", topic_of_pic_sub23).set("轮廓图", null)
+            .set("头饰",topic_of_pic_sub4_array).set("手偶",topic_of_pic_sub4_array).set("胸牌",topic_of_pic_sub4_array);
+    JsonArray ANIM_SUB = Json.createArray().push("文学作品动画").push("音乐作品动画").push("演示动画").push("数学教学动画");
+    JsonArray topic_of_video_sub1 = Json.createArray().push("动物").push("植物").push("自然风光");
+    JsonArray topic_of_video_sub2 = Json.createArray().push("舞蹈").push("歌表演").push("音乐游戏").push("打击乐器演奏").push("基本舞步示范");
+    JsonObject VIDEO_SUB = Json.createObject().set("教学视频", topic_of_video_sub1).set("音乐表演视频", topic_of_video_sub2).set("教学示范课", topic).set("动物模仿动作",null);
+    JsonArray AUDIO_SUB = Json.createArray().push("文学作品音频").push("音乐作品音频").push("音效");
+    JsonArray EBOOK_SUB = Json.createArray().push("托班").push("安全教育");
+
+    root = Json.createObject().set("文本",TEXT_SUB).set("图片",PIC_SUB).set("动画",ANIM_SUB).set("视频",VIDEO_SUB).set("音频",AUDIO_SUB).set("电子书", EBOOK_SUB);
   }
 
-  @Override
+    @Override
   public void onClick(View v) {
     switch (v.getId()) {
       case R.id.iv_act_source_back:
@@ -282,7 +325,18 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       case R.id.iv_act_source_result_next:
         this.onResultPrePageClick(v.getId());
         break;
-
+        case R.id.cb_act_source_subcat_status0:
+        case R.id.cb_act_source_subcat_status1:
+            if(v.isSelected()){
+                this.cb_act_source_subcat_status0.setSelected(false);
+                this.cb_act_source_subcat_status1.setSelected(false);
+                this.ll_act_source_sub_catagorys.setVisibility(View.GONE);
+            }else{
+                this.cb_act_source_subcat_status0.setSelected(true);
+                this.cb_act_source_subcat_status1.setSelected(true);
+                this.ll_act_source_sub_catagorys.setVisibility(View.VISIBLE);
+            }
+            break;
       default:
         break;
     }
@@ -291,6 +345,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    this.setContentView(R.layout.activity_source);
     this.initView();
     Bundle extras = this.getIntent().getExtras();
     JsonObject msg = (JsonObject) extras.get("msg");
@@ -376,9 +431,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
               } else if (page.has("move")) {
                 currentPageNum = currentPageNum + (int) page.getNumber("move");
               }
-              sendQueryMessage(currentContentType, subTags, et_act_source_tags.getText().toString()
-                  .trim());
-
+              sendQueryMessage(currentContentType, subTags, et_act_source_tags.getText().toString().trim());
             }
           }
         });
@@ -419,32 +472,124 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   /**
    * 显示标签的子标签
    * 
-   * @param tags
+   * @param
    */
-  private void bindSubTagToView(JsonArray tags) {
-    int len = tags.length();
-    for (int i = 0; i < len; i++) {
-      String tag = tags.getString(i);
-      DrawableLeftTextView view = new DrawableLeftTextView(SourceActivity.this);
-      TextView child = (TextView) view.findViewById(R.id.tv_subtag);
-      child.setText(tags.getString(i));
-      view.setOnClickListener(new OnSubCatagoryClick());
-      // 查询得到的二级标签中是否包含了控制台传递过来的二级标签
-      for (int j = 0; this.queryingTags != null && j < this.queryingTags.length(); j++) {
-        String queryingTag = this.queryingTags.getString(j);
-        if (tag.equals(queryingTag)) {
-          this.subTags.add(tag);
-          view.setSelected(true);
-          break;
-        }
+  private void bindSubTagToView(int parentIndex,int parentStartY,int selfIndex,boolean isCancle){
+      for(int i=this.ll_act_source_sub_catagorys.getChildCount() - 1; i > currentindex - 1 ; i --){
+          this.ll_act_source_sub_catagorys.removeViewAt(i);
       }
-      LayoutParams layoutParams =
-          new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-      layoutParams.setMargins(getResources().getDimensionPixelOffset(
-          R.dimen.act_source_search_subtag_margin), 0, getResources().getDimensionPixelOffset(
-          R.dimen.act_source_search_subtag_margin), 0);
-      view.setLayoutParams(layoutParams);
-      this.ll_act_source_catagory1.addView(view);
+      if(isCancle){
+          return;
+      }
+      JsonObject tempObject = root;
+      JsonObject jsonObject = null;
+      JsonArray jsonArray = null;
+      boolean isLast = false;
+      boolean isNull = false;
+      for(String tag:subTags){
+          Object subObject = tempObject.get(tag);
+          if(subObject == null){
+             isNull = true;
+             break;
+          }
+          if(subObject instanceof JsonObject){
+              jsonArray = null;
+              jsonObject = (JsonObject)subObject;
+              isLast = false;
+          }else if(subObject instanceof JsonArray){
+              jsonObject = null;
+              jsonArray = (JsonArray)subObject;
+              isLast = true;
+          }
+          tempObject = jsonObject;
+      }
+      if(isNull){
+          return;
+      }
+      JsonArray keys = null;
+      if(jsonObject != null){
+          keys = jsonObject.keys();
+      }else if(jsonArray != null){
+          keys = jsonArray;
+      }
+
+      RadioGroup radioGroup = new RadioGroup(this);
+      if(parentIndex == 0){
+          radioGroup.setBackgroundResource(R.drawable.source_hierarchy_sub_0);
+      }else if(parentIndex == 1){
+          radioGroup.setBackgroundResource(R.drawable.source_hierarchy_sub_1);
+      }else if(parentIndex == 2){
+          radioGroup.setBackgroundResource(R.drawable.source_hierarchy_sub_2);
+      }
+
+      LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      if(parentIndex == 0){
+          layoutParams.setMargins(0, selfIndex * preItemHeight,0,0);
+      }else{
+          layoutParams.setMargins(0, parentStartY  + selfIndex * preItemHeight,0,0);
+      }
+      radioGroup.setLayoutParams(layoutParams);
+      radioGroup.setOrientation(RadioGroup.VERTICAL);
+      for(int i=0;i<keys.length();i++){
+          RadioButton radioButton = (RadioButton) this.getLayoutInflater().inflate(R.layout.soruce_item_sub_search,null);
+          radioButton.setText(keys.get(i).toString());
+          if(parentIndex == 0 && isLast == false){
+              radioButton.setButtonDrawable(R.drawable.source_selector_stretch);
+          }
+          if(parentIndex == 1 && isLast == false){
+              radioButton.setButtonDrawable(R.drawable.source_selector_arrow);
+          }
+          radioButton.setTag(R.id.tag_first, (parentIndex + 1));
+          radioButton.setTag(R.id.tag_second,isLast);
+          radioButton.setTag(R.id.tag_third,i);
+          radioButton.setTag(R.id.tag_fourth,parentStartY + selfIndex * preItemHeight);
+          radioButton.setOnClickListener(new OnSubCatagoryClick());
+          radioGroup.addView(radioButton);
+      }
+      this.ll_act_source_sub_catagorys.addView(radioGroup);
+  }
+
+  private void bindSubTagToView(JsonArray tags) {
+    subCatagoryStack.push(tags);
+    this.ll_act_source_sub_catagorys.removeAllViews();
+    for(JsonArray tag:subCatagoryStack){
+        int len = tag.length();
+        RadioGroup radioGroup = new RadioGroup(this);
+        radioGroup.setOrientation(RadioGroup.HORIZONTAL);
+        //LinearLayout innerSubCatagory = new LinearLayout(this);
+        //innerSubCatagory.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+        //innerSubCatagory.setOrientation(LinearLayout.HORIZONTAL);
+        for (int i = 0; i < len; i++) {
+            String tagString = tag.getString(i);
+            RadioButton radioButton = new RadioButton(this);
+            radioButton.setText(tagString);
+            radioButton.setButtonDrawable(R.drawable.source_selector_catagory1);
+            //DrawableLeftTextView view = new DrawableLeftTextView(SourceActivity.this);
+            //view.setTag(index);
+            //TextView child = (TextView) view.findViewById(R.id.tv_subtag);
+            //child.setText(tags.getString(i));
+            //view.setOnClickListener(new OnSubCatagoryClick());
+            radioButton.setOnClickListener(new OnSubCatagoryClick());
+            // 查询得到的二级标签中是否包含了控制台传递过来的二级标签
+            for (int j = 0; this.queryingTags != null && j < this.queryingTags.length(); j++) {
+                String queryingTag = this.queryingTags.getString(j);
+                if (tag.equals(queryingTag)) {
+                    this.subTags.add(tagString);
+                   // view.setSelected(true);
+                    break;
+                }
+            }
+            LayoutParams layoutParams =
+                    new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            layoutParams.setMargins(getResources().getDimensionPixelOffset(
+                    R.dimen.act_source_search_subtag_margin), 0, getResources().getDimensionPixelOffset(
+                    R.dimen.act_source_search_subtag_margin), 0);
+            //view.setLayoutParams(layoutParams);
+            //innerSubCatagory.addView(view);
+            radioGroup.addView(radioButton);
+        }
+       //this.ll_act_source_sub_catagorys.addView(innerSubCatagory);
+        this.ll_act_source_sub_catagorys.addView(radioGroup);
     }
   }
 
@@ -464,7 +609,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   /**
    * 回显contentType
    * 
-   * @param tag
+   * @param
    */
   private void echoContentType(String tag) {
     Set<Entry<Object, String>> entrySet = idTags.entrySet();
@@ -480,22 +625,42 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * 初始化View对象 设置点击事件 设置光标事件监听
    */
   private void initView() {
-    resultAdapter = new ResultAdapter(this);
+    this.iv_act_source_result_pre = (ImageView) this.findViewById(R.id.iv_act_source_result_pre);
     this.iv_act_source_result_pre.setOnClickListener(this);
+    this.gr_act_source_result = (GridView) this.findViewById(R.id.gr_act_source_result);
+    this.resultAdapter = new ResultAdapter(this);
     this.gr_act_source_result.setAdapter(this.resultAdapter);
+    this.iv_act_source_result_next = (ImageView) this.findViewById(R.id.iv_act_source_result_next);
     this.iv_act_source_result_next.setOnClickListener(this);
 
+    this.tv_act_source_tip = (TextView) this.findViewById(R.id.tv_act_source_tip);
+    this.pb_act_source_search_progress =
+        (ProgressBar) this.findViewById(R.id.pb_act_source_search_progress);
+    this.ll_act_source_catagory0 = (LinearLayout) this.findViewById(R.id.ll_act_source_catagory0);
     int len_catagory0 = this.ll_act_source_catagory0.getChildCount();
     for (int i = 0; i < len_catagory0; i++) {
       this.ll_act_source_catagory0.getChildAt(i).setOnClickListener(this);
     }
+    this.ll_act_source_catagory1 = (LinearLayout) this.findViewById(R.id.ll_act_source_catagory1);
     int len_catagory1 = this.ll_act_source_catagory1.getChildCount();
     for (int i = 0; i < len_catagory1; i++) {
       this.ll_act_source_catagory1.getChildAt(i).setOnClickListener(this);
     }
+    this.et_act_source_tags = (EditText) this.findViewById(R.id.et_act_source_tags);
+    this.iv_act_source_search_button =
+        (ImageView) this.findViewById(R.id.iv_act_source_search_button);
     this.iv_act_source_search_button.setOnClickListener(this);
+    this.ll_act_source_sub_catagorys = (LinearLayout)this.findViewById(R.id.ll_act_source_sub_catagorys);
+    this.tv_act_source_keys_list = (TextView)this.findViewById(R.id.tv_act_source_keys_list);
+    this.cb_act_source_subcat_status0 = (CheckBox) this.findViewById(R.id.cb_act_source_subcat_status0);
+    this.cb_act_source_subcat_status1 = (CheckBox) this.findViewById(R.id.cb_act_source_subcat_status1);
+    this.cb_act_source_subcat_status0.setSelected(true);
+    this.cb_act_source_subcat_status1.setSelected(true);
+    this.cb_act_source_subcat_status0.setOnClickListener(this);
+    this.cb_act_source_subcat_status1.setOnClickListener(this);
 
   }
+
 
   /**
    * 一级类别点事件调用
@@ -504,6 +669,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    */
   private void onContentTypeClick(int id) {
     this.subTags.clear();
+    currentindex = 0;
+    this.subCatagoryStack.clear();
     this.subTags.add(idTags.get(id));
     ll_act_source_catagory1.removeAllViews();
     int len = this.ll_act_source_catagory0.getChildCount();
@@ -524,9 +691,22 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       this.tv_act_source_tip.setText(null);
       this.currentContentType = idContentTypes.get(id);
       if (id != R.id.iv_act_source_catagory0_all) {
-        this.sendQuerySubCatagory(this.subTags.get(0));
+        //this.sendQuerySubCatagory(Json.createArray().push(this.subTags.get(0)));
+        bindSubTagToView(0,30,0,false);
+      }
+
+      if(id == R.id.iv_act_source_catagory0_all){
+          this.ll_act_source_sub_catagorys.removeAllViews();
+          this.cb_act_source_subcat_status0.setSelected(false);
+          this.cb_act_source_subcat_status1.setSelected(false);
+          this.ll_act_source_sub_catagorys.setVisibility(View.GONE);
+      }else{
+          this.cb_act_source_subcat_status0.setSelected(true);
+          this.cb_act_source_subcat_status1.setSelected(true);
+          this.ll_act_source_sub_catagorys.setVisibility(View.VISIBLE);
       }
     }
+    setKeyList();
   }
 
   /**
@@ -556,6 +736,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
    * @param id
    */
   private void onSearchButtonClick(int id) {
+    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
     this.totalAttachmentNum = 0;
     this.currentPageNum = 0;
@@ -604,9 +785,9 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   /**
    * 构建查询的bus消息查询子级分类
    */
-  private void sendQuerySubCatagory(String contentType) {
+  private void sendQuerySubCatagory(JsonArray tags) {
     JsonObject msg =
-        Json.createObject().set(Constant.KEY_TAGS, Json.createArray().push(contentType));
+        Json.createObject().set(Constant.KEY_TAGS, tags);
     msg.set(Constant.KEY_FROM, 0);
     msg.set(Constant.KEY_SIZE, 20);// 假设每个一级搜索下的标签不多于20
     bus.sendLocal(Constant.ADDR_TAG_CHILDREN, msg, new MessageHandler<JsonObject>() {
@@ -617,6 +798,18 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
         bindSubTagToView(tags);
       }
     });
+  }
+  private void sendQuerySubCatagory(List<String> list) {
+    JsonArray tags = Json.createArray();
+    for(String string:list){
+        tags.push(string);
+    }
+    this.sendQuerySubCatagory(tags);
+  }
+  private void sendQuerySubCatagory(String string) {
+    JsonArray tags = Json.createArray();
+    tags.push(string);
+    this.sendQuerySubCatagory(tags);
   }
 
   /**

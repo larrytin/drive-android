@@ -92,4 +92,9 @@
     <string name="string_pdf_next">下一页</string>
     <string name="string_pdf_max">放大</string>
     <string name="string_pdf_min">缩小</string>
+
+    <item type="id" name="tag_first"></item>
+    <item type="id" name="tag_second"></item>
+    <item type="id" name="tag_third"></item>
+    <item type="id" name="tag_fourth"></item>
 </resources>

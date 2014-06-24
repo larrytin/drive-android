@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/mp3_bg" >
+    android:background="@drawable/mp3_bg">
 
     <!-- 标题 -->
 
@@ -16,19 +16,19 @@
         android:paddingTop="10dp"
         android:singleLine="true"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:textSize="16sp"/>
 
-    <include layout="@layout/include_player_controller" />
+    <include layout="@layout/include_player_controller"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/video_back_marginLeft"
-        android:layout_marginTop="@dimen/video_back_marginTop" >
+        android:layout_marginTop="@dimen/video_back_marginTop">
 
         <include
             android:id="@+id/iv_act_favour_back"
-            layout="@layout/include_back" />
+            layout="@layout/include_back"/>
     </RelativeLayout>
 
 </FrameLayout>

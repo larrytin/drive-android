@@ -2,4 +2,4 @@
 <com.goodow.drive.android.view.FontTextView xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/style_common_class"
     android:background="@drawable/common_selector_class_long"
-/>
+    />

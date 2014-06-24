@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/source_bg" >
+    android:background="@drawable/source_bg">
 
     <!--  状态栏  -->
     <com.goodow.drive.android.view.StatusView
-	style="@style/status" 
-    />
+        style="@style/status"
+        />
 
     <!-- 提示语 -->
     <TextView
@@ -18,7 +18,7 @@
         android:text="@string/string_source_tip0"
         android:textColor="#006699"
         android:textSize="@dimen/act_source_search_tip_textSize"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true"/>
 
     <!--  后退  收藏  锁屏  -->
     <RelativeLayout
@@ -28,25 +28,25 @@
         android:layout_marginTop="@dimen/act_source_fun_bar_marginTop"
         >
         <ImageView
-          android:id="@+id/iv_act_source_back"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_back"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_source_back"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_back"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_source_coll"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_coll"
-          android:layout_below="@+id/iv_act_source_back"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_source_coll"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_coll"
+            android:layout_below="@+id/iv_act_source_back"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/iv_act_source_loc"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_loc"
-          android:layout_below="@+id/iv_act_source_coll"
-          android:clickable="true"
-          />
+            android:id="@+id/iv_act_source_loc"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_loc"
+            android:layout_below="@+id/iv_act_source_coll"
+            android:clickable="true"
+            />
     </RelativeLayout>
 
     <!-- 查询结果 -->
@@ -73,7 +73,7 @@
         <!-- 查询结果 -->
         <GridView
             android:layout_centerInParent="true"
-            android:id="@+id/gr_act_source_result" 
+            android:id="@+id/gr_act_source_result"
             android:layout_width="@dimen/act_source_result_width"
             android:layout_height="fill_parent"
             android:numColumns="5"
@@ -83,7 +83,6 @@
             android:alwaysDrawnWithCache="true"
             android:scrollbars="none"
             android:verticalSpacing="25dp"
-            
             ></GridView>
 
         <!-- 查询结果 下一页-->
@@ -102,7 +101,7 @@
             android:id="@+id/pb_act_source_search_progress"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="@dimen/act_source_search_progress_width"
-            android:layout_height="wrap_content" 
+            android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:visibility="gone"
             />
@@ -167,27 +166,27 @@
         android:layout_width="@dimen/act_source_search_root_width"
         android:layout_height="@dimen/act_source_search_root_height"
         android:orientation="horizontal"
-        android:focusable="true"  
-        android:focusableInTouchMode="true" >
-        <FrameLayout 
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent">
-          <EditText
-              android:paddingLeft="@dimen/act_source_search_edit_paddingLeft"
-              android:id="@+id/et_act_source_tags"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:hint="@string/string_source_search_hint"
-              android:textSize="@dimen/act_source_search_edit_textSize"
-              android:background="#ffffff"
-              android:singleLine="true" />
-          <ImageView
-              android:layout_marginLeft="5dp" 
-              android:layout_gravity="center_vertical"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:src="@drawable/source_search_flag"/>
+            <EditText
+                android:paddingLeft="@dimen/act_source_search_edit_paddingLeft"
+                android:id="@+id/et_act_source_tags"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/string_source_search_hint"
+                android:textSize="@dimen/act_source_search_edit_textSize"
+                android:background="#ffffff"
+                android:singleLine="true"/>
+            <ImageView
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/source_search_flag"/>
         </FrameLayout>
         <ImageView
             android:id="@+id/iv_act_source_search_button"
@@ -198,6 +197,60 @@
             android:clickable="true"
             />
     </LinearLayout>
+
+    <LinearLayout android:layout_width="700dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="283dp"
+        android:orientation="vertical"
+        android:layout_below="@id/ll_search_root">
+        <!--级联菜单标题-->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <!--挂载点-->
+            <RelativeLayout android:id="@+id/rl_act_source_common"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content">
+                <CheckBox
+                    android:id="@+id/cb_act_source_subcat_status0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="14dp"
+                    android:button="@drawable/source_selector_mount"/>
+                <CheckBox android:id="@+id/cb_act_source_subcat_status1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dp"
+                    android:button="@drawable/source_selector_mount"/>
+            </RelativeLayout>
+            <!--关键字-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="关键字  "
+                    android:textSize="16sp"
+                    android:textColor="#9d205a"/>
+                <TextView android:id="@+id/tv_act_source_keys_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="#ca310f"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/ll_act_source_sub_catagorys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/rl_act_source_common"
+            android:visibility="gone">
+        </LinearLayout>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_act_source_catagory1"
         android:layout_width="wrap_content"
@@ -206,6 +259,7 @@
         android:layout_alignLeft="@id/ll_search_root"
         android:layout_below="@id/ll_search_root"
         android:layout_marginTop="@dimen/act_source_search_subtag_marginTop"
+        android:visibility="gone"
         >
     </LinearLayout>
 </RelativeLayout>

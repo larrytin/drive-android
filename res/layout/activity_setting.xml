@@ -4,12 +4,12 @@
     android:layout_height="match_parent"
     android:background="@drawable/setting_bg"
     android:orientation="vertical"
-    android:weightSum="11" >
+    android:weightSum="11">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3" >
+        android:layout_weight="3">
 
         <!-- 后退 -->
 
@@ -17,19 +17,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/setting_back_marginLeft"
-            android:layout_marginTop="@dimen/setting_back_marginTop" >
+            android:layout_marginTop="@dimen/setting_back_marginTop">
             <ImageView
                 android:id="@+id/iv_common_back"
                 style="@style/case_sys_fun"
                 android:src="@drawable/new_common_selector_back"
                 android:clickable="true"
-            />
+                />
         </RelativeLayout>
 
         <!-- 状态栏 -->
         <com.goodow.drive.android.view.StatusView
-	        style="@style/status" 
-        />
+            style="@style/status"
+            />
     </RelativeLayout>
 
     <LinearLayout
@@ -38,19 +38,19 @@
         android:layout_weight="8"
         android:gravity="center"
         android:orientation="horizontal"
-        android:weightSum="7" >
+        android:weightSum="7">
 
         <ScrollView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:scrollbars="none" >
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <!-- 一堆按钮 -->
 
@@ -58,35 +58,35 @@
                     android:id="@+id/bt_setting_wifi"
                     style="@style/setting_bt"
                     android:layout_marginTop="0dp"
-                    android:text="@string/setting_wifi" />
+                    android:text="@string/setting_wifi"/>
 
                 <Button
                     android:id="@+id/bt_setting_screen_offset"
                     style="@style/setting_bt"
-                    android:text="@string/setting_screen_offset" />
+                    android:text="@string/setting_screen_offset"/>
 
                 <Button
                     android:id="@+id/bt_setting_about"
                     style="@style/setting_bt"
-                    android:text="@string/setting_about" />
+                    android:text="@string/setting_about"/>
 
                 <Button
                     android:id="@+id/bt_setting_reboot"
                     style="@style/setting_bt"
-                    android:text="@string/setting_reboot" />
+                    android:text="@string/setting_reboot"/>
 
                 <Button
                     android:id="@+id/bt_setting_reset"
                     style="@style/setting_bt"
                     android:visibility="gone"
-                    android:text="@string/setting_reset" />
+                    android:text="@string/setting_reset"/>
 
                 <Button
                     android:id="@+id/bt_setting_register"
                     style="@style/setting_bt"
                     android:visibility="gone"
                     android:text="@string/string_register_register"/>
-                </LinearLayout>
+            </LinearLayout>
         </ScrollView>
     </LinearLayout>
 

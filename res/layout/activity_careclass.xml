@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/care_classes_bg" >
-    
+    android:background="@drawable/care_classes_bg">
+
     <!--  状态栏  -->
     <com.goodow.drive.android.view.StatusView
-	style="@style/status" 
-    />
-    
+        style="@style/status"
+        />
+
     <!-- 上下学期 -->
     <LinearLayout
         android:id="@+id/ll_care_classes_term"
@@ -16,22 +16,22 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_care_term_marginLeft"
         android:layout_marginTop="@dimen/act_care_term_marginTop"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
         <com.goodow.drive.android.view.FontTextView
             android:id="@+id/ftv_term_0"
             style="@style/care_classes_term"
             android:checked="true"
             android:textSize="24dp"
-            android:text="上" />
+            android:text="上"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:id="@+id/ftv_term_1"
             style="@style/care_classes_term"
             android:textSize="24dp"
-            android:text="下" />
+            android:text="下"/>
     </LinearLayout>
-    
+
     <!--  后退  收藏  锁屏  -->
     <LinearLayout
         android:orientation="vertical"
@@ -40,25 +40,25 @@
         android:layout_marginLeft="@dimen/act_harmony_fun_bar_marginLeft"
         android:layout_marginTop="@dimen/act_harmony_fun_bar_marginTop"
         >
-         
+
         <ImageView
-          android:id="@+id/bt_care_back"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_back"
-          android:clickable="true"
-          />
+            android:id="@+id/bt_care_back"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_back"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/bt_care_coll"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_coll"
-          android:clickable="true"
-          />
+            android:id="@+id/bt_care_coll"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_coll"
+            android:clickable="true"
+            />
         <ImageView
-          android:id="@+id/bt_care_loc"
-          style="@style/case_sys_fun"
-          android:src="@drawable/new_common_selector_loc"
-          android:clickable="true"
-          />
+            android:id="@+id/bt_care_loc"
+            style="@style/case_sys_fun"
+            android:src="@drawable/new_common_selector_loc"
+            android:clickable="true"
+            />
     </LinearLayout>
 
     <!-- 一堆条目按钮 -->
@@ -69,52 +69,52 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/act_care_topic_marginLeft"
         android:layout_marginTop="@dimen/act_care_topic_marginTop"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="0"
             android:id="@+id/ftv_care_button1"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="1"
             android:id="@+id/ftv_care_button2"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="2"
             android:id="@+id/ftv_care_button3"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="3"
             android:id="@+id/ftv_care_button4"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="4"
             android:id="@+id/ftv_care_button5"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="5"
             android:id="@+id/ftv_care_button6"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="6"
             android:id="@+id/ftv_care_button7"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="7"
             android:id="@+id/ftv_care_button8"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
 
         <com.goodow.drive.android.view.FontTextView
             android:tag="8"
             android:id="@+id/ftv_care_button9"
-            style="@style/care_classes_item" />
+            style="@style/care_classes_item"/>
     </LinearLayout>
 
     <!-- 一堆云朵 MODIFY BY DPW order BY FROM LEFT TO RIGHT | FROM TOP TO BOTTOM-->
@@ -126,7 +126,7 @@
         android:layout_marginTop="@dimen/act_care_cloud_root_marginTop"
         >
         <LinearLayout
-            android:id="@+id/ll_act_care_result_container_1" 
+            android:id="@+id/ll_act_care_result_container_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -134,31 +134,31 @@
                 android:id="@+id/bt_care_cloud1"
                 style="@style/care_classes_cloud"
                 android:layout_marginTop="5dp"
-            />
+                />
             <TextView
                 android:id="@+id/bt_care_cloud2"
                 style="@style/care_classes_cloud"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="50dp"
-            />
+                />
             <TextView
                 android:id="@+id/bt_care_cloud3"
                 style="@style/care_classes_cloud"
-            />
+                />
             <TextView
                 android:id="@+id/bt_care_cloud4"
                 style="@style/care_classes_cloud"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="55dp"
-            />
+                />
             <TextView
                 android:id="@+id/bt_care_cloud5"
                 style="@style/care_classes_cloud"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="25dp"
-            />
+                />
         </LinearLayout>
-        
+
         <LinearLayout
             android:id="@+id/ll_act_care_result_container_2"
             android:layout_marginTop="200dp"
@@ -169,33 +169,33 @@
                 android:id="@+id/bt_care_cloud6"
                 style="@style/care_classes_cloud"
                 android:layout_marginTop="5dp"
-            />
+                />
             <TextView
                 android:id="@+id/bt_care_cloud7"
                 style="@style/care_classes_cloud"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="50dp"
-            />
+                />
             <TextView
                 android:id="@+id/bt_care_cloud8"
                 style="@style/care_classes_cloud"
-            />
+                />
             <TextView
                 android:id="@+id/bt_care_cloud9"
                 style="@style/care_classes_cloud"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="55dp"
-            />
+                />
             <TextView
                 android:id="@+id/bt_care_cloud10"
                 style="@style/care_classes_cloud"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="25dp"
-            />
+                />
         </LinearLayout>
     </RelativeLayout>
     <ImageButton
-        android:id="@+id/ib_care_ebook" 
+        android:id="@+id/ib_care_ebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/care_classes_ebook"

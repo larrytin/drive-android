@@ -5,7 +5,7 @@
     android:background="@drawable/register_border"
     android:layout_marginBottom="45dip"
     android:layout_marginRight="20dip"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_marginTop="20dp"
@@ -13,7 +13,7 @@
         android:layout_height="0dip"
         android:layout_weight="1"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <com.goodow.drive.android.view.FontEditText
             android:id="@+id/et_schoolname"
@@ -25,7 +25,7 @@
             android:textColor="#fefeff"
             android:singleLine="true"
             android:hint="@string/string_register_schoolname"
-            android:textSize="30sp" />
+            android:textSize="30sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -34,7 +34,7 @@
         android:layout_height="0dip"
         android:layout_weight="1"
         android:gravity="center"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <com.goodow.drive.android.view.FontEditText
             android:id="@+id/et_schoolname1"
@@ -47,13 +47,13 @@
             android:textColor="#fefeff"
             android:inputType="phone"
             android:hint="@string/string_register_schoolname1"
-            android:textSize="30sp" />
+            android:textSize="30sp"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dip"
-        android:layout_weight="1" >
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -62,7 +62,7 @@
             android:gravity="center"
             >
 
-         <com.goodow.drive.android.view.FontTextView
+            <com.goodow.drive.android.view.FontTextView
                 android:id="@+id/tv_register_submit"
                 android:background="@drawable/register_submit"
                 android:layout_width="wrap_content"
@@ -72,7 +72,7 @@
                 android:textSize="28sp"
                 android:gravity="center"
                 android:text="@string/string_register_register"
-             />
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -94,7 +94,7 @@
                 android:textSize="28sp"
                 android:text="@string/string_register_tryten"
                 android:visibility="visible"/>
-             <com.goodow.drive.android.view.FontTextView
+            <com.goodow.drive.android.view.FontTextView
                 android:id="@+id/tv_register_close"
                 android:textColor="#4d1b0d"
                 android:layout_width="wrap_content"
@@ -106,7 +106,7 @@
                 android:gravity="center_vertical"
                 android:textSize="28sp"
                 android:visibility="gone"
-                android:text="@string/string_register_shutdown" />
+                android:text="@string/string_register_shutdown"/>
         </LinearLayout>
     </LinearLayout>
 
