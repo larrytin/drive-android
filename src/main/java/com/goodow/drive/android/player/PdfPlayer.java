@@ -123,7 +123,7 @@ public class PdfPlayer extends BaseActivity implements OnClickListener, OnLoadCo
   protected void onResume() {
     super.onResume();
     controlHandler =
-        bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();

@@ -312,7 +312,7 @@ public class HomeActivity extends BaseActivity {
     final TextView tv_register_shutdown = (TextView) view.findViewById(R.id.tv_register_shutdown);
     tv_register_prompt.setText(mString);
     if (flag) {
-      openHandlerReg = bus.registerLocalHandler(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
+      openHandlerReg = bus.subscribeLocal(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
         @Override
         public void handle(Message<JsonObject> message) {
           wm.removeView(view);
@@ -432,7 +432,7 @@ public class HomeActivity extends BaseActivity {
     }
     registeredNetWork = true;
     netWorkHandlerReg =
-        bus.registerHandler(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
+        bus.subscribe(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
@@ -612,7 +612,7 @@ public class HomeActivity extends BaseActivity {
   // }
   // registeredOnOpen = true;// 注册
   // // 监听网络状况
-  // openHandlerReg = bus.registerHandler(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
+  // openHandlerReg = bus.subscribe(Bus.LOCAL_ON_OPEN, new MessageHandler<JsonObject>() {
   // @Override
   // public void handle(Message<JsonObject> message) {
   // bus.send(Bus.LOCAL + Constant.ADDR_PLAYER + ".analytics.request", null, null);
@@ -845,7 +845,7 @@ public class HomeActivity extends BaseActivity {
       }
       registeredOnOpen1 = true;// 注册
       // 监听网络状况
-      openHandlerReg1 = bus.registerLocalHandler(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
+      openHandlerReg1 = bus.subscribeLocal(Bus.ON_OPEN, new MessageHandler<JsonObject>() {
         @Override
         public void handle(Message<JsonObject> message) {
           bus.sendLocal(Constant.ADDR_AUTH_REQUEST, Json.createObject(), null);

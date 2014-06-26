@@ -66,7 +66,7 @@ public class BaseActivity extends RoboActivity {
       Log.w("EventBus Status", bus.getReadyState().name());
     }
     controlHandler =
-        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject msg = message.body();
@@ -152,7 +152,7 @@ public class BaseActivity extends RoboActivity {
           }
         });
     brightnessHandler =
-        bus.registerLocalHandler(Constant.ADDR_SETTINGS_BRIGHTNESS_LIGHT,
+        bus.subscribeLocal(Constant.ADDR_SETTINGS_BRIGHTNESS_LIGHT,
             new MessageHandler<JsonObject>() {
               @Override
               public void handle(Message<JsonObject> message) {

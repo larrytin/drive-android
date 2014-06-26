@@ -802,7 +802,7 @@ public class VideoActivity extends BaseActivity implements OnTouchListener {
     // isChangedVideo = false;
 
     controlRegistration =
-        bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
 
           @Override
           public void handle(com.goodow.realtime.channel.Message<JsonObject> message) {

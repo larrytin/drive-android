@@ -126,7 +126,7 @@ public class NetWorkListener {
 
     this.context.get().registerReceiver(netWorkStatusReceiver, intentFilter);
     getHander =
-        this.bus.registerLocalHandler(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
+        this.bus.subscribeLocal(Constant.ADDR_CONNECTIVITY, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             String action = message.body().getString("action");

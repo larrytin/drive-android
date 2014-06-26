@@ -278,7 +278,7 @@ public class PicturePlayAcivity extends BaseActivity implements OnTouchListener 
   @Override
   protected void onResume() {
     super.onResume();
-    postHandler = bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+    postHandler = bus.subscribeLocal(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();

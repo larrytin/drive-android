@@ -1,16 +1,18 @@
 package com.goodow.drive.android;
 
+import android.content.Context;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.android.AndroidPlatform;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.impl.ReconnectBus;
 import com.goodow.realtime.channel.impl.ReliableSubscribeBus;
+import com.goodow.realtime.channel.impl.WebSocketBus;
 import com.goodow.realtime.core.Handler;
 import com.goodow.realtime.java.JavaWebSocket;
+import com.goodow.realtime.json.Json;
 import com.goodow.realtime.store.Store;
-import com.goodow.realtime.store.impl.DefaultStore;
-
+import com.goodow.realtime.store.impl.StoreImpl;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -18,8 +20,6 @@ import com.google.inject.Singleton;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import android.content.Context;
 
 public class DriveAndroidModule extends AbstractModule {
   private static final String SERVER = "ldh.goodow.com:1986";
@@ -40,11 +40,11 @@ public class DriveAndroidModule extends AbstractModule {
   Bus provideBus(Store store) {
     ReliableSubscribeBus bus = (ReliableSubscribeBus) store.getBus();
     final ReconnectBus reconnectBus = (ReconnectBus) bus.getDelegate();
-    bus.registerLocalHandler("Bus_Reconnet", new Handler<Message>() {
-      @Override
-      public void handle(Message event) {
-        reconnectBus.connect(URL, null);
-      }
+    bus.subscribeLocal("Bus_Reconnet", new Handler<Message>() {
+        @Override
+        public void handle(Message event) {
+            reconnectBus.connect(URL, null);
+        }
     });
     return bus;
   }
@@ -52,7 +52,7 @@ public class DriveAndroidModule extends AbstractModule {
   @Provides
   @Singleton
   Store provideStore(Provider<Context> contextProvider) {
-    return new DefaultStore(URL, null).authorize(DeviceInformationTools
-        .getLocalMacAddressFromWifiInfo(contextProvider.get()), "");
+      return new StoreImpl(URL, Json.createObject().set(WebSocketBus.SESSION, DeviceInformationTools
+              .getLocalMacAddressFromWifiInfo(contextProvider.get())));
   }
 }

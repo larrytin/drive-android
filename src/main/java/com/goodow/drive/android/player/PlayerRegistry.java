@@ -23,7 +23,7 @@ public class PlayerRegistry {
   private Bus bus;
 
   public void subscribe() {
-    bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -53,7 +53,7 @@ public class PlayerRegistry {
       }
     });
 
-    bus.registerLocalHandler(Constant.ADDR_PLAYER_PDF_JZ, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_PLAYER_PDF_JZ, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, PdfPlayer.class);
@@ -61,7 +61,7 @@ public class PlayerRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_PLAYER_PDF_MU, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_PLAYER_PDF_MU, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, MuPDFActivity.class);
@@ -70,7 +70,7 @@ public class PlayerRegistry {
       }
     });
 
-    bus.registerLocalHandler(Constant.ADDR_PLAYER_SWF_BUTTON, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_PLAYER_SWF_BUTTON, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, FlashPlayerActivity.class);
@@ -78,7 +78,7 @@ public class PlayerRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_PLAYER_SWF_WEBVIEW, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_PLAYER_SWF_WEBVIEW, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, WebViewFlashPlayer.class);
@@ -86,7 +86,7 @@ public class PlayerRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST,
+    bus.subscribeLocal(Constant.ADDR_SYSTIME_ANALYTICS_REQUEST,
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
@@ -115,7 +115,7 @@ public class PlayerRegistry {
                 });
           }
         });
-    bus.registerLocalHandler(Constant.ADDR_PLAYER_ANALYTICS_REQUEST,
+    bus.subscribeLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST,
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {

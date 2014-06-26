@@ -58,7 +58,7 @@ public class SettingsRegistry {
 
   public void subscribe() {
     authSp = ctx.getSharedPreferences(HomeActivity.AUTH, Context.MODE_PRIVATE);
-    bus.registerLocalHandler(Constant.ADDR_AUDIO, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_AUDIO, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -112,7 +112,7 @@ public class SettingsRegistry {
         }
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_SETTINGS_LOCATION_BAIDU,
+    bus.subscribeLocal(Constant.ADDR_SETTINGS_LOCATION_BAIDU,
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(final Message<JsonObject> message) {
@@ -143,7 +143,7 @@ public class SettingsRegistry {
                 });
           }
         });
-    bus.registerLocalHandler(Constant.ADDR_SETTINGS_LOCATION, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_SETTINGS_LOCATION, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = Json.createObject();
@@ -179,7 +179,7 @@ public class SettingsRegistry {
         message.reply(msg, null);
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_SETTINGS_INFORMATION, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_SETTINGS_INFORMATION, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = Json.createObject();
@@ -203,7 +203,7 @@ public class SettingsRegistry {
       }
     });
 
-    bus.registerLocalHandler(Constant.ADDR_SETTINGS_BRIGHTNESS_VIEW,
+    bus.subscribeLocal(Constant.ADDR_SETTINGS_BRIGHTNESS_VIEW,
         new MessageHandler<JsonObject>() {
           private LayoutParams mLayoutParams;
           private View mView;
@@ -255,7 +255,7 @@ public class SettingsRegistry {
           }
         });
 
-    bus.registerLocalHandler(Constant.ADDR_INPUT, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_INPUT, new MessageHandler<JsonObject>() {
       private final Instrumentation inst = new Instrumentation();
 
       @Override
@@ -278,7 +278,7 @@ public class SettingsRegistry {
       }
     });
 
-    bus.registerLocalHandler(Constant.ADDR_NOTIFICATION, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_NOTIFICATION, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
@@ -291,7 +291,7 @@ public class SettingsRegistry {
       }
     });
 
-    bus.registerLocalHandler(Constant.ADDR_PRINT, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_PRINT, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
@@ -309,7 +309,7 @@ public class SettingsRegistry {
     });
 
     // 由服务器来处理验证信息
-    bus.registerLocalHandler(Constant.ADDR_AUTH_REQUEST, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_AUTH_REQUEST, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         final JsonObject messageBody = message.body();

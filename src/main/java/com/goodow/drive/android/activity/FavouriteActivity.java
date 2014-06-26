@@ -190,7 +190,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
   protected void onResume() {
     super.onResume();
     registerPostHandler =
-        bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
@@ -218,7 +218,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
           }
         });
     controlHandler =
-        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
@@ -235,7 +235,7 @@ public class FavouriteActivity extends BaseActivity implements OnClickListener {
         });
 
     refreshHandler =
-        bus.registerLocalHandler(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_VIEW_REFRESH, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             sendQueryMessage(currentTopic);

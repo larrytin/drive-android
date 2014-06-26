@@ -36,7 +36,7 @@ public class ViewRegistry {
     /**
      * 打开VIEW[主页，收藏，设置等]
      */
-    bus.registerLocalHandler(Constant.ADDR_VIEW, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_VIEW, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -104,7 +104,7 @@ public class ViewRegistry {
     /**
      * 打开活动详情
      */
-    bus.registerLocalHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject msg = message.body();
@@ -120,7 +120,7 @@ public class ViewRegistry {
     /**
      * 
      */
-    bus.registerLocalHandler(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_TOPIC, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -173,7 +173,7 @@ public class ViewRegistry {
         ctx.startActivity(intent);
       }
     });
-    bus.registerLocalHandler(Constant.ADDR_VIEW_STATUS, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_VIEW_STATUS, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         Intent intent = new Intent(ctx, StatusBarActivity.class);
@@ -184,7 +184,7 @@ public class ViewRegistry {
     /**
      * 提示使用
      */
-    bus.registerLocalHandler(Constant.ADDR_VIEW_PROMPT, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_VIEW_PROMPT, new MessageHandler<JsonObject>() {
       private LayoutParams mLayoutParams;
       private TextView mView;
       private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
@@ -229,7 +229,7 @@ public class ViewRegistry {
       }
     });
     // 标注
-    bus.registerLocalHandler(Constant.ADDR_VIEW_SCRAWL, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_VIEW_SCRAWL, new MessageHandler<JsonObject>() {
       private final WindowManager mWindowManager = (WindowManager) ctx.getApplicationContext()
           .getSystemService(Context.WINDOW_SERVICE);
       private LayoutParams mLayoutParams;

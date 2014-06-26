@@ -348,7 +348,7 @@ public class MuPDFActivity extends BaseActivity {
   protected void onResume() {
     super.onResume();
     controlHandler =
-        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject msg = message.body();

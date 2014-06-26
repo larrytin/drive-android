@@ -242,7 +242,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
   protected void onResume() {
     super.onResume();
     postHandler =
-        bus.registerLocalHandler(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_ACTIVITY, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();
@@ -271,7 +271,7 @@ public class BehaveActivity extends BaseActivity implements OnClickListener {
         });
 
     controlHandler =
-        bus.registerLocalHandler(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_CONTROL, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject body = message.body();

@@ -23,7 +23,7 @@ public class DataRegistry {
   private Bus bus;
 
   public void subscribe() {
-    bus.registerHandler("drive." + DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx),
+    bus.subscribe("drive." + DeviceInformationTools.getLocalMacAddressFromWifiInfo(ctx),
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(final Message<JsonObject> message) {
@@ -44,7 +44,7 @@ public class DataRegistry {
           }
         });
     // 标签映射的增删改查
-    bus.registerLocalHandler(Constant.ADDR_TAG, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_TAG, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -76,7 +76,7 @@ public class DataRegistry {
       }
     });
     // 查询同时属于N标签的子标签及其文件
-    bus.registerLocalHandler(Constant.ADDR_TAG_CHILDREN_ATTACHMENTS,
+    bus.subscribeLocal(Constant.ADDR_TAG_CHILDREN_ATTACHMENTS,
         new MessageHandler<JsonObject>() {
           @Override
           public void handle(final Message<JsonObject> message) {
@@ -95,7 +95,7 @@ public class DataRegistry {
           }
         });
     // 查询同时属于N标签的子标签
-    bus.registerLocalHandler(Constant.ADDR_TAG_CHILDREN, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_TAG_CHILDREN, new MessageHandler<JsonObject>() {
       @Override
       public void handle(final Message<JsonObject> message) {
         new AsyncTask<Message<?>, Void, JsonObject>() {
@@ -112,7 +112,7 @@ public class DataRegistry {
       }
     });
     // 收藏的增删改查
-    bus.registerLocalHandler(Constant.ADDR_TAG_STAR, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_TAG_STAR, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -144,7 +144,7 @@ public class DataRegistry {
       }
     });
     // 查询收藏列表
-    bus.registerLocalHandler(Constant.ADDR_TAG_STAR_SEARCH, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_TAG_STAR_SEARCH, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -152,7 +152,7 @@ public class DataRegistry {
       }
     });
     // 数据库批量测试数据
-    bus.registerLocalHandler(Constant.ADDR_DB, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_DB, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -170,7 +170,7 @@ public class DataRegistry {
       }
     });
     // 文件的增删改查询
-    bus.registerLocalHandler(Constant.ADDR_TAG_ATTACHMENT, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_TAG_ATTACHMENT, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
         JsonObject body = message.body();
@@ -203,7 +203,7 @@ public class DataRegistry {
     });
 
     // 文件的搜索
-    bus.registerLocalHandler(Constant.ADDR_TAG_ATTACHMENT_SEARCH, new MessageHandler<JsonObject>() {
+    bus.subscribeLocal(Constant.ADDR_TAG_ATTACHMENT_SEARCH, new MessageHandler<JsonObject>() {
       @Override
       public void handle(final Message<JsonObject> message) {
         new AsyncTask<Message<?>, Void, JsonObject>() {

@@ -210,7 +210,7 @@ class FlashView extends RelativeLayout implements OnTouchListener {
     mContext.registerReceiver(flashViewBroadCastReceiver, mIntentFilter);
 
     controlHandler =
-        bus.registerLocalHandler(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
+        bus.subscribeLocal(Constant.ADDR_PLAYER, new MessageHandler<JsonObject>() {
           @Override
           public void handle(Message<JsonObject> message) {
             JsonObject msg = message.body();
