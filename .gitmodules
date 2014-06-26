@@ -1,0 +1,3 @@
+[submodule "drive-android-svg"]
+	path = drive-android-svg
+	url = https://github.com/denghui1010/drive-android-svg.git
