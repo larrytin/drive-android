@@ -63,6 +63,12 @@
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.goodow.drive</groupId>
+      <artifactId>drive-android-svg</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>aar</type>
+    </dependency>
+    <dependency>
       <groupId>com.joanzapata.pdfview</groupId>
       <artifactId>android-pdfview</artifactId>
       <version>1.0.1</version>

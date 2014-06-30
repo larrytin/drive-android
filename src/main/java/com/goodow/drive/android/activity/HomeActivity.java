@@ -135,7 +135,8 @@ public class HomeActivity extends BaseActivity {
 
   // 限制使用状态,如果为true，限制使用中
   public static boolean limitStatus = false;
-  private final long[] mSetting = new long[5];
+  private final long[] keyTime = new long[3];
+  private final int[] keyCode = new int[3];
 
   private boolean isWmShowing;// 限制使用窗口是否显示
   private boolean isHidenWmShowing;// 彩蛋窗口是否显示
@@ -152,6 +153,9 @@ public class HomeActivity extends BaseActivity {
   private DataRegistry dataRegistry;
   @InjectView(R.id.activity_home_progressbar)
   private ProgressBar progressBar;
+  private ListView hideListView;
+  @Inject
+  private WindowManager wm;
 
   public static boolean prompt = false;// 窗口的状态
 
@@ -194,19 +198,28 @@ public class HomeActivity extends BaseActivity {
 
   @Override
   public boolean dispatchKeyEvent(KeyEvent event) {
-    if (event.getKeyCode() == KeyEvent.KEYCODE_S) {
-      System.arraycopy(mSetting, 1, mSetting, 0, mSetting.length - 1);
-      mSetting[mSetting.length - 1] = SystemClock.uptimeMillis();
-      if (!isHidenWmShowing && mSetting[0] >= (mSetting[mSetting.length - 1] - 1000)) {
+    if(event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() != KeyEvent.KEYCODE_BACK) {
+      System.arraycopy(keyTime, 1, keyTime, 0, keyTime.length - 1);
+      System.arraycopy(keyCode, 1, keyCode, 0, keyCode.length - 1);
+      keyTime[keyTime.length - 1] = SystemClock.uptimeMillis();
+      keyCode[keyCode.length - 1] = event.getKeyCode();
+      if (keyCode[1]!=0 && keyTime[keyTime.length - 2] <= keyTime[keyTime.length - 1] - 400) {
+        keyCode[0] = 0;
+        keyCode[1] = 0;
+        keyCode[2] = 0;
+        keyTime[keyTime.length - 1] = SystemClock.uptimeMillis();
+        keyCode[keyCode.length - 1] = event.getKeyCode();
+      }
+      if (keyCode[0] == KeyEvent.KEYCODE_S && keyCode[1] == KeyEvent.KEYCODE_V && keyCode[2] == KeyEvent.KEYCODE_G) {
+        bus.sendLocal(Constant.ADDR_SVG, null, null);
+      } else if(!isHidenWmShowing && keyCode[0] == KeyEvent.KEYCODE_C && keyCode[1] == KeyEvent.KEYCODE_A && keyCode[2] == KeyEvent.KEYCODE_I) {
         LayoutParams params = new LayoutParams();
         params.type = LayoutParams.TYPE_SYSTEM_ALERT;
-        params.flags = LayoutParams.FLAG_ALT_FOCUSABLE_IM;
+        params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
         params.width = 400;
         params.height = 500;
-        final WindowManager wm =
-            (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-        final ListView listView = new ListView(this);
-        listView.setBackgroundColor(Color.WHITE);
+        hideListView = new ListView(this);
+        hideListView.setBackgroundColor(Color.WHITE);
         final PackageManager pm = this.getPackageManager();
         final List<PackageInfo> appInfos = pm.getInstalledPackages(0);
         final List<ResolveInfo> canOpenList = new ArrayList<ResolveInfo>();
@@ -250,7 +263,7 @@ public class HomeActivity extends BaseActivity {
             TextView textview = new TextView(HomeActivity.this);
             AbsListView.LayoutParams params =
                 new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-                    AbsListView.LayoutParams.WRAP_CONTENT);
+                                                AbsListView.LayoutParams.WRAP_CONTENT);
             textview.setPadding(5, 5, 0, 5);
             textview.setTextSize(18);
             textview.setLayoutParams(params);
@@ -262,7 +275,7 @@ public class HomeActivity extends BaseActivity {
                 String activityName = info.activityInfo.name;
                 Intent intent = new Intent();
                 intent.setClassName(info.activityInfo.packageName, activityName);
-                wm.removeView(listView);
+                wm.removeView(hideListView);
                 isHidenWmShowing = false;
                 startActivity(intent);
               }
@@ -270,9 +283,17 @@ public class HomeActivity extends BaseActivity {
             return textview;
           }
         };
-        listView.setAdapter(adapter);
-        wm.addView(listView, params);
+        hideListView.setAdapter(adapter);
+        wm.addView(hideListView, params);
         isHidenWmShowing = true;
+      }
+      if (keyCode[0] != 0 ) {
+        keyCode[0] = 0;
+        keyCode[1] = 0;
+        keyCode[2] = 0;
+        keyTime[0] = 0;
+        keyTime[1] = 0;
+        keyTime[2] = 0;
       }
     }
     return super.dispatchKeyEvent(event);
@@ -391,11 +412,11 @@ public class HomeActivity extends BaseActivity {
    * 屏蔽返回键
    */
   @Override
-  public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK) {
-      return true;
+  public void onBackPressed() {
+    if (isHidenWmShowing) {
+      wm.removeView(hideListView);
+      isHidenWmShowing = false;
     }
-    return super.onKeyDown(keyCode, event);
   }
 
   /**

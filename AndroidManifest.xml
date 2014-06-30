@@ -47,7 +47,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name" >
         <meta-data android:name="roboguice.modules"
-           android:value="com.goodow.drive.android.DriveAndroidModule" />
+           android:value="com.goodow.drive.android.DriveAndroidModule, com.goodow.drive.android.svg.SvgModule" />
         <activity
             android:name="com.goodow.drive.android.activity.HomeActivity"
             android:label="@string/app_name" 
@@ -224,6 +224,10 @@
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
+        </activity>
+        <activity android:name="com.goodow.drive.android.svg.SvgMainActivity"
+            android:theme="@style/ActionBarNoLogoNoHome">
+
         </activity>
         <receiver android:name="com.goodow.drive.android.receiver.BootBroadcastReceiver">
             <intent-filter>
