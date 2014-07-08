@@ -1,10 +1,16 @@
 package com.goodow.drive.android.data;
 
+import android.content.SharedPreferences;
+import android.os.SystemClock;
+import android.text.TextUtils;
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.goodow.drive.android.Constant;
+import com.goodow.drive.android.activity.BaseActivity;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
 import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
+import com.goodow.realtime.channel.State;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
@@ -217,6 +223,27 @@ public class DataRegistry {
             message.reply(result, null);// 分页查询接口
           };
         }.execute(message);
+      }
+    });
+
+    //
+    bus.subscribeLocal(Constant.ADDR_PLAYER_ANALYTICS_DB, new MessageHandler<JsonObject>() {
+      @Override
+      public void handle(final Message<JsonObject> message) {
+          SharedPreferences usagePreferences = ctx.getSharedPreferences(BaseActivity.USAGE_STATISTIC, Context.MODE_MULTI_PROCESS);
+          String fileName = usagePreferences.getString("tmpFileName", "");
+          long openTime = usagePreferences.getLong("tmpOpenTime", -1);
+          // 播放时间，小于5s，忽略
+          long lastTime = SystemClock.uptimeMillis() - usagePreferences.getLong("tmpSystemLast", -1);
+          if (lastTime > 5000 & !TextUtils.isEmpty(fileName)) {
+              // 将播放数据存储到数据库
+              DBOperator.addUserData(ctx, "T_PLAYER", "FILE_NAME", "OPEN_TIME", "LAST_TIME", Json
+                      .createObject().set("FILE_NAME", fileName).set("OPEN_TIME", openTime).set("LAST_TIME",
+                              lastTime));
+              if (bus.getReadyState() == State.OPEN) {
+                  bus.sendLocal(Constant.ADDR_PLAYER_ANALYTICS_REQUEST, null, null);
+              }
+          }
       }
     });
   }

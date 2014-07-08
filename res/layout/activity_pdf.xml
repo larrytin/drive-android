@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-    <com.joanzapata.pdfview.PDFView
+    <com.goodow.drive.android.pdf.DriveAndroidJZPdfView
         android:id="@+id/pdfView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</FrameLayout>
+    <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/common_selector_back"
+            android:onClick="onClick"/>
+    <LinearLayout
+            android:id="@+id/ll_tool_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true">
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:onClick="onClick" android:id="@+id/bt_pdf_pre_page" android:text="@string/string_pdf_pre"/>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:onClick="onClick" android:id="@+id/bt_pdf_next_page" android:text="@string/string_pdf_next"/>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:onClick="onClick" android:id="@+id/bt_pdf_max" android:text="@string/string_pdf_max"/>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:onClick="onClick" android:id="@+id/bt_pdf_min" android:text="@string/string_pdf_min"/>
+    </LinearLayout>
+</RelativeLayout>

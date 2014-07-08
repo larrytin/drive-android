@@ -45,12 +45,12 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name_krx" >
         <meta-data android:name="roboguice.modules"
-           android:value="com.goodow.drive.android.DriveAndroidModule, com.goodow.drive.android.svg.SvgModule" />
+           android:value="com.goodow.drive.android.DriveAndroidModule, com.goodow.drive.android.svg.SvgModule, com.goodow.drive.android.PDFModule" />
         <activity
             android:name="com.goodow.drive.android.activity.HomeActivity"
-            android:label="@string/app_name" 
+            android:label="@string/app_name_krx"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             android:launchMode="singleTask"
             >
@@ -135,7 +135,7 @@
         </activity>
         <!-- PDF播放器 -->
         <activity 
-            android:name="com.goodow.drive.android.player.PdfPlayer" 
+            android:name="com.goodow.drive.android.player.JZPdfActivity"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -225,7 +225,7 @@
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
-        <activity android:name="com.goodow.drive.android.svg.SvgMainActivity"
+        <activity android:name="com.goodow.drive.android.svg.MainActivity"
             android:theme="@style/ActionBarNoLogoNoHome">
 
         </activity>

@@ -1,5 +1,9 @@
 package com.goodow.drive.android.player;
 
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+import com.artifex.mupdf.MuPDFActivity;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DBOperator;
 import com.goodow.drive.android.toolutils.DeviceInformationTools;
@@ -7,14 +11,7 @@ import com.goodow.realtime.channel.Bus;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.json.JsonObject;
-
 import com.google.inject.Inject;
-
-import com.artifex.mupdf.MuPDFActivity;
-
-import android.content.Context;
-import android.content.Intent;
-import android.widget.Toast;
 
 public class PlayerRegistry {
   @Inject
@@ -33,7 +30,7 @@ public class PlayerRegistry {
         String path = body.getString("path");
         Intent intent = null;
         if (path.endsWith(".pdf")) {
-          bus.sendLocal(Constant.ADDR_PLAYER_PDF_MU, message.body(), null);
+          bus.sendLocal(Constant.ADDR_PLAYER_PDF_JZ, message.body(), null);
           return;
         } else if (path.endsWith(".mp4")) {
           intent = new Intent(ctx, VideoActivity.class);
@@ -56,7 +53,7 @@ public class PlayerRegistry {
     bus.subscribeLocal(Constant.ADDR_PLAYER_PDF_JZ, new MessageHandler<JsonObject>() {
       @Override
       public void handle(Message<JsonObject> message) {
-        Intent intent = new Intent(ctx, PdfPlayer.class);
+        Intent intent = new Intent(ctx, JZPdfActivity.class);
         intent.putExtra("msg", message.body());
         ctx.startActivity(intent);
       }

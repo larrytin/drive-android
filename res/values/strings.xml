@@ -2,7 +2,7 @@
 <resources>
 
     <string name="ds_menu_settings">setting</string>
-    <string name="app_name">KeRuiXing</string>
+    <string name="app_name_krx">KeRuiXing</string>
 
     <!-- PDF -->
     <string name="pdf_file_no_exist">文件不存在</string>
@@ -87,4 +87,9 @@
     <string name="string_register_input_notnull">您的输入不能为空!</string>
     <string name="string_register_success">注册成功</string>
     <string name="string_register_try">　　　　试用中</string>
+
+    <string name="string_pdf_pre">上一页</string>
+    <string name="string_pdf_next">下一页</string>
+    <string name="string_pdf_max">放大</string>
+    <string name="string_pdf_min">缩小</string>
 </resources>
