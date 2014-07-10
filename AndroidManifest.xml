@@ -134,7 +134,7 @@
             >
         </activity>
         <!-- PDF播放器 -->
-        <activity 
+        <activity
             android:name="com.goodow.drive.android.player.JZPdfActivity"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
@@ -143,7 +143,7 @@
         </activity>
         <activity
             android:process=":pdf"
-            android:name="com.artifex.mupdf.MuPDFActivity" 
+            android:name="com.goodow.drive.android.player.MuPdfActivity"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -225,7 +225,7 @@
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
             >
         </activity>
-        <activity android:name="com.goodow.drive.android.svg.MainActivity"
+        <activity android:name="com.goodow.drive.android.svg.SvgMainActivity"
             android:theme="@style/ActionBarNoLogoNoHome">
 
         </activity>
