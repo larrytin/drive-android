@@ -3,6 +3,7 @@ package com.goodow.drive.android.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Html;
@@ -15,11 +16,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
-import android.widget.LinearLayout.LayoutParams;
+import android.widget.RelativeLayout.LayoutParams;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.toolutils.FileTools;
-import com.goodow.drive.android.view.FlowRadioGroup;
 import com.goodow.realtime.channel.Message;
 import com.goodow.realtime.channel.MessageHandler;
 import com.goodow.realtime.core.Registration;
@@ -243,7 +243,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
   private static final Map<Object, String> idContentTypes = new HashMap<Object, String>();
   private static final Map<Object, String> idTags = new HashMap<Object, String>();
 
-  private LinearLayout ll_act_source_sub_catagorys = null;
+  private RelativeLayout ll_act_source_sub_catagorys = null;
 
   private final static String CATAGORY0_ALL = "全部";
   private final static String CATAGORY0_TEXT = "文本";
@@ -512,7 +512,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
       }else if(jsonArray != null){
           keys = jsonArray;
       }
-
+      ScrollView scrollView = new ScrollView(this);
       RadioGroup radioGroup = new RadioGroup(this);
       if(parentIndex == 0){
           radioGroup.setBackgroundResource(R.drawable.source_hierarchy_sub_0);
@@ -522,22 +522,28 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
           radioGroup.setBackgroundResource(R.drawable.source_hierarchy_sub_2);
       }
 
-      LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+      LayoutParams layoutParams = new LayoutParams(210, ViewGroup.LayoutParams.WRAP_CONTENT);
       if(parentIndex == 0){
-          layoutParams.setMargins(0, selfIndex * preItemHeight,0,0);
+          layoutParams.setMargins(parentIndex * 200, selfIndex * preItemHeight,0,0);
       }else{
-          layoutParams.setMargins(0, parentStartY  + selfIndex * preItemHeight,0,0);
+          layoutParams.setMargins(parentIndex * 190, parentStartY  + selfIndex * preItemHeight,0,0);
       }
-      radioGroup.setLayoutParams(layoutParams);
+      scrollView.setLayoutParams(layoutParams);
       radioGroup.setOrientation(RadioGroup.VERTICAL);
       for(int i=0;i<keys.length();i++){
           RadioButton radioButton = (RadioButton) this.getLayoutInflater().inflate(R.layout.soruce_item_sub_search,null);
+          radioButton.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 50));
           radioButton.setText(keys.get(i).toString());
           if(parentIndex == 0 && isLast == false){
-              radioButton.setButtonDrawable(R.drawable.source_selector_stretch);
+              radioButton.setBackgroundResource(R.drawable.source_selector_hierarchy_sub_0_item);
+              radioButton.setTextColor(Color.parseColor("#FFFFFF"));
           }
           if(parentIndex == 1 && isLast == false){
+              radioButton.setBackgroundResource(R.drawable.source_selector_hierarchy_sub_1_item);
+          }
+          if(isLast){
               radioButton.setButtonDrawable(R.drawable.source_selector_arrow);
+              radioButton.setTextColor(Color.parseColor("#000000"));
           }
           radioButton.setTag(R.id.tag_first, (parentIndex + 1));
           radioButton.setTag(R.id.tag_second,isLast);
@@ -546,7 +552,8 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
           radioButton.setOnClickListener(new OnSubCatagoryClick());
           radioGroup.addView(radioButton);
       }
-      this.ll_act_source_sub_catagorys.addView(radioGroup);
+      scrollView.addView(radioGroup);
+      this.ll_act_source_sub_catagorys.addView(scrollView);
   }
 
   private void bindSubTagToView(JsonArray tags) {
@@ -650,7 +657,7 @@ public class SourceActivity extends BaseActivity implements OnClickListener {
     this.iv_act_source_search_button =
         (ImageView) this.findViewById(R.id.iv_act_source_search_button);
     this.iv_act_source_search_button.setOnClickListener(this);
-    this.ll_act_source_sub_catagorys = (LinearLayout)this.findViewById(R.id.ll_act_source_sub_catagorys);
+    this.ll_act_source_sub_catagorys = (RelativeLayout)this.findViewById(R.id.ll_act_source_sub_catagorys);
     this.tv_act_source_keys_list = (TextView)this.findViewById(R.id.tv_act_source_keys_list);
     this.cb_act_source_subcat_status0 = (CheckBox) this.findViewById(R.id.cb_act_source_subcat_status0);
     this.cb_act_source_subcat_status1 = (CheckBox) this.findViewById(R.id.cb_act_source_subcat_status1);

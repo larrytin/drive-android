@@ -15,7 +15,10 @@
 	<color name="harmony_grade_term_normal">#FFFFFF</color>
 
 	<!-- 搜索 最后一级 自体颜色值 -->
-	<color name="search_last_term_pressed">#e41e10</color>
-	<color name="search_last_term_normal">#563a07</color>
+	<color name="search_last_term_pressed">#000000</color>
+	<color name="search_last_term_normal">#000000</color>
+    <!-- 搜索 中间一级 自体颜色值 -->
+	<color name="search_middle_term_pressed">#FFFFFF</color>
+	<color name="search_middle_term_normal">#000000</color>
   
 </resources>

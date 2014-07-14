@@ -243,13 +243,12 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout android:id="@+id/ll_act_source_sub_catagorys"
+        <RelativeLayout android:id="@+id/ll_act_source_sub_catagorys"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_below="@id/rl_act_source_common"
             android:visibility="gone">
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_act_source_catagory1"
