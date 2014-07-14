@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DriveAndroidModule extends AbstractModule {
-  private static final String SERVER = "ldh.goodow.com:1986";
+  private static final String SERVER = "dpw.goodow.com:1986";
   private static final String URL = "ws://" + SERVER + "/channel/websocket";
 
   static {
