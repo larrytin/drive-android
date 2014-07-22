@@ -1,5 +1,6 @@
 package com.goodow.drive.android.settings;
 
+import android.view.*;
 import com.goodow.android.drive.R;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.activity.HomeActivity;
@@ -39,12 +40,8 @@ import android.net.Uri;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -235,6 +232,14 @@ public class SettingsRegistry {
                   mWindowManager.removeView(mView);
                   mLayoutParams.type = LayoutParams.TYPE_PRIORITY_PHONE;
                   mWindowManager.addView(mView, mLayoutParams);
+                  mView.setOnKeyListener(new View.OnKeyListener() {
+                    @Override public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                      if (keyEvent.getAction() == keyEvent.ACTION_UP && i == 93){
+                        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 1), null);
+                      }
+                      return true;
+                    }
+                  });
                   mView.setOnTouchListener(new OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {

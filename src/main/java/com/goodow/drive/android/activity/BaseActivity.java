@@ -1,5 +1,6 @@
 package com.goodow.drive.android.activity;
 
+import android.view.KeyEvent;
 import com.goodow.drive.android.Constant;
 import com.goodow.drive.android.data.DBOperator;
 import com.goodow.realtime.channel.Bus;
@@ -26,13 +27,13 @@ import android.view.WindowManager;
 import roboguice.activity.RoboActivity;
 
 /**
+ * @author www.dingpengwei@gmail.com
+ * @version V1.0
  * @title: BaseActivity.java
  * @package drive-android
  * @description: TODO
- * @author www.dingpengwei@gmail.com
  * @createDate 2013 2013-12-4 上午11:33:07
  * @updateDate 2013 2013-12-4 上午11:33:07
- * @version V1.0
  */
 public class BaseActivity extends RoboActivity {
 
@@ -57,6 +58,13 @@ public class BaseActivity extends RoboActivity {
     // Always unregister when an handler no longer should be on the bus.
     controlHandler.unregister();
     brightnessHandler.unregister();
+  }
+
+  @Override public boolean onKeyUp(int keyCode, KeyEvent event) {
+    if (keyCode == 93) {
+        bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
+    }
+    return super.onKeyDown(keyCode, event);
   }
 
   @Override
@@ -163,13 +171,15 @@ public class BaseActivity extends RoboActivity {
                   WindowManager.LayoutParams lp = getWindow().getAttributes();
                   if ((0 < strength | strength == 0) && strength <= 1) {
                     android.provider.Settings.System.putInt(getContentResolver(),
-                        android.provider.Settings.System.SCREEN_BRIGHTNESS, (int) strength * 255); // 0-255
+                        android.provider.Settings.System.SCREEN_BRIGHTNESS,
+                        (int) strength * 255); // 0-255
                     lp.screenBrightness = (float) strength;
                   }
                   getWindow().setAttributes(lp);
                 }
               }
-            });
+            }
+        );
   }
 
   protected void saveOnDatabases() {

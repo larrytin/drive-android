@@ -44,7 +44,7 @@ public class MuPdfActivity extends DriveAndroidMuPdfActivity implements View.OnC
         this.back = new Button(this);
         this.back.setBackgroundResource(R.drawable.common_selector_back);
         this.back.setOnClickListener(this);
-        this.controllBar = this.getLayoutInflater().inflate(com.goodow.drive.android.R.layout.demo,null);
+        this.controllBar = this.getLayoutInflater().inflate(R.layout.pdf_controller,null);
         this.paramsBack = new WindowManager.LayoutParams();
         this.paramsBack.width = this.paramsBack.WRAP_CONTENT;
         this.paramsBack.height = this.paramsBack.WRAP_CONTENT;
