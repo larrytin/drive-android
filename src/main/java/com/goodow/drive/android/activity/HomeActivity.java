@@ -40,10 +40,7 @@ import com.goodow.realtime.core.Registration;
 import com.goodow.realtime.json.Json;
 import com.goodow.realtime.json.JsonArray;
 import com.goodow.realtime.json.JsonObject;
-import com.goodow.realtime.store.CollaborativeMap;
-import com.goodow.realtime.store.Document;
-import com.goodow.realtime.store.Model;
-import com.goodow.realtime.store.Store;
+import com.goodow.realtime.store.*;
 import com.google.inject.Inject;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -59,8 +56,8 @@ public class HomeActivity extends BaseActivity {
 
 
   private static boolean registried;
-  private static final String ID = "drive_android/time";
-  private static final String DRIVE_ANDROID = "drive_android";
+  private static final String ID = "settings/0";
+  private static final String DRIVE_ANDROID = "time";
 
   private Registration netWorkHandlerReg;
 
@@ -97,7 +94,7 @@ public class HomeActivity extends BaseActivity {
   public static int netConnectCheck;
 
   // 周期校验时间间隔
-  private final int authPeriodicTime = 3000;
+  private final int authPeriodicTime = 3 * 60 * 1000;
   // 限制使用时间
   private final long limitTotalTime = 3 * 60 * 1000;
   // 试用时间
@@ -533,7 +530,7 @@ public class HomeActivity extends BaseActivity {
   @Override
   protected void onNewIntent(android.content.Intent intent) {
     Bundle extras = intent.getExtras();
-    if (extras.getBoolean("register")) {
+    if (extras != null && extras.getBoolean("register")) {
       Platform.scheduler().cancelTimer(trialSch);// 取消试用十分钟
       authSp.edit().putBoolean("trial", false).commit();
       bus.sendLocal(Constant.ADDR_VIEW_PROMPT, Json.createObject().set("status", false), null);
@@ -573,11 +570,15 @@ public class HomeActivity extends BaseActivity {
     Handler<Document> onLoaded = new Handler<Document>() {
       @Override
       public void handle(Document document) {
-        CollaborativeMap root = document.getModel().getRoot().get(DRIVE_ANDROID);
-        authSp.edit()
-            .putInt("authPeriodicTime", ((Double) root.get("authPeriodicTime")).intValue())
-            .putLong("limitTotalTime", ((Double) root.get("limitTotalTime")).longValue()).putInt(
+        final CollaborativeMap root = document.getModel().getRoot().get(DRIVE_ANDROID);
+        root.onObjectChanged(new Handler<ObjectChangedEvent>() {
+          @Override public void handle(ObjectChangedEvent objectChangedEvent) {
+            authSp.edit()
+                .putInt("authPeriodicTime", ((Double) root.get("authPeriodicTime")).intValue())
+                .putLong("limitTotalTime", ((Double) root.get("limitTotalTime")).longValue()).putInt(
                 "trailTime", ((Double) root.get("trailTime")).intValue()).commit();
+          }
+        });
       }
     };
     Handler<Model> opt_initializer = new Handler<Model>() {

@@ -64,7 +64,7 @@ public class BaseActivity extends RoboActivity {
     if (keyCode == 93) {
         bus.sendLocal(Constant.ADDR_CONTROL, Json.createObject().set("brightness", 0), null);
     }
-    return super.onKeyDown(keyCode, event);
+    return super.onKeyUp(keyCode, event);
   }
 
   @Override
